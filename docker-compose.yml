@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  generator.service:
+    image: ${DOCKER_REGISTRY-}generator
+    build:
+      context: .
+      dockerfile: Generator.Service/Dockerfile

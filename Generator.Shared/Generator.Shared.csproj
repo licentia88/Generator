@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="protobuf-net.Grpc" />
+    <None Remove="Models\" />
+    <None Remove="Services\" />
+    <None Remove="protobuf-net" />
+    <None Remove="Extensions\" />
+    <None Remove="Apache.Avro" />
+    <None Remove="AvroConvert" />
+    <None Remove="MsgPack.Cli" />
+    <None Remove="Helpers\" />
+    <None Remove="Mapster" />
+    <None Remove="Mapster.Core" />
+    <None Remove="TEST_WILL_DELETE_LATER\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Services\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="TEST_WILL_DELETE_LATER\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="protobuf-net" Version="3.1.22" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.0.177" />
+    <PackageReference Include="AvroConvert" Version="3.3.0" />
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
+    <PackageReference Include="Mapster" Version="7.3.0" />
+    <PackageReference Include="Mapster.Core" Version="1.2.0" />
+  </ItemGroup>
+</Project>

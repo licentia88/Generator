@@ -1,0 +1,67 @@
+﻿@page "/Tests"
+@using Generator.Shared.Services;
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Tests</h1>
+
+
+<button class="btn btn-primary m-2" @onclick="QueryStream">@("QueryStream".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="InsertWithCodeTableTest">@("InsertWithCodeTableTest".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="InsertWithIdentityTest">@("InsertWithIdentityTest".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="InsertWithoutIdentityTest">@("InsertWithoutIdentityTest".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="QueryAsyncObject">@("QueryAsyncObject".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="QueryStreamObject">@("QueryStreamObject".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="InsertWithCodeTableTestObject">@("InsertWithCodeTableTestObject".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="InsertWithIdentityTestObject">@("InsertWithIdentityTestObject".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="InsertWithoutIdentityTestObject">@("InsertWithoutIdentityTestObject".Humanize())</button>
+
+<br />
+
+<button class="btn btn-primary m-2" @onclick="QueryAsyncObject">@("QueryAsyncObject".Humanize())</button>
+
+<br />
+
+
+
+
+@{
+    if (DataSource is not null)
+    {
+        <MudTable Items="@DataSource" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>RowId</MudTh>
+                <MudTh>Desc</MudTh>
+
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="RefNo">@context["TT_ROWID"]</MudTd>
+                <MudTd DataLabel="Desc">@context["TT_DESC"]</MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+}

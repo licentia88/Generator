@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+  <ItemGroup>
+    <None Remove="MudBlazor" />
+    <None Remove="Grpc.Net.Client" />
+    <None Remove="Grpc.Net.Client.Web" />
+    <None Remove="protobuf-net.Grpc.ClientFactory" />
+    <None Remove="Pages\Generic\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="6.0.17" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.49.0" />
+    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.0.177" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\Generic\" />
+  </ItemGroup>
+</Project>

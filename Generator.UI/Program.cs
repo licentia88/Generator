@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Services;
-using Generator.Security;
+﻿using MudBlazor.Services;
 using Grpc.Net.Client.Web;
 using System.Net;
 using ProtoBuf.Grpc.ClientFactory;
@@ -9,54 +6,24 @@ using Generator.Shared.Services;
 using Grpc.Net.Client;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
-using System.Threading.Channels;
-using Generator.Shared.Models;
-using Microsoft.Extensions.Options;
+using Generator.UI;
+using Generator.Shared.Extensions;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
-builder.Services.AddSingleton<CryptoService>();
-
-//builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("JwtTokenConfig")).AddSingleton(x => x.GetRequiredService<IOptions<JwtTokenConfig>>().Value);
+ 
+builder.Services.AddScoped(typeof(List<>));
+builder.Services.RegisterGrpcService<IDatabaseService>();
 
 
  
-
-var httpHandler = new SocketsHttpHandler
-{
-    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-    PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-    KeepAlivePingDelay = TimeSpan.FromSeconds(60),
-    KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
-    EnableMultipleHttp2Connections = true
-};
-
-var hand = new GrpcWebHandler(GrpcWebMode.GrpcWeb, httpHandler);
-//hand.HttpVersion = HttpVersion.Version11;
-
-
-
-builder.Services.AddCodeFirstGrpcClient<IGenericService>(x =>
-{
-    x.ChannelOptionsActions.Add(x => new GrpcChannelOptions
-    {
-        HttpHandler = hand,
-
-        MaxReceiveMessageSize = null, //30000000
-        MaxSendMessageSize = null, //30000000
-        Credentials = ChannelCredentials.Insecure,
-        UnsafeUseInsecureChannelCallCredentials = true,
-        ServiceConfig = new ServiceConfig { LoadBalancingConfigs = { new RoundRobinConfig() } }
-    }) ;
-    
-    x.Address = new Uri("http://localhost:5010");
-
-})
-.ConfigurePrimaryHttpMessageHandler(x => hand);
 
 var app = builder.Build();
 

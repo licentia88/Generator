@@ -12,25 +12,24 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="FastMember" Version="1.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.49.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.50.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.0.179" />
     <PackageReference Include="GenFu" Version="1.6.0" />
     <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,7 +46,6 @@
     <None Remove="protobuf-net.Grpc.AspNetCore" />
     <None Remove="Dapper" />
     <None Remove="Helpers\" />
-    <None Remove="Extensions\" />
     <None Remove="Mapster.Core" />
     <None Remove="Mapster" />
     <None Remove="Models\" />
@@ -61,16 +59,17 @@
     <None Remove="GenFu" />
     <None Remove="BenchmarkDotNet" />
     <None Remove="CsvHelper" />
+    <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Generator.Server\Generator.Server.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Models\" />
-    <Folder Include="Models\Shema\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

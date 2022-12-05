@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json;
 using Generator.Shared.Models;
 
 namespace Generator.Shared.Helpers;
@@ -8,6 +6,7 @@ namespace Generator.Shared.Helpers;
 
 public class JsonHelpers
 {
+
     private static async ValueTask<AppSettings> WriteJson(AppSettings settings)
     {
         var jsonSerialised = JsonSerializer.Serialize(settings);

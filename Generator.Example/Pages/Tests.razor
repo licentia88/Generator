@@ -1,14 +1,20 @@
 ﻿@page "/Tests"
-@using Generator.Shared.Services;
 
 <PageTitle>Counter</PageTitle>
 
 <h1>Tests</h1>
 
 
+<button class="btn btn-primary m-2" @onclick="QueryAsync">@("QueryAsync".Humanize())</button>
+
+<br />
+
 <button class="btn btn-primary m-2" @onclick="QueryStream">@("QueryStream".Humanize())</button>
 
 <br />
+
+
+
 
 <button class="btn btn-primary m-2" @onclick="InsertWithCodeTableTest">@("InsertWithCodeTableTest".Humanize())</button>
 
@@ -22,6 +28,7 @@
 
 <br />
 
+
 <button class="btn btn-primary m-2" @onclick="QueryAsyncObject">@("QueryAsyncObject".Humanize())</button>
 
 <br />
@@ -29,6 +36,7 @@
 <button class="btn btn-primary m-2" @onclick="QueryStreamObject">@("QueryStreamObject".Humanize())</button>
 
 <br />
+
 
 <button class="btn btn-primary m-2" @onclick="InsertWithCodeTableTestObject">@("InsertWithCodeTableTestObject".Humanize())</button>
 
@@ -42,9 +50,7 @@
 
 <br />
 
-<button class="btn btn-primary m-2" @onclick="QueryAsyncObject">@("QueryAsyncObject".Humanize())</button>
 
-<br />
 
 
 

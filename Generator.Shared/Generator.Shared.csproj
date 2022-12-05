@@ -19,6 +19,13 @@
     <None Remove="Mapster" />
     <None Remove="Mapster.Core" />
     <None Remove="TEST_WILL_DELETE_LATER\" />
+    <None Remove="Models\ComponentModels\" />
+    <None Remove="Dependency\" />
+    <None Remove="protobuf-net.Grpc.ClientFactory" />
+    <None Remove="Grpc.AspNetCore.Web" />
+    <None Remove="Grpc.Net.Client.Web" />
+    <None Remove="Grpc.Net.Client" />
+    <None Remove="BCrypt.Net-Next" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -26,13 +33,23 @@
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
     <Folder Include="TEST_WILL_DELETE_LATER\" />
+    <Folder Include="Models\ComponentModels\" />
+    <Folder Include="Dependency\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.1.22" />
-    <PackageReference Include="protobuf-net.Grpc" Version="1.0.177" />
+    <PackageReference Include="protobuf-net" Version="3.1.25" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.0.179" />
     <PackageReference Include="AvroConvert" Version="3.3.0" />
     <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />
+    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.0.179" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.50.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Extensions\ReflectionExtensions.cs" />
+    <Compile Remove="Extensions\PropertyExtensions.cs" />
   </ItemGroup>
 </Project>

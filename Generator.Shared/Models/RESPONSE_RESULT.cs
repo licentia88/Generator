@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using ProtoBuf;
 
 namespace Generator.Shared.Models;
@@ -23,10 +22,4 @@ public class RESPONSE_RESULT
 }
 
 
-
-[ProtoContract]
-public class Person
-{
-    [Key]
-    public int TEST { get; set; }
-}
+ 

@@ -11,11 +11,9 @@ public static class PropertyExtensions
 
     public static List<dynamic> CreateDynamicList(string typeName,Assembly assembly)
     {
-
         var type = ReflectionExtensions.ReconstructType(typeName,true, assembly);
 
         var lt = typeof(List<>);
-        //var type = Type.GetType(typeName,);
 
         var result = (IEnumerable<dynamic>)Activator.CreateInstance(lt.MakeGenericType(type));
 
@@ -28,5 +26,8 @@ public static class PropertyExtensions
     {
         return new T();
     }
+
 }
+
+
 

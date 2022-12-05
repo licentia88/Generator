@@ -1,8 +1,9 @@
-﻿using ProtoBuf;
+﻿using System;
+using ProtoBuf;
 
 namespace Generator.Shared.Models;
 
-
+  
 [ProtoContract]
 public class RESPONSE_REQUEST
 {
@@ -11,6 +12,9 @@ public class RESPONSE_REQUEST
 
     [ProtoMember(2)]
     public string TableName { get; set; }
+
+    [ProtoMember(3)]
+    public string ComponentId { get; set; }
 
     public RESPONSE_REQUEST()
     {
@@ -22,6 +26,4 @@ public class RESPONSE_REQUEST
         RR_DATA = model;
     }
 }
-
-
 

@@ -1,29 +1,40 @@
-﻿using Generator.Shared.Services;
+﻿using System.Data.Common;
+using Generator.Server;
+using Generator.Server.Extensions;
+using Generator.Server.Helpers;
+using Generator.Server.Services;
 using Generator.Shared.Models;
-using ProtoBuf.Grpc;
-using Generator.Service.Helpers;
-using Generator.Service.Extensions;
-using Mapster;
-using Generator.Shared.Extensions;
-using Microsoft.Extensions.Options;
-using System.Dynamic;
-using GenFu;
+using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
+using GenFu;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
+using ProtoBuf.Grpc;
 
-namespace Generator.Service.Services;
+namespace Generator.Services.Services;
 
-
-public class TestService : ServiceBase, ITestService, IDisposable
+public class TestService : ServiceBase<TestContext>, ITestService, IDisposable // GenericServiceBase<TestContext,STRING_TABLE>, ITestService, IDisposable
 {
+    //public DbConnection Connection { get; set; }
+
+     
+    //TODO: OpenIfleri kontrol et
     public TestService(IServiceProvider provider) : base(provider)
     {
+        //Connection = new DbConnection();
+        //var faker = CreateFakeData<GRIDS_M>(5);
+
+        //Connection.ConnectionString = "Server=Localhost;Database=TestContext;User Id=sa;Password=LucidNala88!;TrustServerCertificate=true"
+        //Db.Database.SetConnectionString("Server=Localhost;Database=TestContext;User Id=sa;Password=LucidNala88!;TrustServerCertificate=true");
+        //ChangeDb(nameof(TestContext));
+
+        //ChangeDb(nameof(GeneratorContext));
+        //Db = provider.GetService<TestContext>();
     }
 
     //Part 1
     public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default)
     {
-       //await  CreateFakeData(nameof(TEST_TABLE),5);
-
         return  Delegates.ExecuteAsync(async () =>
         {
  
@@ -31,7 +42,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
-            var result = await Connection.InsertAsync(nameof(STRING_TABLE), dictType);
+            var result = await GeneratorConnection.InsertAsync(nameof(STRING_TABLE), dictType);
 
             return result;
         });
@@ -46,7 +57,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
-            var result = await Connection.InsertAsync(nameof(TEST_TABLE), dictType);
+            var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictType);
 
             return result;
         });
@@ -61,7 +72,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
-            var result = await Connection.InsertAsync(nameof(COMPUTED_TABLE), dictType);
+            var result = await GeneratorConnection.InsertAsync(nameof(COMPUTED_TABLE), dictType);
 
             return result;
         });
@@ -71,7 +82,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            var result = await Connection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
             return result;
         });
@@ -81,7 +92,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            var result = await Connection.QueryScalar<int>($"SELECT 1 FROM {nameof(TEST_TABLE)}");
+            var result = await GeneratorConnection.QueryScalar<int>($"SELECT 1 FROM {nameof(TEST_TABLE)}");
 
             return result;
         });
@@ -90,7 +101,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
 
     public IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context =default)
     {
-        return Delegates.ExecuteStreamAsync(() => Connection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
+        return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
     }
 
 
@@ -98,7 +109,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
 
     public IAsyncEnumerable<RESPONSE_RESULT> QueryStreamObject(CallContext context = default)
     {
-        return Delegates.ExecuteStreamAsync(() => Connection.QueryStreamAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}"));
+        return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}"));
 
     }
 
@@ -106,7 +117,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            var result = await Connection.QueryAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = await GeneratorConnection.QueryAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}");
 
             return result;
         });
@@ -116,11 +127,12 @@ public class TestService : ServiceBase, ITestService, IDisposable
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            var newData = A.New<TEST_TABLE>();
+           
+            var newData = await CreateFakeDataAsync(nameof(TEST_TABLE), 1);
 
-            var dictType = newData.Adapt<IDictionary<string, object>>();
+            var dictType = newData.First().Adapt<IDictionary<string, object>>();
 
-            var result = await Connection.InsertAsync<TEST_TABLE>(dictType);
+            var result = await GeneratorConnection.InsertAsync<TEST_TABLE>(dictType);
 
             return result;
         });
@@ -130,11 +142,11 @@ public class TestService : ServiceBase, ITestService, IDisposable
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            var newData = A.New<STRING_TABLE>();
+            var newData = await CreateFakeDataAsync(nameof(STRING_TABLE), 1);
 
-            var dictType = newData.Adapt<IDictionary<string, object>>();
+            var dictType = newData.First().Adapt<IDictionary<string, object>>();
 
-            var result = await Connection.InsertAsync<STRING_TABLE>(dictType);
+            var result = await GeneratorConnection.InsertAsync<STRING_TABLE>(dictType);
 
             return result;
         });
@@ -144,11 +156,15 @@ public class TestService : ServiceBase, ITestService, IDisposable
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            var newData = A.New<COMPUTED_TABLE>();
+            //var newData = A.New<COMPUTED_TABLE>();
 
-            var dictType = newData.Adapt<IDictionary<string, object>>();
+            //var dictType = newData.Adapt<IDictionary<string, object>>();
 
-            var result = await Connection.InsertAsync<COMPUTED_TABLE>(dictType);
+            var newData = await CreateFakeDataAsync(nameof(COMPUTED_TABLE), 1);
+
+            var dictType = newData.First().Adapt<IDictionary<string, object>>();
+
+            var result = await GeneratorConnection.InsertAsync<COMPUTED_TABLE>(dictType);
 
             return result;
         });
@@ -156,7 +172,7 @@ public class TestService : ServiceBase, ITestService, IDisposable
 
     public void Dispose()
     {
-        Connection.Dispose();
+        GeneratorConnection.Dispose();
         Db.Dispose();
         GC.SuppressFinalize(this);
     }

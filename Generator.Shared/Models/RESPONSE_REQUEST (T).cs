@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System;
+using ProtoBuf;
 
 namespace Generator.Shared.Models;
 
@@ -18,8 +19,3 @@ public class RESPONSE_REQUEST<TModel>
         RR_DATA = model;
     }
 }
-
- 
-
-
-

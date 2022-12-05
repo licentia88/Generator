@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Generator.Service.Migrations
+namespace Generator.Services.Migrations
 {
     [DbContext(typeof(TestContext))]
     partial class TestContextModelSnapshot : ModelSnapshot
@@ -21,7 +21,28 @@ namespace Generator.Service.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Generator.Service.TEST_WILL_DELETE_LATER.COMPUTED_TABLE", b =>
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.CHILD_CLASS", b =>
+                {
+                    b.Property<int>("CC_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CC_ROWID"));
+
+                    b.Property<string>("CC_DESC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CC_PARENT_REFNO")
+                        .HasColumnType("int");
+
+                    b.HasKey("CC_ROWID");
+
+                    b.HasIndex("CC_PARENT_REFNO");
+
+                    b.ToTable("CHILD_CLASS");
+                });
+
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.COMPUTED_TABLE", b =>
                 {
                     b.Property<int>("CT_ROWID")
                         .HasColumnType("int");
@@ -34,7 +55,23 @@ namespace Generator.Service.Migrations
                     b.ToTable("COMPUTED_TABLE");
                 });
 
-            modelBuilder.Entity("Generator.Service.TEST_WILL_DELETE_LATER.STRING_TABLE", b =>
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>
+                {
+                    b.Property<int>("PC_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PC_ROWID"));
+
+                    b.Property<string>("PC_DESC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PC_ROWID");
+
+                    b.ToTable("PARENT_CLASS");
+                });
+
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.STRING_TABLE", b =>
                 {
                     b.Property<string>("CT_ROWID")
                         .HasColumnType("nvarchar(450)");
@@ -47,7 +84,7 @@ namespace Generator.Service.Migrations
                     b.ToTable("STRING_TABLE");
                 });
 
-            modelBuilder.Entity("Generator.Service.TEST_WILL_DELETE_LATER.TEST_TABLE", b =>
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.TEST_TABLE", b =>
                 {
                     b.Property<int>("TT_ROWID")
                         .ValueGeneratedOnAdd()
@@ -61,6 +98,20 @@ namespace Generator.Service.Migrations
                     b.HasKey("TT_ROWID");
 
                     b.ToTable("TEST_TABLE");
+                });
+
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.CHILD_CLASS", b =>
+                {
+                    b.HasOne("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", null)
+                        .WithMany("CHILD_CLASS")
+                        .HasForeignKey("CC_PARENT_REFNO")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>
+                {
+                    b.Navigation("CHILD_CLASS");
                 });
 #pragma warning restore 612, 618
         }

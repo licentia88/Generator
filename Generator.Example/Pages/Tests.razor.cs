@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
 using Generator.Shared.Extensions;
-using Generator.Shared.Models;
 using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.Pages
@@ -14,8 +10,7 @@ namespace Generator.Example.Pages
     {
         public List<IDictionary<string, object>> DataSource { get; set; }
 
-        [Inject]
-        public IGenericService IGenericService { get; set; }
+        
 
         [Inject]
         public ITestService ITestService { get; set; }

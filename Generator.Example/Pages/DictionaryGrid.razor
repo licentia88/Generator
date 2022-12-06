@@ -1,0 +1,14 @@
+﻿@page "/DictionaryGrid"
+
+@{
+    if(DataSource.Count != 0)
+{
+    <GenGrid   DataSource="@DataSource" >
+     
+        <GridColumns>
+            <GenGridColumn BindingField="TT_ROWID" Label="Row Id" />
+            <GenGridColumn BindingField="TT_DESC" Label="Aciklama" />
+        </GridColumns>
+    </GenGrid>
+}
+}

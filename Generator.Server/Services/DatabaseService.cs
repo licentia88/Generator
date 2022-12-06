@@ -6,7 +6,7 @@ using ProtoBuf.Grpc;
 
 namespace Generator.Server.Services;
 
-public class DatabaseService : GenericServiceBase<GeneratorContext, DATABASE>,IDatabaseService
+public class DatabaseService : GenericServiceBase<GeneratorContext, DATABASES>,IDatabaseService
 {
     public DatabaseService(IServiceProvider provider) : base(provider)
     {

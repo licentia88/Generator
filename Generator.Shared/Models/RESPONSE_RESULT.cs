@@ -9,7 +9,9 @@ public class RESPONSE_RESULT
 {
     [ProtoMember(1)]
     public byte[] Data { get; set; }
- 
+
+     
+
     public RESPONSE_RESULT()
     {
     }
@@ -18,7 +20,9 @@ public class RESPONSE_RESULT
     {
         Data = bytes; 
     }
-     
+
+    
+
 }
 
 

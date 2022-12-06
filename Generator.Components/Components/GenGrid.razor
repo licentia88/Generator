@@ -1,0 +1,192 @@
+﻿@inherits GenUI
+
+<CascadingValue Value="this" Name="ParentComponent">
+
+    @{
+        if (GridColumns is not null && isFirstRender)
+        {
+            @GridColumns
+
+            isFirstRender = false;
+        }
+    }
+
+
+    <MudCard Elevation="4" Style="width:100%!important">
+        <MudCardHeader>
+            <CardHeaderContent>
+
+                <MudGrid>
+
+                    <MudText Style="margin:1rem!important" Align="Align.Start" Typo="Typo.h6">@Title</MudText>
+                    <MudSpacer />
+                    @{
+                        if (EnableSearch)
+                        {
+                            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mr-5"></MudTextField>
+
+                        }
+                    }
+
+                </MudGrid>
+            </CardHeaderContent>
+
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="@(async()=>
+                               {
+                                   var dialogOptions = new DialogOptions
+                                   {
+                                       CloseButton = true,
+                                       CloseOnEscapeKey = true,
+                                       DisableBackdropClick = true
+                                   };
+
+
+                                   //var dialog =  DialogService.Show<GridSettings<TModel>>("Settings",new DialogParameters { ["GridX"]=this },dialogOptions);
+
+                                   //var result = await dialog.Result;
+                               })" 
+
+
+                   />
+            </CardHeaderActions>
+
+        </MudCardHeader>
+
+        <MudGrid Class="p-4" Justify="Justify.FlexEnd">
+
+            @{
+                if (HeaderButtons is not null)
+                {
+                    @HeaderButtons
+                }
+            }
+
+
+        </MudGrid>
+
+
+
+        <MudTable Virtualize="@Virtualize"
+                  Height="@(Height+"px")"
+                  FixedFooter="@FixedFooter"
+                  FixedHeader="@FixedHeader"
+                  Elevation="0"
+                  Items="@DataSource"
+                  Dense="true"
+                  Hover="true"
+                  MultiSelection="@MultiSelection"
+                  @bind-SelectedItems="SelectedItems"
+                  SelectedItemChanged="@SelectedItemsChanged"
+                  Breakpoint="Breakpoint.None"
+                  Filter="new Func<object,bool>(SearchFilter)">
+
+            @*<ToolBarContent>
+
+
+
+                </ToolBarContent>*@
+
+            <HeaderContent>
+
+
+                @{
+                    if (DetailGrid is not null && !SmartCrud)
+                    {
+                        <MudTh></MudTh>
+                    }
+
+                    foreach (var item in GetComponentOf<GenColumn>().Where(x => x.VisibleOnGrid))
+                    {
+
+                        <MudTh>
+                            <MudTableSortLabel SortBy="new Func<object, object>(x=> x.GetPropertyValue(item.BindingField))">@item.Label</MudTableSortLabel>
+                        </MudTh>
+
+                    }
+
+                }
+
+            </HeaderContent>
+            <RowTemplate>
+
+                @{
+                    if (DetailGrid is not null && !SmartCrud)
+                    {
+
+
+                        var mudIcon = Icons.Material.Filled.AddCircle;
+
+                        //if (ShouldDisplay(context))
+                        //{
+                        //    mudIcon = Icons.Material.Filled.ArrowDropDownCircle;
+                        //}
+
+                        @*<MudTd DataLabel="">
+                            <MudIcon Icon="@mudIcon"
+                                     Size="Size.Small"
+                                     @onclick="@(()=> {
+                                                     ShowDetailAsync(context);
+                                                 })" />
+                        </MudTd>*@
+                    }
+                }
+
+
+                @{
+
+                    foreach (var item in GetComponentOf<GenColumn>().Where(x => x.VisibleOnGrid))
+                    {
+                        <MudTd @onclick:stopPropagation="true">
+                            @item.RenderComponent(context, ComponentType.Grid)
+                        </MudTd>
+                    }
+                }
+
+
+                <MudTd DataLabel="" Style="text-align: right" @onclick:stopPropagation="true">
+                    @{
+                        if (GridButtons is not null)
+                        {
+                            <CascadingValue Value="context" Name="Context">
+                                @GridButtons(context)
+                            </CascadingValue>
+
+                        }
+                    }
+
+                </MudTd>
+
+            </RowTemplate>
+
+
+            <ChildRowContent>
+                @{
+
+                    @*if (ShouldDisplay(context) && !SmartCrud)
+                    {
+                        <tr style="display:table-row!important;overflow:hidden">
+                            <td style="display:table-cell!important;overflow:hidden" colspan="12">
+                                <CascadingValue Value="context" Name="@(nameof(MudGridX<TModel>.ParentContext))">
+                                    @DetailGrid(context)
+                                </CascadingValue>
+                            </td>
+                        </tr>
+                    }*@
+
+
+                }
+            </ChildRowContent>
+
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count == 0 ?999:DataSource.Count}" />
+            </PagerContent>
+
+
+
+        </MudTable>
+
+    </MudCard>
+
+
+</CascadingValue>

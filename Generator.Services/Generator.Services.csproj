@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
+    <PackageReference Include="MessagePack" Version="2.4.59" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +61,7 @@
     <None Remove="BenchmarkDotNet" />
     <None Remove="CsvHelper" />
     <None Remove="Services\" />
+    <None Remove="MessagePack" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">

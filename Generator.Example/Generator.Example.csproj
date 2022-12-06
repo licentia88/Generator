@@ -15,7 +15,7 @@
     <None Remove="Humanizer.Core" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.1.2" />
+    <PackageReference Include="MudBlazor" Version="6.1.4" />
     <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.0.179" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
     <PackageReference Include="Grpc.Net.Client.Web" Version="2.50.0" />
@@ -23,6 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Generator.Components\Generator.Components.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

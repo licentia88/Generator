@@ -27,5 +27,5 @@ public  class COMPONENT
 
     [ProtoIgnore]
     [ForeignKey(nameof(COMP_DATABASE))]
-    public DATABASE DATABASES { get; set; }
+    public DATABASES DATABASES { get; set; }
 }

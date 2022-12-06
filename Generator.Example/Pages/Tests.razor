@@ -3,8 +3,8 @@
 <PageTitle>Counter</PageTitle>
 
 <h1>Tests</h1>
-
-
+ 
+ 
 <button class="btn btn-primary m-2" @onclick="QueryAsync">@("QueryAsync".Humanize())</button>
 
 <br />
@@ -51,7 +51,11 @@
 <br />
 
 
-
+<GenTextField Variant="Variant.Filled"
+              Value="@DateTime.Now.Date"
+              InputType="InputType.Date"
+              Converter="@DateConverter"
+              Format="yyyy-MM-dd" /> 
 
 
 
@@ -70,4 +74,6 @@
             </RowTemplate>
         </MudTable>
     }
+
+    
 }

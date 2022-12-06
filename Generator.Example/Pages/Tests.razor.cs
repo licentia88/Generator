@@ -1,7 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Generator.Components.Components;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
+using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace Generator.Example.Pages
 {
@@ -20,6 +25,10 @@ namespace Generator.Example.Pages
         protected override Task OnInitializedAsync()
         {
             DataSource = new List<IDictionary<string, object>>();
+
+          
+
+
             return base.OnInitializedAsync();
         }
 
@@ -44,11 +53,23 @@ namespace Generator.Example.Pages
             var data = result.Data.Deserialize<IDictionary<string, object>>();
         }
 
+        private IDictionary<string, object> firstData;
+        //public GenTextField Txtfield { get; set; }
+
+
         private async void QueryAsync()
         {
+          
             var result = await ITestService.QueryAsync();
-
             var data = result.Data.Deserialize<List<IDictionary<string, object>>>();
+
+            //Txtfield = new(data.First());
+            firstData = data.First();
+
+            
+           
+
+            StateHasChanged();
         }
 
         private async void QueryStream()
@@ -64,6 +85,17 @@ namespace Generator.Example.Pages
             }
         }
 
+        Converter<object> StringConverter = new Converter<object>
+        {
+            SetFunc = value => value.ToString(),
+            GetFunc = text => text.ToString(),
+        };
+
+        Converter<object> DateConverter = new Converter<object>
+        {
+            SetFunc = value => value.ToString(),
+            GetFunc = text => Convert.ToDateTime(text),
+        };
 
         private async void InsertWithCodeTableTestObject()
         {
@@ -90,6 +122,7 @@ namespace Generator.Example.Pages
         {
             var result = await ITestService.QueryAsyncObject();
 
+            //var data = result.Data.Deserialize<List<TEST_TABLE>>();
             var data = result.Data.Deserialize<List<object>>();
         }
 

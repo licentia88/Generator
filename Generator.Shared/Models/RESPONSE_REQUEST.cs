@@ -3,6 +3,7 @@ using ProtoBuf;
 
 namespace Generator.Shared.Models;
 
+
   
 [ProtoContract]
 public class RESPONSE_REQUEST

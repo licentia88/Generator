@@ -14,4 +14,3 @@ public static class ObjectExtensions
         return genericMethodInfo?.Invoke(null, new[] { o });
     }
 }
-

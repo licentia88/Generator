@@ -8,7 +8,8 @@ using Grpc.Net.Client.Configuration;
 using Generator.Shared.Services;
 using MudBlazor.Services;
 using Generator.Shared.Extensions;
-
+using Generator.Components.Components;
+ 
 var builder = WebApplication.CreateBuilder(args);
 
 CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
@@ -27,6 +28,8 @@ builder.Services.RegisterGrpcService<IHeaderButtonService>();
 builder.Services.RegisterGrpcService<IFooterButtonService>();
 builder.Services.RegisterGrpcService<IGridsMService>();
 builder.Services.RegisterGrpcService<IGridsDService>();
+
+ 
 
 var app = builder.Build();
 

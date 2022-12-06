@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Net;
 using Generator.Shared.Services;
 using Grpc.Core;
@@ -11,8 +12,8 @@ using ProtoBuf.Grpc.ClientFactory;
 
 namespace Generator.Shared.Extensions
 {
-	public static class DependencyExtensions
-	{
+    public static class DependencyExtensions
+    {
         public static void RegisterGrpcService<TService>(this IServiceCollection Services) where TService : class
         {
             var httpHandler = new SocketsHttpHandler
@@ -46,7 +47,9 @@ namespace Generator.Shared.Extensions
            .ConfigurePrimaryHttpMessageHandler(x => hand);
         }
 
-        
+
     }
 }
+
+   
 

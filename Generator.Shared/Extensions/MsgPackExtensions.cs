@@ -5,6 +5,26 @@ namespace Generator.Shared.Extensions
 {
     public static class MsgPackExtensions
     {
+        public static TModel ToModel<TModel>(this IDictionary<string,object> obj)
+        {
+            return obj.Adapt<TModel>();
+        }
+
+        public static List<TModel> ToModel<TModel>(this List<IDictionary<string, object>> obj)
+        {
+            return obj.Adapt<List<TModel>>();
+        }
+
+        public static TModel ToModel<TModel>(this List<object> obj)
+        {
+            return obj.Adapt<TModel>();
+        }
+
+        public static TModel ToModel<TModel>(this object obj)
+        {
+            return obj.Adapt<TModel>();
+        }
+
         public static List<IDictionary<string,object>> AdaptToDictionary<T>(this List<T> obj)
         {
             return obj.Adapt<List<IDictionary<string, object>>>();

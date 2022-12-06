@@ -48,8 +48,4 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Extensions\ReflectionExtensions.cs" />
-    <Compile Remove="Extensions\PropertyExtensions.cs" />
-  </ItemGroup>
 </Project>

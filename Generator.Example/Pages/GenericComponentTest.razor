@@ -1,0 +1,10 @@
+﻿@page "/GenericComponentTest"
+@inherits ComponentBase
+
+@{
+    if (firstData is not null)
+    {
+        @GenTextField.Render(firstData, this, Components.Enums.ComponentType.Form);
+    }
+
+}

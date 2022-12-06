@@ -7,7 +7,7 @@ using ProtoBuf;
 namespace Generator.Shared.Models;
 
 [ProtoContract]
-public class DATABASE :IValidatableObject
+public class DATABASES :IValidatableObject
 {
    
     [Key]
@@ -22,6 +22,11 @@ public class DATABASE :IValidatableObject
     public string ConnectionString {
         get => CryptoService.Decrypt(_ConnectionString);
         set => _ConnectionString= CryptoService.Encrypt(value);
+    }
+
+    public string DecryptedConnectionString()
+    {
+        return CryptoService.Decrypt(ConnectionString);
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

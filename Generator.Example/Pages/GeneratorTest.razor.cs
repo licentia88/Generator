@@ -1,4 +1,5 @@
 ﻿using System;
+using Generator.Components.Components;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
@@ -24,14 +25,10 @@ namespace Generator.Example.Pages
 
         public async Task ReadDb()
         {
-            var newDatabase = new DATABASE()
-            {
-                ConnectionString = "Server=Localhost;Database=GeneratorContext;User Id=sa;Password=LucidNala88!;TrustServerCertificate=true"
-            };
 
-            var result = await IDatabaseService.AddAsync(new(newDatabase));
+            var result = await IDatabaseService.QueryAsync(new());
 
-            Console.WriteLine();
+ 
         }
 
         public async Task ReadHeader()
@@ -52,6 +49,12 @@ namespace Generator.Example.Pages
         public async Task ReadGridD()
         {
             var result = await IGridsDService.QueryAsync(new());
+        }
+
+        protected override Task OnInitializedAsync()
+        {
+          
+            return base.OnInitializedAsync();
         }
     }
 }

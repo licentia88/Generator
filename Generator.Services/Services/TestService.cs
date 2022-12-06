@@ -1,15 +1,23 @@
 ﻿using System.Data.Common;
+using System.Dynamic;
+using System.Reflection.Metadata;
+using System.Text.Json;
+using System.Text.Unicode;
 using Generator.Server;
 using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
+using Generator.Shared.Extensions;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using GenFu;
 using Mapster;
+using MessagePack;
+using MessagePack.Resolvers;
 using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Grpc;
+using SolTechnology.Avro;
 
 namespace Generator.Services.Services;
 
@@ -82,8 +90,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
     {
         return Delegates.ExecuteAsync(async () =>
         {
+             
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
-
+  
             return result;
         });
     }

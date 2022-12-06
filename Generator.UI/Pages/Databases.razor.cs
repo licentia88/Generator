@@ -11,7 +11,7 @@ namespace Generator.UI.Pages
 	public partial class Databases
 	{
 		[Inject]
-		public List<DATABASE> DATABASE { get; set; }
+		public List<DATABASES> DATABASE { get; set; }
 
 		[Inject]
 		public IDatabaseService IDatabaseService { get; set; }

@@ -13,7 +13,7 @@ public class GeneratorContext: DbContext
 
     public DbSet<COMPONENT> COMPONENT { get; set; }
 
-    public DbSet<DATABASE> DATABASE { get; set; }
+    public DbSet<DATABASES> DATABASES { get; set; }
 
     public DbSet<GRIDS_D> GRIDS_D { get; set; }
 

@@ -42,10 +42,10 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasIndex("COMP_DATABASE");
 
-                    b.ToTable("COMPONENT", (string)null);
+                    b.ToTable("COMPONENT");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.DATABASE", b =>
+            modelBuilder.Entity("Generator.Shared.Models.DATABASES", b =>
                 {
                     b.Property<string>("DatabaseIdentifier")
                         .HasColumnType("nvarchar(450)");
@@ -55,7 +55,7 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasKey("DatabaseIdentifier");
 
-                    b.ToTable("DATABASE", (string)null);
+                    b.ToTable("DATABASES");
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.FOOTER_BUTTON", b =>
@@ -67,14 +67,14 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasIndex("FB_GRID_REFNO");
 
-                    b.ToTable("FOOTER_BUTTON", (string)null);
+                    b.ToTable("FOOTER_BUTTON");
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.GRIDS_M", b =>
                 {
                     b.HasBaseType("Generator.Shared.Models.COMPONENT");
 
-                    b.ToTable("GRIDS_M", (string)null);
+                    b.ToTable("GRIDS_M");
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.HEADER_BUTTON", b =>
@@ -86,7 +86,7 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasIndex("HB_GRID_REFNO");
 
-                    b.ToTable("HEADER_BUTTON", (string)null);
+                    b.ToTable("HEADER_BUTTON");
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.GRIDS_D", b =>
@@ -98,12 +98,12 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasIndex("GD_M_REFNO");
 
-                    b.ToTable("GRIDS_D", (string)null);
+                    b.ToTable("GRIDS_D");
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.COMPONENT", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.DATABASE", "DATABASES")
+                    b.HasOne("Generator.Shared.Models.DATABASES", "DATABASES")
                         .WithMany()
                         .HasForeignKey("COMP_DATABASE");
 

@@ -1,0 +1,15 @@
+﻿@inherits GenColumn
+
+@{
+    if (Context is null) return;
+
+    if(ComponentType == ComponentType.Grid)
+    {
+        @Context.GetPropertyValue(BindingField);
+    }
+    else
+    {
+        
+    }
+
+}

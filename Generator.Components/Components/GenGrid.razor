@@ -1,4 +1,5 @@
-﻿@inherits MudTable<object>
+﻿@*@typeparam TModel where TModel :new()*@
+@inherits MudTable<object>
 
 
 <CascadingValue Name="ParentComponent" Value="this">
@@ -7,9 +8,109 @@
         if (GenColumns is not null && IsFirstRender)
         {
             @GenColumns
-
             IsFirstRender = false;
         }
     }
+
+    <MudCard Elevation="4" Style="@(Style??"width:100%important")" Class="@Class">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudGrid>
+                    <MudText Style="margin:1rem!important" Align="Align.Start" Typo="Typo.h6">
+                        @Title
+                    </MudText>
+                    <MudSpacer />
+                    @{
+                        if (EnableSearch)
+                        {
+                            <MudTextField @bind-Value="@_SearchString"
+                                          Class="mt-0 mr-5"
+                                          Placeholder="@SearchPlaceHolderText"
+                                          Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Filled.Search"
+                                          IconSize="Size.Medium">
+
+                            </MudTextField>
+                        }
+                    }
+                </MudGrid>
+            </CardHeaderContent>
+            <CardHeaderActions>
+
+            </CardHeaderActions>
+        </MudCardHeader>
+
+        <MudGrid Class="p-4" Justify="Justify.FlexEnd">
+
+        </MudGrid>
+        @{
+
+            
+                <MudTable Items="DataSource"
+                          Dense="Dense"
+                          MultiSelection="MultiSelection"
+                          Breakpoint="Breakpoint.None"
+                          Hover="Hover"
+                          Elevation="0"
+                          FixedHeader="FixedHeader"
+                          FixedFooter="FixedFooter"
+                          Height="Height"
+                          Filter="new Func<object,bool>(SearchFunction)"
+                          Virtualize="Virtualize">
+
+                    <HeaderContent>
+                        @{
+                            foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                            {
+                                <MudTh>
+                                    @item.Label
+                                    @*<MudTableSortLabel SortBy="new Func<object, object>(x=> x.GetPropertyValue(item.BindingField))">
+
+                        </MudTableSortLabel>*@
+                                </MudTh>
+                            }
+                        }
+                    </HeaderContent>
+
+
+                    <RowTemplate>
+                        @{
+
+
+                            foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                            {
+                                <MudTd @onclick:stopPropagation="true">
+                                    @item.Render(context, ComponentType.Grid)
+                                </MudTd>
+                            }
+
+                        }
+                    </RowTemplate>
+
+                    <ChildRowContent>
+                        @{
+                            if (!SmartCrud)
+                            {
+                                <tr style="display:table-row!important;overflow:hidden">
+                                    <td style="display:table-cell!important;overflow:hidden" colspan="12">
+                                        <CascadingValue Value="context" Name="@(nameof(GenGrid.ParentContext))">
+                                            @GenDetailGrid
+                                        </CascadingValue>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </ChildRowContent>
+
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count == 0 ?999:DataSource.Count}" />
+                    </PagerContent>
+
+                </MudTable>
+        }
+
+
+    </MudCard>
 
 </CascadingValue>

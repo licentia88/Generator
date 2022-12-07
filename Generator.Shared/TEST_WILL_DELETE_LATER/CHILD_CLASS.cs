@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Generator.Shared.TEST_WILL_DELETE_LATER;
 
+
 public class CHILD_CLASS
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

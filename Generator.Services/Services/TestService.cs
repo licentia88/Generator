@@ -67,6 +67,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
 
             var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictType);
 
+ 
             return result;
         });
     }

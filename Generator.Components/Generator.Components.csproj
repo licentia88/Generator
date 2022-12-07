@@ -21,7 +21,6 @@
     <None Remove="Args\" />
     <None Remove="Enums\" />
     <None Remove="Components\" />
-    <None Remove="Extensions\" />
     <None Remove="MudBlazor" />
     <None Remove="Helpers\" />
     <None Remove="Interfaces\" />
@@ -30,7 +29,6 @@
     <Folder Include="Args\" />
     <Folder Include="Enums\" />
     <Folder Include="Components\" />
-    <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>

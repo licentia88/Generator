@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Generator.Components.Enums;
-using Generator.Components.Extensions;
 using MudBlazor;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -11,11 +10,10 @@ using System;
 using Generator.Components.Interfaces;
 using System.Reflection;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Generator.Components.Components;
-
-
-public partial class GenTextField : MudTextField<object>, IGenCompRenderer
+public  class GenTextField : MudTextField<object>,  IGenTextField
 {
     #region NonParams
     private Dictionary<string, object> Parameters { get; set; }
@@ -33,12 +31,13 @@ public partial class GenTextField : MudTextField<object>, IGenCompRenderer
     #endregion
 
     #region Parameters
-    [Parameter]
+    [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
     [Parameter]
     [EditorRequired()]
     public string BindingField { get; set; }
+
 
     [Parameter, AllowNull]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -80,10 +79,16 @@ public partial class GenTextField : MudTextField<object>, IGenCompRenderer
         Parameters = new();
     }
 
+    //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
+    protected override void BuildRenderTree(RenderTreeBuilder __builder)
+    {
+        if (Model is not null && ParentComponent is not null)
+            base.BuildRenderTree(__builder);
+    }
+
     
     protected override Task OnInitializedAsync()
     {
-
         if (!ValueChanged.HasDelegate)
         {
             ComponentRef = this;
@@ -113,9 +118,9 @@ public partial class GenTextField : MudTextField<object>, IGenCompRenderer
             Converter = StringConverter;
     }
 
-    public RenderFragment Render(object model, ComponentBase parent, ComponentType componentType, params (string key, object value)[] AdditionalParameters) => (builder) =>
+    public RenderFragment Render(object model,  ComponentType componentType, params (string key, object value)[] AdditionalParameters) => (builder) =>
     {
-        if (model is null) return;
+        if (model is null || ParentComponent is null) return;
 
         Model = model;
 
@@ -154,7 +159,7 @@ public partial class GenTextField : MudTextField<object>, IGenCompRenderer
 
         builder.AddAttribute(201, nameof(GenTextField.Value), Model.GetPropertyValue(BindingField));
 
-        builder.AddAttribute(199, nameof(GenTextField.ValueChanged), EventCallback.Factory.Create<object>(parent, (x) => { OnValueChanged(x); return; }));
+        builder.AddAttribute(199, nameof(GenTextField.ValueChanged), EventCallback.Factory.Create<object>(ParentComponent, (x) => { OnValueChanged(x); return; }));
 
 
         foreach (var additional in AdditionalParameters)
@@ -169,7 +174,7 @@ public partial class GenTextField : MudTextField<object>, IGenCompRenderer
     };
 
 
-    #region Events and Customs
+    #region Events 
     private Converter<object> StringConverter = new Converter<object>
     {
         SetFunc = value =>

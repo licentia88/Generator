@@ -26,6 +26,11 @@
     <None Remove="Grpc.Net.Client.Web" />
     <None Remove="Grpc.Net.Client" />
     <None Remove="BCrypt.Net-Next" />
+    <None Remove="ZeroFormatter" />
+    <None Remove="ZeroFormatter.Analyzer" />
+    <None Remove="ZeroFormatter.Interfaces" />
+    <None Remove="BinaryPack" />
+    <None Remove="FsPickler" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -47,5 +52,6 @@
     <PackageReference Include="Grpc.Net.Client.Web" Version="2.50.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="FsPickler" Version="5.3.2" />
   </ItemGroup>
 </Project>

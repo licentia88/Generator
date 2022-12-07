@@ -4,19 +4,30 @@
 @{
     if (firstData is not null)
     {
-        @*@GenTextField.Render(firstData, this, Components.Enums.ComponentType.Form);
+    <CascadingValue Name="ParentComponent" Value="this">
+        @GenTextField.Render(firstData, Components.Enums.ComponentType.Form);
 
 
-        <GenTextField BindingField="TT_ROWID" Model="firstData" />
+        @*<GenTextField BindingField="TT_ROWID" Model="firstData" />
 
-        <GenTextField BindingField="TT_DESC"  Model="firstData"/>*@
+        <GenTextField BindingField="TT_DESC" Model="firstData" />*@
 
-        <GenGrid DataSource="InternalDataSource">
+        <GenGrid Class="m-2"
+                 Title="GenericTest1"
+                 DataSource="InternalDataSource"
+                 EnableSearch="true">
             <GenColumns>
-                <GenTextField BindingField="TT_ROWID" Model="firstData" />
-                <GenTextField BindingField="TT_DESC" Model="firstData" />
+                <GenTextField BindingField="TT_ROWID" Label="Row Id" />
+                <GenTextField BindingField="TT_DESC" Label="Description" />
+                <GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />
+                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
             </GenColumns>
+            <GenDetailGrid>
+
+            </GenDetailGrid>
         </GenGrid>
+    </CascadingValue>
+       
     }
 
 }

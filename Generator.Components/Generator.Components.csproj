@@ -45,12 +45,10 @@
     <Compile Remove="Renderers\RendererBase.cs" />
     <Compile Remove="Components\GenButton.cs" />
     <Compile Remove="Components\GridSpacer.cs" />
-    <Compile Remove="Components\GenGrid.razor.cs" />
     <Compile Remove="Components\GenColumnBase.cs" />
     <Compile Remove="Components\GenGridColumn.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="Components\GenGrid.razor" />
     <Content Remove="Components\GenGridColumn.razor" />
   </ItemGroup>
 </Project>

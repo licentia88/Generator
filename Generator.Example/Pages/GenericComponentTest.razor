@@ -4,7 +4,19 @@
 @{
     if (firstData is not null)
     {
-        @GenTextField.Render(firstData, this, Components.Enums.ComponentType.Form);
+        @*@GenTextField.Render(firstData, this, Components.Enums.ComponentType.Form);
+
+
+        <GenTextField BindingField="TT_ROWID" Model="firstData" />
+
+        <GenTextField BindingField="TT_DESC"  Model="firstData"/>*@
+
+        <GenGrid DataSource="InternalDataSource">
+            <GenColumns>
+                <GenTextField BindingField="TT_ROWID" Model="firstData" />
+                <GenTextField BindingField="TT_DESC" Model="firstData" />
+            </GenColumns>
+        </GenGrid>
     }
 
 }

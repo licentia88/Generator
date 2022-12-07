@@ -1,0 +1,31 @@
+﻿using Microsoft.AspNetCore.Components;
+
+namespace Generator.Components.Interfaces;
+
+public interface IGenComponent: IGenCompRenderer
+{
+    public string BindingField { get; set; }
+
+    public int Width { get; set; }
+
+    public int Order { get; set; }
+
+    public bool VisibleOnEdit { get; set; } 
+
+    public bool VisibleOnGrid { get; set; } 
+
+    public bool EnabledOnEdit { get; set; } 
+
+    public int xs { get; set; }
+
+    public int sm { get; set; }
+
+    public int md { get; set; }
+
+    public int lg { get; set; }
+
+    public int xl { get; set; }
+
+    public int xxl { get; set; }
+}
+

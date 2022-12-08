@@ -1,4 +1,7 @@
-﻿namespace Generator.Components.Interfaces;
+﻿using Generator.Components.Enums;
+using static Generator.Components.Components.GenGrid;
+
+namespace Generator.Components.Interfaces;
 
 public interface IGenGrid : IGenCompRenderer
 {
@@ -9,5 +12,9 @@ public interface IGenGrid : IGenCompRenderer
     public bool SmartCrud { get; set; }
 
     public bool IsFirstRender { get; set; }
+
+    public EditMode EditMode { get; set; }
+
+    public IEnumerable<object> DataSource { get; set; }
 }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Generator.Components.Components;
+using Microsoft.AspNetCore.Components;
 
 namespace Generator.Components.Interfaces;
 
@@ -27,5 +28,11 @@ public interface IGenComponent: IGenCompRenderer
     public int xl { get; set; }
 
     public int xxl { get; set; }
+
+    public GenGrid ParentComponent { get; set; }
+
+    public object Model { get; set; }
+
+     
 }
 

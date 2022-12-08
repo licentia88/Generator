@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 
 namespace Generator.Server.Extensions;
-
 public class ReflectionExtensions
 {
 

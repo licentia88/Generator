@@ -5,14 +5,10 @@
     if (firstData is not null)
     {
     <CascadingValue Name="ParentComponent" Value="this">
-        @GenTextField.Render(firstData, Components.Enums.ComponentType.Form);
+        @*@GenTextField.Render(firstData, Components.Enums.ComponentType.Form)*@
 
-
-        @*<GenTextField BindingField="TT_ROWID" Model="firstData" />
-
-        <GenTextField BindingField="TT_DESC" Model="firstData" />*@
-
-        <GenGrid Class="m-2"
+        <GenGrid @ref="GridRef" Class="m-2"
+                 EditMode="EditMode.Inline"
                  Title="GenericTest1"
                  DataSource="InternalDataSource"
                  EnableSearch="true">

@@ -1,6 +1,7 @@
 ﻿@*@typeparam TModel where TModel :new()*@
 @inherits MudTable<object>
 
+@if (DataSource is null) {return;}
 
 <CascadingValue Name="ParentComponent" Value="this">
 
@@ -23,7 +24,7 @@
                     @{
                         if (EnableSearch)
                         {
-                            <MudTextField @bind-Value="@_SearchString"
+                            <MudTextField @bind-Value="@_SearchString" Disabled="IsSearchDisabled"
                                           Class="mt-0 mr-5"
                                           Placeholder="@SearchPlaceHolderText"
                                           Adornment="Adornment.Start"
@@ -45,69 +46,96 @@
         </MudGrid>
         @{
 
-            
-                <MudTable Items="DataSource"
-                          Dense="Dense"
-                          MultiSelection="MultiSelection"
-                          Breakpoint="Breakpoint.None"
-                          Hover="Hover"
-                          Elevation="0"
-                          FixedHeader="FixedHeader"
-                          FixedFooter="FixedFooter"
-                          Height="Height"
-                          Filter="new Func<object,bool>(SearchFunction)"
-                          Virtualize="Virtualize">
 
-                    <HeaderContent>
-                        @{
-                            foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
-                            {
-                                <MudTh>
-                                    @item.Label
-                                    @*<MudTableSortLabel SortBy="new Func<object, object>(x=> x.GetPropertyValue(item.BindingField))">
+            <MudTable Items="DataSource" con
+                      Dense="Dense"
+                      MultiSelection="MultiSelection"
+                      Breakpoint="Breakpoint.None"
+                      Hover="Hover"
+                      Elevation="0"
+                      FixedHeader="FixedHeader"
+                      FixedFooter="FixedFooter"
+                      Height="Height"
+                      @bind-SelectedItem="SelectedItem"
+                      SelectedItems="@SelectedItems"
+                      Filter="new Func<object,bool>(SearchFunction)"
+                      Virtualize="Virtualize"
+                      OnCommitEditClick="@(() => OnCommitEditEvent())"
+                      RowEditPreview="BackupItem"
+                      RowEditCancel="OnCancel"
+                      RowEditCommit="OnSubmit"
+                      IsEditRowSwitchingBlocked="true"
+                      ApplyButtonPosition="TableApplyButtonPosition.End"
+                      EditButtonPosition="TableEditButtonPosition.End"
+                      EditTrigger="TableEditTrigger.EditButton"
+                      ReadOnly="false"
+                      CanCancelEdit="true">
 
-                        </MudTableSortLabel>*@
-                                </MudTh>
-                            }
+
+                <HeaderContent>
+                    @{
+                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                        {
+                            <MudTh>
+                                @item.Label
+                                @*<MudTableSortLabel SortBy="new Func<object, object>(x=> x.GetPropertyValue(item.BindingField))">
+
+                                </MudTableSortLabel>*@
+                            </MudTh>
                         }
-                    </HeaderContent>
+                    }
+                </HeaderContent>
 
 
-                    <RowTemplate>
-                        @{
+                <RowTemplate>
+                    @{
 
-
-                            foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
-                            {
-                                <MudTd @onclick:stopPropagation="true">
-                                    @item.Render(context, ComponentType.Grid)
-                                </MudTd>
-                            }
-
-                        }
-                    </RowTemplate>
-
-                    <ChildRowContent>
-                        @{
-                            if (!SmartCrud)
-                            {
-                                <tr style="display:table-row!important;overflow:hidden">
-                                    <td style="display:table-cell!important;overflow:hidden" colspan="12">
-                                        <CascadingValue Value="context" Name="@(nameof(GenGrid.ParentContext))">
-                                            @GenDetailGrid
-                                        </CascadingValue>
-                                    </td>
-                                </tr>
-                            }
+                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                        {
+                            <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
+                                @item.RenderComponent(context, ComponentType.Grid)
+                            </MudTd>
                         }
 
-                    </ChildRowContent>
+                    }
+                </RowTemplate>
+                 
+                <RowEditingTemplate>
+                    @{
+                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                        {
+                            <MudTd>
+                                @item.RenderComponent(context, ComponentType.Form)
+                            </MudTd>
+                        }
 
-                    <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count == 0 ?999:DataSource.Count}" />
-                    </PagerContent>
+                    }
+                </RowEditingTemplate>
+                <ChildRowContent>
+                    @{
+                        if (!SmartCrud)
+                        {
+                            <tr style="display:table-row!important;overflow:hidden">
+                                <td style="display:table-cell!important;overflow:hidden" colspan="12">
+                                    <CascadingValue Value="context" Name="@(nameof(GenGrid.ParentContext))">
+                                        @GenDetailGrid
+                                    </CascadingValue>
+                                </td>
+                            </tr>
+                        }
+                    }
 
-                </MudTable>
+                </ChildRowContent>
+
+                <PagerContent >
+                    <MudTablePager  PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count() == 0 ?999:DataSource.Count()}" />
+                </PagerContent>
+                <EditButtonContent Context="button">
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+                </EditButtonContent>
+            </MudTable>
+
+ 
         }
 
 

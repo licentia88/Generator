@@ -47,9 +47,14 @@ namespace Generator.Components.Components
 
         [Parameter]
         public int xxl { get; set; }
- 
 
-        public RenderFragment Render(object Model, ComponentType componentType, params (string key, object value)[] AdditionalParameters)
+        public GenGrid ParentComponent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public object Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+      
+
+        public RenderFragment RenderComponent(object model, ComponentType componentType)
         {
             throw new NotImplementedException();
         }

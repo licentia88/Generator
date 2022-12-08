@@ -4,20 +4,25 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using MudBlazor;
 using System.Collections.ObjectModel;
-using Generator.Components.Enums;
 using System.Reflection;
 using Generator.Shared.Extensions;
 using static MudBlazor.CategoryTypes;
 using Generator.Components.Interfaces;
+using Force.DeepCloner;
+using Generator.Components.Enums;
+using Generator.Server.Extensions;
 
 namespace Generator.Components.Components;
 
 public partial class GenGrid : MudTable<object>, IGenGrid
 {
+    
+
     #region NonParams
-    public List<IGenCompRenderer> Components { get; set; } = new();
+    public List<IGenComponent> Components { get; set; } = new();
     private string _SearchString = string.Empty;
     public bool IsFirstRender { get; set; } = true;
+    private bool IsSearchDisabled = false;
 
     private string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
     #endregion
@@ -41,7 +46,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     public string SearchPlaceHolderText { get; set; } = "Search";
 
     [Parameter, EditorRequired()]
-    public ICollection<object> DataSource { get; set; }
+    public IEnumerable<object> DataSource { get; set; }
 
     #endregion
 
@@ -59,10 +64,12 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     [Parameter, AllowNull]
     public RenderFragment GenDetailGrid { get; set; }
+
+    [Parameter, EditorRequired]
+    public EditMode EditMode { get; set; }
     #endregion
 
-
-
+ 
 
     #region Methods
 
@@ -85,7 +92,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         return false;
     }
 
-    private List<T> GetComponentOf<T>() where T : IGenCompRenderer
+    private List<T> GetComponentOf<T>() where T : IGenComponent
     {
         return Components.Where(x => x is T).Cast<T>().ToList() ;
         //return Components.
@@ -95,16 +102,64 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         //    .Cast<TType>().ToList();
     }
 
-    public void AddChildComponent(IGenCompRenderer childComponent)
+    public void AddChildComponent(IGenComponent childComponent)
     {
+        if (Components.Any(x => x.BindingField == childComponent.BindingField)) return;
         Components.Add(childComponent);
     }
 
-   
+    
 
-    public RenderFragment Render(object Model, ComponentType componentType, params (string key, object value)[] AdditionalParameters)
+    public RenderFragment RenderComponent(object model, ComponentType componentType)
     {
         throw new NotImplementedException();
+    }
+
+
+
+
+    #endregion
+
+    #region RowEditMethods
+
+    private object elementBeforeEdit;
+
+
+
+    private void BackupItem(object element)
+    {
+        IsSearchDisabled = true;
+        elementBeforeEdit = element.DeepClone();
+        StateHasChanged();
+
+    }
+
+    private void OnSubmit(object element)
+    {
+        if (1 != 2)//Fail olursa
+        {
+            OnCancel(element);
+        }
+
+        IsSearchDisabled = false;
+        //AddEditionEvent($"RowEditCommit event: Changes to Element {((Element)element).Name} committed");
+    }
+
+    private void OnCancel(object element)
+    {
+        var datasourceItem = DataSource.Select((item, index) => new { item, index }).FirstOrDefault(x => x.item == element);
+
+        DataSource = DataSource.Replace(datasourceItem.index, elementBeforeEdit);
+
+
+
+        IsSearchDisabled = false;
+        StateHasChanged();
+    }
+
+    public void OnCommitEditEvent()
+    {
+
     }
     #endregion
 }

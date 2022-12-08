@@ -10,6 +10,9 @@ namespace Generator.Example.Pages
 {
 	public partial class GenericComponentTest:ComponentBase
 	{
+        public GenGrid GridRef { get; set; }
+
+
         public ICollection<object> InternalDataSource { get; set; }
 
         [Inject]
@@ -20,16 +23,17 @@ namespace Generator.Example.Pages
         public GenTextField GenTextField { get; set; }
 
 
-        protected  override async Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
             await QueryAsync();
-
         }
+
+        
         private async Task QueryAsync()
         {
             var result = await ITestService.QueryAsync();
             var data = result.Data.Deserialize<List<IDictionary<string, object>>>();
-            InternalDataSource = new List<object>(data);
+            InternalDataSource = new List<object>(data.Take(1));
 
             
             firstData = data.First();

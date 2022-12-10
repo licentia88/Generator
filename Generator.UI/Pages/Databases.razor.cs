@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Diagnostics.Eventing.Reader;
 using BCrypt.Net;
 using Generator.Shared.Models;
+using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
 

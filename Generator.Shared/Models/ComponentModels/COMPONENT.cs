@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 
-namespace Generator.Shared.Models;
+namespace Generator.Shared.Models.ComponentModels;
 
 [ProtoContract]
 //[ProtoInclude(100, typeof(GRIDS_M))]

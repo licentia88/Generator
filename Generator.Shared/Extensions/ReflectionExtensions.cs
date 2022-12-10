@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Generator.Server.Extensions;
+namespace Generator.Shared.Extensions;
+
 public class ReflectionExtensions
 {
 

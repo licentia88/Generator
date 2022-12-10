@@ -71,6 +71,19 @@ public class ClassGenerator
                             TypeAttributes.BeforeFieldInit |
                             TypeAttributes.AutoLayout
                             , null);
+
+
+
+        Type[] ctorParams = new Type[] {  };
+        ConstructorInfo classCtorInfo = typeof(SerializableAttribute).GetConstructor(ctorParams);
+
+        CustomAttributeBuilder myCABuilder = new CustomAttributeBuilder(
+                            classCtorInfo, new object[] { });
+        //new object[] );
+
+
+        typeBuilder.SetCustomAttribute(myCABuilder);
+
         return typeBuilder;
     }
     private void CreateConstructor(TypeBuilder typeBuilder)

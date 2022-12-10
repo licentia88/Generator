@@ -1,8 +1,8 @@
 ﻿using Generator.Server;
 using Generator.Server.Dependency;
+using Generator.Server.Seed;
 using Generator.Server.Services;
 using Generator.Services;
-using Generator.Services.Seed;
 using Generator.Services.Services;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;

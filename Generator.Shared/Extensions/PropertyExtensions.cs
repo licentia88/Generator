@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Reflection;
 using FastMember;
-using Generator.Server.Extensions;
 
 namespace Generator.Shared.Extensions;
 
@@ -28,7 +28,7 @@ public static class PropertyExtensions
  
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        if (obj.GetType() == typeof(Dictionary<string, object>))
+        if (obj.GetType() == typeof(Dictionary<string, object>) || obj.GetType() == typeof(IDictionary<string, object>) || obj.GetType() == typeof(KeyValuePair<string, object>))
         {
             var cast = obj.CastTo<Dictionary<string, object>>();
 
@@ -36,12 +36,16 @@ public static class PropertyExtensions
         }
         else
         {
-            var accessor = TypeAccessor.Create(typeof(T));
+
+            obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
+            //var accessor = TypeAccessor.Create(typeof(T));
             try
             {
-                accessor[obj, propertyName] = propertyValue;
+                obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
+
+                //accessor[obj, propertyName] = propertyValue;
             }
-            catch
+            catch (Exception ex)
             {
                 // ignored
             }
@@ -71,6 +75,8 @@ public static class PropertyExtensions
     {
         return new T();
     }
+
+    
 
     public static Dictionary<string, object> CreateNewDictionaryModel(this IDictionary<string, object> type) 
     {
@@ -124,5 +130,30 @@ public static class PropertyExtensions
     public static IEnumerable<TType> Exclude<TType, ExcludeType>(this IEnumerable<TType> list)
     {
         return list.Where(x => x is not ExcludeType).Cast<TType>();
+    }
+
+    //public static object GetDefaultValue(this Type type)
+    //{
+    //    var defaultValue = typeof(TypeExtensions)
+    //        .GetRuntimeMethod(nameof(GetDefaultValue), new Type[] { })
+    //        .MakeGenericMethod(type).Invoke(null, null);
+    //    return defaultValue;
+    //}
+
+    public static T GetDefaultValue<T>() 
+    {
+        return default(T);
+    }
+
+    public static object GetDefaultValue(this Type type)
+    {
+        if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
+        {
+            return Activator.CreateInstance(type);
+        }
+        else
+        {
+            return null;
+        }
     }
 }

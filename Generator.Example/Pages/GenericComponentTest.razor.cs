@@ -3,6 +3,7 @@ using System.Reflection;
 using Generator.Components.Components;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
+using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -33,9 +34,12 @@ namespace Generator.Example.Pages
         {
             var result = await ITestService.QueryAsync();
             var data = result.Data.Deserialize<List<IDictionary<string, object>>>();
-            InternalDataSource = new List<object>(data.Take(1));
+            var dataToPass = data.Take(1);
 
-            
+            InternalDataSource = new List<object>(dataToPass);//  new List<object>(data.Take(1));
+
+
+
             firstData = data.First();
 
             GenTextField = new GenTextField();

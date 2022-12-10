@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 
-namespace Generator.Shared.Models;
+namespace Generator.Shared.Models.ComponentModels;
 
 [ProtoContract]
-[Table(nameof(Models.GRIDS_D))]
+[Table(nameof(ComponentModels.GRIDS_D))]
 public class GRIDS_D: GRIDS_M
 {
     public GRIDS_D()

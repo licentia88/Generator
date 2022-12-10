@@ -52,7 +52,11 @@ namespace Generator.Components.Components
 
         public object Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-      
+        public Type DataType => null;
+
+        public object GetDefaultValue => throw new NotImplementedException();
+
+        Type IGenComponent.DataType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public RenderFragment RenderComponent(object model, ComponentType componentType)
         {

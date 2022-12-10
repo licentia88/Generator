@@ -1,4 +1,5 @@
 ﻿using Generator.Shared.Models;
+using Generator.Shared.Models.ComponentModels;
 using ProtoBuf.Grpc;
 using ProtoBuf.Grpc.Configuration;
 

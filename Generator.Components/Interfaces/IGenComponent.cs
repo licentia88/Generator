@@ -7,6 +7,8 @@ public interface IGenComponent: IGenCompRenderer
 {
     public string BindingField { get; set; }
 
+    public Type DataType { get; set; }
+
     public int Width { get; set; }
 
     public int Order { get; set; }
@@ -33,6 +35,8 @@ public interface IGenComponent: IGenCompRenderer
 
     public object Model { get; set; }
 
-     
+    public object GetDefaultValue { get; }
+
+
 }
 

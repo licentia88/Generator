@@ -13,11 +13,15 @@ using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using GenFu;
 using Mapster;
+using MBrace.FsPickler;
+//using MBrace.FsPickler.Json;
 using MessagePack;
 using MessagePack.Resolvers;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ProtoBuf.Grpc;
 using SolTechnology.Avro;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Generator.Services.Services;
 
@@ -60,6 +64,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
     {
         return  Delegates.ExecuteAsync(async () =>
         {
+            var serializer = FsPickler.CreateBinarySerializer();
 
             var newData = A.New<TEST_TABLE>();
 
@@ -67,7 +72,16 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
 
             var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictType);
 
- 
+            var classGen = new ClassGenerator();
+            var newClass= classGen.GenerateClass(result);
+
+            var adapted = result.Adapt(result.GetType(), newClass.GetType());
+
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            string res = JsonConvert.SerializeObject(adapted, Formatting.Indented);
+
+
+
             return result;
         });
     }

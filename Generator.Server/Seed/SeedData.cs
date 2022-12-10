@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Generator.Server;
-using Generator.Shared.Models;
+﻿using System.Collections.ObjectModel;
+using Generator.Shared.Models.ComponentModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Generator.Services.Seed;
+namespace Generator.Server.Seed;
 
 public class SeedData
 {

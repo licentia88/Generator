@@ -4,7 +4,7 @@ using System.Data.Common;
 using Generator.Shared.Services;
 using ProtoBuf;
 
-namespace Generator.Shared.Models;
+namespace Generator.Shared.Models.ComponentModels;
 
 [ProtoContract]
 public class DATABASES :IValidatableObject

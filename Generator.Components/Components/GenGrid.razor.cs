@@ -10,25 +10,47 @@ using static MudBlazor.CategoryTypes;
 using Generator.Components.Interfaces;
 using Force.DeepCloner;
 using Generator.Components.Enums;
-using Generator.Server.Extensions;
+using System.ComponentModel;
+using Mapster;
+using Generator.Shared.TEST_WILL_DELETE_LATER;
+using MudBlazorFix;
 
 namespace Generator.Components.Components;
 
 public partial class GenGrid : MudTable<object>, IGenGrid
 {
-    
+    private MudTable<object> GridRef { get; set; }
+
+    public bool AddNewTriggered { get; set; }
+
+    public MudIconButton EditButtonRef { get; set; }
 
     #region NonParams
     public List<IGenComponent> Components { get; set; } = new();
     private string _SearchString = string.Empty;
     public bool IsFirstRender { get; set; } = true;
     private bool IsSearchDisabled = false;
+    //protected object OriginalEditItem { get; set; }÷
+    public object OriginalEditItem { get; set; }
+
 
     private string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
     #endregion
 
 
     #region Parameters
+
+    [Parameter]
+    public EventCallback<object> Create { get; set; }
+
+    [Parameter]
+    public EventCallback<object> Delete { get; set; }
+
+    [Parameter]
+    public EventCallback<object> Update { get; set; }
+
+    [Parameter]
+    public EventCallback Load { get; set; }
 
     [CascadingParameter(Name = nameof(ParentContext))]
     public object ParentContext { get; set; }
@@ -69,7 +91,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     public EditMode EditMode { get; set; }
     #endregion
 
- 
 
     #region Methods
 
@@ -95,11 +116,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     private List<T> GetComponentOf<T>() where T : IGenComponent
     {
         return Components.Where(x => x is T).Cast<T>().ToList() ;
-        //return Components.
-        //    Where(x => x is TType).
-        //    Exclude<ColumnBase<TModel>, IButton>()
-        //    .Exclude<ColumnBase<TModel>, GridSpacer<TModel>>()
-        //    .Cast<TType>().ToList();
+         
     }
 
     public void AddChildComponent(IGenComponent childComponent)
@@ -108,58 +125,78 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         Components.Add(childComponent);
     }
 
-    
-
     public RenderFragment RenderComponent(object model, ComponentType componentType)
     {
         throw new NotImplementedException();
     }
 
-
-
-
     #endregion
 
     #region RowEditMethods
 
-    private object elementBeforeEdit;
 
-
-
-    private void BackupItem(object element)
+ 
+    private async Task OnBeforeAnyAction(object element)
     {
         IsSearchDisabled = true;
-        elementBeforeEdit = element.DeepClone();
-        StateHasChanged();
+        SelectedItem = element;
+        OriginalEditItem = element.DeepClone();
+
+        await InvokeAsync(StateHasChanged);
 
     }
 
-    private void OnSubmit(object element)
+    private async Task OnCommit(object element)
     {
-        if (1 != 2)//Fail olursa
-        {
-            OnCancel(element);
-        }
-
         IsSearchDisabled = false;
-        //AddEditionEvent($"RowEditCommit event: Changes to Element {((Element)element).Name} committed");
+
+        if (Create.HasDelegate)
+            await Create.InvokeAsync(element);
+
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!IsFirstRender && AddNewTriggered)
+        {
+            EditButtonRef.OnClick.InvokeAsync();
+            AddNewTriggered = false;
+        }
+        return base.OnAfterRenderAsync(firstRender);
     }
 
     private void OnCancel(object element)
     {
+
         var datasourceItem = DataSource.Select((item, index) => new { item, index }).FirstOrDefault(x => x.item == element);
 
-        DataSource = DataSource.Replace(datasourceItem.index, elementBeforeEdit);
-
-
-
+        DataSource = DataSource.Replace(datasourceItem.index, OriginalEditItem);
+ 
         IsSearchDisabled = false;
         StateHasChanged();
     }
 
-    public void OnCommitEditEvent()
-    {
 
+     
+    public async Task OnAddNewEvent()
+    {
+        var DatasourceModelType = DataSource.GetType().GenericTypeArguments[0];
+
+        var newData = Components.ToDictionary<IGenComponent, string, object>(comp => comp.BindingField, comp => comp.GetDefaultValue);
+
+        var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), DatasourceModelType);
+
+        DataSource = DataSource.Add(adaptedData);
+
+        AddNewTriggered = true;
+        
+        await InvokeAsync(StateHasChanged);
+
+    }
+    public async Task OnEditCLick()
+    {
+        if(Load.HasDelegate)
+            await Load.InvokeAsync();
     }
     #endregion
 }

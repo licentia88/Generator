@@ -1,6 +1,7 @@
 ﻿using Generator.Server;
 using Generator.Server.Services;
 using Generator.Shared.Models;
+using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using ProtoBuf.Grpc;
 

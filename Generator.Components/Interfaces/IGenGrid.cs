@@ -16,5 +16,10 @@ public interface IGenGrid : IGenCompRenderer
     public EditMode EditMode { get; set; }
 
     public IEnumerable<object> DataSource { get; set; }
+
+    public bool AddNewTriggered { get; set; }
+
+    public object OriginalEditItem { get; set; }
+
 }
 

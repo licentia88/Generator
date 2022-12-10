@@ -5,8 +5,10 @@ using Generator.Components.Components;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
+using MBrace.FsPickler;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using ProtoBuf;
 
 namespace Generator.Example.Pages
 {
@@ -42,7 +44,7 @@ namespace Generator.Example.Pages
         private async void InsertWithIdentityTest()
         {
             var result = await ITestService.InsertWithIdentityTest();
-
+           
             var data = result.Data.Deserialize<IDictionary<string, object>>();
         }
 

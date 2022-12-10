@@ -4,6 +4,7 @@ using MudBlazor;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Generator.Components.Interfaces;
+using Generator.Shared.Extensions;
 
 namespace Generator.Components.Components;
 
@@ -13,6 +14,9 @@ public class GenCheckBox : MudCheckBox<object>, IGenCheckBox
     [EditorRequired()]
     public string BindingField { get; set; }
 
+    public Type DataType { get; set; } = typeof(bool);
+
+    public object GetDefaultValue => DataType.GetDefaultValue();
 
     [Parameter, AllowNull]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -50,7 +54,8 @@ public class GenCheckBox : MudCheckBox<object>, IGenCheckBox
     public GenGrid ParentComponent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public object Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-     
+
+    
 
     public RenderFragment RenderComponent(object model, ComponentType componentType)
     {

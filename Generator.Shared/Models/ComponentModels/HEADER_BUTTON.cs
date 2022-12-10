@@ -1,8 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 
-namespace Generator.Shared.Models;
+namespace Generator.Shared.Models.ComponentModels;
 
 [ProtoContract]
 [Table(nameof(HEADER_BUTTON))]

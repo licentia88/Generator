@@ -1,5 +1,6 @@
 ﻿@*@typeparam TModel where TModel :new()*@
 @inherits MudTable<object>
+@using Generator.Shared.Extensions
 
 @if (DataSource is null) {return;}
 
@@ -24,7 +25,8 @@
                     @{
                         if (EnableSearch)
                         {
-                            <MudTextField @bind-Value="@_SearchString" Disabled="IsSearchDisabled"
+                            <MudTextField @bind-Value="@_SearchString"
+                                          Disabled="IsSearchDisabled"
                                           Class="mt-0 mr-5"
                                           Placeholder="@SearchPlaceHolderText"
                                           Adornment="Adornment.Start"
@@ -41,13 +43,12 @@
             </CardHeaderActions>
         </MudCardHeader>
 
-        <MudGrid Class="p-4" Justify="Justify.FlexEnd">
-
-        </MudGrid>
+        
         @{
 
 
-            <MudTable Items="DataSource" con
+            <MudTable @ref="@GridRef"
+                      Items="DataSource"
                       Dense="Dense"
                       MultiSelection="MultiSelection"
                       Breakpoint="Breakpoint.None"
@@ -60,10 +61,10 @@
                       SelectedItems="@SelectedItems"
                       Filter="new Func<object,bool>(SearchFunction)"
                       Virtualize="Virtualize"
-                      OnCommitEditClick="@(() => OnCommitEditEvent())"
-                      RowEditPreview="BackupItem"
-                      RowEditCancel="OnCancel"
-                      RowEditCommit="OnSubmit"
+                      OnCommitEditClick="OnEditCLick"
+                      RowEditPreview="async x=> await OnBeforeAnyAction(x)"
+                      RowEditCancel="async x=> OnCancel(x)"
+                      RowEditCommit="async x=> await OnCommit(x)"
                       IsEditRowSwitchingBlocked="true"
                       ApplyButtonPosition="TableApplyButtonPosition.End"
                       EditButtonPosition="TableEditButtonPosition.End"
@@ -74,16 +75,20 @@
 
                 <HeaderContent>
                     @{
+
                         foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
                         {
                             <MudTh>
                                 @item.Label
-                                @*<MudTableSortLabel SortBy="new Func<object, object>(x=> x.GetPropertyValue(item.BindingField))">
-
-                                </MudTableSortLabel>*@
                             </MudTh>
                         }
                     }
+                <MudTh>
+                    <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
+                        <MudIconButton  Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" @onclick="OnAddNewEvent" />
+                    </MudGrid>
+                   
+                </MudTh>
                 </HeaderContent>
 
 
@@ -96,17 +101,31 @@
                                 @item.RenderComponent(context, ComponentType.Grid)
                             </MudTd>
                         }
+                        //SetEditingItem(DataSource.Last());
+                        //EditButtonRef.OnClick.i();
+                        //Add colonu icin eklendi
+                        <MudTh>
+                           
+                        </MudTh>
+
+
+                        //AsyncHelper.RunSync(ExecutableTasks);
+                       
+
 
                     }
                 </RowTemplate>
                  
                 <RowEditingTemplate>
                     @{
-                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                        int i = 0;
+                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid).ToList())
                         {
+                            Console.WriteLine(i);
                             <MudTd>
                                 @item.RenderComponent(context, ComponentType.Form)
                             </MudTd>
+                            i++;
                         }
 
                     }
@@ -130,8 +149,8 @@
                 <PagerContent >
                     <MudTablePager  PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count() == 0 ?999:DataSource.Count()}" />
                 </PagerContent>
-                <EditButtonContent Context="button">
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+                <EditButtonContent  Context="button">
+                    <MudIconButton  @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
                 </EditButtonContent>
             </MudTable>
 

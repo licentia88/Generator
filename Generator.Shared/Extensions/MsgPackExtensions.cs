@@ -51,7 +51,12 @@ namespace Generator.Shared.Extensions
         {
             return serializer.UnPickle<List<IDictionary<string, object>>>(bytes);
         }
- 
+
+        public static object DeserializeByType<T>(this T  type, byte[] bytes)
+        {
+            return serializer.UnPickle<T>(bytes);
+        }
+
         public static byte[] Serialize<T>(this T thisObj)
         {
             return serializer.Pickle(thisObj);

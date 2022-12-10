@@ -1,4 +1,4 @@
-﻿namespace Generator.Server.Extensions;
+﻿namespace Generator.Shared.Extensions;
 
 public static class CollectionExtensions
 {

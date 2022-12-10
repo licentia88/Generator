@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Generator.Shared.TEST_WILL_DELETE_LATER;
 
+[Serializable]
 public class TEST_TABLE
 {
 	[Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]

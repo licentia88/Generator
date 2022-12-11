@@ -1,9 +1,7 @@
 using System.Collections.ObjectModel;
 using System.IO.Compression;
-using Generator.Server.Models.Shema;
 using Generator.Server.Seed;
 using Generator.Server.Services;
-using Generator.Shared.Models;
 using Generator.Shared.Models.ComponentModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

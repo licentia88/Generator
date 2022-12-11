@@ -2,7 +2,6 @@
 using System.Data.Common;
 using Generator.Server.Models.Shema;
 using Mapster;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Generator.Server.Extensions;
 

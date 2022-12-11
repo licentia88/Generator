@@ -1,7 +1,4 @@
-﻿using System.Data;
-using System.Data.Common;
-using Generator.Server.Helpers;
-using Generator.Server.Models.Shema;
+﻿using Generator.Server.Helpers;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
 using GenFu;

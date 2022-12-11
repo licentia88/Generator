@@ -1,14 +1,6 @@
 ﻿using MudBlazor.Services;
-using Grpc.Net.Client.Web;
-using System.Net;
-using ProtoBuf.Grpc.ClientFactory;
 using Generator.Shared.Services;
-using Grpc.Net.Client;
-using Grpc.Core;
-using Grpc.Net.Client.Configuration;
-using Generator.UI;
 using Generator.Shared.Extensions;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

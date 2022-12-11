@@ -1,5 +1,4 @@
-﻿using Generator.Server;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
+﻿using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Services

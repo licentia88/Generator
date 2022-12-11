@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Generator.Shared.Extensions;
-using Microsoft.FSharp.Linq.RuntimeHelpers;
-using ProtoBuf;
+﻿using ProtoBuf;
 
 namespace Generator.Shared.Models;
 

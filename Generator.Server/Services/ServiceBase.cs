@@ -9,10 +9,8 @@ using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using GenFu;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc;
-using ProtoBuf.Meta;
 
 namespace Generator.Server.Services;
 

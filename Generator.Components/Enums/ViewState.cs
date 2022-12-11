@@ -1,5 +1,4 @@
-﻿using System;
-namespace Generator.Components.Enums;
+﻿namespace Generator.Components.Enums;
 
 public enum ViewState
 {

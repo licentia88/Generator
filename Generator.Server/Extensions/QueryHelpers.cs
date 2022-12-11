@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
 using Generator.Shared.Extensions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Generator.Server.Extensions;
 

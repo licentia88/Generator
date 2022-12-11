@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using Generator.Components.Components;
-using Generator.Shared.Extensions;
-using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
-using MBrace.FsPickler;
+﻿using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using ProtoBuf;
 
 namespace Generator.Example.Pages
 {

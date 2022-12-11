@@ -1,15 +1,8 @@
 ﻿using Generator.Example.Data;
-using System.Net;
-using Grpc.Net.Client.Web;
-using ProtoBuf.Grpc.ClientFactory;
-using Grpc.Net.Client;
-using Grpc.Core;
-using Grpc.Net.Client.Configuration;
 using Generator.Shared.Services;
 using MudBlazor.Services;
 using Generator.Shared.Extensions;
-using Generator.Components.Components;
- 
+
 var builder = WebApplication.CreateBuilder(args);
 
 CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;

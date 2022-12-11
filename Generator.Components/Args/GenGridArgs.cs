@@ -1,5 +1,4 @@
-﻿using System;
-namespace Generator.Components.Args;
+﻿namespace Generator.Components.Args;
 
 public class GenGridArgs//<TModel> where TModel : new()
 {

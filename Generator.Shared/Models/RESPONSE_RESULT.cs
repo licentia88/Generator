@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Generator.Shared.Extensions;
-using MBrace.FsPickler;
-using ProtoBuf;
+﻿using ProtoBuf;
 
 namespace Generator.Shared.Models;
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Generator.Components.Components;
+﻿using Generator.Components.Components;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;

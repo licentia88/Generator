@@ -1,7 +1,4 @@
-﻿using System;
-using Generator.Components.Components;
-using Generator.Shared.Models;
-using Generator.Shared.Services;
+﻿using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.Pages

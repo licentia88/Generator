@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Generator.Shared.Extensions;
-using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
+﻿using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.VisualBasic;
 
 namespace Generator.Example.Pages
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using Generator.Components.Components;
-using Generator.Components.Enums;
-using Microsoft.AspNetCore.Components;
-using MudBlazor;
-using static MudBlazor.CategoryTypes;
+﻿using MudBlazor;
 
 namespace Generator.Components.Helpers
 {

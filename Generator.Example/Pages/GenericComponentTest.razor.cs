@@ -1,11 +1,6 @@
-﻿using System;
-using System.Reflection;
-using Generator.Components.Components;
-using Generator.Shared.Extensions;
+﻿using Generator.Components.Components;
 using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 
 namespace Generator.Example.Pages
 {

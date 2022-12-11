@@ -1,9 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
 using Generator.Server.Helpers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Generator.Server.Models.Shema;
 

@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Generator.Components.Components;
+﻿using Generator.Components.Components;
 using Generator.Components.Enums;
 using Microsoft.AspNetCore.Components;
-using static Generator.Components.Components.GenGrid;
 
 namespace Generator.Components.Interfaces;
 

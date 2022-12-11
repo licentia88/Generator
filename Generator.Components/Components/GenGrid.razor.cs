@@ -14,6 +14,7 @@ using System.ComponentModel;
 using Mapster;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using MudBlazorFix;
+using System.Data.Common;
 
 namespace Generator.Components.Components;
 
@@ -25,11 +26,13 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     public MudIconButton EditButtonRef { get; set; }
 
+    public bool DetailClicked { get; set; }
+
     #region NonParams
     public List<IGenComponent> Components { get; set; } = new();
     private string _SearchString = string.Empty;
     public bool IsFirstRender { get; set; } = true;
-    private bool IsSearchDisabled = false;
+    public bool SearchDisabled { get; set; } = false;
     //protected object OriginalEditItem { get; set; }÷
     public object OriginalEditItem { get; set; }
 
@@ -52,12 +55,10 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter]
     public EventCallback Load { get; set; }
 
-    [CascadingParameter(Name = nameof(ParentContext))]
-    public object ParentContext { get; set; }
+    [CascadingParameter(Name = nameof(ParentComponent))]
+    public GenGrid ParentComponent { get; set; }
 
-    [Parameter, AllowNull]
-    public bool SmartCrud { get { return _smartCrud; } set { _smartCrud = value; } }
-
+    
     [Parameter]
     public string Title { get; set; }
 
@@ -74,8 +75,11 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     #region CascadingParameters
 
-    [CascadingParameter(Name = nameof(SmartCrud))]
-    private bool _smartCrud { get; set; }
+    //[Parameter, AllowNull]
+    //public bool SmartCrud { get { return _smartCrud; } set { _smartCrud = value; } }
+
+    //[CascadingParameter(Name = nameof(SmartCrud))]
+    //private bool _smartCrud { get; set; }
 
 
     #endregion
@@ -85,10 +89,18 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     public RenderFragment GenColumns { get; set; }
 
     [Parameter, AllowNull]
-    public RenderFragment GenDetailGrid { get; set; }
+    public RenderFragment<object> GenDetailGrid { get; set; }
+
+    public bool HasDetail => GenDetailGrid is not null;
 
     [Parameter, EditorRequired]
     public EditMode EditMode { get; set; }
+
+
+    public bool NewDisabled { get; set; } = false;
+    public bool ExpandDisabled { get; set; } = false;
+    
+
     #endregion
 
 
@@ -138,7 +150,9 @@ public partial class GenGrid : MudTable<object>, IGenGrid
  
     private async Task OnBeforeAnyAction(object element)
     {
-        IsSearchDisabled = true;
+        NewDisabled = true;
+        ExpandDisabled = true;
+        SearchDisabled = true;
         SelectedItem = element;
         OriginalEditItem = element.DeepClone();
 
@@ -148,21 +162,33 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     private async Task OnCommit(object element)
     {
-        IsSearchDisabled = false;
-
+        NewDisabled = false;
+        ExpandDisabled = false;
         if (Create.HasDelegate)
             await Create.InvokeAsync(element);
 
+         
     }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!IsFirstRender && AddNewTriggered)
         {
-            EditButtonRef.OnClick.InvokeAsync();
+            await EditButtonRef.OnClick.InvokeAsync();
             AddNewTriggered = false;
+            await InvokeAsync(StateHasChanged);
+
         }
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(ParentComponent is not null && ParentComponent.DetailClicked)
+        {
+            await InvokeAsync(ParentComponent.StateHasChanged);
+        }
+        await base.OnInitializedAsync();
     }
 
     private void OnCancel(object element)
@@ -171,8 +197,10 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         var datasourceItem = DataSource.Select((item, index) => new { item, index }).FirstOrDefault(x => x.item == element);
 
         DataSource = DataSource.Replace(datasourceItem.index, OriginalEditItem);
- 
-        IsSearchDisabled = false;
+
+        SearchDisabled = false;
+        NewDisabled = false;
+        ExpandDisabled = false;
         StateHasChanged();
     }
 
@@ -189,7 +217,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         DataSource = DataSource.Add(adaptedData);
 
         AddNewTriggered = true;
-        
+
         await InvokeAsync(StateHasChanged);
 
     }
@@ -197,6 +225,26 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     {
         if(Load.HasDelegate)
             await Load.InvokeAsync();
+    }
+
+    public  Task OnDeleteClicked(Action buttonAction)
+    {
+        //buttonAction.Invoke();
+        //return buttonAction;
+        var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
+
+        DataSource = DataSource.Remove(dataToRemove);
+
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+     public async Task OnDetailClicked()
+    {
+        DetailClicked = !DetailClicked;
+        
+        await InvokeAsync(StateHasChanged);
+
     }
     #endregion
 }

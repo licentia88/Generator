@@ -32,6 +32,7 @@
     <None Remove="BinaryPack" />
     <None Remove="FsPickler" />
     <None Remove="FsPickler.Json" />
+    <None Remove="Types\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -41,6 +42,7 @@
     <Folder Include="TEST_WILL_DELETE_LATER\" />
     <Folder Include="Models\ComponentModels\" />
     <Folder Include="Dependency\" />
+    <Folder Include="Types\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="protobuf-net" Version="3.1.25" />

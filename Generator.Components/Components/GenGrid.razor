@@ -4,7 +4,7 @@
 
 @if (DataSource is null) {return;}
 
-<CascadingValue Name="ParentComponent" Value="this">
+<CascadingValue Name="@(nameof(GenGrid.ParentComponent))" Value="this">
 
     @{
         if (GenColumns is not null && IsFirstRender)
@@ -26,7 +26,7 @@
                         if (EnableSearch)
                         {
                             <MudTextField @bind-Value="@_SearchString"
-                                          Disabled="IsSearchDisabled"
+                                          Disabled="SearchDisabled"
                                           Class="mt-0 mr-5"
                                           Placeholder="@SearchPlaceHolderText"
                                           Adornment="Adornment.Start"
@@ -48,8 +48,11 @@
 
 
             <MudTable @ref="@GridRef"
+                      T="object"
                       Items="DataSource"
                       Dense="Dense"
+                      RowClassFunc="@RowClassFunc"
+                      OnRowClick="@OnRowClick"
                       MultiSelection="MultiSelection"
                       Breakpoint="Breakpoint.None"
                       Hover="Hover"
@@ -76,6 +79,12 @@
                 <HeaderContent>
                     @{
 
+                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        {
+                            <MudTh>
+
+                            </MudTh>
+                        }
                         foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
                         {
                             <MudTh>
@@ -84,10 +93,15 @@
                         }
                     }
                 <MudTh>
-                    <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                        <MudIconButton  Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" @onclick="OnAddNewEvent" />
-                    </MudGrid>
-                   
+
+                    <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+                        <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
+                            <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" @onclick="OnAddNewEvent" Disabled="NewDisabled" />
+                        </MudGrid>
+                    </div>
+
+                  
+
                 </MudTh>
                 </HeaderContent>
 
@@ -95,22 +109,31 @@
                 <RowTemplate>
                     @{
 
+                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        {
+                            <MudTd>
+                                <MudIconButton 
+                                           Size="Size.Small"
+                                           Disabled="ExpandDisabled"
+                                           Icon="@(DetailClicked?Icons.Material.Filled.ExpandLess:Icons.Material.Filled.ExpandMore)"
+                                           OnClick="@(OnDetailClicked)">
+                                                     
+                                     
+                                </MudIconButton>
+                            </MudTd>
+                        }
+
+
                         foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
                         {
                             <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
                                 @item.RenderComponent(context, ComponentType.Grid)
                             </MudTd>
                         }
-                        //SetEditingItem(DataSource.Last());
-                        //EditButtonRef.OnClick.i();
-                        //Add colonu icin eklendi
+                         
                         <MudTh>
-                           
-                        </MudTh>
 
-
-                        //AsyncHelper.RunSync(ExecutableTasks);
-                       
+                        </MudTh>    
 
 
                     }
@@ -132,14 +155,14 @@
                 </RowEditingTemplate>
                 <ChildRowContent>
                     @{
-                        if (!SmartCrud)
+                        if (EditMode != EditMode.SmartPopup && DetailClicked && HasDetail)
                         {
                             <tr style="display:table-row!important;overflow:hidden">
-                                <td style="display:table-cell!important;overflow:hidden" colspan="12">
-                                    <CascadingValue Value="context" Name="@(nameof(GenGrid.ParentContext))">
-                                        @GenDetailGrid
-                                    </CascadingValue>
-                                </td>
+                            <td style="display:table-cell!important;overflow:hidden" colspan="12">
+
+                                
+                                @GenDetailGrid(context)
+                            </td>
                             </tr>
                         }
                     }
@@ -147,10 +170,15 @@
                 </ChildRowContent>
 
                 <PagerContent >
-                    <MudTablePager  PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count() == 0 ?999:DataSource.Count()}" />
+                    <MudTablePager   PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count() == 0 ?999:DataSource.Count()}" />
                 </PagerContent>
-                <EditButtonContent  Context="button">
-                    <MudIconButton  @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+                <EditButtonContent Context="button">
+                    
+                    <div  style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+                        <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
+                    </div>
+
                 </EditButtonContent>
             </MudTable>
 

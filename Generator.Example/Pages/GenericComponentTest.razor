@@ -2,11 +2,8 @@
 @inherits ComponentBase
 
 @{
-    if (firstData is not null)
+    if (InternalDataSource is not null)
     {
-    <CascadingValue Name="ParentComponent" Value="this">
-        @*@GenTextField.Render(firstData, Components.Enums.ComponentType.Form)*@
-
         <GenGrid @ref="GridRef" Class="m-2"
                  EditMode="EditMode.Inline"
                  Title="GenericTest1"
@@ -19,11 +16,22 @@
                 <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
             </GenColumns>
             <GenDetailGrid>
+                <GenGrid @ref="GridRef" Class="m-2"
+                         EditMode="EditMode.Inline"
+                         Title="GenericTest1"
+                         DataSource="InternalDataSource"
+                         EnableSearch="true">
+                    <GenColumns>
+                        <GenTextField BindingField="TT_ROWID" Label="Row Id" />
+                        <GenTextField BindingField="TT_DESC" Label="Description" />
+                        <GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />
+                        <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
+                    </GenColumns>
 
+                </GenGrid>
             </GenDetailGrid>
         </GenGrid>
-    </CascadingValue>
-       
+
     }
 
 }

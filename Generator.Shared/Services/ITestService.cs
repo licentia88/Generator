@@ -24,7 +24,6 @@ public interface ITestService
 
     public ValueTask<RESPONSE_RESULT> QueryAsyncObject(CallContext context = default);
 
-
     public ValueTask<RESPONSE_RESULT> InsertWithIdentityTestObject(CallContext context = default);
 
     public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTestObject(CallContext context = default);

@@ -47,16 +47,16 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
     //Part 1
     public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default)
     {
-        return  Delegates.ExecuteAsync(async () =>
+        return Delegates.ExecuteAsync(async () =>
         {
- 
+
             var newData = A.New<STRING_TABLE>();
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
             var result = await GeneratorConnection.InsertAsync(nameof(STRING_TABLE), dictType);
 
-            return result;
+            return new GenObject(result);
         });
     }
 
@@ -67,28 +67,21 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
             var serializer = FsPickler.CreateBinarySerializer();
 
             var newData = A.New<TEST_TABLE>();
-
+            newData.TT_NULLABLE_DATE = null;
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
-            var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictType);
-
-            var classGen = new ClassGenerator();
-            var newClass= classGen.GenerateClass(result);
-
-            var adapted = result.Adapt(result.GetType(), newClass.GetType());
-
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-            string res = JsonConvert.SerializeObject(adapted, Formatting.Indented);
+ 
+           var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictType);
 
 
-
-            return result;
+           return new GenObject(result);
+            //return result;
         });
     }
 
     public ValueTask<RESPONSE_RESULT> InsertWithoutIdentityTest(CallContext context = default)
     {
-        return  Delegates.ExecuteAsync(async () =>
+        return Delegates.ExecuteAsync(async () =>
         {
 
             var newData = A.New<COMPUTED_TABLE>();
@@ -97,7 +90,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
 
             var result = await GeneratorConnection.InsertAsync(nameof(COMPUTED_TABLE), dictType);
 
-            return result;
+            return new GenObject(result);
         });
     }
 
@@ -105,10 +98,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
     {
         return Delegates.ExecuteAsync(async () =>
         {
-             
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
-  
-            return result;
+
+            return new GenObject(result);
         });
     }
 
@@ -118,22 +110,38 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         {
             var result = await GeneratorConnection.QueryScalar<int>($"SELECT 1 FROM {nameof(TEST_TABLE)}");
 
-            return result;
+            var genObj = new GenObject();
+
+            genObj.Add("", result);
+            return genObj;
         });
-        
+
     }
 
-    public IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context =default)
+    public async IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context = default)
     {
-        return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
+        //return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
+
+        await foreach (var data in GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"))
+        {
+            yield return new RESPONSE_RESULT(new GenObject(data));
+        }
+
+         //sync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
     }
 
 
-    //Part 2
+    ////Part 2
 
-    public IAsyncEnumerable<RESPONSE_RESULT> QueryStreamObject(CallContext context = default)
+    public async IAsyncEnumerable<RESPONSE_RESULT> QueryStreamObject(CallContext context = default)
     {
-        return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}"));
+        await foreach (var data in GeneratorConnection.QueryStreamAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}"))
+        {
+ 
+            yield return new RESPONSE_RESULT(new GenObject(data.AdaptToDictionary()));
+        }
+
+        //return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}"));
 
     }
 
@@ -143,7 +151,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         {
             var result = await GeneratorConnection.QueryAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}");
 
-            return result;
+            return new GenObject(result.AdaptToDictionary());
         });
     }
 
@@ -151,14 +159,14 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
     {
         return Delegates.ExecuteAsync(async () =>
         {
-           
+
             var newData = await CreateFakeDataAsync(nameof(TEST_TABLE), 1);
 
             var dictType = newData.First().Adapt<IDictionary<string, object>>();
 
             var result = await GeneratorConnection.InsertAsync<TEST_TABLE>(dictType);
 
-            return result;
+            return new GenObject(result.AdaptToDictionary()); ;
         });
     }
 
@@ -172,7 +180,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
 
             var result = await GeneratorConnection.InsertAsync<STRING_TABLE>(dictType);
 
-            return result;
+            return new GenObject(result.AdaptToDictionary()); ;
         });
     }
 
@@ -180,17 +188,13 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
     {
         return Delegates.ExecuteAsync(async () =>
         {
-            //var newData = A.New<COMPUTED_TABLE>();
-
-            //var dictType = newData.Adapt<IDictionary<string, object>>();
-
             var newData = await CreateFakeDataAsync(nameof(COMPUTED_TABLE), 1);
 
             var dictType = newData.First().Adapt<IDictionary<string, object>>();
 
             var result = await GeneratorConnection.InsertAsync<COMPUTED_TABLE>(dictType);
 
-            return result;
+            return new GenObject(result.AdaptToDictionary()); 
         });
     }
 

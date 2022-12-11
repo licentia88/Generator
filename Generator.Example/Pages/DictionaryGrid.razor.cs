@@ -24,12 +24,12 @@ namespace Generator.Example.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var data = await Service.QueryAsync();
+            //var data = await Service.QueryAsync();
 
-            var result2 = data.Data.Deserialize<object>();
-            var result = data.Data.Deserialize<List<IDictionary<string,object>>>();
+            //var result2 = data.Data.Deserialize<object>();
+            //var result = data.Data.Deserialize<List<IDictionary<string,object>>>();
 
-            ((List<object>)DataSource).AddRange(result);
+            //((List<object>)DataSource).AddRange(result);
 
             StateHasChanged();
         }

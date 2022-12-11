@@ -47,7 +47,7 @@ public static class CollectionExtensions
         return enumerable.Select((x, i) => index == i ? value : x);
     }
 
-    public static IEnumerable<T> Remove<T>(this IEnumerable<T> enumerable, int index)
+    public static IEnumerable<T> RemoveAt<T>(this IEnumerable<T> enumerable, int index)
     {
         int current = 0;
         foreach (var item in enumerable)
@@ -59,8 +59,13 @@ public static class CollectionExtensions
         }
     }
 
-    public static IEnumerable<T> Remove2<T>(this IEnumerable<T> enumerable, int index)
+    public static IEnumerable<T> RemoveAt2<T>(this IEnumerable<T> enumerable, int index)
     {
         return enumerable.Where((x, i) => index != i);
+    }
+
+    public static IEnumerable<T> Remove<T>(this IEnumerable<T> enumerable, T data)
+    {
+        return enumerable.Where((x, i) => !x.Equals(data));
     }
 }

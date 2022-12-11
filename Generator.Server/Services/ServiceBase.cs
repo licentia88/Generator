@@ -80,7 +80,8 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
         {
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
-            return result;
+            return new GenObject();
+            //return result;
         });
     }
 

@@ -19,13 +19,13 @@ namespace Generator.Example.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var data = await Service.QueryAsyncObject();
+            //var data = await Service.QueryAsyncObject();
 
-            var result = data.Data.Deserialize<List<TEST_TABLE>>();
+            //var result = data.Data.Deserialize<List<TEST_TABLE>>();
 
-            DataSource.AddRange(result);
+            //DataSource.AddRange(result);
 
-            StateHasChanged();
+            //StateHasChanged();
         }
     }
 }

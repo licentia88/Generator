@@ -15,21 +15,16 @@ namespace Generator.Example.Pages
 
     public partial class Tests
     {
-        public List<IDictionary<string, object>> DataSource { get; set; }
-
-        
-
         [Inject]
         public ITestService ITestService { get; set; }
+
+        public List<object> DataSource { get; set; }
 
         private int currentCount = 0;
 
         protected override Task OnInitializedAsync()
         {
-            DataSource = new List<IDictionary<string, object>>();
-
-          
-
+            DataSource = new List<object>();
 
             return base.OnInitializedAsync();
         }
@@ -38,39 +33,31 @@ namespace Generator.Example.Pages
         {
             var result = await ITestService.InsertWithCodeTableTest();
 
-            var data = result.Data.Deserialize<IDictionary<string, object>>();
+            var data = result.GenObject.DynamicData().First();
         }
 
         private async void InsertWithIdentityTest()
         {
             var result = await ITestService.InsertWithIdentityTest();
-           
-            var data = result.Data.Deserialize<IDictionary<string, object>>();
+
+            var testREsult = result.GenObject.DynamicData().First();
         }
 
         private async void InsertWithoutIdentityTest()
         {
             var result = await ITestService.InsertWithoutIdentityTest();
 
-            var data = result.Data.Deserialize<IDictionary<string, object>>();
+            var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
         }
 
-        private IDictionary<string, object> firstData;
-        //public GenTextField Txtfield { get; set; }
 
 
         private async void QueryAsync()
         {
-          
+
             var result = await ITestService.QueryAsync();
-            var data = result.Data.Deserialize<List<IDictionary<string, object>>>();
-
-            //Txtfield = new(data.First());
-            firstData = data.First();
-
-            
-           
-
+            var data = result.GenObject.DynamicData().ToList();
+ 
             StateHasChanged();
         }
 
@@ -78,7 +65,7 @@ namespace Generator.Example.Pages
         {
             await foreach (var item in ITestService.QueryStream())
             {
-                var streamedData = item.Data.Deserialize<ObservableCollection<IDictionary<string, object>>>();
+                var streamedData = item.GenObject.DynamicData().ToList();
 
                 DataSource.AddRange(streamedData);
 
@@ -87,54 +74,44 @@ namespace Generator.Example.Pages
             }
         }
 
-        Converter<object> StringConverter = new Converter<object>
-        {
-            SetFunc = value => value.ToString(),
-            GetFunc = text => text.ToString(),
-        };
-
-        Converter<object> DateConverter = new Converter<object>
-        {
-            SetFunc = value => value.ToString(),
-            GetFunc = text => Convert.ToDateTime(text),
-        };
+        
 
         private async void InsertWithCodeTableTestObject()
         {
             var result = await ITestService.InsertWithCodeTableTestObject();
 
-            var data = result.Data.Deserialize<object>();
+            var data = result.GenObject.DynamicData().FirstOrDefault();
         }
 
         private async void InsertWithIdentityTestObject()
         {
             var result = await ITestService.InsertWithIdentityTestObject();
 
-            var data = result.Data.Deserialize<object>();
+            var data = result.GenObject.DynamicData().FirstOrDefault();
         }
 
         private async void InsertWithoutIdentityTestObject()
         {
             var result = await ITestService.InsertWithoutIdentityTestObject();
 
-            var data = result.Data.Deserialize<object>();
+            var data = result.GenObject.DynamicData().FirstOrDefault();
         }
 
         private async void QueryAsyncObject()
         {
             var result = await ITestService.QueryAsyncObject();
 
-            //var data = result.Data.Deserialize<List<TEST_TABLE>>();
-            var data = result.Data.Deserialize<List<object>>();
+            var data = result.GenObject.DynamicData().FirstOrDefault();
+
         }
 
         private async void QueryStreamObject()
         {
             await foreach (var item in ITestService.QueryStreamObject())
             {
-                var streamedData = item.Data.Deserialize<ObservableCollection<object>>();
+                var streamedData = item.GenObject.DynamicData().ToList();
 
-                //DataSource.AddRange(streamedData);
+                DataSource.AddRange(streamedData);
 
                 StateHasChanged();
 

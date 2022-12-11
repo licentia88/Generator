@@ -7,15 +7,15 @@ namespace Generator.Server.Helpers;
 
 public class Delegates
 {
-    public static async ValueTask<RESPONSE_RESULT> ExecuteAsync<T>(Func<ValueTask<T>> task)
+    public static async ValueTask<RESPONSE_RESULT> ExecuteAsync<T>(Func<ValueTask<T>> task) where T: GenObject
     {
         try
         {
             var result = await task();
 
-            var bytes = result.Serialize();
+            //var bytes = result.Serialize();
 
-            return new RESPONSE_RESULT(bytes);
+            return new RESPONSE_RESULT(result);
         }
         catch (Exception ex)
         {
@@ -25,34 +25,21 @@ public class Delegates
         }
     }
 
-    public static async IAsyncEnumerable<RESPONSE_RESULT> ExecuteStreamAsync<T>(Func<IAsyncEnumerable<T>> task)
+    public static async IAsyncEnumerable<RESPONSE_RESULT> ExecuteStreamAsync<T>(Func<IAsyncEnumerable<T>> task) where T : GenObject
     {
         await foreach (var data in task())
-        {
-            byte[] bytes;
-            try
-            {
-                bytes = data.Serialize();
-            }
-            catch (Exception ex)
-            {
-                //TODO
-                throw new Exception("Do something, Logs probably");
-            }
-
-            yield return new RESPONSE_RESULT(bytes);
-        }        
+            yield return new RESPONSE_RESULT(data);
     }
 
-    public static RESPONSE_RESULT Execute<T>(Func<T> task)
+    public static RESPONSE_RESULT Execute<T>(Func<T> task) where T : GenObject
     {
         try
         {
             var result = task();
 
-            var bytes = result.Serialize();
+            //var bytes = result.Serialize();
 
-            return new RESPONSE_RESULT(bytes);
+            return new RESPONSE_RESULT(result);
         }
         catch (Exception ex)
         {

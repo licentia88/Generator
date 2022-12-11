@@ -19,8 +19,7 @@ namespace Generator.Example.Pages
         [Inject]
         public ITestService ITestService { get; set; }
 
-        public IDictionary<string,object> firstData { get; set; }
-
+ 
         public GenTextField GenTextField { get; set; }
 
 
@@ -33,22 +32,9 @@ namespace Generator.Example.Pages
         private async Task QueryAsync()
         {
             var result = await ITestService.QueryAsync();
-            var data = result.Data.Deserialize<List<IDictionary<string, object>>>();
-            var dataToPass = data.Take(1);
 
-            InternalDataSource = new List<object>(dataToPass);//  new List<object>(data.Take(1));
-
-
-
-            firstData = data.First();
-
-            GenTextField = new GenTextField();
-            GenTextField.Variant = MudBlazor.Variant.Outlined;
-             
-            GenTextField.BindingField = "TT_DESC";
-             
-
-            Console.WriteLine();
+            InternalDataSource = result.GenObject.DynamicData().ToList();
+            
         }
         
     }

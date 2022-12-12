@@ -32,12 +32,12 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         //Db = provider.GetService<TestContext>();
     }
 
+
     //Part 1
     public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default)
     {
         return Delegates.ExecuteAsync(async () =>
-        {
-
+        {  
             var newData = A.New<STRING_TABLE>();
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
@@ -48,6 +48,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         });
     }
 
+   
+
     public ValueTask<RESPONSE_RESULT> InsertWithIdentityTest(CallContext context = default)
     {
         return  Delegates.ExecuteAsync(async () =>
@@ -55,7 +57,10 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
             var serializer = FsPickler.CreateBinarySerializer();
 
             var newData = A.New<TEST_TABLE>();
+
             newData.TT_NULLABLE_DATE = null;
+            //newData.TT_DEFAULT_VALUE_STRING = "";
+
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
  
@@ -191,5 +196,77 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         GeneratorConnection.Dispose();
         Db.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    public ValueTask<RESPONSE_RESULT> UpdateCodeTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
+ 
+            var result = await GeneratorConnection.UpdateAsync(nameof(STRING_TABLE), EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> UpdateCodeModelTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
+
+            var result = await GeneratorConnection.UpdateAsync<STRING_TABLE>(EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> UpdateIdentityTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
+
+            var result = await GeneratorConnection.UpdateAsync(nameof(TEST_TABLE), EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> UpdateIdentityModelTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
+
+            var result = await GeneratorConnection.UpdateAsync<TEST_TABLE>(EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> UpdateComputedTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
+
+            var result = await GeneratorConnection.UpdateAsync(nameof(COMPUTED_TABLE), EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> UpdateComputedModelTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
+
+            var result = await GeneratorConnection.UpdateAsync<COMPUTED_TABLE>(EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
     }
 }

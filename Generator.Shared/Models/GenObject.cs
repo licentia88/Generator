@@ -25,7 +25,19 @@ public class GenObject : DynamicObject
         IsList = true;
     }
 
- 
+    public GenObject(object data)
+    {
+        Bytes = data.AdaptToDictionary().Serialize();
+        IsList = false;
+    }
+
+    public GenObject(List<object> data)
+    {
+        Bytes = data.AdaptToDictionary().Serialize();
+        IsList = true;
+    }
+
+
 
     [ProtoMember(1)]
     private byte[] Bytes { get; set; }

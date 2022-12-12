@@ -58,7 +58,7 @@ public static class QueryExtensions
 
             var columns = result.GetColumnSchema().ToList();
 
-            var dataList = await result.ReadDataAsync(columns);
+            var dataList = await result.ReadDataAsync();
 
             await connection.CloseAsync();
 
@@ -92,6 +92,8 @@ public static class QueryExtensions
         {
             await command.Connection.OpenIfAsync();
 
+
+
             OrderBy = string.IsNullOrEmpty(OrderBy) ? " ORDER BY 1 " : OrderBy;
 
             var newQuery = $" {query} {OrderBy} OFFSET {pageIndex * pageSize} ROWS  FETCH NEXT {pageSize} ROWS ONLY ";
@@ -106,7 +108,7 @@ public static class QueryExtensions
 
             var columns = reader.GetColumnSchema().ToList();
 
-            var dataList = await reader.ReadDataAsync(columns);
+            var dataList = await reader.ReadDataAsync();
 
             pageIndex++;
 
@@ -120,7 +122,7 @@ public static class QueryExtensions
     }
 
 
-    public static async ValueTask<T> QueryScalar<T>(this DbConnection connection, string query) where T : unmanaged
+    public static async ValueTask<T> QueryScalar<T>(this DbConnection connection, string query, bool CloseConnection = true) where T : unmanaged
     {
         await using var command = connection.CreateCommand();
 
@@ -135,7 +137,8 @@ public static class QueryExtensions
 
             var result = await command.ExecuteScalarAsync();
 
-            await connection.CloseAsync();
+            if (CloseConnection)
+                await connection.CloseAsync();
 
             return result is null ? default : (T)result;
         }
@@ -163,19 +166,22 @@ public static class QueryExtensions
 
             var isAutoIncrement = await connection.IsAutoIncrementAsync(TableName);
 
-            var statement = QueryGenerator.InsertStatement(model, TableName, isAutoIncrement ? shema.PrimaryKey.FieldName : "");
+            var statement = QueryGenerator.InsertStatement(model, TableName, isAutoIncrement , shema.PrimaryKey.FieldName );
 
+            command.CommandText = statement.query;
 
             command.AddParameters(model, statement.fields);
 
-            var primaryKeyValue = await command.ExecuteInsert(statement.query);
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.Default);
 
-            if (primaryKeyValue is not DBNull)
-                model[shema.PrimaryKey.FieldName] = primaryKeyValue;
+            var columns = reader.GetColumnSchema().Where(x => statement.fields.Any(y => y.Equals(x.ColumnName))).ToList();
 
-            return model;
+            //columns.Add(new DbColumn { ColumnName = shema.PrimaryKey.FieldName });
+            var dataList = await reader.ReadDataAsync(shema.ColumnList);
 
+            var returnData = dataList.First();
 
+            return returnData;
         }
         catch (Exception e)
         {
@@ -213,15 +219,26 @@ public static class QueryExtensions
             var statement = QueryGenerator.UpdateStatement(model, TableName, shema.PrimaryKey.FieldName);
 
 
-           command .AddParameters(model, statement.fields);
+            command.CommandText = statement.query;
 
+            command.AddParameters(model, statement.fields);
 
-            var primaryKeyValue = await command.ExecuteUpdate(statement.query);
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.Default);
 
-            if (primaryKeyValue is not DBNull)
-                model[shema.PrimaryKey.FieldName] = primaryKeyValue;
+            var columns = reader.GetColumnSchema().Where(x => statement.fields.Any(y => y.Equals(x.ColumnName))).ToList();
 
-            return model;
+            var dataList = await reader.ReadDataAsync();
+
+            var returnData = dataList.First();
+
+            return returnData;
+
+            //var primaryKeyValue = await command.ExecuteUpdate(statement.query);
+
+            //if (primaryKeyValue is not DBNull)
+            //    model[shema.PrimaryKey.FieldName] = primaryKeyValue;
+
+            //return model;
 
 
         }
@@ -258,8 +275,8 @@ public static class QueryExtensions
             var shema = new ShemaGenerator(connection, TableName).ShemaList.First();
 
             var statement = QueryGenerator.DeleteStatement(model, TableName, shema.PrimaryKey.FieldName);
-
-            await command.ExecuteUpdate(statement);
+            command.CommandText = statement;
+            await command.ExecuteNonQueryAsync();
 
             return model;
 

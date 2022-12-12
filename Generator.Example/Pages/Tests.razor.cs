@@ -1,5 +1,14 @@
-﻿using Generator.Shared.Services;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Generator.Components.Components;
+using Generator.Shared.Extensions;
+using Generator.Shared.Services;
+using Generator.Shared.TEST_WILL_DELETE_LATER;
+using MBrace.FsPickler;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using ProtoBuf;
 
 namespace Generator.Example.Pages
 {
@@ -37,6 +46,27 @@ namespace Generator.Example.Pages
         private async void InsertWithoutIdentityTest()
         {
             var result = await ITestService.InsertWithoutIdentityTest();
+
+            var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
+        }
+
+        private async void UpdateCodeTest()
+        {
+            var result = await ITestService.UpdateCodeTest();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
+        private async void UpdateIdentityTest()
+        {
+            var result = await ITestService.UpdateIdentityTest();
+
+            var testREsult = result.GenObject.DynamicData().First();
+        }
+
+        private async void UpdateComputedTest()
+        {
+            var result = await ITestService.UpdateComputedTest();
 
             var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
         }
@@ -86,6 +116,27 @@ namespace Generator.Example.Pages
             var result = await ITestService.InsertWithoutIdentityTestObject();
 
             var data = result.GenObject.DynamicData().FirstOrDefault();
+        }
+
+        private async void UpdateCodeModelTest()
+        {
+            var result = await ITestService.UpdateCodeModelTest();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
+        private async void UpdateIdentityModelTest()
+        {
+            var result = await ITestService.UpdateIdentityModelTest();
+
+            var testREsult = result.GenObject.DynamicData().First();
+        }
+
+        private async void UpdateComputedModelTest()
+        {
+            var result = await ITestService.UpdateComputedModelTest();
+
+            var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
         }
 
         private async void QueryAsyncObject()

@@ -22,6 +22,7 @@
     <None Remove="Microsoft.EntityFrameworkCore.Abstractions" />
     <None Remove="Microsoft.EntityFrameworkCore.Relational" />
     <None Remove="Grpc.AspNetCore.Web" />
+    <None Remove="SqlPlace" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />

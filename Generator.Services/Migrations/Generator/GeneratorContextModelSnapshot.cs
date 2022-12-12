@@ -21,7 +21,7 @@ namespace Generator.Services.Migrations.Generator
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Generator.Shared.Models.COMPONENT", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT", b =>
                 {
                     b.Property<int>("COMP_ROWID")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace Generator.Services.Migrations.Generator
                     b.ToTable("COMPONENT");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.DATABASES", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.DATABASES", b =>
                 {
                     b.Property<string>("DatabaseIdentifier")
                         .HasColumnType("nvarchar(450)");
@@ -58,9 +58,9 @@ namespace Generator.Services.Migrations.Generator
                     b.ToTable("DATABASES");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.FOOTER_BUTTON", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.FOOTER_BUTTON", b =>
                 {
-                    b.HasBaseType("Generator.Shared.Models.COMPONENT");
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT");
 
                     b.Property<int>("FB_GRID_REFNO")
                         .HasColumnType("int");
@@ -70,16 +70,16 @@ namespace Generator.Services.Migrations.Generator
                     b.ToTable("FOOTER_BUTTON");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.GRIDS_M", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_M", b =>
                 {
-                    b.HasBaseType("Generator.Shared.Models.COMPONENT");
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT");
 
                     b.ToTable("GRIDS_M");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.HEADER_BUTTON", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTON", b =>
                 {
-                    b.HasBaseType("Generator.Shared.Models.COMPONENT");
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT");
 
                     b.Property<int>("HB_GRID_REFNO")
                         .HasColumnType("int");
@@ -89,9 +89,9 @@ namespace Generator.Services.Migrations.Generator
                     b.ToTable("HEADER_BUTTON");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.GRIDS_D", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_D", b =>
                 {
-                    b.HasBaseType("Generator.Shared.Models.GRIDS_M");
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.GRIDS_M");
 
                     b.Property<int>("GD_M_REFNO")
                         .HasColumnType("int");
@@ -101,70 +101,70 @@ namespace Generator.Services.Migrations.Generator
                     b.ToTable("GRIDS_D");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.COMPONENT", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.DATABASES", "DATABASES")
+                    b.HasOne("Generator.Shared.Models.ComponentModels.DATABASES", "DATABASES")
                         .WithMany()
                         .HasForeignKey("COMP_DATABASE");
 
                     b.Navigation("DATABASES");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.FOOTER_BUTTON", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.FOOTER_BUTTON", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.COMPONENT", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT", null)
                         .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.FOOTER_BUTTON", "COMP_ROWID")
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.FOOTER_BUTTON", "COMP_ROWID")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("Generator.Shared.Models.GRIDS_M", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
                         .WithMany("FOOTER_BUTTON")
                         .HasForeignKey("FB_GRID_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.GRIDS_M", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_M", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.COMPONENT", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT", null)
                         .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.GRIDS_M", "COMP_ROWID")
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.GRIDS_M", "COMP_ROWID")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.HEADER_BUTTON", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTON", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.COMPONENT", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT", null)
                         .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.HEADER_BUTTON", "COMP_ROWID")
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.HEADER_BUTTON", "COMP_ROWID")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("Generator.Shared.Models.GRIDS_M", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
                         .WithMany("HEADER_BUTTON")
                         .HasForeignKey("HB_GRID_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.GRIDS_D", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_D", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.GRIDS_M", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
                         .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.GRIDS_D", "COMP_ROWID")
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.GRIDS_D", "COMP_ROWID")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("Generator.Shared.Models.GRIDS_M", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
                         .WithMany("GRIDS_D")
                         .HasForeignKey("GD_M_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.GRIDS_M", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_M", b =>
                 {
                     b.Navigation("FOOTER_BUTTON");
 

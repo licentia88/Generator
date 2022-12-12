@@ -17,5 +17,6 @@ public class TEST_TABLE
 
 	public bool TT_BOOLEAN { get; set; }
 
+	public string TT_DEFAULT_VALUE_STRING { get; set; } = "TESTME";
 }
 

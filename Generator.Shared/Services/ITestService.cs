@@ -14,6 +14,18 @@ public interface ITestService
 
     public ValueTask<RESPONSE_RESULT> QueryScalarTest(CallContext context = default);
 
+    public ValueTask<RESPONSE_RESULT> UpdateCodeTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> UpdateCodeModelTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> UpdateIdentityTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> UpdateIdentityModelTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> UpdateComputedTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> UpdateComputedModelTest(CallContext context = default);
+
     public ValueTask<RESPONSE_RESULT> InsertWithIdentityTest(CallContext context = default);
 
     public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default);

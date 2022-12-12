@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using Generator.Server.Models.Shema;
 using Generator.Shared.Extensions;
 
 namespace Generator.Server.Extensions;
@@ -23,13 +24,40 @@ public static class QueryHelpers
     /// <param name="reader"></param>
     /// <param name="columns"></param>
     /// <returns></returns>
-    internal static async ValueTask<List<IDictionary<string, object>>> ReadDataAsync(this DbDataReader reader, List<DbColumn> columns)
+    internal static async ValueTask<List<IDictionary<string, object>>> ReadDataAsync(this DbDataReader reader, List<Columns> columns)
     {
         var expObj = ObjectExtensions.NewExpandObject();
         var expObjList = expObj.CreateDynamicList();
 
  
         while (  await reader.ReadAsync())
+        {
+            var newObj = expObj.CreateNew<Dictionary<string, object>>();
+
+            foreach (var column in columns)
+                newObj.Add(column.FieldName, reader.GetColumnValue(column.FieldName));
+
+            expObjList.Add(newObj);
+        }
+
+        //await reader.DisposeAsync();
+        return expObjList;
+    }
+
+    /// <summary>
+    /// Reads data from Reader
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="columns"></param>
+    /// <returns></returns>
+    internal static async ValueTask<List<IDictionary<string, object>>> ReadDataAsync(this DbDataReader reader)
+    {
+        var expObj = ObjectExtensions.NewExpandObject();
+        var expObjList = expObj.CreateDynamicList();
+
+        var columns = reader.GetColumnSchema().ToList();
+
+        while (await reader.ReadAsync())
         {
             var newObj = expObj.CreateNew<Dictionary<string, object>>();
 
@@ -86,7 +114,7 @@ public static class QueryHelpers
         {
             var parameter = command.CreateParameter();
             parameter.ParameterName = $"@{x}";
-            parameter.Value = model[x];
+            parameter.Value = model[x]?? DBNull.Value;
             return parameter;
         }).ToArray();
 
@@ -101,25 +129,40 @@ public static class QueryHelpers
 
         command.CommandText = $"{statement}";
 
-        command.CommandText += "; SELECT SCOPE_IDENTITY() ";
+        //command.CommandText += "; SELECT SCOPE_IDENTITY() ";
 
- 
+
         object lastID = command.ExecuteScalar();
 
         return lastID;
     }
 
-    internal static async Task<object> ExecuteUpdate(this DbCommand command, string statement)
-    {
-        if (command.Connection.State != ConnectionState.Open)
-            await command.Connection.OpenAsync();
+    //internal static async Task<object> ExecuteInsert(this DbCommand command, string statement)
+    //{
+    //    if (command.Connection.State != ConnectionState.Open)
+    //        await command.Connection.OpenAsync();
 
-        command.CommandText = $"{statement}";
-  
-        object lastID = command.ExecuteScalar();
+    //    command.CommandText = $"{statement}";
 
-        return lastID;
-    }
+    //    //command.CommandText += "; SELECT SCOPE_IDENTITY() ";
+
+
+    //    object lastID = command.ExecuteScalar();
+
+    //    return lastID;
+    //}
+
+    //internal static async Task<object> ExecuteUpdate(this DbCommand command, string statement)
+    //{
+    //    if (command.Connection.State != ConnectionState.Open)
+    //        await command.Connection.OpenAsync();
+
+    //    command.CommandText = $"{statement}";
+
+    //    //object lastID = command.ExecuteScalar();
+
+    //    return lastID;
+    //}
 
     /// <summary>
     /// Determines wheter table has Identity column or not
@@ -127,10 +170,10 @@ public static class QueryHelpers
     /// <param name="connection"></param>
     /// <param name="TableName"></param>
     /// <returns></returns>
-    internal static async Task<bool> IsAutoIncrementAsync(this DbConnection connection, string TableName)
+    internal static async Task<bool> IsAutoIncrementAsync(this DbConnection connection, string TableName, bool CloseConnection = false)
     {
         //Count 1 ise autoincrement 0 ise auto increment degildir 
-        var result = await connection.QueryScalar<bool>($"SELECT IS_IDENTITY FROM SYS.IDENTITY_COLUMNS JOIN SYS.TABLES ON SYS.IDENTITY_COLUMNS.OBJECT_ID = SYS.TABLES.OBJECT_ID WHERE SYS.TABLES.name = '{TableName}' AND IS_IDENTITY = 1 ");
+        var result = await connection.QueryScalar<bool>($"SELECT IS_IDENTITY FROM SYS.IDENTITY_COLUMNS JOIN SYS.TABLES ON SYS.IDENTITY_COLUMNS.OBJECT_ID = SYS.TABLES.OBJECT_ID WHERE SYS.TABLES.name = '{TableName}' AND IS_IDENTITY = 1 ", CloseConnection);
 
         return result;
     }

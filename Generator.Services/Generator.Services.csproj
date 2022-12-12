@@ -62,6 +62,7 @@
     <None Remove="CsvHelper" />
     <None Remove="Services\" />
     <None Remove="MessagePack" />
+    <None Remove="SqlPlace" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">

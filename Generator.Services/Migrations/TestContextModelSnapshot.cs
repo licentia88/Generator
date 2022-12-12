@@ -99,6 +99,9 @@ namespace Generator.Services.Migrations
                     b.Property<DateTime>("TT_DATE")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("TT_DEFAULT_VALUE_STRING")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TT_DESC")
                         .HasColumnType("nvarchar(max)");
 

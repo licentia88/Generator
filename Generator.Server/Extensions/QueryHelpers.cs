@@ -71,7 +71,7 @@ public static class QueryHelpers
         return expObjList;
     }
 
-    internal static void AddParameters(this DbCommand command, IDictionary<string, object> parameters)
+    internal static void AddParameters(this DbCommand command, params (string Key, object Value)[] parameters)
     {
         var prms =  parameters?.Select(x =>
         {

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using Cysharp.Text;
 using Generator.Server.Models.Shema;
 using Mapster;
 
@@ -33,14 +34,14 @@ public static class QueryExtensions
         }
     }
 
-    public static async ValueTask<List<TReturnType>> QueryAsync<TReturnType>(this DbConnection connection, string query, params IDictionary<string, object>[] parameters)
+    public static async ValueTask<List<TReturnType>> QueryAsync<TReturnType>(this DbConnection connection, string query, params (string Key,object Value)[] parameters)
     {
         var result = await QueryAsync(connection, query, parameters);
 
         return result.Adapt<List<TReturnType>>();
     }
 
-    public static async ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string query, params IDictionary<string, object>[] parameters)
+    public static async ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string query, params (string Key, object Value)[] parameters)
     {
         await using var command = connection.CreateCommand();
 
@@ -53,7 +54,10 @@ public static class QueryExtensions
             if (command.Connection.State != ConnectionState.Open)
                 await command.Connection.OpenAsync();
 
- 
+
+            command.AddParameters(parameters);
+
+
             await using var result = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
 
             var columns = result.GetColumnSchema().ToList();
@@ -72,7 +76,32 @@ public static class QueryExtensions
         }
     }
 
-    public static async IAsyncEnumerable<List<TReturnType>> QueryStreamAsync<TReturnType>(this DbConnection connection, string query, string OrderBy = default, int pageSize = 30, IDictionary<string, object> parameters = default)
+    public static ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string TableName, IDictionary<string,object> fields, params (string Key, object Value)[] parameters)
+    {
+        using (var sb = ZString.CreateStringBuilder())
+        {
+            using (var WhereSb = ZString.CreateStringBuilder())
+            {
+                var fieldsString = fields.Select((x) => x.Key).ToList();
+
+                if (parameters.Any())
+                {
+                    var loParams = parameters.Select(x => $"{x.Key} = @{x.Key} AND");
+
+                    var paramsString = ZString.Join("", loParams).TrimEnd('A', 'N', 'D');
+                    WhereSb.AppendFormat("WHERE {0}", paramsString);
+                }
+
+                sb.AppendFormat("SELECT {0} FROM {1} {2}", ZString.Join(", ", fieldsString), TableName, WhereSb);
+
+                var endQuery = sb.ToString();
+
+                return QueryAsync(connection, endQuery, parameters);
+            }
+        }
+    }
+
+    public static async IAsyncEnumerable<List<TReturnType>> QueryStreamAsync<TReturnType>(this DbConnection connection, string query, string OrderBy = default, int pageSize = 30, params (string Key, object Value)[] parameters)
     {
         await foreach (var item in QueryStreamAsync(connection, query, OrderBy, pageSize,parameters))
         {
@@ -80,7 +109,7 @@ public static class QueryExtensions
         }
      }
 
-    public static async IAsyncEnumerable<List<IDictionary<string, object>>> QueryStreamAsync(this DbConnection connection, string query,string OrderBy = default, int pageSize = 30, IDictionary<string, object> parameters =default)
+    public static async IAsyncEnumerable<List<IDictionary<string, object>>> QueryStreamAsync(this DbConnection connection, string query,string OrderBy = default, int pageSize = 30, params (string Key, object Value)[] parameters)
     {
         await using var command = connection.CreateCommand();
 
@@ -121,7 +150,6 @@ public static class QueryExtensions
         await command.Connection.CloseAsync();
     }
 
-
     public static async ValueTask<T> QueryScalar<T>(this DbConnection connection, string query, bool CloseConnection = true) where T : unmanaged
     {
         await using var command = connection.CreateCommand();
@@ -150,8 +178,6 @@ public static class QueryExtensions
             throw new Exception(e.Message);
         }
     }
-
-
 
     public static async ValueTask<IDictionary<string, object>> InsertAsync(this DbConnection connection, string TableName, IDictionary<string, object> model)
     {
@@ -202,8 +228,6 @@ public static class QueryExtensions
     {
         return InsertAsync(connection, modelType.Name,model);
     }
-
-
 
     public static async ValueTask<IDictionary<string, object>> UpdateAsync(this DbConnection connection, string TableName, IDictionary<string, object> model)
     {
@@ -261,7 +285,6 @@ public static class QueryExtensions
     {
         return UpdateAsync(connection, modelType.Name, model);
     }
-
 
     public static async ValueTask<IDictionary<string, object>> DeleteAsync(this DbConnection connection, string TableName, IDictionary<string, object> model)
     {

@@ -23,6 +23,7 @@
     <None Remove="Microsoft.EntityFrameworkCore.Relational" />
     <None Remove="Grpc.AspNetCore.Web" />
     <None Remove="SqlPlace" />
+    <None Remove="ZString" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
@@ -30,7 +31,6 @@
     <Folder Include="Seed\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="FastMember" Version="1.5.0" />
     <PackageReference Include="GenFu" Version="1.6.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
@@ -50,6 +50,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.50.0" />
+    <PackageReference Include="ZString" Version="2.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />

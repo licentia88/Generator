@@ -11,6 +11,7 @@ public class CHILD_CLASS
 
     public string CC_DESC { get; set; }
 
+
     public int CC_PARENT_REFNO { get; set; }
 }
 

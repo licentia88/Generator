@@ -67,7 +67,12 @@ namespace Generator.Services.Migrations
                     b.Property<string>("PC_DESC")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PC_STRING_TABLE_CODE")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("PC_ROWID");
+
+                    b.HasIndex("PC_STRING_TABLE_CODE");
 
                     b.ToTable("PARENT_CLASS");
                 });
@@ -120,6 +125,15 @@ namespace Generator.Services.Migrations
                         .HasForeignKey("CC_PARENT_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>
+                {
+                    b.HasOne("Generator.Shared.TEST_WILL_DELETE_LATER.STRING_TABLE", "STRING_TABLE")
+                        .WithMany()
+                        .HasForeignKey("PC_STRING_TABLE_CODE");
+
+                    b.Navigation("STRING_TABLE");
                 });
 
             modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>

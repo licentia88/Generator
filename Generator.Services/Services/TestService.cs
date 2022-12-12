@@ -93,6 +93,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         {
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
+            var result2 = await GeneratorConnection.QueryAsync("TEST_TABLE",result.First(),("TT_ROWID",1013));
+
             return new GenObject(result);
         });
     }

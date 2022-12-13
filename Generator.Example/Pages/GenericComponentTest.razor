@@ -12,10 +12,11 @@
             <GenColumns>
                 <GenTextField BindingField="TT_ROWID" Label="Row Id" />
                 <GenTextField BindingField="TT_DESC" Label="Description" />
-                <GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />
-                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
+                <GenCheckBox  BindingField="TT_BOOLEAN" TrueText="Evet" FalseText="Hayir" Label="BooleanTest" />
+                @*<GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />
+                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />*@
             </GenColumns>
-            <GenDetailGrid>
+            @*<GenDetailGrid>
                 <GenGrid @ref="GridRef" Class="m-2"
                          EditMode="EditMode.Inline"
                          Title="GenericTest1"
@@ -29,7 +30,7 @@
                     </GenColumns>
 
                 </GenGrid>
-            </GenDetailGrid>
+            </GenDetailGrid>*@
         </GenGrid>
 
     }

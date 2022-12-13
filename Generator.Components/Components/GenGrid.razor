@@ -85,7 +85,7 @@
 
                             </MudTh>
                         }
-                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                        foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                         {
                             <MudTh>
                                 @item.Label
@@ -124,7 +124,7 @@
                         }
 
 
-                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid))
+                        foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                         {
                             <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
                                 @item.RenderComponent(context, ComponentType.Grid)
@@ -142,7 +142,7 @@
                 <RowEditingTemplate>
                     @{
                         int i = 0;
-                        foreach (var item in GetComponentOf<GenTextField>().Where(x => x.VisibleOnGrid).ToList())
+                        foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
                         {
                             Console.WriteLine(i);
                             <MudTd>

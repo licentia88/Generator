@@ -1,4 +1,10 @@
-﻿namespace Generator.Server.Extensions;
+﻿using Cysharp.Text;
+using Generator.Server.Helpers;
+using Generator.Shared.Enums;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+namespace Generator.Server.Extensions;
 
 public class QueryGenerator
 {
@@ -50,6 +56,32 @@ public class QueryGenerator
         var query = $"DELETE FROM {TableName} {whereStatememt}";
 
         return query;
+    }
+
+    internal static string CreateParametricQuery(string TableName, IDictionary<string, object> objectModel = null, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
+    {
+        using (var sb = ZString.CreateStringBuilder())
+        {
+            using (var WhereSb = ZString.CreateStringBuilder())
+            {
+                var fieldsList = objectModel?.Select((x) => x.Key).ToList();
+                var fieldsString = fieldsList is null ? " * " : ZString.Join(", ", fieldsList);
+
+                if (parameters.Any())
+                {
+                    var loParams = parameters.Select(x => $"{x.LogicalOperator.CreateStatement(x.Key, x.Value)}  AND").ToList();
+
+                    var paramsString = ZString.Join("", loParams).TrimEnd('A', 'N', 'D');
+                    WhereSb.AppendFormat("WHERE {0}", paramsString);
+                }
+
+                sb.AppendFormat("SELECT {0} FROM {1} {2}", fieldsString, TableName, WhereSb);
+
+                var Query = sb.ToString();
+
+                return Query;
+            }
+        }
     }
 }
 

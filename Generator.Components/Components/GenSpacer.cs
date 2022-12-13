@@ -46,15 +46,24 @@ namespace Generator.Components.Components
         [Parameter]
         public int xxl { get; set; }
 
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public GenGrid ParentComponent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public Type DataType => null;
 
+       
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string Label { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public Type DataType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public object GetDefaultValue => throw new NotImplementedException();
-
-        Type IGenComponent.DataType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public RenderFragment RenderComponent(object model, ComponentType componentType)
         {

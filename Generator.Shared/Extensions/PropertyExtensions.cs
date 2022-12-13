@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.Reflection;
 using FastMember;
 
@@ -10,49 +11,35 @@ public static class PropertyExtensions
     {
         if (obj is null) return default;
 
-        if(obj.GetType() == typeof(Dictionary<string, object>) )
+        if(obj is ExpandoObject exp)
         {
-            var cast = obj.CastTo<Dictionary<string, object>>();
+            var cast = exp.AdaptToDictionary();
 
             return cast[propertyName];
         }
-        else
-        {
-            var accessor = TypeAccessor.Create(obj.GetType());
 
-            return accessor[obj, propertyName];
-        }
-       
+
+        var accessor = TypeAccessor.Create(obj.GetType());
+
+        return accessor[obj, propertyName];
+
     }
  
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        if (obj.GetType() == typeof(Dictionary<string, object>) || obj.GetType() == typeof(IDictionary<string, object>) || obj.GetType() == typeof(KeyValuePair<string, object>))
+        if (obj is ExpandoObject exp)
         {
-            var cast = obj.CastTo<Dictionary<string, object>>();
+            var cast = exp.AdaptToDictionary();
 
             cast[propertyName] = propertyValue;
+
+            return;
         }
-        else
-        {
 
-            obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
-            //var accessor = TypeAccessor.Create(typeof(T));
-            try
-            {
-                obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
+        var accessor = TypeAccessor.Create(obj.GetType());
 
-                //accessor[obj, propertyName] = propertyValue;
-            }
-            catch (Exception ex)
-            {
-                // ignored
-            }
-        }
-       
-
-      
-    }
+        accessor[obj, propertyName] = propertyValue;
+     }
 
     public static List<T> CreateDynamicList<T>(this T type)
     {

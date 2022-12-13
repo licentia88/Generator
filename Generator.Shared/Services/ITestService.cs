@@ -32,6 +32,12 @@ public interface ITestService
 
     public ValueTask<RESPONSE_RESULT> InsertWithoutIdentityTest(CallContext context = default);
 
+    public ValueTask<RESPONSE_RESULT> DeleteWithIdentityTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithCodeTableTest(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithoutIdentityTest(CallContext context = default);
+
     public IAsyncEnumerable<RESPONSE_RESULT> QueryStreamObject(CallContext context = default);
 
     public ValueTask<RESPONSE_RESULT> QueryAsyncObject(CallContext context = default);
@@ -41,5 +47,11 @@ public interface ITestService
     public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTestObject(CallContext context = default);
 
     public ValueTask<RESPONSE_RESULT> InsertWithoutIdentityTestObject(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithIdentityTestObject(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithCodeTableTestObject(CallContext context = default);
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithoutIdentityTestObject(CallContext context = default);
 }
 

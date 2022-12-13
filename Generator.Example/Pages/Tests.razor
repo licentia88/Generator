@@ -40,6 +40,17 @@
         <button class="btn btn-primary m-2" @onclick="UpdateComputedTest">@("UpdateComputedTest".Humanize())</button>
     </MudItem>
 
+    @*DELETE*@
+    <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
+        <button class="btn btn-primary m-2" @onclick="DeleteIdentityTest">@("DeleteIdentityTest".Humanize())</button>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
+        <button class="btn btn-primary m-2" @onclick="DeleteCodeTest">@("DeleteCodeTest".Humanize())</button>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
+        <button class="btn btn-primary m-2" @onclick="DeleteComputedTest">@("DeleteComputedTest".Humanize())</button>
+    </MudItem>
+
     @*Query Model*@
     <MudItem xs="12" sm="12" md="3" lg="6" xl="6" xxl="6">
         <button class="btn btn-primary m-2" @onclick="QueryAsyncObject">@("QueryAsyncObject".Humanize())</button>
@@ -68,6 +79,17 @@
     </MudItem>
     <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
         <button class="btn btn-primary m-2" @onclick="UpdateComputedModelTest">@("UpdateComputedModelTest".Humanize())</button>
+    </MudItem>
+
+    @*DELETE Model*@
+    <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
+        <button class="btn btn-primary m-2" @onclick="DeleteIdentityTestObject">@("DeleteIdentityTestObject".Humanize())</button>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
+        <button class="btn btn-primary m-2" @onclick="DeleteCodeTestObject">@("DeleteCodeTestObject".Humanize())</button>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="3" lg="4" xl="4" xxl="4">
+        <button class="btn btn-primary m-2" @onclick="DeleteComputedTestObject">@("DeleteComputedTestObject".Humanize())</button>
     </MudItem>
 </MudGrid>
 

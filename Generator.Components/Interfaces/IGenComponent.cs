@@ -36,6 +36,6 @@ public interface IGenComponent: IGenCompRenderer
 
     public object GetDefaultValue { get; }
 
-
+    public string Label { get; set; }
 }
 

@@ -71,6 +71,48 @@ namespace Generator.Example.Pages
             var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
         }
 
+        private async void DeleteCodeTest()
+        {
+            var result = await ITestService.DeleteWithCodeTableTest();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
+        private async void DeleteIdentityTest()
+        {
+            var result = await ITestService.DeleteWithIdentityTest();
+
+            var testREsult = result.GenObject.DynamicData().First();
+        }
+
+        private async void DeleteComputedTest()
+        {
+            var result = await ITestService.DeleteWithoutIdentityTest();
+
+            var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
+        }
+
+        private async void DeleteCodeTestObject()
+        {
+            var result = await ITestService.DeleteWithCodeTableTestObject();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
+        private async void DeleteIdentityTestObject()
+        {
+            var result = await ITestService.DeleteWithIdentityTestObject();
+
+            var testREsult = result.GenObject.DynamicData().First();
+        }
+
+        private async void DeleteComputedTestObject()
+        {
+            var result = await ITestService.DeleteWithoutIdentityTestObject();
+
+            var data = result.GenObject.DynamicData().First();//.Deserialize<IDictionary<string, object>>();
+        }
+
 
 
         private async void QueryAsync()

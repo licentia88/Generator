@@ -5,14 +5,31 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
+using System.ComponentModel;
+using Microsoft.AspNetCore.Components.Rendering;
+using Generator.Components.Extensions;
 
 namespace Generator.Components.Components;
 
-public class GenCheckBox : MudCheckBox<object>, IGenCheckBox
+public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 {
+    #region CascadingParameters
+    [CascadingParameter(Name = nameof(ParentComponent))]
+    public GenGrid ParentComponent { get; set; }
+    #endregion
+
+    [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
+    public object Model { get; set; }
+
     [Parameter]
     [EditorRequired()]
     public string BindingField { get; set; }
+
+    [Parameter, EditorRequired]
+    public string TrueText { get; set; }
+
+    [Parameter,EditorRequired]
+    public string FalseText { get; set; }
 
     public Type DataType { get; set; } = typeof(bool);
 
@@ -51,16 +68,50 @@ public class GenCheckBox : MudCheckBox<object>, IGenCheckBox
 
     [Parameter]
     public int xxl { get; set; }
-    public GenGrid ParentComponent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public object Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+    protected override Task OnInitializedAsync()
+    {
+        //Converter = BoolConverter;
+        ParentComponent?.AddChildComponent(this);
+
+        return Task.CompletedTask;
+    }
+
+    protected override void BuildRenderTree(RenderTreeBuilder __builder)
+    {
+        if (Model is not null && ParentComponent is not null)
+        {
+            base.BuildRenderTree(__builder);
+        }
+    }
+    protected override Task OnChange(ChangeEventArgs args)
+    {
+        Model.SetPropertyValue(BindingField, args.Value);
+        return base.OnChange(args);
+    }
+
+    //public void OnCheckChanged(bool value)
+    //{
+    //    Model.SetPropertyValue(BindingField, value);
+    //}
+
+    public RenderFragment RenderComponent(object model, ComponentType componentType) => (builder) => {
+
+        Model = model;
+
+        if(componentType == ComponentType.Form)
+        {
+            this.RenderComponent(model, builder, componentType, (nameof(Checked), model.GetPropertyValue(BindingField)));
+            return;
+        }
+
+        var gridValue = Model.GetPropertyValue(BindingField).CastTo<bool>() ? TrueText : FalseText;
+        this.RenderGrid(model, builder, gridValue);
+
+    };
 
     
 
-    public RenderFragment RenderComponent(object model, ComponentType componentType)
-    {
-        throw new NotImplementedException();
-    }
 }
 
 

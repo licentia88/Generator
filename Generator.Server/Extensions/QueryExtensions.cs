@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using System.Data.Common;
 using Cysharp.Text;
+using Generator.Server.Helpers;
 using Generator.Server.Models.Shema;
+using Generator.Shared.Enums;
 using Mapster;
 
 namespace Generator.Server.Extensions;
@@ -34,14 +36,14 @@ public static class QueryExtensions
         }
     }
 
-    public static async ValueTask<List<TReturnType>> QueryAsync<TReturnType>(this DbConnection connection, string query, params (string Key,object Value)[] parameters)
+    public static async ValueTask<List<TReturnType>> QueryAsync<TReturnType>(this DbConnection connection, string query, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
         var result = await QueryAsync(connection, query, parameters);
 
         return result.Adapt<List<TReturnType>>();
     }
 
-    public static async ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string query, params (string Key, object Value)[] parameters)
+    public static async ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string query, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
         await using var command = connection.CreateCommand();
 
@@ -58,7 +60,7 @@ public static class QueryExtensions
             command.AddParameters(parameters);
 
 
-            await using var result = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+            await using var result = await command.ExecuteReaderAsync(CommandBehavior.Default);
 
             var columns = result.GetColumnSchema().ToList();
 
@@ -76,32 +78,14 @@ public static class QueryExtensions
         }
     }
 
-    public static ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string TableName, IDictionary<string,object> fields, params (string Key, object Value)[] parameters)
+    public static ValueTask<List<IDictionary<string, object>>> QueryAsync(this DbConnection connection, string TableName, IDictionary<string,object>  objectModel = null, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
-        using (var sb = ZString.CreateStringBuilder())
-        {
-            using (var WhereSb = ZString.CreateStringBuilder())
-            {
-                var fieldsString = fields.Select((x) => x.Key).ToList();
+        var query = QueryGenerator.CreateParametricQuery(TableName, null, parameters);
+        return QueryAsync(connection, query, parameters);
 
-                if (parameters.Any())
-                {
-                    var loParams = parameters.Select(x => $"{x.Key} = @{x.Key} AND");
-
-                    var paramsString = ZString.Join("", loParams).TrimEnd('A', 'N', 'D');
-                    WhereSb.AppendFormat("WHERE {0}", paramsString);
-                }
-
-                sb.AppendFormat("SELECT {0} FROM {1} {2}", ZString.Join(", ", fieldsString), TableName, WhereSb);
-
-                var endQuery = sb.ToString();
-
-                return QueryAsync(connection, endQuery, parameters);
-            }
-        }
     }
 
-    public static async IAsyncEnumerable<List<TReturnType>> QueryStreamAsync<TReturnType>(this DbConnection connection, string query, string OrderBy = default, int pageSize = 30, params (string Key, object Value)[] parameters)
+    public static async IAsyncEnumerable<List<TReturnType>> QueryStreamAsync<TReturnType>(this DbConnection connection, string query, string OrderBy = default, int pageSize = 30, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
         await foreach (var item in QueryStreamAsync(connection, query, OrderBy, pageSize,parameters))
         {
@@ -109,7 +93,7 @@ public static class QueryExtensions
         }
      }
 
-    public static async IAsyncEnumerable<List<IDictionary<string, object>>> QueryStreamAsync(this DbConnection connection, string query,string OrderBy = default, int pageSize = 30, params (string Key, object Value)[] parameters)
+    public static async IAsyncEnumerable<List<IDictionary<string, object>>> QueryStreamAsync(this DbConnection connection, string query,string OrderBy = default, int pageSize = 30, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
         await using var command = connection.CreateCommand();
 
@@ -299,6 +283,9 @@ public static class QueryExtensions
 
             var statement = QueryGenerator.DeleteStatement(model, TableName, shema.PrimaryKey.FieldName);
             command.CommandText = statement;
+
+            command.AddParameters(model, new List<string> { shema.PrimaryKey.FieldName});
+
             await command.ExecuteNonQueryAsync();
 
             return model;

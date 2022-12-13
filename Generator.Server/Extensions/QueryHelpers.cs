@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using Generator.Server.Models.Shema;
+using Generator.Shared.Enums;
 using Generator.Shared.Extensions;
 
 namespace Generator.Server.Extensions;
@@ -71,18 +72,37 @@ public static class QueryHelpers
         return expObjList;
     }
 
-    internal static void AddParameters(this DbCommand command, params (string Key, object Value)[] parameters)
+    internal static void AddParameters(this DbCommand command, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
-        var prms =  parameters?.Select(x =>
-        {
-            var parameter = command.CreateParameter();
-            parameter.ParameterName = $"@{x.Key}";
-            parameter.Value = x.Value;
-            return parameter;
-        }).ToArray();
+        var parameterArray = new List<DbParameter>();
 
-        if (prms != null && prms.Count() > 0)
-            command.Parameters.AddRange(prms);
+        foreach (var parameter in parameters)
+        {
+            if (parameter.LogicalOperator == LogicalOperator.In)
+            {
+                foreach (var innerParam in parameter.Value)
+                {
+                    var parm = command.CreateParameter();
+                    parm.ParameterName = $"@{innerParam}";
+                    parm.Value = innerParam;
+                    parameterArray.Add(parm);
+                }
+                continue;
+            }
+
+            var prm = command.CreateParameter();
+            prm.ParameterName = $"@{parameter.Key}";
+            prm.Value = parameter.Value.First();
+
+            parameterArray.Add(prm);
+            continue;
+
+        }
+         
+         
+
+        if (parameterArray != null && parameterArray.Count() > 0)
+            command.Parameters.AddRange(parameterArray.ToArray());
     }
 
     public static async Task OpenIfAsync(this DbCommand command)
@@ -108,6 +128,7 @@ public static class QueryHelpers
         if (Connection.State != ConnectionState.Open)
               Connection.Open();
     }
+
     internal static void AddParameters(this DbCommand command, IDictionary<string, object> model, List<string> fields)
     {
         var prms = fields?.Select((x) =>

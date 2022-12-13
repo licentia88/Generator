@@ -1,6 +1,7 @@
 ﻿using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
+using Generator.Shared.Enums;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
@@ -13,7 +14,7 @@ using ProtoBuf.Grpc;
 
 namespace Generator.Services.Services;
 
-public class TestService : ServiceBase<TestContext>, ITestService, IDisposable // GenericServiceBase<TestContext,STRING_TABLE>, ITestService, IDisposable
+public class TestService : ServiceBase<TestContext>, ITestService, IDisposable 
 {
     //public DbConnection Connection { get; set; }
 
@@ -92,8 +93,6 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
         return Delegates.ExecuteAsync(async () =>
         {
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
-
-            var result2 = await GeneratorConnection.QueryAsync("TEST_TABLE",result.First(),("TT_ROWID",1013));
 
             return new GenObject(result);
         });
@@ -267,6 +266,79 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable /
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
 
             var result = await GeneratorConnection.UpdateAsync<COMPUTED_TABLE>(EXISTINGDATA.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithIdentityTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+
+            var result = await GeneratorConnection.DeleteAsync(nameof(TEST_TABLE), quey.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithCodeTableTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
+
+            var result = await GeneratorConnection.DeleteAsync(nameof(STRING_TABLE), quey.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithoutIdentityTest(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
+
+            var result = await GeneratorConnection.DeleteAsync(nameof(COMPUTED_TABLE), quey.First());
+
+            return new GenObject(result);
+        }); 
+    }
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithIdentityTestObject(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+
+            var result = await GeneratorConnection.DeleteAsync<TEST_TABLE>(nameof(TEST_TABLE), quey.First());
+
+            return new GenObject(result);
+        }); 
+    }
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithCodeTableTestObject(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
+
+            var result = await GeneratorConnection.DeleteAsync<STRING_TABLE>(nameof(STRING_TABLE), quey.First());
+
+            return new GenObject(result);
+
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> DeleteWithoutIdentityTestObject(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
+
+            var result = await GeneratorConnection.DeleteAsync<COMPUTED_TABLE>(nameof(COMPUTED_TABLE), quey.First());
 
             return new GenObject(result);
         });

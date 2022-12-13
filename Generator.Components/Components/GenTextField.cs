@@ -15,6 +15,8 @@ using MudBlazor.Extensions;
 using System.Globalization;
 using Generator.Components.Extensions;
 using System;
+using Generator.Shared.Models.ComponentModels;
+
 namespace Generator.Components.Components;
 public  class GenTextField : MudTextField<object>,  IGenTextField
 {
@@ -89,13 +91,9 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
     {
         if (Model is not null && ParentComponent is not null  )
         {
-
             base.BuildRenderTree(__builder);
         }
-
-         
-
-    }
+     }
 
     
 
@@ -167,12 +165,19 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
 
 
     public RenderFragment RenderComponent(object model, ComponentType componentType) => (builder) => {
-
         Model = model;
-        
+
         ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
 
-        this.Render(model,builder, componentType);
+        if(componentType == ComponentType.Form)
+        {
+            this.RenderComponent(model, builder, componentType, (nameof(Value), model.GetPropertyValue(BindingField)));
+            return;
+        }
+
+        this.RenderGrid(model, builder, model.GetPropertyValue(BindingField));
+
+
     };
      
    

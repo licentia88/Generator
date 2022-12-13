@@ -9,28 +9,24 @@ namespace Generator.Components.Extensions
 {
 	public static class RenderExtensions
 	{
-        public static void Render<T>(this T component, object objectModel,RenderTreeBuilder builder, ComponentType componentType, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
+
+       
+        public static void RenderGrid<T>(this T component, object objectModel, RenderTreeBuilder builder ,object value) where T : IGenComponent
+        {
+            builder.OpenComponent(0, typeof(GridLabel));
+            builder.AddAttribute(1, nameof(GridLabel.Value), value);
+            builder.CloseComponent();
+        }
+
+        public static void RenderComponent<T>(this T component, object objectModel,RenderTreeBuilder builder, ComponentType componentType, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
         {
             if (objectModel is null || component.ParentComponent is null) return;
-
-            //Model = model;
-
-            //SetSpecialScenarios();
-
-
-            if (componentType == ComponentType.Grid)
-            {
-                builder.OpenComponent(0, typeof(GridLabel));
-                builder.AddAttribute(1, nameof(GridLabel.Value), objectModel.GetPropertyValue(component.BindingField));
-                builder.CloseComponent();
-                return;
-            }
-
+ 
             var properties = component.GetType().GetProperties()
                              .Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(ParameterAttribute))
                                                                      && x.Name != "UserAttributes");
 
-            builder.OpenComponent(0, typeof(GenTextField));
+            builder.OpenComponent(0, typeof(T));
 
             foreach (var property in properties.Select((val, index) => (val, index)))
             {
@@ -46,17 +42,9 @@ namespace Generator.Components.Extensions
 
             }
 
-            builder.AddAttribute(201, nameof(GenTextField.Model), objectModel);
-            builder.AddAttribute(201, nameof(GenTextField.Value), objectModel.GetPropertyValue(component.BindingField));
+            builder.AddAttribute(201, nameof(IGenComponent.Model), objectModel);
 
-            if (typeof(T).HasMethod("OnValueChanged"))
-            {
-            
-
-            }
-            //builder.AddAttribute(199, nameof(GenTextField.ValueChanged), EventCallback.Factory.Create<object>(component.ParentComponent, (x) => { ((dynamic)component).OnValueChanged(x); return; }));
-
-
+ 
 
             foreach (var additional in AdditionalParameters)
             {
@@ -70,8 +58,8 @@ namespace Generator.Components.Extensions
             builder.CloseComponent();
 
         }
-
-    }
+         
+}
  
 }
 

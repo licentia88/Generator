@@ -10,11 +10,13 @@
                  DataSource="InternalDataSource"
                  EnableSearch="true">
             <GenColumns>
+                <GenComboBox Clearable="true" Placeholder="Seciniz" Label="ComboTest"  DataSource="@ComboDataSource" BindingField="TT_STRING_TABLE_CODE" ValueField="CT_ROWID" DisplayField="CT_DESC"  />
                 <GenTextField BindingField="TT_ROWID" Label="Row Id" />
                 <GenTextField BindingField="TT_DESC" Label="Description" />
                 <GenCheckBox  BindingField="TT_BOOLEAN" TrueText="Evet" FalseText="Hayir" Label="BooleanTest" />
-                @*<GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />
-                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />*@
+                @*<GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />*@
+                <GenDatePicker BindingField="TT_DATE" Label="Date" />
+                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
             </GenColumns>
             @*<GenDetailGrid>
                 <GenGrid @ref="GridRef" Class="m-2"

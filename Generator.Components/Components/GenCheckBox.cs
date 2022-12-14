@@ -69,6 +69,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     [Parameter]
     public int xxl { get; set; }
 
+     
+
     protected override Task OnInitializedAsync()
     {
         //Converter = BoolConverter;
@@ -106,7 +108,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     //    Model.SetPropertyValue(BindingField, value);
     //}
 
-    public RenderFragment RenderAsComponent(object model) => (builder) =>
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     {
 
         Model = model;
@@ -116,14 +118,13 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
         bool val = (bool)model.GetPropertyValue(BindingField);
         //, (nameof(BoolValue), val)
-        this.RenderComponent(model, builder, (nameof(Checked), val));
+        this.RenderComponent(model, builder,ignoreLabels, (nameof(Checked), val));
     };
 
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
     {
         Model = model;
-
         var val = Model.GetPropertyValue(BindingField) as bool?;
 
         var gridValue = val  == true ? TrueText : FalseText;

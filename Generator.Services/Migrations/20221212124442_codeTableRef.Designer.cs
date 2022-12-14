@@ -4,6 +4,7 @@ using Generator.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Generator.Services.Migrations
 {
     [DbContext(typeof(TestContext))]
-    partial class TestContextModelSnapshot : ModelSnapshot
+    [Migration("20221212124442_codeTableRef")]
+    partial class codeTableRef
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,9 +114,6 @@ namespace Generator.Services.Migrations
 
                     b.Property<DateTime?>("TT_NULLABLE_DATE")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TT_STRING_TABLE_CODE")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TT_ROWID");
 

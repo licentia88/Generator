@@ -7,17 +7,14 @@ namespace Generator.Shared.Extensions;
 
 public static class PropertyExtensions
 {
-    public static object? GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
+    public static object GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
     {
         if (obj is null) return default;
-
 
         if ((obj is ExpandoObject || obj is Dictionary<string, object>))
             return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
 
-
         return obj.GetType().GetProperty(propertyName).GetValue(obj)??null;
-
     }
  
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
@@ -30,7 +27,6 @@ public static class PropertyExtensions
         }
 
         obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
-
 
     }
 
@@ -110,14 +106,6 @@ public static class PropertyExtensions
     {
         return list.Where(x => x is not ExcludeType).Cast<TType>();
     }
-
-    //public static object GetDefaultValue(this Type type)
-    //{
-    //    var defaultValue = typeof(TypeExtensions)
-    //        .GetRuntimeMethod(nameof(GetDefaultValue), new Type[] { })
-    //        .MakeGenericMethod(type).Invoke(null, null);
-    //    return defaultValue;
-    //}
 
     public static T GetDefaultValue<T>() 
     {

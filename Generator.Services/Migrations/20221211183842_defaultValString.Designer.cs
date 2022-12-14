@@ -4,6 +4,7 @@ using Generator.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Generator.Services.Migrations
 {
     [DbContext(typeof(TestContext))]
-    partial class TestContextModelSnapshot : ModelSnapshot
+    [Migration("20221211183842_defaultValString")]
+    partial class defaultValString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,12 +69,7 @@ namespace Generator.Services.Migrations
                     b.Property<string>("PC_DESC")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PC_STRING_TABLE_CODE")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("PC_ROWID");
-
-                    b.HasIndex("PC_STRING_TABLE_CODE");
 
                     b.ToTable("PARENT_CLASS");
                 });
@@ -113,9 +110,6 @@ namespace Generator.Services.Migrations
                     b.Property<DateTime?>("TT_NULLABLE_DATE")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TT_STRING_TABLE_CODE")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("TT_ROWID");
 
                     b.ToTable("TEST_TABLE");
@@ -128,15 +122,6 @@ namespace Generator.Services.Migrations
                         .HasForeignKey("CC_PARENT_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>
-                {
-                    b.HasOne("Generator.Shared.TEST_WILL_DELETE_LATER.STRING_TABLE", "STRING_TABLE")
-                        .WithMany()
-                        .HasForeignKey("PC_STRING_TABLE_CODE");
-
-                    b.Navigation("STRING_TABLE");
                 });
 
             modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>

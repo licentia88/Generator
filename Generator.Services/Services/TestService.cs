@@ -1,4 +1,5 @@
-﻿using Generator.Server.Extensions;
+﻿using System.Dynamic;
+using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
 using Generator.Shared.Enums;
@@ -339,6 +340,16 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
 
             var result = await GeneratorConnection.DeleteAsync<COMPUTED_TABLE>(nameof(COMPUTED_TABLE), quey.First());
+
+            return new GenObject(result);
+        });
+    }
+
+    public ValueTask<RESPONSE_RESULT> QueryTestStringDataAsync(CallContext context = default)
+    {
+        return Delegates.ExecuteAsync(async () =>
+        {
+            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
 
             return new GenObject(result);
         });

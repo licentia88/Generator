@@ -15,10 +15,11 @@ namespace Generator.Components.Extensions
         {
             builder.OpenComponent(0, typeof(GridLabel));
             builder.AddAttribute(1, nameof(GridLabel.Value), value);
+          
             builder.CloseComponent();
         }
 
-        public static void RenderComponent<T>(this T component, object objectModel,RenderTreeBuilder builder, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
+        public static void RenderComponent<T>(this T component, object objectModel,RenderTreeBuilder builder,bool IgnoreLabels, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
         {
             if (objectModel is null || component.ParentComponent is null) return;
  
@@ -26,29 +27,38 @@ namespace Generator.Components.Extensions
                              .Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(ParameterAttribute))
                                                                      && x.Name != "UserAttributes");
 
+            if (IgnoreLabels)
+            {
+                properties = properties.Where(x => !x.Name.Equals(nameof(IGenComponent.Label)));
+            }
+
+            var i = 1;
             builder.OpenComponent(0, typeof(T));
 
-            foreach (var property in properties.Select((val, index) => (val, index)))
+            foreach (var property in properties)
             {
-                var propName = property.val.Name;
+                var propName = property.Name;
 
                 var value = component.GetPropertyValue(propName);
 
                 if (value is null) continue;
 
-                var index = property.index + 1;
+                var index = i;
 
                 builder.AddAttribute(index, propName, value);
 
+                i++;
             }
 
-            builder.AddAttribute(201, nameof(IGenComponent.Model), objectModel);
+            builder.AddAttribute(i++, nameof(IGenComponent.Model), objectModel);
 
  
 
+
             foreach (var additional in AdditionalParameters)
             {
-                builder.AddAttribute(201, additional.key, additional.value);
+                builder.AddAttribute(i, additional.key, additional.value);
+                i++;
             }
 
             //builder.AddComponentReferenceCapture(300, (value) => this.ComponentRef = (GenTextField)value);

@@ -109,8 +109,8 @@ public class GenObject : DynamicObject
 
     public IEnumerable<T> DynamicData<T>()
     {
-        if (IsList)
-        {
+         if (IsList)
+         {
             var deserializedList = Bytes.Deserialize<List<IDictionary<string, object>>>();
 
             foreach (var data in deserializedList)

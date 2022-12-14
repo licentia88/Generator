@@ -165,12 +165,13 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
     }
 
 
-    public RenderFragment RenderAsComponent(object model) => (builder) => {
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+    {
         Model = model;
 
         ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
 
-        this.RenderComponent(model, builder, (nameof(Value), model.GetPropertyValue(BindingField)));
+        this.RenderComponent(model, builder,ignoreLabels, (nameof(Value), model.GetPropertyValue(BindingField)));
 
 
     };
@@ -179,8 +180,14 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
         Model = model;
 
         //ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+        var data = model.GetPropertyValue(BindingField);
 
-        this.RenderGrid(model, builder, model.GetPropertyValue(BindingField));
+        if(data is DateTime dt)
+        {
+            data = dt.ToString(Format);
+        }
+
+        this.RenderGrid(model, builder, data);
 
     };
 

@@ -112,13 +112,12 @@
                         if (HasDetail && EditMode != EditMode.SmartPopup)
                         {
                             <MudTd>
-                                <MudIconButton 
-                                           Size="Size.Small"
-                                           Disabled="ExpandDisabled"
-                                           Icon="@(DetailClicked?Icons.Material.Filled.ExpandLess:Icons.Material.Filled.ExpandMore)"
-                                           OnClick="@(OnDetailClicked)">
-                                                     
-                                     
+                                <MudIconButton Size="Size.Small"
+                                               Disabled="ExpandDisabled"
+                                               Icon="@(DetailClicked?Icons.Material.Filled.ExpandLess:Icons.Material.Filled.ExpandMore)"
+                                               OnClick="@(OnDetailClicked)">
+
+
                                 </MudIconButton>
                             </MudTd>
                         }
@@ -126,14 +125,15 @@
 
                         foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                         {
-                            <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
+                            @*@onclick:stopPropagation = "EditMode==EditMode.Popup"*@
+                            <MudTd @onclick:stopPropagation = "EditMode==EditMode.Popup">
                                 @item.RenderAsGridComponent(context)
                             </MudTd>
                         }
-                         
+
                         <MudTh>
 
-                        </MudTh>    
+                        </MudTh>
 
 
                     }
@@ -141,14 +141,11 @@
                  
                 <RowEditingTemplate>
                     @{
-                        int i = 0;
                         foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
                         {
-                            Console.WriteLine(i);
                             <MudTd>
-                                @item.RenderAsComponent(context)
+                                @item.RenderAsComponent(context,ignoreLabels:true)
                             </MudTd>
-                            i++;
                         }
 
                     }

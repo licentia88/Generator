@@ -12,6 +12,9 @@ public interface ITestService
 
     public ValueTask<RESPONSE_RESULT> QueryAsync(CallContext context = default);
 
+    public ValueTask<RESPONSE_RESULT> QueryTestStringDataAsync(CallContext context = default);
+
+
     public ValueTask<RESPONSE_RESULT> QueryScalarTest(CallContext context = default);
 
     public ValueTask<RESPONSE_RESULT> UpdateCodeTest(CallContext context = default);

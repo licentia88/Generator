@@ -65,7 +65,7 @@ namespace Generator.Components.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public object GetDefaultValue => throw new NotImplementedException();
 
-        public RenderFragment RenderAsComponent(object model)
+        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
         {
             throw new NotImplementedException();
         }
@@ -74,7 +74,6 @@ namespace Generator.Components.Components
         {
             throw new NotImplementedException();
         }
- 
     }
 }
 

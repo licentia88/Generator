@@ -6,7 +6,7 @@ namespace Generator.Components.Interfaces;
 public interface IGenCompRenderer
 {
     //MudComponentBase parent,
-    public RenderFragment RenderAsComponent(object model);
+    public RenderFragment RenderAsComponent(object model,bool ignoreLabels = false);
 
     public RenderFragment RenderAsGridComponent(object model);
 }

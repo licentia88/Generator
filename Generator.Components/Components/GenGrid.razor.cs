@@ -261,7 +261,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     }
 
-    public RenderFragment RenderAsComponent(object model)
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
     {
         throw new NotImplementedException();
     }
@@ -270,6 +270,8 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     {
         throw new NotImplementedException();
     }
+
+
     #endregion
 }
 

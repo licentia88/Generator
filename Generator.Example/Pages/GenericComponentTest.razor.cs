@@ -28,7 +28,7 @@ namespace Generator.Example.Pages
         {
             var result = await ITestService.QueryAsync();
 
-            InternalDataSource = result.GenObject.DynamicData().ToList();
+            InternalDataSource = result.GenObject.DynamicData().Take(5).ToList();
             
         }
         

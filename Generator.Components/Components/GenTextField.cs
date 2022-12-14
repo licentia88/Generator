@@ -160,33 +160,37 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
 
     public  void OnValueChanged(object value)
     {
-        Model.SetPropertyValue(BindingField, value);
+         //ParentComponent.SelectedItem
+         Model.SetPropertyValue(BindingField, value);
     }
 
 
-    public RenderFragment RenderComponent(object model, ComponentType componentType) => (builder) => {
+    public RenderFragment RenderAsComponent(object model) => (builder) => {
         Model = model;
 
         ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
 
-        if(componentType == ComponentType.Form)
-        {
-            this.RenderComponent(model, builder, componentType, (nameof(Value), model.GetPropertyValue(BindingField)));
-            return;
-        }
-
-        this.RenderGrid(model, builder, model.GetPropertyValue(BindingField));
+        this.RenderComponent(model, builder, (nameof(Value), model.GetPropertyValue(BindingField)));
 
 
     };
-     
-   
 
-        #endregion
+    public RenderFragment RenderAsGridComponent(object model) => (builder) => {
+        Model = model;
+
+        //ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+
+        this.RenderGrid(model, builder, model.GetPropertyValue(BindingField));
+
+    };
 
 
 
-    }
+    #endregion
+
+
+
+}
 
 
 

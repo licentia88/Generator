@@ -84,10 +84,21 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
             base.BuildRenderTree(__builder);
         }
     }
-    protected override Task OnChange(ChangeEventArgs args)
+
+    //[EditorBrowsable(EditorBrowsableState.Never)]
+    //public new bool BoolValue => (bool)Model.GetPropertyValue(BindingField);
+
+
+    protected void OnValueChanged(bool value)
     {
-        Model.SetPropertyValue(BindingField, args.Value);
-        return base.OnChange(args);
+
+        var index = ParentComponent.DataSource.FindIndexByHash(Model);
+
+        Model.SetPropertyValue(BindingField, value);
+
+        //ParentComponent.DataSource = ParentComponent.DataSource.Replace(index.Value, Model);
+        Checked = value;
+        
     }
 
     //public void OnCheckChanged(bool value)
@@ -95,23 +106,30 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     //    Model.SetPropertyValue(BindingField, value);
     //}
 
-    public RenderFragment RenderComponent(object model, ComponentType componentType) => (builder) => {
+    public RenderFragment RenderAsComponent(object model) => (builder) =>
+    {
 
         Model = model;
 
-        if(componentType == ComponentType.Form)
-        {
-            this.RenderComponent(model, builder, componentType, (nameof(Checked), model.GetPropertyValue(BindingField)));
-            return;
-        }
 
-        var gridValue = Model.GetPropertyValue(BindingField).CastTo<bool>() ? TrueText : FalseText;
-        this.RenderGrid(model, builder, gridValue);
+        CheckedChanged = EventCallback.Factory.Create<bool>(this, x => OnValueChanged(x));
 
+        bool val = (bool)model.GetPropertyValue(BindingField);
+        //, (nameof(BoolValue), val)
+        this.RenderComponent(model, builder, (nameof(Checked), val));
     };
 
-    
 
+    public RenderFragment RenderAsGridComponent(object model) => (builder) =>
+    {
+        Model = model;
+
+        var val = Model.GetPropertyValue(BindingField) as bool?;
+
+        var gridValue = val  == true ? TrueText : FalseText;
+
+        this.RenderGrid(model, builder, gridValue);
+    };
 }
 
 

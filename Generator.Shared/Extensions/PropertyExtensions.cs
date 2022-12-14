@@ -7,39 +7,32 @@ namespace Generator.Shared.Extensions;
 
 public static class PropertyExtensions
 {
-    public static object GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
+    public static object? GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
     {
         if (obj is null) return default;
 
-        if(obj is ExpandoObject exp)
-        {
-            var cast = exp.AdaptToDictionary();
 
-            return cast[propertyName];
-        }
+        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+            return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
 
 
-        var accessor = TypeAccessor.Create(obj.GetType());
-
-        return accessor[obj, propertyName];
+        return obj.GetType().GetProperty(propertyName).GetValue(obj)??null;
 
     }
  
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        if (obj is ExpandoObject exp)
+        if ((obj is ExpandoObject  || obj is Dictionary<string,object>)  )
         {
-            var cast = exp.AdaptToDictionary();
-
-            cast[propertyName] = propertyValue;
+            ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
 
             return;
         }
 
-        var accessor = TypeAccessor.Create(obj.GetType());
+        obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
 
-        accessor[obj, propertyName] = propertyValue;
-     }
+
+    }
 
     public static List<T> CreateDynamicList<T>(this T type)
     {

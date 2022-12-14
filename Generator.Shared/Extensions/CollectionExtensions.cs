@@ -32,6 +32,8 @@ public static class CollectionExtensions
         return enumerable.SelectMany((x, i) => index == i ? new T[] { value, x } : new T[] { x });
     }
 
+
+
     public static IEnumerable<T> Replace<T>(this IEnumerable<T> enumerable, int index, T value)
     {
         int current = 0;
@@ -40,6 +42,24 @@ public static class CollectionExtensions
             yield return current == index ? value : item;
             current++;
         }
+    }
+
+
+    public static int? FindIndexByHash<T>(this IEnumerable<T> enumerable,  T value)
+    {
+        int? current = null;
+        foreach (var item in enumerable.Select((x, i)=> (x,i)))
+        {
+            if (item.x.GetHashCode() == value.GetHashCode())
+            {
+                current = item.i;
+                break;
+            }
+                
+        }
+
+        return current;
+        //var test = enumerable.Select((x, i) => value.GetHashCode() == x.GetHashCode() ? i : null);
     }
 
     public static IEnumerable<T> Replace2<T>(this IEnumerable<T> enumerable, int index, T value)

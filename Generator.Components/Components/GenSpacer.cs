@@ -65,10 +65,16 @@ namespace Generator.Components.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public object GetDefaultValue => throw new NotImplementedException();
 
-        public RenderFragment RenderComponent(object model, ComponentType componentType)
+        public RenderFragment RenderAsComponent(object model)
         {
             throw new NotImplementedException();
         }
+
+        public RenderFragment RenderAsGridComponent(object model)
+        {
+            throw new NotImplementedException();
+        }
+ 
     }
 }
 

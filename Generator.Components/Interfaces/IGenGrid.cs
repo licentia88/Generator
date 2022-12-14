@@ -6,6 +6,8 @@ namespace Generator.Components.Interfaces;
 
 public interface IGenGrid : IGenCompRenderer
 {
+    public ViewState ViewState { get; set; }
+
     public string Title { get; set; }
 
     public bool EnableSearch { get; set; }
@@ -16,7 +18,7 @@ public interface IGenGrid : IGenCompRenderer
 
     public IEnumerable<object> DataSource { get; set; }
 
-    public bool AddNewTriggered { get; set; }
+    //public bool AddNewTriggered { get; set; }
 
     public object OriginalEditItem { get; set; }
 

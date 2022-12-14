@@ -18,7 +18,7 @@ namespace Generator.Components.Extensions
             builder.CloseComponent();
         }
 
-        public static void RenderComponent<T>(this T component, object objectModel,RenderTreeBuilder builder, ComponentType componentType, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
+        public static void RenderComponent<T>(this T component, object objectModel,RenderTreeBuilder builder, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
         {
             if (objectModel is null || component.ParentComponent is null) return;
  

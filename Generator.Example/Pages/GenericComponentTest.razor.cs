@@ -38,7 +38,7 @@ namespace Generator.Example.Pages
 
            
 
-            InternalDataSource = result.GenObject.DynamicData().Take(1).ToList();
+            InternalDataSource = result.GenObject.DynamicData().Take(2).ToList();
 
             ComboDataSource = comboResult.GenObject.DynamicData().ToList();
 

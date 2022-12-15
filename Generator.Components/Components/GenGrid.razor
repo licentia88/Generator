@@ -170,11 +170,18 @@
                     <MudTablePager   PageSizeOptions="new int[] { 10,25,50,100, DataSource.Count() == 0 ?999:DataSource.Count()}" />
                 </PagerContent>
                 <EditButtonContent Context="button">
-                    
-                    <div  style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
-                        <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
-                        <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
-                    </div>
+
+                    @{
+                        EditButtonActionList.Add((button.ButtonAction, SelectedItem));
+                        <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+
+                            <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(button.ButtonAction)" Disabled="@button.ButtonDisabled" />
+
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
+
+                        </div>
+                    }
+
 
                 </EditButtonContent>
             </MudTable>

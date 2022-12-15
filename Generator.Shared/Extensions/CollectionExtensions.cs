@@ -44,6 +44,7 @@ public static class CollectionExtensions
         }
     }
 
+     
 
     public static int? FindIndexByHash<T>(this IEnumerable<T> enumerable,  T value)
     {
@@ -64,6 +65,13 @@ public static class CollectionExtensions
 
     public static IEnumerable<T> Replace2<T>(this IEnumerable<T> enumerable, int index, T value)
     {
+        return enumerable.Select((x, i) => index == i ? value : x);
+    }
+
+    public static IEnumerable<T> ReplaceModel<T>(this IEnumerable<T> enumerable, T value)
+    {
+        var index = enumerable.FindIndexByHash(value);
+  
         return enumerable.Select((x, i) => index == i ? value : x);
     }
 

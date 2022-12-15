@@ -26,7 +26,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     private MudTable<object> GridRef { get; set; }
 
-    //public bool AddNewTriggered { get; set; }
 
     public MudIconButton EditButtonRef { get; set; }
 
@@ -37,7 +36,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     private string _SearchString = string.Empty;
     public bool IsFirstRender { get; set; } = true;
     public bool SearchDisabled { get; set; } = false;
-    //protected object OriginalEditItem { get; set; }÷
     public object OriginalEditItem { get; set; }
 
 
@@ -80,12 +78,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     #region CascadingParameters
 
-    //[Parameter, AllowNull]
-    //public bool SmartCrud { get { return _smartCrud; } set { _smartCrud = value; } }
-
-    //[CascadingParameter(Name = nameof(SmartCrud))]
-    //private bool _smartCrud { get; set; }
-
 
     #endregion
 
@@ -103,6 +95,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
 
     public bool NewDisabled { get; set; } = false;
+
     public bool ExpandDisabled { get; set; } = false;
     
 
@@ -142,31 +135,25 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         Components.Add(childComponent);
     }
 
-    
+
     #endregion
 
     #region RowEditMethods
 
-
- 
-   
-
-
-    
+    private List<(Action,object)> EditButtonActionList { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //if (!IsFirstRender && AddNewTriggered)
-        //{
-           
-
-        //}
-
         if(ViewState == ViewState.Create)
         {
-            await EditButtonRef.OnClick.InvokeAsync();
-            //AddNewTriggered = false;
-            //await InvokeAsync(StateHasChanged);
+            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Item1.Target.CastTo<MudTr>().Item == SelectedItem);
+            //((dynamic)GridRef.Context.Rows.First().Value).StartEditingItem();
+            //await EditButtonRef.OnClick.InvokeAsync();
+            firstItem.Item1.Invoke();
+            //EditButtonActionList.Last().Item1.Invoke();
+            ViewState = ViewState.None;
+
+            await InvokeAsync(StateHasChanged);
         }
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -204,6 +191,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     public async Task OnAddNewEvent()
     {
+        EditButtonActionList.Clear();
         ViewState = ViewState.Create;
 
         var DatasourceModelType = DataSource.GetType().GenericTypeArguments[0];
@@ -214,7 +202,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
         SelectedItem = adaptedData;
 
-        DataSource = DataSource.Add(SelectedItem);
+        DataSource = DataSource.Insert(0,SelectedItem);
 
         //AddNewTriggered = true;
 
@@ -227,8 +215,12 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             await Load.InvokeAsync();
     }
 
+
+
     public  Task OnDeleteClicked(Action buttonAction)
     {
+        //var param1s = buttonAction.Method.GetParameters();
+
         var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
 
         DataSource = DataSource.Remove(dataToRemove);

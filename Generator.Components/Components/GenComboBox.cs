@@ -75,9 +75,7 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
-            ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
-
+            
             ParentComponent?.AddChildComponent(this);
 
             return Task.CompletedTask;
@@ -93,11 +91,16 @@ namespace Generator.Components.Components
         {
             if (value is null) return;
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
+
         }
 
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
+            Model = model;
+            ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
+            ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+
 
             var innerFragment  = (nameof(ChildContent), (RenderFragment)((bldr) =>
             {
@@ -122,11 +125,11 @@ namespace Generator.Components.Components
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
-            Model = model;
+            //Model = model;
 
             var selectedField = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
-            this.RenderGrid(model, builder, selectedField.GetPropertyValue(DisplayField));
+            this.RenderGrid(null, builder, selectedField.GetPropertyValue(DisplayField));
         };
 
     }

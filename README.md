@@ -1,7 +1,7 @@
 # Generator
  
 Three projects are included in this repository.
-Generator Server, Generator UI, and Generator Components
+**Generator Server** , **Generator UI**, and **Generator Components**
 
 ## Motivation & Intention
 I've been using both Telerik and Mudblazor components in my projects. Telerik components offer a lot of functions, but the UI is ugly. Mudblazor gives a beautiful user interface, but it lacks functionality when compared to Telerik components and needs more work when implementing components such as Tables and SelectInput

@@ -140,17 +140,20 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     #region RowEditMethods
 
-    private List<(Action,object)> EditButtonActionList { get; set; } = new();
+    private List<Action> EditButtonActionList { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(ViewState == ViewState.Create)
         {
-            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Item1.Target.CastTo<MudTr>().Item == SelectedItem);
-            //((dynamic)GridRef.Context.Rows.First().Value).StartEditingItem();
-            //await EditButtonRef.OnClick.InvokeAsync();
-            firstItem.Item1.Invoke();
-            //EditButtonActionList.Last().Item1.Invoke();
+            if(EditButtonActionList.Count() == 0)
+            {
+                await EditButtonRef.OnClick.InvokeAsync();
+                return;
+            }
+           
+            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target.CastTo<MudTr>().Item == SelectedItem);
+            firstItem?.Invoke();
             ViewState = ViewState.None;
 
             await InvokeAsync(StateHasChanged);
@@ -202,7 +205,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
         SelectedItem = adaptedData;
 
-        DataSource = DataSource.Insert(0,SelectedItem);
+        DataSource = DataSource.Insert(0, SelectedItem);
 
         //AddNewTriggered = true;
 

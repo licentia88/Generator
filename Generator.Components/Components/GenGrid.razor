@@ -105,10 +105,9 @@
                 </MudTh>
                 </HeaderContent>
 
-
                 <RowTemplate>
+ 
                     @{
-
                         if (HasDetail && EditMode != EditMode.SmartPopup)
                         {
                             <MudTd>
@@ -172,7 +171,8 @@
                 <EditButtonContent Context="button">
 
                     @{
-                        EditButtonActionList.Add((button.ButtonAction, SelectedItem));
+                        if(!EditButtonActionList.Contains(button.ButtonAction))
+                            EditButtonActionList.Add((button.ButtonAction));
                         <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
 
                             <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(button.ButtonAction)" Disabled="@button.ButtonDisabled" />

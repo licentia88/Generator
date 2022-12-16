@@ -17,15 +17,25 @@ public static class CollectionExtensions
 
     public static IEnumerable<T> Insert<T>(this IEnumerable<T> enumerable, int index, T value)
     {
-        int current = 0;
-        foreach (var item in enumerable)
+        if(enumerable.Count() == 0)
         {
-            if (current == index)
-                yield return value;
+            yield return value;
 
-            yield return item;
-            current++;
         }
+        else
+        {
+            int current = 0;
+            foreach (var item in enumerable)
+            {
+                if (current == index)
+                    yield return value;
+
+                yield return item;
+                current++;
+            }
+        }
+
+       
     }
     public static IEnumerable<T> Insert2<T>(this IEnumerable<T> enumerable, int index, T value)
     {

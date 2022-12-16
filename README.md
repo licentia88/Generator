@@ -14,9 +14,9 @@ All this inspired me to create Gen Components using Mudblazor components to rese
 
 ### Generator Components
 //Will add Description soon
-### Generator Components
+### Generator Service
 //Will add Description soon
-### Generator Components
+### Generator UI
 //Will add Description soon
 
  

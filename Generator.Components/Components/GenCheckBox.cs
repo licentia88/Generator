@@ -94,13 +94,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     protected void OnValueChanged(bool value)
     {
 
-        var index = ParentComponent.DataSource.FindIndexByHash(Model);
-
         Model.SetPropertyValue(BindingField, value);
 
-        //ParentComponent.DataSource = ParentComponent.DataSource.Replace(index.Value, Model);
         Checked = value;
-        
     }
 
     //public void OnCheckChanged(bool value)

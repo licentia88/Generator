@@ -45,14 +45,11 @@
 
         
         @{
-
-
-            <MudTable @ref="@GridRef"
+            <MudTable  
                       T="object"
                       Items="DataSource"
                       Dense="Dense"
                       RowClassFunc="@RowClassFunc"
-                      OnRowClick="@OnRowClick"
                       MultiSelection="MultiSelection"
                       Breakpoint="Breakpoint.None"
                       Hover="Hover"
@@ -65,8 +62,8 @@
                       Filter="new Func<object,bool>(SearchFunction)"
                       Virtualize="Virtualize"
                       OnCommitEditClick="OnEditCLick"
-                      RowEditPreview="async x=> await OnBeforeAnyAction(x)"
-                      RowEditCancel="async x=> OnCancel(x)"
+                      RowEditPreview="async x=>OnBackUp(x)"
+                      RowEditCancel="x=> OnCancelClick(x)"
                       RowEditCommit="async x=> await OnCommit(x)"
                       IsEditRowSwitchingBlocked="true"
                       ApplyButtonPosition="TableApplyButtonPosition.End"
@@ -85,7 +82,7 @@
 
                             </MudTh>
                         }
-                        foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid))
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                         {
                             <MudTh>
                                 @item.Label
@@ -96,7 +93,7 @@
 
                     <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
                         <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                            <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" @onclick="OnAddNewEvent" Disabled="NewDisabled" />
+                            <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
                         </MudGrid>
                     </div>
 
@@ -122,7 +119,7 @@
                         }
 
 
-                        foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid))
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                         {
                             @*@onclick:stopPropagation = "EditMode==EditMode.Popup"*@
                             <MudTd @onclick:stopPropagation = "EditMode==EditMode.Popup">
@@ -140,7 +137,7 @@
                  
                 <RowEditingTemplate>
                     @{
-                        foreach (var item in GetComponentOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
                         {
                             <MudTd>
                                 @item.RenderAsComponent(context,ignoreLabels:true)
@@ -175,7 +172,7 @@
                             EditButtonActionList.Add((button.ButtonAction));
                         <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
 
-                            <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(button.ButtonAction)" Disabled="@button.ButtonDisabled" />
+                            <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(() => { ViewState = ViewState.Update; button.ButtonAction.Invoke(); })" Disabled="@button.ButtonDisabled" />
 
                             <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
 

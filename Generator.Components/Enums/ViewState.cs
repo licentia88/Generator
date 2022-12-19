@@ -2,5 +2,5 @@
 
 public enum ViewState
 {
-    Create, Update, Remove, None
+    Create, Update, Delete, None
 }

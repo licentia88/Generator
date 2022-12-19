@@ -4,7 +4,12 @@
 @{
     if (InternalDataSource is not null)
     {
-        <GenGrid @ref="GridRef" Class="m-2"
+        <GenGrid @ref="GridRef"
+                 Create="async x=>await OnCreate(x)"
+                 Update="async x=>await OnUpdate(x)"
+                 Delete="async x=>await OnDelete(x)"
+                 Load="async x=>await OnLoad(x)"
+                 Class="m-2"
                  EditMode="EditMode.Inline"
                  Title="GenericTest1"
                  DataSource="InternalDataSource"
@@ -42,3 +47,5 @@
     }
 
 }
+
+ 

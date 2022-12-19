@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Dynamic;
+using Generator.Components.Args;
 using Generator.Components.Components;
+using Generator.Components.Enums;
+using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
@@ -13,7 +17,7 @@ namespace Generator.Example.Pages
         public GenGrid GridRef { get; set; }
 
 
-        public ICollection<object> InternalDataSource { get; set; }
+        public ObservableCollection<object> InternalDataSource { get; set; }
 
         public List<object> ComboDataSource  { get; set; }
 
@@ -36,9 +40,9 @@ namespace Generator.Example.Pages
 
             var comboResult = await ITestService.QueryTestStringDataAsync();
 
-           
 
-            InternalDataSource = result.GenObject.DynamicData().Take(0).ToList();
+            //InternalDataSource.add
+            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(5)); ;
 
             ComboDataSource = comboResult.GenObject.DynamicData().ToList();
 
@@ -55,7 +59,40 @@ namespace Generator.Example.Pages
             }
           
         }
-        
+
+        public ValueTask OnCreate(GenGridArgs args)
+        {
+            //InternalDataSource.Insert(0,args.NewData);
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask OnUpdate(GenGridArgs args)
+        {
+            //InternalDataSource =  InternalDataSource.ReplaceExistingData(args.OldData, args.NewData).ToList();
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask OnDelete(GenGridArgs args)
+        {
+            InternalDataSource.Remove(args.OldData);
+
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask OnLoad(IGenView view)
+        {
+            if(view.ViewState == ViewState.Create)
+            {
+                var prop = view.GetPropertyValue(nameof(GenGrid.SelectedItem));
+                prop.SetPropertyValue("TT_ROWID", "222");
+
+                //InternalDataSource.Insert(0, prop);
+            }
+           
+            //test.Value = "221";
+            return ValueTask.CompletedTask;
+        }
+
     }
 }
 

@@ -2,7 +2,7 @@
 {
     public partial class DictionaryGrid
     {
-        private ICollection<object> DataSource { get; }
+        private List<object> DataSource { get; }
 
         public DictionaryGrid()
         {
@@ -11,12 +11,7 @@
 
         protected override Task OnInitializedAsync()
         {
-            //var data = await Service.QueryAsync();
-
-            //var result2 = data.Data.Deserialize<object>();
-            //var result = data.Data.Deserialize<List<IDictionary<string,object>>>();
-
-            //((List<object>)DataSource).AddRange(result);
+            
 
             StateHasChanged();
             return Task.CompletedTask;

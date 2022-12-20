@@ -1,8 +1,6 @@
 ﻿using Cysharp.Text;
 using Generator.Server.Helpers;
 using Generator.Shared.Enums;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Generator.Server.Extensions;
 

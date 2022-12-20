@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Generator.Components.Enums;
 using MudBlazor;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using System.ComponentModel;
@@ -35,20 +33,20 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     public object GetDefaultValue => DataType.GetDefaultValue();
 
-    [Parameter, AllowNull]
+    [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
     public int Width { get; set; }
 
-    [Parameter, AllowNull]
+    [Parameter]
     public int Order { get; set; }
 
-    [Parameter, AllowNull]
+    [Parameter]
     public bool VisibleOnEdit { get; set; } = true;
 
-    [Parameter, AllowNull]
+    [Parameter]
     public bool VisibleOnGrid { get; set; } = true;
 
-    [Parameter, AllowNull]
+    [Parameter]
     public bool EnabledOnEdit { get; set; } = true;
 
     [Parameter]
@@ -68,14 +66,10 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     [Parameter]
     public int xxl { get; set; }
-
-     
-
+    
     protected override Task OnInitializedAsync()
     {
-        //Converter = BoolConverter;
         ParentComponent?.AddChildComponent(this);
-
         return Task.CompletedTask;
     }
 
@@ -86,12 +80,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
             base.BuildRenderTree(__builder);
         }
     }
-
-    //[EditorBrowsable(EditorBrowsableState.Never)]
-    //public new bool BoolValue => (bool)Model.GetPropertyValue(BindingField);
-
-
-    protected void OnValueChanged(bool value)
+    
+    private void OnValueChanged(bool value)
     {
 
         Model.SetPropertyValue(BindingField, value);
@@ -106,26 +96,25 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     {
-
         Model = model;
-
-
+        
         CheckedChanged = EventCallback.Factory.Create<bool>(this, x => OnValueChanged(x));
 
-        bool val = (bool)model.GetPropertyValue(BindingField);
-        //, (nameof(BoolValue), val)
-        this.RenderComponent(model, builder,ignoreLabels, (nameof(Checked), val));
+        var val = (bool)model.GetPropertyValue(BindingField);
+        
+         
+        builder.RenderComponent(new RenderParameters<GenCheckBox>(this,model,ignoreLabels),(nameof(Checked), val));
+        // this.RenderComponent(new RenderParams<GenCheckBox>(model, builder, , ignoreLabels);
     };
 
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
     {
-        Model = model;
         var val = Model.GetPropertyValue(BindingField) as bool?;
 
         var gridValue = val  == true ? TrueText : FalseText;
 
-        this.RenderGrid(model, builder, gridValue);
+        RenderExtensions.RenderGrid(builder, gridValue);
     };
 }
 

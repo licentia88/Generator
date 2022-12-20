@@ -1,5 +1,4 @@
-﻿using Generator.Components.Interfaces;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Generator.Components.Components;
 

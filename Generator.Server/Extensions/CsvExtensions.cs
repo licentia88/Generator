@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Generator.Server.Extensions;
+﻿namespace Generator.Server.Extensions;
 
 //public static class CsvExtensions
 //{

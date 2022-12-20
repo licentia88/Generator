@@ -35,20 +35,20 @@ namespace Generator.Components.Components
 
         public object GetDefaultValue => DataType.GetDefaultValue();
 
-        [Parameter, AllowNull]
+        [Parameter]
         [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
         public int Width { get; set; }
 
-        [Parameter, AllowNull]
+        [Parameter]
         public int Order { get; set; }
 
-        [Parameter, AllowNull]
+        [Parameter]
         public bool VisibleOnEdit { get; set; } = true;
 
-        [Parameter, AllowNull]
+        [Parameter]
         public bool VisibleOnGrid { get; set; } = true;
 
-        [Parameter, AllowNull]
+        [Parameter]
         public bool EnabledOnEdit { get; set; } = true;
 
         [Parameter]
@@ -116,8 +116,9 @@ namespace Generator.Components.Components
                 }
             }));
 
-            var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString()); 
-            this.RenderComponent(model, builder,ignoreLabels, (nameof(Value), loValue), innerFragment);
+            var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
+            
+            builder.RenderComponent(new RenderParameters<GenComboBox>(this,model,ignoreLabels),(nameof(Value), loValue),innerFragment);
 
         };
           
@@ -125,11 +126,9 @@ namespace Generator.Components.Components
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
-            //Model = model;
-
             var selectedField = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
-            this.RenderGrid(null, builder, selectedField.GetPropertyValue(DisplayField));
+            RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
         };
 
     }

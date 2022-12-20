@@ -1,7 +1,4 @@
-﻿using System.Data.Common;
-using Cysharp.Text;
-
-namespace Generator.Server.Helpers;
+﻿namespace Generator.Server.Helpers;
 
 public class QueryHelper
 {

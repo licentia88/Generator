@@ -1,5 +1,4 @@
 ﻿using Generator.Components.Components;
-using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
@@ -7,11 +6,25 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Generator.Components.Extensions
 {
-	public static class RenderExtensions
+    public class RenderParameters<TGenComponent> where TGenComponent : IGenComponent
+    {
+        public RenderParameters(TGenComponent component, object objectModel, bool ignoreLabels)
+        {
+            Component = component;
+            ObjectModel = objectModel;
+            IgnoreLabels = ignoreLabels;
+        }
+
+        public TGenComponent Component { get; }
+        public object ObjectModel { get; }
+        public bool IgnoreLabels { get; }
+    }
+
+    public static class RenderExtensions
 	{
 
        
-        public static void RenderGrid<T>(this T component, object objectModel, RenderTreeBuilder builder ,object value) where T : IGenComponent
+        public static void RenderGrid(RenderTreeBuilder builder ,object value)
         {
             builder.OpenComponent(0, typeof(GridLabel));
             builder.AddAttribute(1, nameof(GridLabel.Value), value);
@@ -19,15 +32,15 @@ namespace Generator.Components.Extensions
             builder.CloseComponent();
         }
 
-        public static void RenderComponent<T>(this T component, object objectModel,RenderTreeBuilder builder,bool IgnoreLabels, params (string key, object value)[]  AdditionalParameters) where T:IGenComponent
+        public static void RenderComponent<T>(this RenderTreeBuilder builder, RenderParameters<T> renderParameters, params (string Key, object Value)[] AdditionalParams) where T:IGenComponent
         {
-            if (objectModel is null || component.ParentComponent is null) return;
+            if (renderParameters.ObjectModel is null || renderParameters.Component.ParentComponent is null) return;
  
-            var properties = component.GetType().GetProperties()
+            var properties = renderParameters.Component.GetType().GetProperties()
                              .Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(ParameterAttribute))
                                                                      && x.Name != "UserAttributes");
 
-            if (IgnoreLabels)
+            if (renderParameters.IgnoreLabels)
             {
                 properties = properties.Where(x => !x.Name.Equals(nameof(IGenComponent.Label)));
             }
@@ -39,7 +52,7 @@ namespace Generator.Components.Extensions
             {
                 var propName = property.Name;
 
-                var value = component.GetPropertyValue(propName);
+                var value = renderParameters.Component.GetPropertyValue(propName);
 
                 if (value is null) continue;
 
@@ -50,14 +63,14 @@ namespace Generator.Components.Extensions
                 i++;
             }
 
-            builder.AddAttribute(i++, nameof(IGenComponent.Model), objectModel);
+            builder.AddAttribute(i++, nameof(IGenComponent.Model), renderParameters.ObjectModel);
 
  
 
 
-            foreach (var additional in AdditionalParameters)
+            foreach (var additional in AdditionalParams)
             {
-                builder.AddAttribute(i, additional.key, additional.value);
+                builder.AddAttribute(i, additional.Key, additional.Value);
                 i++;
             }
 

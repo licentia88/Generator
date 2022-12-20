@@ -26,9 +26,6 @@ public partial class GenGrid : MudTable<object>, IGenView
 {
     public ViewState ViewState { get; set; } = ViewState.None;
 
-    // private MudTable<object> GridRef { get; set; }
-
-
     public MudIconButton EditButtonRef { get; set; }
 
     public bool DetailClicked { get; set; }
@@ -37,10 +34,9 @@ public partial class GenGrid : MudTable<object>, IGenView
     public List<IGenComponent> Components { get; set; } = new();
     private string _SearchString = string.Empty;
     public bool IsFirstRender { get; set; } = true;
-    public bool SearchDisabled { get; set; } = false;
+    public bool SearchDisabled { get; set; }
     public object OriginalEditItem { get; set; }
-
-
+ 
     private string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
     #endregion
 
@@ -83,7 +79,6 @@ public partial class GenGrid : MudTable<object>, IGenView
 
     #endregion
 
-    #region RenderFragments
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
 
@@ -96,12 +91,11 @@ public partial class GenGrid : MudTable<object>, IGenView
     public EditMode EditMode { get; set; }
 
 
-    public bool NewDisabled { get; set; } = false;
+    public bool NewDisabled { get; set; } 
 
-    public bool ExpandDisabled { get; set; } = false;
+    public bool ExpandDisabled { get; set; } 
     
 
-    #endregion
 
 
     #region Methods
@@ -117,9 +111,9 @@ public partial class GenGrid : MudTable<object>, IGenView
         {
             var columnValue = Model.GetPropertyValue(field.BindingField);
 
-            if (columnValue is null) continue;
+            if (columnValue is null ) continue;
 
-            if (columnValue.ToString().Contains(_SearchString, StringComparison.OrdinalIgnoreCase))
+            if (columnValue.ToString()!.Contains(_SearchString, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
         return false;
@@ -137,9 +131,22 @@ public partial class GenGrid : MudTable<object>, IGenView
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+            await OnNewItemAddEditInvoker();
+        // await base.OnAfterRenderAsync(firstRender);
+    }
+
+    /// <summary>
+    /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
+    /// therefore the newly added item is inserted to 0 index of datasource however the component is not rendered at that moment
+    /// and this method must be called on after render method
+    /// </summary>
+    /// <returns></returns>
+    private async Task OnNewItemAddEditInvoker()
+    {
         if (ViewState == ViewState.Create)
         {
-            if (EditButtonActionList.Count() == 0 && EditButtonRef is not null)
+            if (!EditButtonActionList.Any() && EditButtonRef is not null)
             {
                 await EditButtonRef.OnClick.InvokeAsync();
                 return;
@@ -149,19 +156,16 @@ public partial class GenGrid : MudTable<object>, IGenView
             firstItem?.Invoke();
 
             EditButtonActionList.Clear();
-            //await InvokeAsync(StateHasChanged);
         }
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     protected override async Task OnInitializedAsync()
     {
+        //Detail Grid
         if(ParentComponent is not null && ParentComponent.DetailClicked)
         {
             await InvokeAsync(ParentComponent.StateHasChanged);
         }
-
-        //await base.OnInitializedAsync();
     }
 
 
@@ -173,9 +177,6 @@ public partial class GenGrid : MudTable<object>, IGenView
         SearchDisabled = true;
         SelectedItem = element;
         OriginalEditItem = element.DeepClone();
-
-        //await InvokeAsync(StateHasChanged);
-
     }
 
  
@@ -183,16 +184,36 @@ public partial class GenGrid : MudTable<object>, IGenView
     {
         NewDisabled = false;
         ExpandDisabled = false;
+        
+        await ViewInvokeDecisioner(model);
+    }
 
-        if (ViewState == ViewState.Create && Create.HasDelegate)
-            await Create.InvokeAsync(new GenGridArgs(null, model));
+    /// <summary>
+    /// Invokes the eventcallback depending on the viewstate
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private async Task ViewInvokeDecisioner(object model)
+    {
+        switch (ViewState)
+        {
+            case ViewState.Create when Create.HasDelegate:
+                await Create.InvokeAsync(new GenGridArgs(null, model));
+                break;
+            case ViewState.Update when Update.HasDelegate:
+                await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
+                break;
+            case ViewState.Delete when Delete.HasDelegate:
+                await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
+                break;
+            case ViewState.None:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
-        if (ViewState == ViewState.Update && Update.HasDelegate)
-            await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
-
-        if (ViewState == ViewState.Delete && Delete.HasDelegate)
-            await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
-
+        ViewState = ViewState.None;
     }
 
     public async Task OnCreateClick()
@@ -203,7 +224,7 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         var DatasourceModelType = DataSource.GetType().GenericTypeArguments[0];
 
-        var newData = Components.ToDictionary<IGenComponent, string, object>(comp => comp.BindingField, comp => comp.GetDefaultValue);
+        var newData = Components.ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
         var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), DatasourceModelType);
 
@@ -225,25 +246,23 @@ public partial class GenGrid : MudTable<object>, IGenView
 
 
 
-    public  Task OnDeleteClicked(Action buttonAction)
+    public Task OnDeleteClicked(Action buttonAction)
     {
         ViewState = ViewState.Delete;
-        //var param1s = buttonAction.Method.GetParameters();
 
         var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
 
-         DataSource.Remove(dataToRemove);
-
-        //StateHasChanged();
+        DataSource.Remove(dataToRemove);
 
         return Task.CompletedTask;
     }
 
     private void OnCancelClick(object element)
     {
-        var datasourceItem = DataSource.Select((item, index) => new { item, index }).FirstOrDefault(x => x.item == element);
-
-        DataSource.Replace(element, OriginalEditItem);
+        if (ViewState == ViewState.Create)
+            DataSource.RemoveAt(0);
+        else
+            DataSource.Replace(element, OriginalEditItem);
 
         SearchDisabled = false;
         NewDisabled = false;

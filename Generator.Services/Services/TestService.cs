@@ -1,8 +1,6 @@
-﻿using System.Dynamic;
-using Generator.Server.Extensions;
+﻿using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
-using Generator.Shared.Enums;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
@@ -113,7 +111,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
     }
 
-    public async IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context = default)
+    public new async IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context = default)
     {
         //return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
 

@@ -46,20 +46,20 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
     public string BindingField { get; set; }
 
 
-    [Parameter, AllowNull]
+    [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
     public int Width { get; set; }
 
-    [Parameter, AllowNull]
+    [Parameter]
     public int Order { get; set; }
 
-    [Parameter, AllowNull]
+    [Parameter]
     public bool VisibleOnEdit { get; set; } = true;
 
-    [Parameter, AllowNull]
+    [Parameter]
     public bool VisibleOnGrid { get; set; } = true;
 
-    [Parameter, AllowNull]
+    [Parameter]
     public bool EnabledOnEdit { get; set; } = true;
 
     [Parameter]
@@ -169,17 +169,16 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
     {
         Model = model;
 
-        ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+        ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
 
-        this.RenderComponent(model, builder,ignoreLabels, (nameof(Value), model.GetPropertyValue(BindingField)));
+        var loValue = model.GetPropertyValue(BindingField);
 
+        builder.RenderComponent(new RenderParameters<GenTextField>(this,model,ignoreLabels),(nameof(Value), loValue));
 
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) => {
-        Model = model;
-
-        //ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+         
         var data = model.GetPropertyValue(BindingField);
 
         if(data is DateTime dt)
@@ -187,7 +186,7 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
             data = dt.ToString(Format);
         }
 
-        this.RenderGrid(model, builder, data);
+        RenderExtensions.RenderGrid(builder, data);
 
     };
 

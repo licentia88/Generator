@@ -1,5 +1,4 @@
-﻿using System;
-namespace Generator.Shared.Enums;
+﻿namespace Generator.Shared.Enums;
 
 public enum LogicalOperator
 {

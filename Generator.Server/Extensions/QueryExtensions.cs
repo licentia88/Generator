@@ -1,7 +1,5 @@
 ﻿using System.Data;
 using System.Data.Common;
-using Cysharp.Text;
-using Generator.Server.Helpers;
 using Generator.Server.Models.Shema;
 using Generator.Shared.Enums;
 using Mapster;

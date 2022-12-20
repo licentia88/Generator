@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 
@@ -12,7 +10,7 @@ namespace Generator.Components.Components
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public string BindingField { get; set; }
 
-        [Parameter, AllowNull]
+        [Parameter]
         [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
         public int Width { get; set; }
 

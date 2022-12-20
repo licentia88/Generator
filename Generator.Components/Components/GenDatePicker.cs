@@ -1,13 +1,10 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.VisualBasic;
 using MudBlazor;
 
 namespace Generator.Components.Components
@@ -31,20 +28,20 @@ namespace Generator.Components.Components
 
         public object GetDefaultValue => DataType.GetDefaultValue();
 
-        [Parameter, AllowNull]
+        [Parameter]
         [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
         public int Width { get; set; }
 
-        [Parameter, AllowNull]
+        [Parameter]
         public int Order { get; set; }
 
-        [Parameter, AllowNull]
+        [Parameter]
         public bool VisibleOnEdit { get; set; } = true;
 
-        [Parameter, AllowNull]
+        [Parameter]
         public bool VisibleOnGrid { get; set; } = true;
 
-        [Parameter, AllowNull]
+        [Parameter]
         public bool EnabledOnEdit { get; set; } = true;
 
         [Parameter]
@@ -91,22 +88,22 @@ namespace Generator.Components.Components
         {
             Model = model;
 
-            DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => OnDateChanged(x));
+            DateChanged = EventCallback.Factory.Create<DateTime?>(this, OnDateChanged);
 
             Date = (DateTime?)model.GetPropertyValue(BindingField);
 
-            this.RenderComponent(model, builder, ignoreLabels);
+            builder.RenderComponent(new RenderParameters<GenDatePicker>(this,model,ignoreLabels));
+
         };
          
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
-            //Model = model;
-
             Date = (DateTime?)model.GetPropertyValue(BindingField);
 
             if (Date is null) return;
-            this.RenderGrid(model,builder, Date.Value.ToString(DateFormat));
+            
+            RenderExtensions.RenderGrid(builder, Date.Value.ToString(DateFormat));
         };
 
          

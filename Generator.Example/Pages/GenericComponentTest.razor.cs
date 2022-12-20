@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Dynamic;
+﻿using System.Collections.ObjectModel;
 using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Enums;
@@ -8,7 +6,6 @@ using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
-using static System.Net.WebRequestMethods;
 
 namespace Generator.Example.Pages
 {

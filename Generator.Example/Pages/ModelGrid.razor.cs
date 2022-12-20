@@ -16,8 +16,9 @@ namespace Generator.Example.Pages
             DataSource = new List<TEST_TABLE>();
         }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
+            return Task.CompletedTask;
             //var data = await Service.QueryAsyncObject();
 
             //var result = data.Data.Deserialize<List<TEST_TABLE>>();

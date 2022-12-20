@@ -1,5 +1,4 @@
-﻿using Generator.Example.Data;
-using Generator.Shared.Services;
+﻿using Generator.Shared.Services;
 using MudBlazor.Services;
 using Generator.Shared.Extensions;
 
@@ -11,7 +10,6 @@ CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMudServices();
 
 //builder.Services.RegisterGrpcService<IGenericServiceBase>();

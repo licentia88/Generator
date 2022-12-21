@@ -12,9 +12,11 @@ namespace Generator.Components.Components;
 public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 {
     #region CascadingParameters
+
     [CascadingParameter(Name = nameof(ParentComponent))]
     public GenGrid ParentComponent { get; set; }
-    #endregion
+
+    #endregion CascadingParameters
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
@@ -26,7 +28,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     [Parameter, EditorRequired]
     public string TrueText { get; set; }
 
-    [Parameter,EditorRequired]
+    [Parameter, EditorRequired]
     public string FalseText { get; set; }
 
     public Type DataType { get; set; } = typeof(bool);
@@ -66,57 +68,49 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     [Parameter]
     public int xxl { get; set; }
-    
+
     protected override Task OnInitializedAsync()
     {
         ParentComponent?.AddChildComponent(this);
         return Task.CompletedTask;
     }
 
-    protected override void BuildRenderTree(RenderTreeBuilder __builder)
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Model is not null && ParentComponent is not null)
         {
-            base.BuildRenderTree(__builder);
+            base.BuildRenderTree(builder);
         }
     }
-    
+
     private void OnValueChanged(bool value)
     {
-
         Model.SetPropertyValue(BindingField, value);
 
         Checked = value;
     }
 
-    //public void OnCheckChanged(bool value)
-    //{
-    //    Model.SetPropertyValue(BindingField, value);
-    //}
-
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     {
         Model = model;
-        
-        CheckedChanged = EventCallback.Factory.Create<bool>(this, x => OnValueChanged(x));
+
+        CheckedChanged = EventCallback.Factory.Create<bool>(this, OnValueChanged);
 
         var val = (bool)model.GetPropertyValue(BindingField);
-        
-         
-        builder.RenderComponent(new RenderParameters<GenCheckBox>(this,model,ignoreLabels),(nameof(Checked), val));
-        // this.RenderComponent(new RenderParams<GenCheckBox>(model, builder, , ignoreLabels);
-    };
 
+        builder.RenderComponent(new RenderParameters<GenCheckBox>(this, model, ignoreLabels), (nameof(Checked), val));
+    };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
     {
         var val = Model.GetPropertyValue(BindingField) as bool?;
 
-        var gridValue = val  == true ? TrueText : FalseText;
+        var gridValue = val == true ? TrueText : FalseText;
 
         RenderExtensions.RenderGrid(builder, gridValue);
     };
 }
+
 
 
 

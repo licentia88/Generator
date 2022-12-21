@@ -1,24 +1,20 @@
-﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using Generator.Components.Extensions;
+﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Generator.Components.Components
 {
-	public class GenComboBox:MudSelect<object>,IGenComboBox
-	{
-        #region CascadingParameters
+    public class GenComboBox : MudSelect<object>, IGenComboBox
+    {
         [CascadingParameter(Name = nameof(ParentComponent))]
         public GenGrid ParentComponent { get; set; }
-        #endregion
 
-        [Parameter,EditorRequired]
+        [Parameter, EditorRequired]
         public string DisplayField { get; set; }
 
         [Parameter, EditorRequired]
@@ -28,7 +24,7 @@ namespace Generator.Components.Components
         public object Model { get; set; }
 
         [Parameter]
-        [EditorRequired()]
+        [EditorRequired]
         public string BindingField { get; set; }
 
         public Type DataType { get; set; } = typeof(object);
@@ -69,60 +65,52 @@ namespace Generator.Components.Components
         [Parameter]
         public int xxl { get; set; }
 
-        [Parameter,EditorRequired]
+        [Parameter, EditorRequired]
         public IEnumerable<object> DataSource { get; set; }
-
 
         protected override Task OnInitializedAsync()
         {
-            
             ParentComponent?.AddChildComponent(this);
 
             return Task.CompletedTask;
         }
 
-        protected override void BuildRenderTree(RenderTreeBuilder __builder)
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             if (Model is not null && ParentComponent is not null)
-                base.BuildRenderTree(__builder);
+                base.BuildRenderTree(builder);
         }
 
         public void OnValueChanged(object value)
         {
             if (value is null) return;
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
-
         }
 
-
-        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
         {
             Model = model;
             ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
-            ValueChanged = EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+            ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
 
-
-            var innerFragment  = (nameof(ChildContent), (RenderFragment)((bldr) =>
+            var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>
             {
                 var i = 1000;
 
                 foreach (var data in DataSource)
                 {
-                    bldr.OpenComponent(i++, typeof(MudSelectItem<object>));
+                    treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
-                    bldr.AddAttribute(i++, nameof(Value), data);
+                    treeBuilder.AddAttribute(i++, nameof(Value), data);
 
-                    bldr.CloseComponent();
+                    treeBuilder.CloseComponent();
                 }
             }));
 
             var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
-            
-            builder.RenderComponent(new RenderParameters<GenComboBox>(this,model,ignoreLabels),(nameof(Value), loValue),innerFragment);
 
+            builder.RenderComponent(new RenderParameters<GenComboBox>(this, model, ignoreLabels), (nameof(Value), loValue), innerFragment);
         };
-          
-       
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
@@ -130,7 +118,6 @@ namespace Generator.Components.Components
 
             RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
         };
-
     }
 }
 

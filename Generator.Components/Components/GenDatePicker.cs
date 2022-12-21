@@ -9,19 +9,16 @@ using MudBlazor;
 
 namespace Generator.Components.Components
 {
-	public class GenDatePicker:MudDatePicker,IGenDatePicker
-	{
-		 
-        #region CascadingParameters
+    public class GenDatePicker : MudDatePicker, IGenDatePicker
+    {
         [CascadingParameter(Name = nameof(ParentComponent))]
         public GenGrid ParentComponent { get; set; }
-        #endregion
- 
+
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get; set; }
 
         [Parameter]
-        [EditorRequired()]
+        [EditorRequired]
         public string BindingField { get; set; }
 
         public Type DataType { get; set; } = typeof(DateTime);
@@ -64,25 +61,21 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            
             ParentComponent?.AddChildComponent(this);
 
             return Task.CompletedTask;
         }
 
-        protected override void BuildRenderTree(RenderTreeBuilder __builder)
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             if (Model is not null && ParentComponent is not null)
-                base.BuildRenderTree(__builder);
+                base.BuildRenderTree(builder);
         }
 
- 
         public void OnDateChanged(DateTime? date)
         {
             Model.SetPropertyValue(BindingField, date);
         }
-
-       
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
@@ -92,21 +85,18 @@ namespace Generator.Components.Components
 
             Date = (DateTime?)model.GetPropertyValue(BindingField);
 
-            builder.RenderComponent(new RenderParameters<GenDatePicker>(this,model,ignoreLabels));
-
+            builder.RenderComponent(new RenderParameters<GenDatePicker>(this, model, ignoreLabels));
         };
-         
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
             Date = (DateTime?)model.GetPropertyValue(BindingField);
 
             if (Date is null) return;
-            
+
             RenderExtensions.RenderGrid(builder, Date.Value.ToString(DateFormat));
         };
-
-         
     }
 }
+
 

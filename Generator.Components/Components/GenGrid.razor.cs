@@ -1,26 +1,14 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml.Linq;
-using MudBlazor;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using Generator.Shared.Extensions;
-using Generator.Components.Interfaces;
-using Force.DeepCloner;
-using Generator.Components.Enums;
-using System.ComponentModel;
-using Mapster;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
-using MudBlazorFix;
-using System.Data.Common;
-using System.Windows.Input;
-using System.Dynamic;
+﻿using Force.DeepCloner;
 using Generator.Components.Args;
-using Microsoft.FSharp.Data.UnitSystems.SI.UnitNames;
+using Generator.Components.Enums;
+using Generator.Components.Interfaces;
+using Generator.Shared.Extensions;
+using Mapster;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
-
 
 public partial class GenGrid : MudTable<object>, IGenView
 {
@@ -30,18 +18,17 @@ public partial class GenGrid : MudTable<object>, IGenView
 
     public bool DetailClicked { get; set; }
 
-    #region NonParams
     public List<IGenComponent> Components { get; set; } = new();
-    private string _SearchString = string.Empty;
+
+    private string _searchString = string.Empty;
+
     public bool IsFirstRender { get; set; } = true;
+
     public bool SearchDisabled { get; set; }
+
     public object OriginalEditItem { get; set; }
- 
+
     private string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
-    #endregion
-
-
-    #region Parameters
 
     [Parameter]
     public EventCallback<GenGridArgs> Create { get; set; }
@@ -59,7 +46,6 @@ public partial class GenGrid : MudTable<object>, IGenView
     [CascadingParameter(Name = nameof(ParentComponent))]
     public GenGrid ParentComponent { get; set; }
 
-    
     [Parameter]
     public string Title { get; set; }
 
@@ -69,15 +55,8 @@ public partial class GenGrid : MudTable<object>, IGenView
     [Parameter]
     public string SearchPlaceHolderText { get; set; } = "Search";
 
-    [Parameter, EditorRequired()]
+    [Parameter, EditorRequired]
     public ICollection<object> DataSource { get; set; }
-
-    #endregion
-
-    #region CascadingParameters
-
-
-    #endregion
 
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
@@ -90,49 +69,37 @@ public partial class GenGrid : MudTable<object>, IGenView
     [Parameter, EditorRequired]
     public EditMode EditMode { get; set; }
 
+    public bool NewDisabled { get; set; }
 
-    public bool NewDisabled { get; set; } 
+    public bool ExpandDisabled { get; set; }
 
-    public bool ExpandDisabled { get; set; } 
-    
-
-
-
-    #region Methods
-
-    private bool SearchFunction(object Model)
+    private bool SearchFunction(object model)
     {
-        if (string.IsNullOrEmpty(_SearchString)) return true;
+        if (string.IsNullOrEmpty(_searchString)) return true;
 
         var searchableFields = GetComponentsOf<IGenTextField>()
-            .Where((x) => x.BindingField is not null && x.VisibleOnGrid );
+            .Where((x) => x.BindingField is not null && x.VisibleOnGrid);
 
-        foreach (var field in searchableFields)
-        {
-            var columnValue = Model.GetPropertyValue(field.BindingField);
+        //foreach (var field in searchableFields)
+        //{
+        //    var columnValue = model.GetPropertyValue(field.BindingField);
 
-            if (columnValue is null ) continue;
+        //    if (columnValue is null) continue;
 
-            if (columnValue.ToString()!.Contains(_SearchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-        }
-        return false;
+        //    if (columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        //        return true;
+        //}
+
+        return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
 
-   
-
-
-    #endregion
-
-    #region RowEditMethods
-
     private List<Action> EditButtonActionList { get; set; } = new();
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             await OnNewItemAddEditInvoker();
+
         // await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -162,13 +129,11 @@ public partial class GenGrid : MudTable<object>, IGenView
     protected override async Task OnInitializedAsync()
     {
         //Detail Grid
-        if(ParentComponent is not null && ParentComponent.DetailClicked)
+        if (ParentComponent is not null && ParentComponent.DetailClicked)
         {
             await InvokeAsync(ParentComponent.StateHasChanged);
         }
     }
-
-
 
     private void OnBackUp(object element)
     {
@@ -179,12 +144,11 @@ public partial class GenGrid : MudTable<object>, IGenView
         OriginalEditItem = element.DeepClone();
     }
 
- 
     private async Task OnCommit(object model)
     {
         NewDisabled = false;
         ExpandDisabled = false;
-        
+
         await ViewInvokeDecisioner(model);
     }
 
@@ -201,14 +165,18 @@ public partial class GenGrid : MudTable<object>, IGenView
             case ViewState.Create when Create.HasDelegate:
                 await Create.InvokeAsync(new GenGridArgs(null, model));
                 break;
+
             case ViewState.Update when Update.HasDelegate:
                 await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
                 break;
+
             case ViewState.Delete when Delete.HasDelegate:
                 await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
                 break;
+
             case ViewState.None:
                 break;
+
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -222,29 +190,25 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         ViewState = ViewState.Create;
 
-        var DatasourceModelType = DataSource.GetType().GenericTypeArguments[0];
+        var datasourceModelType = DataSource.GetType().GenericTypeArguments[0];
 
         var newData = Components.ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
-        var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), DatasourceModelType);
+        var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), datasourceModelType);
 
         SelectedItem = adaptedData;
 
         DataSource.Insert(0, SelectedItem);
-       
+
         if (Load.HasDelegate)
             await Load.InvokeAsync(this);
-
-        //await InvokeAsync(StateHasChanged);
-        }
+    }
 
     public async Task OnEditCLick()
     {
-        if(Load.HasDelegate)
+        if (Load.HasDelegate)
             await Load.InvokeAsync();
     }
-
-
 
     public Task OnDeleteClicked(Action buttonAction)
     {
@@ -277,7 +241,6 @@ public partial class GenGrid : MudTable<object>, IGenView
         DetailClicked = !DetailClicked;
 
         await InvokeAsync(StateHasChanged);
-
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
@@ -290,9 +253,9 @@ public partial class GenGrid : MudTable<object>, IGenView
         throw new NotImplementedException();
     }
 
-    public TComponent GetComponent<TComponent>(string BindingField) where TComponent : IGenComponent
+    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
     {
-        var item = Components.FirstOrDefault(x => x.BindingField.Equals(BindingField));
+        var item = Components.FirstOrDefault(x => x.BindingField.Equals(bindingField));
 
         return item is null ? default : item.CastTo<TComponent>();
     }
@@ -300,7 +263,6 @@ public partial class GenGrid : MudTable<object>, IGenView
     private List<TComponent> GetComponentsOf<TComponent>() where TComponent : IGenComponent
     {
         return Components.Where(x => x is TComponent).Cast<TComponent>().ToList();
-
     }
 
     public void AddChildComponent(IGenComponent childComponent)
@@ -308,7 +270,6 @@ public partial class GenGrid : MudTable<object>, IGenView
         if (Components.Any(x => x.BindingField == childComponent.BindingField)) return;
         Components.Add(childComponent);
     }
-
-    #endregion
 }
+
 

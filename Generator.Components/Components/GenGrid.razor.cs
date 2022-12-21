@@ -198,7 +198,12 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         SelectedItem = adaptedData;
 
-        DataSource.Insert(0, SelectedItem);
+        //await ViewInvokeDecisioner(SelectedItem);
+
+        //if (Load.HasDelegate)
+        //    await Load.InvokeAsync(this);
+
+        //DataSource.Insert(0, SelectedItem);
 
         if (Load.HasDelegate)
             await Load.InvokeAsync(this);
@@ -206,8 +211,8 @@ public partial class GenGrid : MudTable<object>, IGenView
 
     public async Task OnEditCLick()
     {
-        if (Load.HasDelegate)
-            await Load.InvokeAsync();
+        //if (Load.HasDelegate && ViewState != ViewState.Create)
+        //    await Load.InvokeAsync(this);
     }
 
     public Task OnDeleteClicked(Action buttonAction)
@@ -271,5 +276,3 @@ public partial class GenGrid : MudTable<object>, IGenView
         Components.Add(childComponent);
     }
 }
-
-

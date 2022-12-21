@@ -1,50 +1,30 @@
-﻿using Microsoft.AspNetCore.Components;
-using Generator.Components.Enums;
-using MudBlazor;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using Generator.Shared.Extensions;
-using System.ComponentModel;
-using Generator.Shared.Models;
-using System;
+﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-using System.Reflection;
-using System.Diagnostics;
+using Generator.Shared.Extensions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using MudBlazor.Extensions;
+using MudBlazor;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using Generator.Components.Extensions;
-using System;
-using Generator.Shared.Models.ComponentModels;
 
 namespace Generator.Components.Components;
-public  class GenTextField : MudTextField<object>,  IGenTextField
-{
-    #region NonParams
-    private Dictionary<string, object> Parameters { get; set; }
 
-    public Type DataType { get; set; } 
+public class GenTextField : MudTextField<object>, IGenTextField
+{
+    public Type DataType { get; set; }
 
     public object GetDefaultValue => DataType.GetDefaultValue();
 
-    public ComponentType ComponentType { get; set; }
-
-    //public GenTextField ComponentRef { get; set; }
-    #endregion
-
-    #region CascadingParameters
     [CascadingParameter(Name = nameof(ParentComponent))]
     public GenGrid ParentComponent { get; set; }
-    #endregion
 
-    #region Parameters
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
     [Parameter]
-    [EditorRequired()]
+    [EditorRequired]
     public string BindingField { get; set; }
-
 
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -79,91 +59,59 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
 
     [Parameter]
     public int xxl { get; set; }
-    #endregion
-
-    public GenTextField()
-    {
-        Parameters = new();
-    }
 
     //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
-    protected override void BuildRenderTree(RenderTreeBuilder __builder)
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null && ParentComponent is not null  )
+        if (Model is not null && ParentComponent is not null)
         {
-            base.BuildRenderTree(__builder);
+            base.BuildRenderTree(builder);
         }
-     }
-
-    
+    }
 
     protected override Task OnInitializedAsync()
     {
         if (InputType == InputType.Date)
         {
-            Converter = DateConverter;
+            Converter = _dateConverter;
             Culture = CultureInfo.GetCultureInfo("en-US");
             Format = "yyyy-MM-dd";
             DataType = typeof(DateTime);
         }
         else
         {
-            Converter = StringConverter;
+            Converter = _stringConverter;
             DataType = typeof(string);
         }
 
         ParentComponent?.AddChildComponent(this);
 
         return Task.CompletedTask;
-      
     }
 
-
-  
-
-    #region Events 
-    private Converter<object> StringConverter = new Converter<object>
+    private Converter<object> _stringConverter = new()
     {
-        SetFunc = value =>
-        {
-            return value?.ToString();
-        },
-        GetFunc = text =>
-        {
-            return text?.ToString();
-        }
+        SetFunc = value => value?.ToString(),
+        GetFunc = text => text?.ToString()
     };
 
-    private Converter<object> DateConverter = new Converter<object>
+    private Converter<object> _dateConverter = new()
     {
-        SetFunc = value => {
-
-
-            //DateTime.TryParse(value?.ToString(), out var dataToReturn);
-
-            //return dataToReturn.ToString("yyyy-MM-dd");
-            return Convert.ToDateTime(value).ToString("yyyy-MM-dd");
-
-        },
+        SetFunc = value => Convert.ToDateTime(value).ToString("yyyy-MM-dd"),
         GetFunc = text =>
         {
             DateTime.TryParse(text, out var dataToReturn);
             return dataToReturn;
         }
-        
     };
-
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
-
-    public  void OnValueChanged(object value)
+    public void OnValueChanged(object value)
     {
-         //ParentComponent.SelectedItem
-         Model.SetPropertyValue(BindingField, value);
+        Model.SetPropertyValue(BindingField, value);
     }
-
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     {
@@ -173,30 +121,22 @@ public  class GenTextField : MudTextField<object>,  IGenTextField
 
         var loValue = model.GetPropertyValue(BindingField);
 
-        builder.RenderComponent(new RenderParameters<GenTextField>(this,model,ignoreLabels),(nameof(Value), loValue));
-
+        builder.RenderComponent(new RenderParameters<GenTextField>(this, model, ignoreLabels), (nameof(Value), loValue));
     };
 
-    public RenderFragment RenderAsGridComponent(object model) => (builder) => {
-         
+    public RenderFragment RenderAsGridComponent(object model) => (builder) =>
+    {
         var data = model.GetPropertyValue(BindingField);
 
-        if(data is DateTime dt)
+        if (data is DateTime dt)
         {
             data = dt.ToString(Format);
         }
 
         RenderExtensions.RenderGrid(builder, data);
-
     };
-
-
-
-    #endregion
-
-
-
 }
+
 
 
 

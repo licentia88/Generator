@@ -93,7 +93,7 @@
 
                     <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
                         <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                            <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
+                                <MudIconButton Icon="@AddIcon"  Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
                         </MudGrid>
                     </div>
 
@@ -163,7 +163,7 @@
                 </ChildRowContent>
 
                 <PagerContent >
-                    <MudTablePager   PageSizeOptions="new[] { 10,25,50,100, !DataSource.Any() ?999:DataSource.Count()}" />
+                    <MudTablePager   PageSizeOptions="new[] { 10,25,50,100, !DataSource.Any() ?999:DataSource.Count}" />
                 </PagerContent>
                 <EditButtonContent Context="button">
 
@@ -172,13 +172,14 @@
                             EditButtonActionList.Add((button.ButtonAction));
                         <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
 
-                            <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(() =>
+                            <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(
+                            async () =>
                             {
-                            if(ViewState == ViewState.None)
-                                 ViewState = ViewState.Update;
-
-                            button.ButtonAction.Invoke();
-                            })" Disabled="@button.ButtonDisabled" />
+                                if(ViewState == ViewState.None)
+                                    ViewState = ViewState.Update; if (ViewState != ViewState.Create && Load.HasDelegate) await Load.InvokeAsync(this);
+                                button.ButtonAction.Invoke();
+                            })" 
+                            Disabled="@button.ButtonDisabled" />
 
                             <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
 
@@ -196,4 +197,3 @@
     </MudCard>
 
 </CascadingValue>
-

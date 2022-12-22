@@ -6,7 +6,7 @@ using ProtoBuf;
 namespace Generator.Shared.Models;
 
 [ProtoContract]
-public class GenObject : DynamicObject
+public class GenObject  
 {
     public GenObject()
     {
@@ -46,42 +46,42 @@ public class GenObject : DynamicObject
     public bool IsList { get; }
 
 
-    [ProtoIgnore] private IDictionary<string, object> Dictionary { get; set; } = new ExpandoObject();
+    //[ProtoIgnore] private IDictionary<string, object> Dictionary { get; set; } = new ExpandoObject();
 
     
 
-    public override bool TryGetMember(GetMemberBinder binder, out object result)
-    {
-        if (Dictionary.ContainsKey(binder.Name))
-        {
-            result = Dictionary[binder.Name];
-            return true;
-        }
-        else
-        {
-            result = "Invalid Property!";
-            return false;
-        }
-    }
+    //public override bool TryGetMember(GetMemberBinder binder, out object result)
+    //{
+    //    if (Dictionary.ContainsKey(binder.Name))
+    //    {
+    //        result = Dictionary[binder.Name];
+    //        return true;
+    //    }
+    //    else
+    //    {
+    //        result = "Invalid Property!";
+    //        return false;
+    //    }
+    //}
 
-    public override bool TrySetMember(SetMemberBinder binder, object value)
-    {
-        Dictionary[binder.Name] = value;
-        return true;
-    }
+    //public override bool TrySetMember(SetMemberBinder binder, object value)
+    //{
+    //    Dictionary[binder.Name] = value;
+    //    return true;
+    //}
 
-    public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-    {
-        dynamic method = Dictionary[binder.Name];
-        result = method(args[0].ToString(), args[1].ToString());
-        return true;
-    }
+    //public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+    //{
+    //    dynamic method = Dictionary[binder.Name];
+    //    result = method(args[0].ToString(), args[1].ToString());
+    //    return true;
+    //}
 
-    public void Add(string name, int value)
-    {
-        Dictionary.Add(name, value);
-        Bytes = Dictionary.Serialize();
-    }
+    //public void Add(string name, int value)
+    //{
+    //    Dictionary.Add(name, value);
+    //    Bytes = Dictionary.Serialize();
+    //}
 
 
     //public IEnumerable<object> DynamicData
@@ -120,8 +120,8 @@ public class GenObject : DynamicObject
         }
         else
         {
-            Dictionary = Bytes.Deserialize<IDictionary<string, object>>();
-            yield return Dictionary.Adapt<T>();
+            yield return Bytes.Deserialize<IDictionary<string, object>>().Adapt<T>(); 
+            //yield return Dictionary
         }
     }
 

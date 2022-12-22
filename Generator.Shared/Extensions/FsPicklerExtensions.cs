@@ -3,7 +3,7 @@ using MBrace.FsPickler;
 
 namespace Generator.Shared.Extensions
 {
-    public static class MsgPackExtensions
+    public static class FsPicklerExtensions
     {
         private static BinarySerializer serializer = FsPickler.CreateBinarySerializer();
 

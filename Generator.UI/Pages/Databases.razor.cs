@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using BCrypt.Net;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
@@ -18,12 +17,12 @@ namespace Generator.UI.Pages
         {
             //$2a$11$VP/ocvMI0dpk9yhw7yex9O
             //$2a$11$VP/ocvMI0dpk9yhw7yex9OdHiKxSapdhwvSxJha93MDm4FrexT5NW
-            var saltKey = BCrypt.Net.BCrypt.GenerateSalt();
+            //var saltKey = BCrypt.Net.BCrypt.GenerateSalt();
 
-            var test =   BCrypt.Net.BCrypt.HashPassword("TEST", "$2a$11$VP/ocvMI0dpk9yhw7yex9O");
+            //var test =   BCrypt.Net.BCrypt.HashPassword("TEST", "$2a$11$VP/ocvMI0dpk9yhw7yex9O");
 
-            var enhancedHashPassword = BCrypt.Net.BCrypt.EnhancedHashPassword("TEST", hashType: HashType.SHA384);
-            var validatePassword = BCrypt.Net.BCrypt.EnhancedVerify("TEST", enhancedHashPassword, hashType: HashType.SHA384);
+            //var enhancedHashPassword = BCrypt.Net.BCrypt.EnhancedHashPassword("TEST", hashType: HashType.SHA384);
+            //var validatePassword = BCrypt.Net.BCrypt.EnhancedVerify("TEST", enhancedHashPassword, hashType: HashType.SHA384);
 
             var builder = new DbConnectionStringBuilder();
 			builder.ConnectionString = "Server=Localhost;Database=TestContext;User Id=sa;Password=LucidNala88!;TrustServerCertificate=true";

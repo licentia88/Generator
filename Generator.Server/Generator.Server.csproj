@@ -31,7 +31,6 @@
     <Folder Include="Seed\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FastMember" Version="1.5.0" />
     <PackageReference Include="GenFu" Version="1.6.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />

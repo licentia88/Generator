@@ -105,7 +105,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
             var genObj = new GenObject();
 
-            genObj.Add("", result);
+            //genObj.Add("", result);
             return genObj;
         });
 

@@ -2,16 +2,38 @@
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
+using Generator.Components.Managers;
 using Generator.Shared.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid : MudTable<object>, IGenView
+public partial class GenGrid : MudTable<object>, IGenGrid
 {
+    [Inject]
+    public IDialogService DialogService { get; set; }
+
+    public DialogResult DialogResult { get; set; }
+
+    public DialogParameters DialogParameters { get; set; } = new DialogParameters();
+
+    public DialogOptions DialogOptions { get; set; } = new DialogOptions
+    {
+        MaxWidth = MaxWidth.Medium,
+        FullWidth = true,
+        CloseButton = true,
+        CloseOnEscapeKey = true,
+        DisableBackdropClick = true,
+        Position = DialogPosition.Center
+    };
+
+    private List<Action> EditButtonActionList { get; set; } = new();
+
+
     public ViewState ViewState { get; set; } = ViewState.None;
 
     public MudIconButton EditButtonRef { get; set; }
@@ -38,6 +60,9 @@ public partial class GenGrid : MudTable<object>, IGenView
 
     [Parameter]
     public EventCallback<GenGridArgs> Update { get; set; }
+
+    [Parameter]
+    public EventCallback<GenGridArgs> Cancel { get; set; }
 
     //Form Load
     [Parameter]
@@ -73,6 +98,21 @@ public partial class GenGrid : MudTable<object>, IGenView
 
     public bool ExpandDisabled { get; set; }
 
+    [Parameter]
+    public string CancelText { get; set; } = "Cancel";
+
+    [Parameter]
+    public string CreateText { get; set; } = "Create";
+
+    [Parameter]
+    public string UpdateText { get; set; } = "Update";
+
+    [Parameter]
+    public string DeleteText { get; set; } = "Delete";
+
+    
+
+
     private bool SearchFunction(object model)
     {
         if (string.IsNullOrEmpty(_searchString)) return true;
@@ -93,8 +133,7 @@ public partial class GenGrid : MudTable<object>, IGenView
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
 
-    private List<Action> EditButtonActionList { get; set; } = new();
-
+ 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
@@ -142,7 +181,8 @@ public partial class GenGrid : MudTable<object>, IGenView
         SearchDisabled = true;
         SelectedItem = element;
         OriginalEditItem = element.DeepClone();
-    }
+
+    }//test
 
     private async Task OnCommit(object model)
     {
@@ -183,6 +223,7 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         ViewState = ViewState.None;
     }
+   
 
     public async Task OnCreateClick()
     {
@@ -198,6 +239,22 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         SelectedItem = adaptedData;
 
+
+        //if (EditMode != EditMode.Inline)
+        //{
+        //    var paramList = new List<(string, object)>();
+
+        //    paramList.Add((nameof(GenPage.ViewModel), SelectedItem));
+        //    paramList.Add((nameof(GenPage.GenGrid), this));
+
+        //    await ShowDialogAsync<GenPage>(paramList.ToArray());
+        //    return;
+        //}
+
+
+        if (Create.HasDelegate)
+            await Create.InvokeAsync(new GenGridArgs(null, SelectedItem));
+
         //await ViewInvokeDecisioner(SelectedItem);
 
         //if (Load.HasDelegate)
@@ -205,8 +262,8 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         //DataSource.Insert(0, SelectedItem);
 
-        if (Load.HasDelegate)
-            await Load.InvokeAsync(this);
+        //if (Load.HasDelegate)
+        //    await Load.InvokeAsync(this);
     }
 
     public async Task OnEditCLick()
@@ -247,6 +304,18 @@ public partial class GenGrid : MudTable<object>, IGenView
 
         await InvokeAsync(StateHasChanged);
     }
+
+    public virtual async ValueTask ShowDialogAsync<Page>(params (string key, object value)[] parameters) where Page : IGenPage
+    {
+        foreach (var prm in parameters)
+        {
+            DialogParameters.Add(prm.key, prm.value);
+        }
+
+        await DialogService.ShowAsync<GenPage>(Title, DialogParameters, DialogOptions);
+
+    }
+
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
     {

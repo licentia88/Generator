@@ -1,0 +1,64 @@
+﻿@implements IGenPage
+
+
+<EditForm Model="@ViewModel" OnValidSubmit="OnCommit">
+
+    <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="Close">
+        <DialogContent>
+
+            @{
+                if (EnableModelValidation)
+                {
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                }
+            }
+            <MudContainer Style="max-height: 80vh; overflow-y: auto ">
+                @{
+
+                    <MudGrid Justify="Justify.FlexStart" Spacing="0">
+
+                        @{
+                            if (Components is not null)
+                            {
+                                @foreach (var component in Components.Where(x => x is IGenComponent))
+                                    {
+
+                                    <MudItem xs="component.xs"
+                                             sm="component.sm"
+                                             md="component.md"
+                                             lg="component.lg"
+                                             xl="component.xl"
+                                             xxl="component.xxl">
+                                        @{
+                                            if (component.VisibleOnEdit)
+                                            {
+                                                @component.RenderAsComponent(ViewModel, false)
+                                            }
+                                        }
+                                    </MudItem>
+                                }
+                            }
+                        }
+
+                    </MudGrid>
+
+                    if (GenGrid.EditMode == EditMode.SmartPopup && GenGrid.GenDetailGrid is not null)
+                    {
+                        <div class="pb-5">
+                            <CascadingValue Value="ViewModel" Name="@(nameof(GenPage.ViewModel))">
+                                @GenGrid.GenDetailGrid(ViewModel)
+                            </CascadingValue>
+                        </div>
+                    }
+                }
+            </MudContainer>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="Close">@GenGrid.CancelText</MudButton>
+            <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit">
+                 @(GetSubmitTextFromViewState())
+            </MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>

@@ -2,7 +2,7 @@
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
-using Generator.Components.Managers;
+using Generator.Components.Partials;
 using Generator.Shared.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Components;

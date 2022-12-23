@@ -28,7 +28,6 @@
     <None Remove="Extensions\" />
     <None Remove="DeepCloner" />
     <None Remove="Commands\" />
-    <None Remove="Managers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Args\" />
@@ -38,7 +37,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Extensions\" />
     <Folder Include="Commands\" />
-    <Folder Include="Managers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />

@@ -19,25 +19,23 @@
                     <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
                         @{
-                            if (Components is not null)
+                            @foreach (var component in GenGrid.Components?.Where(x => x is IGenComponent))
                             {
-                                @foreach (var component in Components.Where(x => x is IGenComponent))
-                                    {
 
-                                    <MudItem xs="component.xs"
-                                             sm="component.sm"
-                                             md="component.md"
-                                             lg="component.lg"
-                                             xl="component.xl"
-                                             xxl="component.xxl">
-                                        @{
-                                            if (component.VisibleOnEdit)
-                                            {
-                                                @component.RenderAsComponent(ViewModel, false)
-                                            }
+                                <MudItem    Class="mt-4"
+                                            xs="component.xs"
+                                            sm="component.sm"
+                                            md="component.md"
+                                            lg="component.lg"
+                                            xl="component.xl"
+                                            xxl="component.xxl">
+                                    @{
+                                        if (component.VisibleOnEdit)
+                                        {
+                                            @component.RenderAsComponent(ViewModel, false)
                                         }
-                                    </MudItem>
-                                }
+                                    }
+                                </MudItem>
                             }
                         }
 

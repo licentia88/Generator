@@ -48,22 +48,22 @@ namespace Generator.Components.Components
         public bool EnabledOnEdit { get; set; } = true;
 
         [Parameter]
-        public int xs { get; set; }
+        public int xs { get; set; } = 12;
 
         [Parameter]
-        public int sm { get; set; }
+        public int sm { get; set; } = 12;
 
         [Parameter]
-        public int md { get; set; }
+        public int md { get; set; } = 12;
 
         [Parameter]
-        public int lg { get; set; }
+        public int lg { get; set; } = 12;
 
         [Parameter]
-        public int xl { get; set; }
+        public int xl { get; set; } = 12;
 
         [Parameter]
-        public int xxl { get; set; }
+        public int xxl { get; set; } = 12;
 
         [Parameter, EditorRequired]
         public IEnumerable<object> DataSource { get; set; }
@@ -77,7 +77,7 @@ namespace Generator.Components.Components
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null && ParentComponent is not null)
+            if (Model is not null )
                 base.BuildRenderTree(builder);
         }
 
@@ -109,7 +109,7 @@ namespace Generator.Components.Components
 
             var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
-            builder.RenderComponent(new RenderParameters<GenComboBox>(this, model, ignoreLabels), (nameof(Value), loValue), innerFragment);
+            builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), innerFragment);
         };
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>

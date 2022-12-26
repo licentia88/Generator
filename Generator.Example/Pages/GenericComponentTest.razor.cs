@@ -59,8 +59,8 @@ namespace Generator.Example.Pages
 
         public ValueTask OnCreate(GenGridArgs args)
         {
-            args.NewData.SetPropertyValue("TT_ROWID", 2222);
-            InternalDataSource.Insert(0,args.NewData);
+            args.NewData.SetPropertyValue("TT_ROWID", "TEST");
+            //InternalDataSource.Insert(0,args.NewData);
             return ValueTask.CompletedTask;
         }
 

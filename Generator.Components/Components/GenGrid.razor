@@ -42,6 +42,14 @@
             </CardHeaderActions>
         </MudCardHeader>
 
+        <MudGrid Class="pt-5 pb-5 pr-15"Justify="Justify.FlexEnd"  >
+                @{
+                    if(GenHeaderButtons is not null)
+                    {
+                        @GenHeaderButtons
+                    }
+                }
+        </MudGrid>
         
         @* ReSharper disable once AsyncVoidLambda *@
         @{
@@ -91,13 +99,16 @@
                     }
                 <MudTh>
 
-                    <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
-                        <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                                <MudIconButton Icon="@AddIcon"  Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
-                        </MudGrid>
-                    </div>
-
-                  
+                    @{
+                        if (Create.HasDelegate)
+                        {
+                            <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+                                <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
+                                    <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
+                                </MudGrid>
+                            </div>
+                        }
+                    }
 
                 </MudTh>
                 </HeaderContent>
@@ -165,29 +176,35 @@
                 <PagerContent >
                     <MudTablePager   PageSizeOptions="new[] { 10,25,50,100, !DataSource.Any() ?999:DataSource.Count}" />
                 </PagerContent>
+
                 <EditButtonContent Context="button">
 
-                    @{
-                        if(!EditButtonActionList.Contains(button.ButtonAction))
-                            EditButtonActionList.Add((button.ButtonAction));
-                        <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
-
-                            <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(
+                    <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+                        @{
+                            if (Update.HasDelegate)
+                            {
+                                if (!EditButtonActionList.Contains(button.ButtonAction))
+                                    EditButtonActionList.Add((button.ButtonAction));
+                                <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(
                             async () =>
                             {
                                 if(ViewState == ViewState.None)
                                     ViewState = ViewState.Update; if (ViewState != ViewState.Create && Load.HasDelegate) await Load.InvokeAsync(this);
                                 button.ButtonAction.Invoke();
-                            })" 
-                            Disabled="@button.ButtonDisabled" />
+                            })"
+                                               Disabled="@button.ButtonDisabled" />
+                            }
+                        }
+                        @{
+                            if (Delete.HasDelegate)
+                            {
+                                <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
 
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
+                            }
+                        }
 
-                        </div>
-                    }
-
-
-                </EditButtonContent>
+                    </div>
+                    </EditButtonContent>
             </MudTable>
 
  

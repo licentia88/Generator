@@ -36,7 +36,7 @@ namespace Generator.Components.Components
         public EventCallback<GenGridArgs> Cancel { get; set; }
 
         [Parameter]
-        public object ViewModel { get; set; }
+        public object ViewModel { get; set; }  
 
         public MudDialogInstance MudDialog { get; set; }
         public bool EnableModelValidation { get; set; }

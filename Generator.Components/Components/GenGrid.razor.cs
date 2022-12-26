@@ -2,7 +2,6 @@
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
-using Generator.Components.Partials;
 using Generator.Shared.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Components;
@@ -87,6 +86,10 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     public RenderFragment GenColumns { get; set; }
 
     [Parameter, AllowNull]
+    public RenderFragment GenHeaderButtons { get; set; }
+
+
+    [Parameter, AllowNull]
     public RenderFragment<object> GenDetailGrid { get; set; }
 
     public bool HasDetail => GenDetailGrid is not null;
@@ -150,7 +153,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     /// <returns></returns>
     private async Task OnNewItemAddEditInvoker()
     {
-        if (ViewState == ViewState.Create)
+        if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
         {
             if (!EditButtonActionList.Any() && EditButtonRef is not null)
             {
@@ -225,46 +228,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     }
    
 
-    public async Task OnCreateClick()
-    {
-        EditButtonActionList.Clear();
-
-        ViewState = ViewState.Create;
-
-        var datasourceModelType = DataSource.GetType().GenericTypeArguments[0];
-
-        var newData = Components.ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
-
-        var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), datasourceModelType);
-
-        SelectedItem = adaptedData;
-
-
-        //if (EditMode != EditMode.Inline)
-        //{
-        //    var paramList = new List<(string, object)>();
-
-        //    paramList.Add((nameof(GenPage.ViewModel), SelectedItem));
-        //    paramList.Add((nameof(GenPage.GenGrid), this));
-
-        //    await ShowDialogAsync<GenPage>(paramList.ToArray());
-        //    return;
-        //}
-
-
-        if (Create.HasDelegate)
-            await Create.InvokeAsync(new GenGridArgs(null, SelectedItem));
-
-        //await ViewInvokeDecisioner(SelectedItem);
-
-        //if (Load.HasDelegate)
-        //    await Load.InvokeAsync(this);
-
-        //DataSource.Insert(0, SelectedItem);
-
-        //if (Load.HasDelegate)
-        //    await Load.InvokeAsync(this);
-    }
+    
 
     public async Task OnEditCLick()
     {

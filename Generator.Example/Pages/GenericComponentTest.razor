@@ -14,17 +14,38 @@
                  Title="GenericTest1"
                  DataSource="InternalDataSource"
                  EnableSearch="true">
-            <GenColumns >
+
+
+                 <GenHeaderButtons>
+                    <MudFab  Icon="@Icons.Material.Filled.AccessAlarm" Size="Size.Small" />
+                 </GenHeaderButtons>
+
+            <GenColumns>
+
+                <GenTextField BindingField="TT_ROWID" Label="Row Id"
+                              xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+                <GenSpacer xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
                 <GenComboBox Clearable="true"
                              Placeholder="Seciniz" Label="ComboTest"
                              DataSource="@ComboDataSource"
                              BindingField="TT_STRING_TABLE_CODE"
-                             ValueField="CT_ROWID" DisplayField="CT_DESC"  />
-                <GenTextField BindingField="TT_ROWID" Label="Row Id" />
+                             ValueField="CT_ROWID" DisplayField="CT_DESC"
+                             xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+                <GenSpacer xs="12" sm="12" md="12" lg="6" xl="6" xxl="6" />
+
                 <GenTextField BindingField="TT_DESC" Label="Description" />
-                <GenCheckBox  BindingField="TT_BOOLEAN" TrueText="Evet" FalseText="Hayir" Label="BooleanTest" />
+
+                <GenCheckBox BindingField="TT_BOOLEAN" Class="p-0"
+                             xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" 
+                             TrueText="Evet"
+                             FalseText="Hayir"
+                             Label="BooleanTest"
+                             LabelPosition="LabelPosition.Start"/>
                 @*<GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />*@
-                <GenDatePicker BindingField="TT_DATE" Label="Date" />
+                <GenDatePicker BindingField="TT_DATE" Label="Date" Clearable="true" TransformOrigin="Origin.BottomLeft"/>
                 <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
             </GenColumns>
             @*<GenDetailGrid>

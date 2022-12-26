@@ -2,11 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
+using IComponent = Microsoft.AspNetCore.Components.IComponent;
 
 namespace Generator.Components.Components
 {
-	public class GenSpacer:IGenSpacer
-	{
+	public partial class GenSpacer:IGenSpacer
+    {
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public string BindingField { get; set; }
 
@@ -26,52 +27,63 @@ namespace Generator.Components.Components
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public bool EnabledOnEdit { get; set; } = true;
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public int xs { get; set; }
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public int sm { get; set; }
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public int md { get; set; }
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public int lg { get; set; }
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public int xl { get; set; }
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public int xxl { get; set; }
 
+        [CascadingParameter(Name = nameof(ParentComponent))]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public GenGrid ParentComponent { get; set; }
+
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public GenGrid ParentComponent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public object Model { get; set; }
 
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public object Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-
-       
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public string Label { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Label { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Type DataType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Type DataType { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public object GetDefaultValue => throw new NotImplementedException();
+        public object GetDefaultValue { get; set; }
 
-        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
+
+        protected override Task OnInitializedAsync()
         {
-            throw new NotImplementedException();
+            ParentComponent?.Components.Add(this);
+
+            return base.OnInitializedAsync();
         }
 
-        public RenderFragment RenderAsGridComponent(object model)
+        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
-            throw new NotImplementedException();
-        }
+
+        };
+        
+
+        public RenderFragment RenderAsGridComponent(object model) => (builder) =>
+        {
+
+        };
+
+
+
     }
 }
 

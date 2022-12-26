@@ -70,6 +70,7 @@ public interface IGenGrid : IGenView
 
     public string DeleteText { get; set; }
 
+    public object SelectedItem { get; set; }
 
     public bool EnableSearch { get; set; }
 
@@ -84,6 +85,8 @@ public interface IGenGrid : IGenView
     public bool SearchDisabled { get; set; }
 
     public RenderFragment GenColumns { get; set; }
+
+    public RenderFragment GenHeaderButtons { get; set; }
 
     public RenderFragment<object> GenDetailGrid { get; set; }
 

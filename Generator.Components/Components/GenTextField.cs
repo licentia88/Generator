@@ -43,27 +43,27 @@ public class GenTextField : MudTextField<object>, IGenTextField
     public bool EnabledOnEdit { get; set; } = true;
 
     [Parameter]
-    public int xs { get; set; }
+    public int xs { get; set; } = 12;
 
     [Parameter]
-    public int sm { get; set; }
+    public int sm { get; set; } = 12;
 
     [Parameter]
-    public int md { get; set; }
+    public int md { get; set; } = 12;
 
     [Parameter]
-    public int lg { get; set; }
+    public int lg { get; set; } = 12;
 
     [Parameter]
-    public int xl { get; set; }
+    public int xl { get; set; } = 12;
 
     [Parameter]
-    public int xxl { get; set; }
+    public int xxl { get; set; } = 12;
 
     //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null && ParentComponent is not null)
+        if (Model is not null )
         {
             base.BuildRenderTree(builder);
         }
@@ -121,7 +121,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
         var loValue = model.GetPropertyValue(BindingField);
 
-        builder.RenderComponent(new RenderParameters<GenTextField>(this, model, ignoreLabels), (nameof(Value), loValue));
+        builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue));
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>

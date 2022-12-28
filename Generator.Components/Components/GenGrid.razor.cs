@@ -2,6 +2,7 @@
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
+using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +14,8 @@ namespace Generator.Components.Components;
 
 public partial class GenGrid : MudTable<object>, IGenGrid
 {
+    private MudTable<object> thisGrid;
+
     [Inject]
     public IDialogService DialogService { get; set; }
 
@@ -113,86 +116,38 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter]
     public string DeleteText { get; set; } = "Delete";
 
-    
 
-
-    private bool SearchFunction(object model)
-    {
-        if (string.IsNullOrEmpty(_searchString)) return true;
-
-        var searchableFields = GetComponentsOf<IGenTextField>()
-            .Where((x) => x.BindingField is not null && x.VisibleOnGrid);
-
-        //foreach (var field in searchableFields)
-        //{
-        //    var columnValue = model.GetPropertyValue(field.BindingField);
-
-        //    if (columnValue is null) continue;
-
-        //    if (columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-        //        return true;
-        //}
-
-        return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
-    }
-
- 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            await OnNewItemAddEditInvoker();
-
-        // await base.OnAfterRenderAsync(firstRender);
-    }
-
-    /// <summary>
-    /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
-    /// therefore the newly added item is inserted to 0 index of datasource however the component is not rendered at that moment
-    /// and this method must be called on after render method
-    /// </summary>
-    /// <returns></returns>
-    private async Task OnNewItemAddEditInvoker()
-    {
-        if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
-        {
-            if (!EditButtonActionList.Any() && EditButtonRef is not null)
-            {
-                await EditButtonRef.OnClick.InvokeAsync();
-                return;
-            }
-
-            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
-            firstItem?.Invoke();
-
-            EditButtonActionList.Clear();
-        }
-    }
+    public ObjectValidator ObjectValidator { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        //Detail Grid
+        ObjectValidator = new ObjectValidator();
+
+        //Detail Grid den parent gridi refreshleme
         if (ParentComponent is not null && ParentComponent.DetailClicked)
         {
             await InvokeAsync(ParentComponent.StateHasChanged);
         }
     }
 
-    private void OnBackUp(object element)
-    {
-        NewDisabled = true;
-        ExpandDisabled = true;
-        SearchDisabled = true;
-        SelectedItem = element;
-        OriginalEditItem = element.DeepClone();
 
-    }//test
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            await OnNewItemAddEditInvoker();
+    }
+
+   
+   
 
     private async Task OnCommit(object model)
     {
-        NewDisabled = false;
-        ExpandDisabled = false;
+        var a= Components.Any(x => x.Required && x.Model.GetPropertyValue(x.BindingField).IsNullOrDefault());
 
-        await ViewInvokeDecisioner(model);
+
+        if (a) return;
+
+        await InvokeCallBackByViewState(model);
     }
 
     /// <summary>
@@ -201,34 +156,44 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     /// <param name="model"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    private async Task ViewInvokeDecisioner(object model)
+    internal async Task InvokeCallBackByViewState(object model)
     {
         switch (ViewState)
         {
             case ViewState.Create when Create.HasDelegate:
-                await Create.InvokeAsync(new GenGridArgs(null, model));
+                await Create.InvokeAsync(new GenGridArgs(null, model,EditMode, DataSource.IndexOf(SelectedItem)));
                 break;
 
             case ViewState.Update when Update.HasDelegate:
-                await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
+                await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
                 break;
 
             case ViewState.Delete when Delete.HasDelegate:
-                await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model));
+                await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
                 break;
 
-            case ViewState.None:
+            case ViewState.None when Cancel.HasDelegate:
+                await Cancel.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
                 break;
 
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
+ 
+        SearchDisabled = false;
+        NewDisabled = false;
+        ExpandDisabled = false;
         ViewState = ViewState.None;
     }
-   
 
-    
+    internal async Task InvokeCallBackByViewState(object model, ViewState viewState)
+    {
+        ViewState = viewState;
+        await InvokeCallBackByViewState(model);
+    }
+
+
 
     public async Task OnEditCLick()
     {
@@ -236,30 +201,22 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         //    await Load.InvokeAsync(this);
     }
 
-    public Task OnDeleteClicked(Action buttonAction)
-    {
-        ViewState = ViewState.Delete;
+    
 
-        var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
-
-        DataSource.Remove(dataToRemove);
-
-        return Task.CompletedTask;
-    }
-
-    private void OnCancelClick(object element)
+    private async void OnCancelClick(object element)
     {
         if (ViewState == ViewState.Create)
-            DataSource.RemoveAt(0);
+            DataSource.Remove(element);
         else
             DataSource.Replace(element, OriginalEditItem);
 
-        SearchDisabled = false;
-        NewDisabled = false;
-        ExpandDisabled = false;
+
+      
 
         ViewState = ViewState.None;
-        StateHasChanged();
+
+        await InvokeCallBackByViewState(element);
+        //StateHasChanged();
     }
 
     public async Task OnDetailClicked()

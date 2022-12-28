@@ -8,6 +8,7 @@
                  Create="async x=>await OnCreate(x)"
                  Update="async x=>await OnUpdate(x)"
                  Delete="async x=>await OnDelete(x)"
+                 Cancel="async x=>await Cancel(x)"
                  Load="async x=>await OnLoad(x)"
                  Class="m-2"
                  EditMode="EditMode.Popup"
@@ -32,11 +33,11 @@
                              DataSource="@ComboDataSource"
                              BindingField="TT_STRING_TABLE_CODE"
                              ValueField="CT_ROWID" DisplayField="CT_DESC"
-                             xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+                             xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
 
-                <GenSpacer xs="12" sm="12" md="12" lg="6" xl="6" xxl="6" />
+                <GenSpacer xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
 
-                <GenTextField BindingField="TT_DESC" Label="Description" />
+                <GenTextField BindingField="TT_DESC" Label="Description"  Required="true" />
 
                 <GenCheckBox BindingField="TT_BOOLEAN" Class="p-0"
                              xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" 

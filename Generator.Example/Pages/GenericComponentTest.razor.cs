@@ -39,7 +39,7 @@ namespace Generator.Example.Pages
 
 
             //InternalDataSource.add
-            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(5)); ;
+            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(2)); ;
 
             ComboDataSource = comboResult.GenObject.DynamicData().ToList();
 
@@ -60,12 +60,24 @@ namespace Generator.Example.Pages
         public ValueTask OnCreate(GenGridArgs args)
         {
             args.NewData.SetPropertyValue("TT_ROWID", "TEST");
-            //InternalDataSource.Insert(0,args.NewData);
+
+            if (args.EditMode != EditMode.Inline)
+            {
+                InternalDataSource.Insert(0, args.NewData);
+            }
+           
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask Cancel(GenGridArgs args)
+        {
             return ValueTask.CompletedTask;
         }
 
         public ValueTask OnUpdate(GenGridArgs args)
         {
+            //InternalDataSource.Replace(args.OldData, args.NewData);
+
             //InternalDataSource =  InternalDataSource.ReplaceExistingData(args.OldData, args.NewData).ToList();
             return ValueTask.CompletedTask;
         }

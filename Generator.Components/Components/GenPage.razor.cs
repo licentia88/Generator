@@ -10,7 +10,7 @@ namespace Generator.Components.Components
 	public partial class GenPage: IGenPage
     {
         [Parameter]
-        public IGenGrid GenGrid { get; set; }
+        public GenGrid GenGrid { get; set; }
 
         [Parameter]
         public string Title { get; set; }
@@ -36,10 +36,13 @@ namespace Generator.Components.Components
         public EventCallback<GenGridArgs> Cancel { get; set; }
 
         [Parameter]
-        public object ViewModel { get; set; }  
+        public object ViewModel { get; set; }
 
+        [CascadingParameter]
         public MudDialogInstance MudDialog { get; set; }
+
         public bool EnableModelValidation { get; set; }
+
         public List<IGenComponent> Components { get; set; }
 
         public TComponent GetComponent<TComponent>(string BindingField) where TComponent : IGenComponent
@@ -58,9 +61,12 @@ namespace Generator.Components.Components
         }
 
 
-        public Task OnCommit()
+        public async Task OnCommit()
         {
-            return Task.CompletedTask;
+            //var aa = GenGrid.Validator.IsValid;
+            await GenGrid.InvokeCallBackByViewState(ViewModel);
+
+            Close();
         }
 
         public virtual void Close()

@@ -68,13 +68,14 @@ namespace Generator.Components.Components
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null )
+            if (Model is not null)
                 base.BuildRenderTree(builder);
         }
 
         public void OnDateChanged(DateTime? date)
         {
             Model.SetPropertyValue(BindingField, date);
+            Console.WriteLine(Date.ToString());
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
@@ -90,11 +91,11 @@ namespace Generator.Components.Components
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
-            Date = (DateTime?)model.GetPropertyValue(BindingField);
+            var val = (DateTime?)model.GetPropertyValue(BindingField);
 
-            if (Date is null) return;
+            if(val is not null)
+                RenderExtensions.RenderGrid(builder, val.Value.ToString(DateFormat));
 
-            RenderExtensions.RenderGrid(builder, Date.Value.ToString(DateFormat));
         };
     }
 }

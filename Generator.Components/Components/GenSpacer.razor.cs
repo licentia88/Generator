@@ -63,6 +63,8 @@ namespace Generator.Components.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public object GetDefaultValue { get; set; }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool Required { get; set; }
 
         protected override Task OnInitializedAsync()
         {

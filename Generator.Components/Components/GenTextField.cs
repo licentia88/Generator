@@ -1,9 +1,11 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
+using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -12,6 +14,7 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField
 {
+ 
     public Type DataType { get; set; }
 
     public object GetDefaultValue => DataType.GetDefaultValue();
@@ -65,12 +68,20 @@ public class GenTextField : MudTextField<object>, IGenTextField
     {
         if (Model is not null )
         {
+            if (Required)
+            {
+                For = () => BindingField;
+                Validation = ParentComponent.ObjectValidator.ValidateValue(Model, BindingField);
+            }
+            
             base.BuildRenderTree(builder);
         }
-    }
 
-    protected override Task OnInitializedAsync()
+    }
+  
+    protected override  Task OnInitializedAsync()
     {
+       
         if (InputType == InputType.Date)
         {
             Converter = _dateConverter;

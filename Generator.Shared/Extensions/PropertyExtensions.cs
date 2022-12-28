@@ -111,6 +111,22 @@ public static class PropertyExtensions
         return default(T);
     }
 
+    public static bool IsNullOrDefault<T>(this T argument)
+    {
+        if (argument is ValueType || argument != null)
+        {
+            if ((object.Equals(argument, default(T))))
+                return true;
+
+            if (argument is string str)
+                return string.IsNullOrEmpty(str);
+
+            return false;
+        }
+
+        return true;
+    }
+
     public static object GetDefaultValue(this Type type)
     {
         if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)

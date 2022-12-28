@@ -47,7 +47,7 @@ public interface IGenPage : IGenView
 
     public bool EnableModelValidation { get; set; }
 
-    public IGenGrid GenGrid { get; set; }
+    public GenGrid GenGrid { get; set; }
 
 }
 

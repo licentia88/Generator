@@ -4,6 +4,7 @@ using Generator.Components.Enums;
 using Mapster;
 using MudBlazor;
 using Generator.Shared.Extensions;
+using Force.DeepCloner;
 
 namespace Generator.Components.Components;
 
@@ -85,4 +86,65 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     //}
 
+    private bool SearchFunction(object model)
+    {
+        if (string.IsNullOrEmpty(_searchString)) return true;
+
+        var searchableFields = GetComponentsOf<IGenTextField>()
+            .Where((x) => x.BindingField is not null && x.VisibleOnGrid);
+
+        //foreach (var field in searchableFields)
+        //{
+        //    var columnValue = model.GetPropertyValue(field.BindingField);
+
+        //    if (columnValue is null) continue;
+
+        //    if (columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        //        return true;
+        //}
+
+        return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
+    /// therefore the newly added item is inserted to 0 index of datasource however the component is not rendered at that moment
+    /// and this method must be called on after render method
+    /// </summary>
+    /// <returns></returns>
+    private async Task OnNewItemAddEditInvoker()
+    {
+        if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
+        {
+            if (!EditButtonActionList.Any() && EditButtonRef is not null)
+            {
+                await EditButtonRef.OnClick.InvokeAsync();
+                return;
+            }
+
+            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
+            firstItem?.Invoke();
+
+            EditButtonActionList.Clear();
+        }
+    }
+
+    private void OnBackUp(object element)
+    {
+        NewDisabled = true;
+        ExpandDisabled = true;
+        SearchDisabled = true;
+        SelectedItem = element;
+        OriginalEditItem = element.DeepClone();
+    }
+
+    public async Task OnDeleteClicked(Action buttonAction)
+    {
+        ViewState = ViewState.Delete;
+
+        var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
+
+        await  InvokeCallBackByViewState(dataToRemove);
+ 
+    }
 }

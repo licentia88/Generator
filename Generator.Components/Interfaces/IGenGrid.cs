@@ -98,9 +98,8 @@ public interface IGenGrid : IGenView
 
     public string SearchPlaceHolderText { get; set; }
 
- 
+    public bool IsModelValid { get; set; }
 
 
-
- }
+}
 

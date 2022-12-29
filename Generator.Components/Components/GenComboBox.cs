@@ -1,5 +1,6 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
+using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -11,6 +12,8 @@ namespace Generator.Components.Components
 {
     public class GenComboBox : MudSelect<object>, IGenComboBox
     {
+        ObjectValidator<GenComboBox> ObjectValidator = new ObjectValidator<GenComboBox>();
+
         [CascadingParameter(Name = nameof(ParentComponent))]
         public GenGrid ParentComponent { get; set; }
 
@@ -68,6 +71,10 @@ namespace Generator.Components.Components
         [Parameter, EditorRequired]
         public IEnumerable<object> DataSource { get; set; }
 
+        public GenComboBox()
+        {
+            ObjectValidator = new();
+        }
         protected override Task OnInitializedAsync()
         {
             ParentComponent?.AddChildComponent(this);
@@ -83,8 +90,10 @@ namespace Generator.Components.Components
 
         public void OnValueChanged(object value)
         {
-            if (value is null) return;
+            //if (value is null) return;
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
+
+            ObjectValidator.Validate(this);
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Reflection;
 
@@ -113,18 +114,13 @@ public static class PropertyExtensions
 
     public static bool IsNullOrDefault<T>(this T argument)
     {
-        if (argument is ValueType || argument != null)
-        {
-            if ((object.Equals(argument, default(T))))
-                return true;
+        if (argument is not ValueType && argument is null) return true;
 
-            if (argument is string str)
-                return string.IsNullOrEmpty(str);
+        if (argument is string str)
+            return string.IsNullOrEmpty(str);
 
-            return false;
-        }
-
-        return true;
+         return argument.Equals(default);
+         //return EqualityComparer<T>.Default.Equals(typeof(argument), default);
     }
 
     public static object GetDefaultValue(this Type type)

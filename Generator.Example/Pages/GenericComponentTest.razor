@@ -11,7 +11,7 @@
                  Cancel="async x=>await Cancel(x)"
                  Load="async x=>await OnLoad(x)"
                  Class="m-2"
-                 EditMode="EditMode.Popup"
+                 EditMode="EditMode.Inline"
                  Title="GenericTest1"
                  DataSource="InternalDataSource"
                  EnableSearch="true">
@@ -29,6 +29,7 @@
                 <GenSpacer xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
 
                 <GenComboBox Clearable="true"
+                             Required="true"
                              Placeholder="Seciniz" Label="ComboTest"
                              DataSource="@ComboDataSource"
                              BindingField="TT_STRING_TABLE_CODE"
@@ -46,8 +47,8 @@
                              Label="BooleanTest"
                              LabelPosition="LabelPosition.Start"/>
                 @*<GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />*@
-                <GenDatePicker BindingField="TT_DATE" Label="Date" Clearable="true" TransformOrigin="Origin.BottomLeft"/>
-                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" />
+                <GenDatePicker BindingField="TT_DATE" Label="Date" Clearable="true" TransformOrigin="Origin.BottomLeft" Required="true"/>
+                <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" Required="true" Clearable="true"/>
             </GenColumns>
             @*<GenDetailGrid>
                 <GenGrid @ref="GridRef" Class="m-2"

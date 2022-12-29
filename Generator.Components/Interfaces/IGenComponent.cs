@@ -37,5 +37,9 @@ public interface IGenComponent: IGenCompRenderer
     public string Label { get; set; }
 
     public bool Required { get; set; }
+
+    public bool Error { get; set; }
+
+    public string ErrorText { get; set; }
 }
 

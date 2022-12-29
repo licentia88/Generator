@@ -14,7 +14,6 @@ namespace Generator.Components.Components;
 
 public partial class GenGrid : MudTable<object>, IGenGrid
 {
-    private MudTable<object> thisGrid;
 
     [Inject]
     public IDialogService DialogService { get; set; }

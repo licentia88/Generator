@@ -42,7 +42,7 @@
             </CardHeaderActions>
         </MudCardHeader>
 
-        <MudGrid Class="pt-5 pb-5 pr-15"Justify="Justify.FlexEnd"  >
+        <MudGrid Class="pt-5 pb-5 pr-15" Justify="Justify.FlexEnd"  >
                 @{
                     if(GenHeaderButtons is not null)
                     {
@@ -53,7 +53,7 @@
         
         @* ReSharper disable once AsyncVoidLambda *@
         @{
-                <MudTable @ref="thisGrid"
+                <MudTable 
                           T="object"
                           Items="DataSource"
                           Dense="Dense"

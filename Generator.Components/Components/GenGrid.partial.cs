@@ -127,10 +127,26 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
             EditButtonActionList.Clear();
         }
+
+        if (ViewState == ViewState.Update && EditMode == EditMode.Inline)
+        {
+            if (!EditButtonActionList.Any() && EditButtonRef is not null)
+            {
+                await EditButtonRef.OnClick.InvokeAsync();
+                return;
+            }
+
+            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
+            firstItem?.Invoke();
+
+            EditButtonActionList.Clear();
+        }
     }
 
     private void OnBackUp(object element)
     {
+        if (!IsModelValid) return;
+
         NewDisabled = true;
         ExpandDisabled = true;
         SearchDisabled = true;

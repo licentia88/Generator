@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
+using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -11,6 +12,8 @@ namespace Generator.Components.Components
 {
     public class GenDatePicker : MudDatePicker, IGenDatePicker
     {
+        ObjectValidator<GenDatePicker> ObjectValidator = new ObjectValidator<GenDatePicker>();
+
         [CascadingParameter(Name = nameof(ParentComponent))]
         public GenGrid ParentComponent { get; set; }
 
@@ -59,9 +62,13 @@ namespace Generator.Components.Components
         [Parameter]
         public int xxl { get; set; } = 12;
 
+
+        
         protected override Task OnInitializedAsync()
         {
             ParentComponent?.AddChildComponent(this);
+
+            Date = (DateTime?)Model?.GetPropertyValue(BindingField);
 
             return Task.CompletedTask;
         }
@@ -75,7 +82,8 @@ namespace Generator.Components.Components
         public void OnDateChanged(DateTime? date)
         {
             Model.SetPropertyValue(BindingField, date);
-            Console.WriteLine(Date.ToString());
+
+            ObjectValidator.Validate(this);
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
@@ -84,7 +92,7 @@ namespace Generator.Components.Components
 
             DateChanged = EventCallback.Factory.Create<DateTime?>(this, OnDateChanged);
 
-            Date = (DateTime?)model.GetPropertyValue(BindingField);
+            //Date = (DateTime?)model.GetPropertyValue(BindingField);
 
             builder.RenderComponent(this,ignoreLabels);
         };

@@ -116,12 +116,10 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter]
     public string DeleteText { get; set; } = "Delete";
 
-
-    public ObjectValidator ObjectValidator { get; set; }
+    public bool IsModelValid { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
-        ObjectValidator = new ObjectValidator();
 
         //Detail Grid den parent gridi refreshleme
         if (ParentComponent is not null && ParentComponent.DetailClicked)

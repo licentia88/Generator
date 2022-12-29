@@ -65,6 +65,8 @@ namespace Generator.Components.Components
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public bool Required { get; set; }
+        public bool Error { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ErrorText { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         protected override Task OnInitializedAsync()
         {

@@ -14,7 +14,8 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField
 {
- 
+    ObjectValidator<GenTextField> ObjectValidator = new ObjectValidator<GenTextField>();
+
     public Type DataType { get; set; }
 
     public object GetDefaultValue => DataType.GetDefaultValue();
@@ -67,15 +68,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Model is not null )
-        {
-            if (Required)
-            {
-                For = () => BindingField;
-                Validation = ParentComponent.ObjectValidator.ValidateValue(Model, BindingField);
-            }
-            
             base.BuildRenderTree(builder);
-        }
 
     }
   
@@ -122,6 +115,8 @@ public class GenTextField : MudTextField<object>, IGenTextField
     public void OnValueChanged(object value)
     {
         Model.SetPropertyValue(BindingField, value);
+
+        ObjectValidator.Validate(this);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>

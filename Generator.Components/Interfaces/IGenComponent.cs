@@ -1,4 +1,5 @@
 ﻿using Generator.Components.Components;
+using Generator.Components.Validators;
 
 namespace Generator.Components.Interfaces;
 
@@ -41,5 +42,8 @@ public interface IGenComponent: IGenCompRenderer
     public bool Error { get; set; }
 
     public string ErrorText { get; set; }
+
+    public void ValidateObject();
+
 }
 

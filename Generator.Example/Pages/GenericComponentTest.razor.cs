@@ -39,7 +39,7 @@ namespace Generator.Example.Pages
 
 
             //InternalDataSource.add
-            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(2)); ;
+            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(1)); ;
 
             ComboDataSource = comboResult.GenObject.DynamicData().ToList();
 

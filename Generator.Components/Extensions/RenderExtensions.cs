@@ -19,7 +19,9 @@ namespace Generator.Components.Extensions
         }
 
         public static void RenderComponent<T>(this RenderTreeBuilder builder, T component, bool ignoreLabels, params (string Key, object Value)[] AdditionalParams) where T:IGenComponent
-        { 
+        {
+            //if (component.Model is null) return;
+
             var i = 1;
             builder.OpenComponent(0, typeof(T));
 

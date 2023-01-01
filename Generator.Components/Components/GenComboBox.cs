@@ -4,6 +4,7 @@ using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,7 @@ namespace Generator.Components.Components
 {
     public class GenComboBox : MudSelect<object>, IGenComboBox
     {
-        ObjectValidator<GenComboBox> ObjectValidator = new ObjectValidator<GenComboBox>();
+        public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
 
         [CascadingParameter(Name = nameof(ParentComponent))]
         public GenGrid ParentComponent { get; set; }
@@ -75,6 +76,7 @@ namespace Generator.Components.Components
         {
             ObjectValidator = new();
         }
+
         protected override Task OnInitializedAsync()
         {
             ParentComponent?.AddChildComponent(this);
@@ -88,19 +90,31 @@ namespace Generator.Components.Components
                 base.BuildRenderTree(builder);
         }
 
+
+        public void OnClearClicked(MouseEventArgs arg)
+        {
+            Model.SetPropertyValue(BindingField, null);
+
+            ValidateObject();
+
+        }
         public void OnValueChanged(object value)
         {
-            //if (value is null) return;
+            if (value is null) return;
+
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            ObjectValidator.Validate(this);
+            ValidateObject();
+
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
         {
             Model = model;
             ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
             ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
+
 
             var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>
             {
@@ -127,6 +141,11 @@ namespace Generator.Components.Components
 
             RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
         };
+
+        public void ValidateObject()
+        {
+            ObjectValidator.Validate(this);
+        }
     }
 }
 

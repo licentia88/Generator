@@ -54,6 +54,8 @@ public interface IGenPage : IGenView
 public interface IGenGrid : IGenView
 {
 
+    public bool HasErrors();// { get; }
+
     public IDialogService DialogService { get; set; }
 
     public DialogResult DialogResult { get; set; }
@@ -98,8 +100,7 @@ public interface IGenGrid : IGenView
 
     public string SearchPlaceHolderText { get; set; }
 
-    public bool IsModelValid { get; set; }
-
+ 
 
 }
 

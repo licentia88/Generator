@@ -6,6 +6,7 @@ using Generator.Shared.Extensions;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
+using Generator.Components.Validators;
 
 namespace Generator.Components.Components;
 
@@ -69,6 +70,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     [Parameter]
     public int xxl { get; set; } = 12;
 
+    //bool HasErrors { get; set; } 
+
     protected override Task OnInitializedAsync()
     {
         ParentComponent?.AddChildComponent(this);
@@ -85,6 +88,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     private void OnValueChanged(bool value)
     {
+
+
         Model.SetPropertyValue(BindingField, value);
 
         Checked = value;
@@ -98,17 +103,23 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
         var val = (bool)model.GetPropertyValue(BindingField);
 
-        builder.RenderComponent(this,ignoreLabels, (nameof(Checked), val));
+
+        builder.RenderComponent(this, ignoreLabels,(nameof(Checked), val));
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
     {
-        var val = Model.GetPropertyValue(BindingField) as bool?;
+        var val = model.GetPropertyValue(BindingField) as bool?;
 
         var gridValue = val == true ? TrueText : FalseText;
 
         RenderExtensions.RenderGrid(builder, gridValue);
     };
+
+    public void ValidateObject()
+    {
+        
+    }
 }
 
 

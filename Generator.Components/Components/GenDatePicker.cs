@@ -83,7 +83,7 @@ namespace Generator.Components.Components
         {
             Model.SetPropertyValue(BindingField, date);
 
-            ObjectValidator.Validate(this);
+            ValidateObject();
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
@@ -105,6 +105,11 @@ namespace Generator.Components.Components
                 RenderExtensions.RenderGrid(builder, val.Value.ToString(DateFormat));
 
         };
+
+        public void ValidateObject()
+        {
+            ObjectValidator.Validate(this);
+        }
     }
 }
 

@@ -81,10 +81,18 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     //}
 
 
-    //public void OnCommit()
-    //{
+  
 
-    //}
+    private async Task OnCommit(object model)
+    {
+        Components.ForEach(x => x.ValidateObject());
+
+        if (HasErrors()) return;
+
+ 
+        await InvokeCallBackByViewState(model);
+    }
+
 
     private bool SearchFunction(object model)
     {
@@ -106,7 +114,8 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
 
-    /// <summary>
+
+     /// <summary>
     /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
     /// therefore the newly added item is inserted to 0 index of datasource however the component is not rendered at that moment
     /// and this method must be called on after render method
@@ -116,36 +125,52 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     {
         if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
         {
-            if (!EditButtonActionList.Any() && EditButtonRef is not null)
+            if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
             {
                 await EditButtonRef.OnClick.InvokeAsync();
+
+                IgnoreErrors = true;
+
                 return;
             }
 
             var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
+
+            if (firstItem is null)
+                return;
+
             firstItem?.Invoke();
 
             EditButtonActionList.Clear();
+
+            return;
         }
 
-        if (ViewState == ViewState.Update && EditMode == EditMode.Inline)
+        if (ViewState == ViewState.Update && EditMode == EditMode.Inline )
         {
-            if (!EditButtonActionList.Any() && EditButtonRef is not null)
+            if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
             {
                 await EditButtonRef.OnClick.InvokeAsync();
+
+                IgnoreErrors = true;
+
                 return;
             }
 
             var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
+
             firstItem?.Invoke();
 
             EditButtonActionList.Clear();
+
+            return;
+
         }
     }
 
     private void OnBackUp(object element)
     {
-        if (!IsModelValid) return;
+        if (HasErrors()) return;
 
         NewDisabled = true;
         ExpandDisabled = true;

@@ -34,6 +34,19 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     private List<Action> EditButtonActionList { get; set; } = new();
 
+    internal bool IgnoreErrors = true;
+
+
+    public bool HasErrors()
+    {
+        var result = Components.Any(x => x.Error);
+
+        IgnoreErrors = !result;
+
+        return result;
+    }
+
+    
 
     public ViewState ViewState { get; set; } = ViewState.None;
 
@@ -115,8 +128,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter]
     public string DeleteText { get; set; } = "Delete";
 
-    public bool IsModelValid { get; set; } = true;
-
+ 
     protected override async Task OnInitializedAsync()
     {
 
@@ -134,19 +146,9 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             await OnNewItemAddEditInvoker();
     }
 
+ 
    
    
-
-    private async Task OnCommit(object model)
-    {
-        var a= Components.Any(x => x.Required && x.Model.GetPropertyValue(x.BindingField).IsNullOrDefault());
-
-
-        if (a) return;
-
-        await InvokeCallBackByViewState(model);
-    }
-
     /// <summary>
     /// Invokes the eventcallback depending on the viewstate
     /// </summary>
@@ -206,14 +208,13 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             DataSource.Remove(element);
         else
             DataSource.Replace(element, OriginalEditItem);
-
-
-      
+ 
 
         ViewState = ViewState.None;
 
         await InvokeCallBackByViewState(element);
-        //StateHasChanged();
+
+        Components.ForEach(x => x.Error = false);
     }
 
     public async Task OnDetailClicked()

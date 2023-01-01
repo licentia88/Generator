@@ -53,8 +53,7 @@
         
         @* ReSharper disable once AsyncVoidLambda *@
         @{
-                <MudTable 
-                          T="object"
+                <MudTable T="object"
                           Items="DataSource"
                           Dense="Dense"
                           RowClassFunc="@RowClassFunc"
@@ -77,10 +76,9 @@
                           ApplyButtonPosition="TableApplyButtonPosition.End"
                           EditButtonPosition="TableEditButtonPosition.End"
                           EditTrigger="TableEditTrigger.EditButton"
-                          ReadOnly="false"
+                          ReadOnly="false" 
                           CanCancelEdit="true">
 
-                  
 
                     <HeaderContent>
                         @{
@@ -134,41 +132,45 @@
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                             {
                                 @*@onclick:stopPropagation = "EditMode==EditMode.Popup"*@
-                                <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
+                                <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup" >
                                     @item.RenderAsGridComponent(context)
                                 </MudTd>
                             }
 
-                            <MudTh>
+                            <MudTd>
 
-                            </MudTh>
+                            </MudTd>
 
 
                         }
                     </RowTemplate>
                     <RowEditingTemplate>
                         @{
+                            if (HasDetail && EditMode != EditMode.SmartPopup)
+                            {
+                                <MudTd></MudTd>
+                            }
+
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
                             {
-                                <MudTd>
+                                <MudTd Style="width:auto!important">
                                     @item.RenderAsComponent(context, ignoreLabels: true)
                                 </MudTd>
                             }
-                            @*<MudTd><MudTextField @bind-Value="@context.Id" For="@(() => context.Id)" ReadOnly="true" /></MudTd>
-                            <MudTd>
-                                <MudTextField @bind-Value="@context.Name" For="@(() => context.Name)" Immediate="true"
-                                              Validation=@(async (string x) => await Validator.ValidateValueAsync(context, "Name")) />
-                            </MudTd>*@
+
+                            <MudTh>
+
+                            </MudTh>
                         }
                     </RowEditingTemplate>
                     <ChildRowContent>
                         @{
+
+
                             if (EditMode != EditMode.SmartPopup && DetailClicked && HasDetail)
                             {
                                 <tr style="display:table-row!important;overflow:hidden">
                                     <td style="display:table-cell!important;overflow:hidden" colspan="12">
-
-
                                         @GenDetailGrid(context)
                                     </td>
                                 </tr>
@@ -182,7 +184,7 @@
                     </PagerContent>
 
                     <EditButtonContent Context="button">
-                     
+
                         <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
                             @{
                                 if (Update.HasDelegate)
@@ -193,7 +195,15 @@
                             async () =>
                             {
                                 if(ViewState == ViewState.None)
-                                    ViewState = ViewState.Update; if (ViewState != ViewState.Create && Load.HasDelegate) await Load.InvokeAsync(this);
+                                {
+                                ViewState = ViewState.Update;
+                                }
+                                    
+                                if (ViewState != ViewState.Create && Load.HasDelegate)
+                                {
+                                  await Load.InvokeAsync(this);
+                                }
+                                      
                                 button.ButtonAction.Invoke();
                             })"
                                                    Disabled="@button.ButtonDisabled" />

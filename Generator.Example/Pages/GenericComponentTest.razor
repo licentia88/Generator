@@ -16,7 +16,6 @@
                  DataSource="InternalDataSource"
                  EnableSearch="true">
 
-
                  <GenHeaderButtons>
                     <MudFab  Icon="@Icons.Material.Filled.AccessAlarm" Size="Size.Small" />
                  </GenHeaderButtons>
@@ -29,7 +28,7 @@
                 <GenSpacer xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
 
                 <GenComboBox Clearable="true"
-                             Required="true"
+                             Required="true" 
                              Placeholder="Seciniz" Label="ComboTest"
                              DataSource="@ComboDataSource"
                              BindingField="TT_STRING_TABLE_CODE"
@@ -40,19 +39,19 @@
 
                 <GenTextField BindingField="TT_DESC" Label="Description"  Required="true" />
 
-                <GenCheckBox BindingField="TT_BOOLEAN" Class="p-0"
+                <GenCheckBox BindingField="TT_BOOLEAN"  
                              xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" 
                              TrueText="Evet"
-                             FalseText="Hayir"
+                             FalseText="Hayir" 
                              Label="BooleanTest"
-                             LabelPosition="LabelPosition.Start"/>
+                             LabelPosition="LabelPosition.End"/>
                 @*<GenTextField BindingField="TT_DATE" InputType="InputType.Date" Label="Date" />*@
-                <GenDatePicker BindingField="TT_DATE" Label="Date" Clearable="true" TransformOrigin="Origin.BottomLeft" Required="true"/>
+                <GenDatePicker  BindingField="TT_DATE" Label="Date" Clearable="true" TransformOrigin="Origin.BottomLeft" Required="true"/>
                 <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" Required="true" Clearable="true"/>
             </GenColumns>
-            @*<GenDetailGrid>
-                <GenGrid @ref="GridRef" Class="m-2"
-                         EditMode="EditMode.Inline"
+            <GenDetailGrid>
+                <GenGrid @ref="GridRef" Class="mt-2"
+                         EditMode="EditMode.Popup"
                          Title="GenericTest1"
                          DataSource="InternalDataSource"
                          EnableSearch="true">
@@ -64,7 +63,7 @@
                     </GenColumns>
 
                 </GenGrid>
-            </GenDetailGrid>*@
+            </GenDetailGrid>
         </GenGrid>
 
     }

@@ -7,7 +7,7 @@ using Generator.Shared.Extensions;
 
 namespace Generator.Components.Validators;
 
-public class ObjectValidator <TComponent> where TComponent : IGenComponent
+public class ObjectValidator<TComponent> where TComponent : IGenComponent
 {
 
     public ICollection<ValidationResult> results  { get; }
@@ -30,35 +30,37 @@ public class ObjectValidator <TComponent> where TComponent : IGenComponent
             {
                 var resIsNull = component.Model.GetPropertyValue(component.BindingField).IsNullOrDefault();
 
-                if (!resIsNull) return;
+                if (resIsNull)
+                {
+                    component.Error = true;
 
-                component.Error = true;
+                    component.ErrorText = $"Required";
 
-                component.ErrorText = $"The {component.BindingField} field is required";
-
-                component.ParentComponent.IsModelValid = false;
-
-                return;
+                    return;
+                }               
             }
 
-            if (component.HasProperty(nameof(IGenTextField.MaxLength)))
-            {
-                var maxlength = component.GetPropertyValue(nameof(IGenTextField.MaxLength)).CastTo<int>();
+            //if (component.HasProperty(nameof(IGenTextField.MaxLength)))
+            //{
+            //    var maxlength = component.GetPropertyValue(nameof(IGenTextField.MaxLength)).CastTo<int>();
 
-                var compLength = component.Model.GetPropertyValue(component.BindingField)?.ToString()?.Length??0;
+            //    var compLength = component.Model.GetPropertyValue(component.BindingField)?.ToString()?.Length??0;
 
-                var lengthresult = compLength < maxlength;
+            //    var lengthresult = compLength < maxlength;
 
-                if (lengthresult) return;
+            //    if (!lengthresult)
+            //    {
+            //        component.Error = true;
 
-                component.Error = true;
+            //        component.ErrorText = $"The {component.BindingField} can not be more then {maxlength} characters";
 
-                component.ErrorText = $"The {component.BindingField} can not be more then {maxlength} characters";
 
-                component.ParentComponent.IsModelValid = false;
+            //        return;
+            //    }
+            //}
 
-                return;
-            }
+            component.ErrorText = string.Empty;
+            component.Error = false;
 
             return;
         }
@@ -71,9 +73,12 @@ public class ObjectValidator <TComponent> where TComponent : IGenComponent
 
         };
 
+       
+
         var result = Validator.TryValidateProperty(component.Model.GetPropertyValue(component.BindingField), valCOntext, results);
 
-        component.ParentComponent.IsModelValid = true;
+
+        component.Error = false;
     }
 
 }

@@ -4,6 +4,7 @@ using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField
 {
-    ObjectValidator<GenTextField> ObjectValidator = new ObjectValidator<GenTextField>();
+    public ObjectValidator<GenTextField> ObjectValidator { get; set; } = new ObjectValidator<GenTextField>();
 
     public Type DataType { get; set; }
 
@@ -67,14 +68,14 @@ public class GenTextField : MudTextField<object>, IGenTextField
     //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null )
+        if (Model is not null)
             base.BuildRenderTree(builder);
 
     }
-  
-    protected override  Task OnInitializedAsync()
+
+    protected override Task OnInitializedAsync()
     {
-       
+
         if (InputType == InputType.Date)
         {
             Converter = _dateConverter;
@@ -112,11 +113,12 @@ public class GenTextField : MudTextField<object>, IGenTextField
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
+
     public void OnValueChanged(object value)
     {
         Model.SetPropertyValue(BindingField, value);
 
-        ObjectValidator.Validate(this);
+        ValidateObject();
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
@@ -124,6 +126,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
         Model = model;
 
         ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
+
 
         var loValue = model.GetPropertyValue(BindingField);
 
@@ -141,6 +144,12 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
         RenderExtensions.RenderGrid(builder, data);
     };
+
+    public void ValidateObject()
+    {
+        ObjectValidator.Validate(this);
+
+    }
 }
 
 

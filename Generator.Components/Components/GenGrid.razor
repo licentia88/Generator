@@ -1,7 +1,7 @@
 ﻿@inherits MudTable<object>
 @using Generator.Shared.Extensions
 
-@if (DataSource is null) {return;}
+@if (DataSource is null) { return; }
 
 <CascadingValue Name="@(nameof(GenGrid.ParentComponent))" Value="this">
 
@@ -42,186 +42,207 @@
             </CardHeaderActions>
         </MudCardHeader>
 
-        <MudGrid Class="pt-5 pb-5 pr-15" Justify="Justify.FlexEnd"  >
-                @{
-                    if(GenHeaderButtons is not null)
-                    {
-                        @GenHeaderButtons
-                    }
+        <MudGrid Class="pt-5 pb-5 pr-15" Justify="Justify.FlexEnd">
+            @{
+                if (GenHeaderButtons is not null)
+                {
+                    @GenHeaderButtons
                 }
+            }
         </MudGrid>
-        
+
         @* ReSharper disable once AsyncVoidLambda *@
         @{
-                <MudTable T="object"
-                          Items="DataSource"
-                          Dense="Dense"
-                          RowClassFunc="@RowClassFunc"
-                          MultiSelection="MultiSelection"
-                          Breakpoint="Breakpoint.None"
-                          Hover="Hover"
-                          Elevation="0"
-                          FixedHeader="FixedHeader"
-                          FixedFooter="FixedFooter"
-                          Height="Height"
-                          @bind-SelectedItem="SelectedItem"
-                          SelectedItems="@SelectedItems"
-                          Filter="new Func<object,bool>(SearchFunction)"
-                          Virtualize="Virtualize"
-                          OnCommitEditClick="OnEditCLick"
-                          RowEditPreview="x=>OnBackUp(x)"
-                          RowEditCancel="x=> OnCancelClick(x)"
-                          RowEditCommit="async x => await OnCommit(x)"
-                          IsEditRowSwitchingBlocked="true"
-                          ApplyButtonPosition="TableApplyButtonPosition.End"
-                          EditButtonPosition="TableEditButtonPosition.End"
-                          EditTrigger="TableEditTrigger.EditButton"
-                          ReadOnly="false" 
-                          CanCancelEdit="true">
+            <MudTable T="object"
+                      Items="DataSource"
+                      Dense="Dense"
+                      RowClassFunc="@RowClassFunc"
+                      MultiSelection="MultiSelection"
+                      Breakpoint="Breakpoint.None"
+                      Hover="Hover"
+                      Elevation="0"
+                      FixedHeader="FixedHeader"
+                      FixedFooter="FixedFooter"
+                      Height="Height"
+                      @bind-SelectedItem="SelectedItem"
+                      SelectedItems="@SelectedItems"
+                      Filter="new Func<object,bool>(SearchFunction)"
+                      Virtualize="Virtualize"
+                      OnCommitEditClick="OnEditCLick"
+                      RowEditPreview="async x=>await OnBackUp(x)"
+                      RowEditCancel="x=> OnCancelClick(x)"
+                      RowEditCommit="async x => await OnCommit(x)"
+                      IsEditRowSwitchingBlocked="true"
+                      ApplyButtonPosition="TableApplyButtonPosition.End"
+                      EditButtonPosition="TableEditButtonPosition.End"
+                      EditTrigger="TableEditTrigger.EditButton"
+                      ReadOnly="false"
+                      CanCancelEdit="true">
 
 
-                    <HeaderContent>
-                        @{
+                <HeaderContent>
+                    @{
 
-                            if (HasDetail && EditMode != EditMode.SmartPopup)
-                            {
-                                <MudTh>
-
-                                </MudTh>
-                            }
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
-                            {
-                                <MudTh>
-                                    @item.Label
-                                </MudTh>
-                            }
-                        }
-                        <MudTh>
-
-                            @{
-                                if (Create.HasDelegate)
-                                {
-                                    <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
-                                        <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                                            <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
-                                        </MudGrid>
-                                    </div>
-                                }
-                            }
-
-                        </MudTh>
-                    </HeaderContent>
-
-                    <RowTemplate>
-
-                        @{
-                            if (HasDetail && EditMode != EditMode.SmartPopup)
-                            {
-                                <MudTd>
-                                    <MudIconButton Size="Size.Small"
-                                                   Disabled="ExpandDisabled"
-                                                   Icon="@(DetailClicked?Icons.Material.Filled.ExpandLess:Icons.Material.Filled.ExpandMore)"
-                                                   OnClick="@(OnDetailClicked)">
-
-
-                                    </MudIconButton>
-                                </MudTd>
-                            }
-
-
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
-                            {
-                                @*@onclick:stopPropagation = "EditMode==EditMode.Popup"*@
-                                <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup" >
-                                    @item.RenderAsGridComponent(context)
-                                </MudTd>
-                            }
-
-                            <MudTd>
-
-                            </MudTd>
-
-
-                        }
-                    </RowTemplate>
-                    <RowEditingTemplate>
-                        @{
-                            if (HasDetail && EditMode != EditMode.SmartPopup)
-                            {
-                                <MudTd></MudTd>
-                            }
-
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
-                            {
-                                <MudTd Style="width:auto!important">
-                                    @item.RenderAsComponent(context, ignoreLabels: true)
-                                </MudTd>
-                            }
-
+                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        {
                             <MudTh>
 
                             </MudTh>
                         }
-                    </RowEditingTemplate>
-                    <ChildRowContent>
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
+                        {
+                            <MudTh>
+                                @item.Label
+                            </MudTh>
+                        }
+                    }
+                    <MudTh>
+
                         @{
-
-
-                            if (EditMode != EditMode.SmartPopup && DetailClicked && HasDetail)
+                            if (Create.HasDelegate)
                             {
-                                <tr style="display:table-row!important;overflow:hidden">
-                                    <td style="display:table-cell!important;overflow:hidden" colspan="12">
-                                        @GenDetailGrid(context)
-                                    </td>
-                                </tr>
+                                <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+                                    <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
+                                        <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
+                                    </MudGrid>
+                                </div>
                             }
                         }
 
-                    </ChildRowContent>
+                    </MudTh>
+                </HeaderContent>
 
-                    <PagerContent>
-                        <MudTablePager PageSizeOptions="new[] { 10,25,50,100, !DataSource.Any() ?999:DataSource.Count}" />
-                    </PagerContent>
+                <RowTemplate>
 
-                    <EditButtonContent Context="button">
+                    @{
+                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        {
+                            <MudTd>
+                                <MudIconButton Size="Size.Small"
+                                               Disabled="ExpandDisabled"
+                                               Icon="@(DetailClicked?Icons.Material.Filled.ExpandLess:Icons.Material.Filled.ExpandMore)"
+                                               OnClick="@(OnDetailClicked)">
 
-                        <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
-                            @{
-                                if (Update.HasDelegate)
-                                {
-                                    if (!EditButtonActionList.Contains(button.ButtonAction))
-                                        EditButtonActionList.Add((button.ButtonAction));
-                                    <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(
+
+                                </MudIconButton>
+                            </MudTd>
+                        }
+
+
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
+                        {
+                            @*@onclick:stopPropagation = "EditMode==EditMode.Popup"*@
+                            <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
+                                @item.RenderAsGridComponent(context)
+                            </MudTd>
+                        }
+
+                        <MudTd>
+
+                        </MudTd>
+
+
+                    }
+                </RowTemplate>
+                <RowEditingTemplate>
+                    @{
+                        if(EditMode != EditMode.Inline)
+                        {
+                            var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).Where(x => x.Item == SelectedItem).FirstOrDefault();
+                            editingRow.Context.Table.SetEditingItem(null);
+
+                            StateHasChanged();
+
+                            var a = editingRow.GetFieldValue("hasBeenCanceled");
+                            var b = editingRow.GetFieldValue("hasBeenCommitted");
+                            var c = editingRow.GetFieldValue("hasBeenClickedFirstTime");
+
+                            editingRow.SetFieldValue("hasBeenCanceled", false);
+                            editingRow.SetFieldValue("hasBeenCommitted", false);
+                            editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
+
+                            var d = editingRow.GetFieldValue("hasBeenCanceled");
+                            var e = editingRow.GetFieldValue("hasBeenCommitted");
+                            var f = editingRow.GetFieldValue("hasBeenClickedFirstTime");
+
+                            //editingRow.ManagePreviousEdition();
+                        }
+                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        {
+                            <MudTd></MudTd>
+                        }
+
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
+                        {
+                            <MudTd Style="width:auto!important">
+                                @item.RenderAsComponent(context, ignoreLabels: true)
+                            </MudTd>
+                        }
+
+                        <MudTh>
+
+                        </MudTh>
+                    }
+                </RowEditingTemplate>
+                <ChildRowContent>
+                    @{
+
+
+                        if (EditMode != EditMode.SmartPopup && DetailClicked && HasDetail)
+                        {
+                            <tr style="display:table-row!important;overflow:hidden">
+                                <td style="display:table-cell!important;overflow:hidden" colspan="12">
+                                    @GenDetailGrid(context)
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </ChildRowContent>
+
+                <PagerContent>
+                    <MudTablePager PageSizeOptions="new[] { 10,25,50,100, !DataSource.Any() ?999:DataSource.Count}" />
+                </PagerContent>
+
+                <EditButtonContent Context="button">
+
+                    <div style="@(DetailClicked?"pointer-events: none;opacity:0.4;":string.Empty)">
+                        @{
+                            if (Update.HasDelegate)
+                            {
+                                if (!EditButtonActionList.Contains(button.ButtonAction))
+                                    EditButtonActionList.Add((button.ButtonAction));
+                                <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@(
                             async () =>
                             {
                                 if(ViewState == ViewState.None)
                                 {
                                 ViewState = ViewState.Update;
                                 }
-                                    
+
                                 if (ViewState != ViewState.Create && Load.HasDelegate)
                                 {
                                   await Load.InvokeAsync(this);
                                 }
-                                      
+
                                 button.ButtonAction.Invoke();
                             })"
-                                                   Disabled="@button.ButtonDisabled" />
-                                }
+                                               Disabled="@button.ButtonDisabled" />
                             }
-                            @{
-                                if (Delete.HasDelegate)
-                                {
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
+                        }
+                        @{
+                            if (Delete.HasDelegate)
+                            {
+                                <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
 
-                                }
                             }
+                        }
 
-                        </div>
-                    </EditButtonContent>
-                </MudTable>
+                    </div>
+                </EditButtonContent>
+            </MudTable>
 
- 
+
         }
 
 

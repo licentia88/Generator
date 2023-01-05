@@ -7,13 +7,19 @@ using Generator.Shared.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using MudBlazorFix;
 using System;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
 
+
 public partial class GenGrid : MudTable<object>, IGenGrid
 {
+
+    public GridManager GridManager { get; }
+
 
     [Inject]
     public IDialogService DialogService { get; set; }
@@ -32,10 +38,19 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         Position = DialogPosition.Center
     };
 
-    private List<Action> EditButtonActionList { get; set; } = new();
+    internal List<Action> EditButtonActionList { get; set; } = new();
 
     internal bool IgnoreErrors = true;
 
+    public void OnEditContextButtonClick(EditButtonContext button)
+    {
+        if(ViewState == ViewState.None)
+        {
+            ViewState = ViewState.Update;
+        }
+
+        button.ButtonAction.Invoke();
+    }
 
     public bool HasErrors()
     {
@@ -46,7 +61,8 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         return result;
     }
 
-    
+    public MudTable<object> GridRef { get; set; }
+
 
     public ViewState ViewState { get; set; } = ViewState.None;
 
@@ -128,10 +144,14 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter]
     public string DeleteText { get; set; } = "Delete";
 
- 
+
+    public GenGrid()
+    {
+        GridManager = new GridManager(this);
+    }
+
     protected override async Task OnInitializedAsync()
     {
-
         //Detail Grid den parent gridi refreshleme
         if (ParentComponent is not null && ParentComponent.DetailClicked)
         {
@@ -139,16 +159,13 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         }
     }
 
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             await OnNewItemAddEditInvoker();
     }
 
- 
-   
-   
+    
     /// <summary>
     /// Invokes the eventcallback depending on the viewstate
     /// </summary>
@@ -192,15 +209,11 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         await InvokeCallBackByViewState(model);
     }
 
-
-
     public async Task OnEditCLick()
     {
         //if (Load.HasDelegate && ViewState != ViewState.Create)
         //    await Load.InvokeAsync(this);
     }
-
-    
 
     private async void OnCancelClick(object element)
     {
@@ -224,6 +237,19 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         await InvokeAsync(StateHasChanged);
     }
 
+    public virtual async ValueTask ShowDialogAsync<Page>() where Page : IGenPage
+    {
+        var paramList = new List<(string, object)>
+        {
+            (nameof(GenPage.ViewModel), SelectedItem),
+            (nameof(GenPage.ViewState), ViewState),
+            (nameof(GenPage.GenGrid), this)
+        };
+
+        await ShowDialogAsync<Page>(paramList.ToArray());
+
+    }
+
     public virtual async ValueTask ShowDialogAsync<Page>(params (string key, object value)[] parameters) where Page : IGenPage
     {
         foreach (var prm in parameters)
@@ -232,9 +258,9 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         }
 
         await DialogService.ShowAsync<GenPage>(Title, DialogParameters, DialogOptions);
-
     }
 
+  
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
     {

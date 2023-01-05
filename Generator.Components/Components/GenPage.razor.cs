@@ -3,6 +3,7 @@ using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Generator.Components.Components
@@ -63,7 +64,11 @@ namespace Generator.Components.Components
 
         public async Task OnCommit()
         {
-            //var aa = GenGrid.Validator.IsValid;
+            GenGrid.Components.ForEach(x => x.ValidateObject());
+
+            if (GenGrid.HasErrors()) return;
+
+             //var aa = GenGrid.Validator.IsValid;
             await GenGrid.InvokeCallBackByViewState(ViewModel);
 
             Close();

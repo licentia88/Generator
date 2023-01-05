@@ -14,19 +14,46 @@ public static class PropertyExtensions
         if ((obj is ExpandoObject || obj is Dictionary<string, object>))
             return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
 
-        return obj.GetType().GetProperty(propertyName).GetValue(obj)??null;
+        return obj.GetType()
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .GetValue(obj) ?? null;
     }
- 
+
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        if ((obj is ExpandoObject  || obj is Dictionary<string,object>)  )
+        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
         {
             ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
 
             return;
         }
 
-        obj.GetType().GetProperty(propertyName).SetValue(obj, propertyValue);
+        obj.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(obj, propertyValue);
+
+    }
+
+    public static object GetFieldValue<T>(this T obj, string propertyName) //where T:new()
+    {
+        if (obj is null) return default;
+
+        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+            return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
+
+        return obj.GetType()
+            .GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .GetValue(obj) ?? null;
+    }
+
+    public static void SetFieldValue<T>(this T obj, string propertyName, object propertyValue)
+    {
+        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+        {
+            ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
+
+            return;
+        }
+
+        obj.GetType().GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(obj, propertyValue);
 
     }
 

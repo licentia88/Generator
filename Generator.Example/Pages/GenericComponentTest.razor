@@ -11,7 +11,7 @@
                  Cancel="async x=>await Cancel(x)"
                  Load="async x=>await OnLoad(x)"
                  Class="m-2"
-                 EditMode="EditMode.Inline"
+                 EditMode="EditMode.Popup"
                  Title="GenericTest1"
                  DataSource="InternalDataSource"
                  EnableSearch="true">
@@ -54,7 +54,7 @@
                          EditMode="EditMode.Popup"
                          Title="GenericTest1"
                          DataSource="InternalDataSource"
-                         EnableSearch="true">
+                         EnableSearch="false">
                     <GenColumns>
                         <GenTextField BindingField="TT_ROWID" Label="Row Id" />
                         <GenTextField BindingField="TT_DESC" Label="Description" />

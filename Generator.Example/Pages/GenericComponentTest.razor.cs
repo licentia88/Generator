@@ -39,7 +39,7 @@ namespace Generator.Example.Pages
 
 
             //InternalDataSource.add
-            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(1)); ;
+            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(4)); ;
 
             ComboDataSource = comboResult.GenObject.DynamicData().ToList();
 
@@ -84,7 +84,7 @@ namespace Generator.Example.Pages
 
         public ValueTask OnDelete(GenGridArgs args)
         {
-            InternalDataSource.Remove(args.OldData);
+            InternalDataSource.Remove(args.NewData);
 
             return ValueTask.CompletedTask;
         }

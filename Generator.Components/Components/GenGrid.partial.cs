@@ -5,83 +5,18 @@ using Mapster;
 using MudBlazor;
 using Generator.Shared.Extensions;
 using Force.DeepCloner;
+using static MudBlazor.CategoryTypes;
 
 namespace Generator.Components.Components;
 
 public partial class GenGrid : MudTable<object>, IGenGrid
 {
-
-    public async Task InvokeLoad()
-    {
-        if (Load.HasDelegate)
-            await Load.InvokeAsync(this);
-    }
-
+    
     public async Task OnCreateClick()
     {
-        EditButtonActionList.Clear();
-
-        ViewState = ViewState.Create;
-
-        var datasourceModelType = DataSource.GetType().GenericTypeArguments[0];
-
-        var newData = Components.Where(x=> x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
-
-        var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), datasourceModelType);
-
-        SelectedItem = adaptedData;
-
-        if (EditMode == EditMode.Inline)
-        {
-            DataSource.Insert(0, SelectedItem);
-
-            await InvokeLoad();
-
-            return;
-        }
-
-        var paramList = new List<(string, object)>();
-        paramList.Add((nameof(GenPage.ViewModel), SelectedItem));
-        paramList.Add((nameof(GenPage.GenGrid), this));
-
-        await ShowDialogAsync<GenPage>(paramList.ToArray());
- 
-        //if (Create.HasDelegate)
-        //    await Create.InvokeAsync(new GenGridArgs(null, SelectedItem));
+       await GridManager.Create();
 
     }
-    //public void Create()
-    //{
-
-    //}
-
-    //public void Update()
-    //{
-
-    //}
-
-    //public void Delete()
-    //{
-
-    //}
-
-    //public void Load()
-    //{
-
-    //}
-
-    //public void Cancel()
-    //{
-
-    //}
-
-    //public void BackUp(object element)
-    //{
-
-    //}
-
-
-  
 
     private async Task OnCommit(object model)
     {
@@ -89,10 +24,8 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
         if (HasErrors()) return;
 
- 
         await InvokeCallBackByViewState(model);
     }
-
 
     private bool SearchFunction(object model)
     {
@@ -113,7 +46,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
-
 
      /// <summary>
     /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
@@ -159,6 +91,9 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
             var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
 
+            if (firstItem is null)
+                return;
+
             firstItem?.Invoke();
 
             EditButtonActionList.Clear();
@@ -166,17 +101,37 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             return;
 
         }
+
+        
     }
 
-    private void OnBackUp(object element)
+    private async Task OnBackUp(object element)
     {
         if (HasErrors()) return;
 
         NewDisabled = true;
+
         ExpandDisabled = true;
+
         SearchDisabled = true;
+
         SelectedItem = element;
+
         OriginalEditItem = element.DeepClone();
+
+        if (EditMode != EditMode.Inline)
+        {
+            await  GridManager.Edit();
+            return;
+        }
+
+        await InvokeLoad();
+    }
+
+    public async Task InvokeLoad()
+    {
+        if (Load.HasDelegate)
+            await Load.InvokeAsync(this);
     }
 
     public async Task OnDeleteClicked(Action buttonAction)

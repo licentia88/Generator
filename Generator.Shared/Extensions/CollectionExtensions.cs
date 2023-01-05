@@ -22,13 +22,20 @@ public static class CollectionExtensions
 
     public static void Replace<T>(this ICollection<T> enumerable, T oldValue, T newValue)
     {
-        if (enumerable.IsReadOnly) throw new NotSupportedException();
+        try
+        {
+            if (enumerable.IsReadOnly) throw new NotSupportedException();
 
-        if (enumerable is not IList<T> collection) throw new NotSupportedException();
+            if (enumerable is not IList<T> collection) throw new NotSupportedException();
 
-        var index = enumerable.IndexOf(oldValue);
+            var index = enumerable.IndexOf(oldValue);
 
-        collection[index] = newValue;
+            collection[index] = newValue;
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
 
     public static void RemoveAt<T>(this ICollection<T> enumerable, int index)

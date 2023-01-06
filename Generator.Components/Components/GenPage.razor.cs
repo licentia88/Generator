@@ -1,4 +1,4 @@
-﻿using Generator.Components.Args;
+using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -88,5 +88,3 @@ namespace Generator.Components.Components
         }
     }
 }
-
-

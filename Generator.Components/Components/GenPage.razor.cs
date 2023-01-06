@@ -1,14 +1,12 @@
-﻿using System;
-using Generator.Components.Args;
+﻿using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Generator.Components.Components
 {
-	public partial class GenPage: IGenPage
+    public partial class GenPage
     {
         [Parameter]
         public GenGrid GenGrid { get; set; }
@@ -46,7 +44,7 @@ namespace Generator.Components.Components
 
         public List<IGenComponent> Components { get; set; }
 
-        public TComponent GetComponent<TComponent>(string BindingField) where TComponent : IGenComponent
+        public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
         {
             throw new NotImplementedException();
         }
@@ -61,14 +59,13 @@ namespace Generator.Components.Components
             throw new NotImplementedException();
         }
 
-
         public async Task OnCommit()
         {
             GenGrid.Components.ForEach(x => x.ValidateObject());
 
             if (GenGrid.HasErrors()) return;
 
-             //var aa = GenGrid.Validator.IsValid;
+            //var aa = GenGrid.Validator.IsValid;
             await GenGrid.InvokeCallBackByViewState(ViewModel);
 
             Close();
@@ -81,15 +78,15 @@ namespace Generator.Components.Components
 
         private string GetSubmitTextFromViewState()
         {
-            if (ViewState == ViewState.Create)
-                return GenGrid.CreateText;
-            if (ViewState == ViewState.Update)
-                return GenGrid.UpdateText;
-            if (ViewState == ViewState.Delete)
-                return GenGrid.DeleteText;
-
-            return "";
+            return ViewState switch
+            {
+                ViewState.Create => GenGrid.CreateText,
+                ViewState.Update => GenGrid.UpdateText,
+                ViewState.Delete => GenGrid.DeleteText,
+                _ => ""
+            };
         }
     }
 }
+
 

@@ -11,6 +11,8 @@ namespace Generator.Components.Components
         [Parameter]
         public GenGrid GenGrid { get; set; }
 
+        public bool PreventClose { get; set; }
+
         [Parameter]
         public string Title { get; set; }
 

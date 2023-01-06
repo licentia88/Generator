@@ -65,15 +65,21 @@ namespace Generator.Components.Components
 
             if (GenGrid.HasErrors()) return;
 
-            //var aa = GenGrid.Validator.IsValid;
-            await GenGrid.InvokeCallBackByViewState(ViewModel);
+            if (GenGrid.ParentComponent?.ViewState == ViewState.Create)
+            {
+                await GenGrid.ParentComponent.InvokeCallBackByViewState(ViewModel);
+            }
+            else
+            {
+                await GenGrid.InvokeCallBackByViewState(ViewModel);
+            }
 
             Close();
         }
 
         public virtual void Close()
         {
-            MudDialog.Cancel();
+            MudDialog.Close();
         }
 
         private string GetSubmitTextFromViewState()

@@ -1,25 +1,17 @@
-﻿using Force.DeepCloner;
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
-using Generator.Components.Validators;
 using Generator.Shared.Extensions;
-using Mapster;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazorFix;
-using System;
-using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
 
-
-public partial class GenGrid : MudTable<object>, IGenGrid
+public partial class GenGrid
 {
-
     public GridManager GridManager { get; }
-
 
     [Inject]
     public IDialogService DialogService { get; set; }
@@ -44,7 +36,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
     public void OnEditContextButtonClick(EditButtonContext button)
     {
-        if(ViewState == ViewState.None)
+        if (ViewState == ViewState.None)
         {
             ViewState = ViewState.Update;
         }
@@ -62,7 +54,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     }
 
     public MudTable<object> GridRef { get; set; }
-
 
     public ViewState ViewState { get; set; } = ViewState.None;
 
@@ -119,7 +110,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter, AllowNull]
     public RenderFragment GenHeaderButtons { get; set; }
 
-
     [Parameter, AllowNull]
     public RenderFragment<object> GenDetailGrid { get; set; }
 
@@ -144,7 +134,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     [Parameter]
     public string DeleteText { get; set; } = "Delete";
 
-
     public GenGrid()
     {
         GridManager = new GridManager(this);
@@ -165,7 +154,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             await OnNewItemAddEditInvoker();
     }
 
-    
     /// <summary>
     /// Invokes the eventcallback depending on the viewstate
     /// </summary>
@@ -177,7 +165,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         switch (ViewState)
         {
             case ViewState.Create when Create.HasDelegate:
-                await Create.InvokeAsync(new GenGridArgs(null, model,EditMode, DataSource.IndexOf(SelectedItem)));
+                await Create.InvokeAsync(new GenGridArgs(null, model, EditMode, DataSource.IndexOf(SelectedItem)));
                 break;
 
             case ViewState.Update when Update.HasDelegate:
@@ -196,21 +184,16 @@ public partial class GenGrid : MudTable<object>, IGenGrid
                 throw new ArgumentOutOfRangeException();
         }
 
- 
         SearchDisabled = false;
         NewDisabled = false;
         ExpandDisabled = false;
         ViewState = ViewState.None;
     }
 
-    internal async Task InvokeCallBackByViewState(object model, ViewState viewState)
+    public Task OnEditCLick()
     {
-        ViewState = viewState;
-        await InvokeCallBackByViewState(model);
-    }
+        return Task.CompletedTask;
 
-    public async Task OnEditCLick()
-    {
         //if (Load.HasDelegate && ViewState != ViewState.Create)
         //    await Load.InvokeAsync(this);
     }
@@ -221,7 +204,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             DataSource.Remove(element);
         else
             DataSource.Replace(element, OriginalEditItem);
- 
 
         ViewState = ViewState.None;
 
@@ -230,14 +212,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         Components.ForEach(x => x.Error = false);
     }
 
-    public async Task OnDetailClicked()
-    {
-        DetailClicked = !DetailClicked;
-
-        await InvokeAsync(StateHasChanged);
-    }
-
-    public virtual async ValueTask ShowDialogAsync<Page>() where Page : IGenPage
+    public virtual async ValueTask ShowDialogAsync<TPage>() where TPage : IGenPage
     {
         var paramList = new List<(string, object)>
         {
@@ -246,11 +221,10 @@ public partial class GenGrid : MudTable<object>, IGenGrid
             (nameof(GenPage.GenGrid), this)
         };
 
-        await ShowDialogAsync<Page>(paramList.ToArray());
-
+        await ShowDialogAsync<TPage>(paramList.ToArray());
     }
 
-    public virtual async ValueTask ShowDialogAsync<Page>(params (string key, object value)[] parameters) where Page : IGenPage
+    public virtual async ValueTask ShowDialogAsync<TPage>(params (string key, object value)[] parameters) where TPage : IGenPage
     {
         foreach (var prm in parameters)
         {
@@ -259,8 +233,6 @@ public partial class GenGrid : MudTable<object>, IGenGrid
 
         await DialogService.ShowAsync<GenPage>(Title, DialogParameters, DialogOptions);
     }
-
-  
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
     {
@@ -288,5 +260,31 @@ public partial class GenGrid : MudTable<object>, IGenGrid
     {
         if (Components.Any(x => x.BindingField == childComponent.BindingField)) return;
         Components.Add(childComponent);
+    }
+
+    private object _selectedDetailObject;
+
+    public void OnDetailClicked(object context)
+    {
+        DetailClicked = !DetailClicked;
+
+        if (DetailClicked)
+        {
+            _selectedDetailObject = context;
+        }
+        else if (_selectedDetailObject != context)
+        {
+            _selectedDetailObject = context;
+            OnDetailClicked(context);
+        }
+        else
+            _selectedDetailObject = null;
+    }
+
+    private bool ShouldDisplay(object context)
+    {
+        if (_selectedDetailObject is null) return false;
+
+        return DetailClicked && _selectedDetailObject.Equals(context);
     }
 }

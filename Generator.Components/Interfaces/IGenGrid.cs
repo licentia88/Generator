@@ -1,4 +1,4 @@
-﻿using Generator.Components.Args;
+using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Enums;
 using Microsoft.AspNetCore.Components;
@@ -16,7 +16,6 @@ public interface IGenView : IGenCompRenderer
 
     public object OriginalEditItem { get; set; }
 
-
     public EventCallback<GenGridArgs> Create { get; set; }
 
     public EventCallback<GenGridArgs> Update { get; set; }
@@ -26,17 +25,8 @@ public interface IGenView : IGenCompRenderer
     public EventCallback<GenGridArgs> Cancel { get; set; }
 
     public List<IGenComponent> Components { get; set; }
-    //public EventCallback<IGenView> OnBeforeCreate { get; set; }
 
-    //public EventCallback<IGenView> OnBeforeUpdate { get; set; }
-
-    //public EventCallback<IGenView> OnBeforeDelete { get; set; }
-
-    //public EventCallback<IGenView> OnLoad { get; set; }
-
-
-    public TComponent GetComponent<TComponent>(string BindingField) where TComponent : IGenComponent;
-
+    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
 }
 
 public interface IGenPage : IGenView
@@ -49,11 +39,11 @@ public interface IGenPage : IGenView
 
     public GenGrid GenGrid { get; set; }
 
+    public bool PreventClose { get; set; }
 }
 
 public interface IGenGrid : IGenView
 {
-
     public bool HasErrors();// { get; }
 
     public IDialogService DialogService { get; set; }
@@ -92,15 +82,11 @@ public interface IGenGrid : IGenView
 
     public RenderFragment<object> GenDetailGrid { get; set; }
 
-    public bool  HasDetail { get;}
+    public bool HasDetail { get; }
 
     public bool DetailClicked { get; set; }
 
     public GenGrid ParentComponent { get; set; }
 
     public string SearchPlaceHolderText { get; set; }
-
- 
-
 }
-

@@ -1,4 +1,4 @@
-﻿@inherits MudTable<object>
+@inherits MudTable<object>
 @using Generator.Shared.Extensions
 
 @if (DataSource is null) { return; }
@@ -117,15 +117,21 @@
                     @{
                         if (HasDetail && EditMode != EditMode.SmartPopup)
                         {
+                            var expandIcon = Icons.Material.Filled.ExpandMore;
+
+                            if(ShouldDisplay(context))
+                            {
+                                expandIcon = Icons.Material.Filled.ExpandLess;
+                            }
+
                             <MudTd>
                                 <MudIconButton Size="Size.Small"
                                                Disabled="ExpandDisabled"
-                                               Icon="@(DetailClicked?Icons.Material.Filled.ExpandLess:Icons.Material.Filled.ExpandMore)"
-                                               OnClick="@(OnDetailClicked)">
-
-
+                                               Icon="@expandIcon"
+                                               OnClick="@(()=> OnDetailClicked(context))">
                                 </MudIconButton>
                             </MudTd>
+
                         }
 
 
@@ -148,24 +154,15 @@
                     @{
                         if(EditMode != EditMode.Inline)
                         {
-                            var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).Where(x => x.Item == SelectedItem).FirstOrDefault();
-                            editingRow.Context.Table.SetEditingItem(null);
+                            var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item == SelectedItem);
+                            editingRow?.Context.Table.SetEditingItem(null);
 
                             StateHasChanged();
-
-                            var a = editingRow.GetFieldValue("hasBeenCanceled");
-                            var b = editingRow.GetFieldValue("hasBeenCommitted");
-                            var c = editingRow.GetFieldValue("hasBeenClickedFirstTime");
-
+ 
                             editingRow.SetFieldValue("hasBeenCanceled", false);
                             editingRow.SetFieldValue("hasBeenCommitted", false);
                             editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
 
-                            var d = editingRow.GetFieldValue("hasBeenCanceled");
-                            var e = editingRow.GetFieldValue("hasBeenCommitted");
-                            var f = editingRow.GetFieldValue("hasBeenClickedFirstTime");
-
-                            //editingRow.ManagePreviousEdition();
                         }
                         if (HasDetail && EditMode != EditMode.SmartPopup)
                         {
@@ -188,7 +185,7 @@
                     @{
 
 
-                        if (EditMode != EditMode.SmartPopup && DetailClicked && HasDetail)
+                        if (EditMode != EditMode.SmartPopup && ShouldDisplay(context) && HasDetail)
                         {
                             <tr style="display:table-row!important;overflow:hidden">
                                 <td style="display:table-cell!important;overflow:hidden" colspan="12">

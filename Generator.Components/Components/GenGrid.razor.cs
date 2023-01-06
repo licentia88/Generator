@@ -20,7 +20,7 @@ public partial class GenGrid
 
     public DialogParameters DialogParameters { get; set; } = new DialogParameters();
 
-    public DialogOptions DialogOptions { get; set; } = new DialogOptions
+    public DialogOptions DialogOptions { get; set; } = new()
     {
         MaxWidth = MaxWidth.Medium,
         FullWidth = true,
@@ -52,8 +52,6 @@ public partial class GenGrid
 
         return result;
     }
-
-    public MudTable<object> GridRef { get; set; }
 
     public ViewState ViewState { get; set; } = ViewState.None;
 
@@ -162,32 +160,38 @@ public partial class GenGrid
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     internal async Task InvokeCallBackByViewState(object model)
     {
-        switch (ViewState)
+        try
         {
-            case ViewState.Create when Create.HasDelegate:
-                await Create.InvokeAsync(new GenGridArgs(null, model, EditMode, DataSource.IndexOf(SelectedItem)));
-                break;
+            switch (ViewState)
+            {
+                case ViewState.Create when Create.HasDelegate:
+                    await Create.InvokeAsync(new GenGridArgs(null, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    break;
 
-            case ViewState.Update when Update.HasDelegate:
-                await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
-                break;
+                case ViewState.Update when Update.HasDelegate:
+                    await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    break;
 
-            case ViewState.Delete when Delete.HasDelegate:
-                await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
-                break;
+                case ViewState.Delete when Delete.HasDelegate:
+                    await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    break;
 
-            case ViewState.None when Cancel.HasDelegate:
-                await Cancel.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
-                break;
+                case ViewState.None when Cancel.HasDelegate:
+                    await Cancel.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    break;
 
-            default:
-                throw new ArgumentOutOfRangeException();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            SearchDisabled = false;
+            NewDisabled = false;
+            ExpandDisabled = false;
+            ViewState = ViewState.None;
         }
-
-        SearchDisabled = false;
-        NewDisabled = false;
-        ExpandDisabled = false;
-        ViewState = ViewState.None;
+        catch (Exception e)
+        {
+        }
     }
 
     public Task OnEditCLick()
@@ -212,7 +216,7 @@ public partial class GenGrid
         Components.ForEach(x => x.Error = false);
     }
 
-    public virtual async ValueTask ShowDialogAsync<TPage>() where TPage : IGenPage
+    public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage
     {
         var paramList = new List<(string, object)>
         {
@@ -221,17 +225,17 @@ public partial class GenGrid
             (nameof(GenPage.GenGrid), this)
         };
 
-        await ShowDialogAsync<TPage>(paramList.ToArray());
+        return await ShowDialogAsync<TPage>(paramList.ToArray());
     }
 
-    public virtual async ValueTask ShowDialogAsync<TPage>(params (string key, object value)[] parameters) where TPage : IGenPage
+    public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>(params (string key, object value)[] parameters) where TPage : IGenPage
     {
         foreach (var prm in parameters)
         {
             DialogParameters.Add(prm.key, prm.value);
         }
 
-        await DialogService.ShowAsync<GenPage>(Title, DialogParameters, DialogOptions);
+        return await DialogService.ShowAsync<GenPage>(Title, DialogParameters, DialogOptions);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)

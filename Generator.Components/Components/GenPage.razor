@@ -1,4 +1,4 @@
-﻿@implements IGenPage
+@implements IGenPage
 
 
 <EditForm Model="@ViewModel" OnValidSubmit="OnCommit">
@@ -19,7 +19,7 @@
                     <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
                         @{
-                            @foreach (var component in GenGrid.Components?.Where(x => x is IGenComponent))
+                            @foreach (var component in GenGrid.Components)
                             {
 
                                 <MudItem    Class="mt-4"
@@ -32,7 +32,7 @@
                                     @{
                                         if (component.VisibleOnEdit)
                                         {
-                                            @component.RenderAsComponent(ViewModel, false)
+                                            @component.RenderAsComponent(ViewModel)
                                         }
                                     }
                                 </MudItem>
@@ -43,8 +43,8 @@
 
                     if (GenGrid.EditMode == EditMode.SmartPopup && GenGrid.GenDetailGrid is not null)
                     {
-                        <div class="pb-5">
-                            <CascadingValue Value="ViewModel" Name="@(nameof(GenPage.ViewModel))">
+                        <div class="pt-5 pb-5">
+                            <CascadingValue Value="ViewModel" Name="@(nameof(ViewModel))">
                                 @GenGrid.GenDetailGrid(ViewModel)
                             </CascadingValue>
                         </div>
@@ -54,7 +54,7 @@
         </DialogContent>
         <DialogActions>
             <MudButton OnClick="Close">@GenGrid.CancelText</MudButton>
-            <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="MudBlazor.ButtonType.Submit">
+            <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">
                  @(GetSubmitTextFromViewState())
             </MudButton>
         </DialogActions>

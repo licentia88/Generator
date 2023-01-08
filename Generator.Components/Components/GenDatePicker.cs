@@ -15,7 +15,7 @@ namespace Generator.Components.Components
         ObjectValidator<GenDatePicker> ObjectValidator = new ObjectValidator<GenDatePicker>();
 
         [CascadingParameter(Name = nameof(ParentComponent))]
-        public GenGrid ParentComponent { get; set; }
+        public dynamic  ParentComponent { get; set; }
 
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get; set; }

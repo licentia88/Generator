@@ -13,4 +13,11 @@ public static class ObjectExtensions
         var genericMethodInfo = methodInfo?.MakeGenericMethod(genericArguments);
         return genericMethodInfo?.Invoke(null, new[] { o });
     }
+    public static dynamic CastToReflected<T>(this object o)
+    {
+        var methodInfo = typeof(ObjectExtensions).GetMethod(nameof(CastTo), BindingFlags.Static | BindingFlags.Public);
+        var genericArguments = new[] { typeof(T) };
+        var genericMethodInfo = methodInfo?.MakeGenericMethod(genericArguments);
+        return genericMethodInfo?.Invoke(null, new[] { (object)o });
+    }
 }

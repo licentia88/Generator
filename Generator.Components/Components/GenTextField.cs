@@ -22,7 +22,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
     public object GetDefaultValue => DataType.GetDefaultValue();
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public GenGrid ParentComponent { get; set; }
+    public dynamic ParentComponent { get; set; }
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
@@ -37,7 +37,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
     [Parameter]
     public int Order { get; set; }
-
+ 
     [Parameter]
     public bool VisibleOnEdit { get; set; } = true;
 

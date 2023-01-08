@@ -9,9 +9,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid
+public partial class GenGrid<TModel>  
 {
-    public GridManager GridManager { get; }
+    internal bool GridIsBusy = false;
+
+    internal GenPage<TModel> CurrentGenPage { get; set; }
+
+    public GridManager<TModel> GridManager { get; }
 
     [Inject]
     public IDialogService DialogService { get; set; }
@@ -88,7 +92,7 @@ public partial class GenGrid
     public EventCallback<IGenView> Load { get; set; }
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public GenGrid ParentComponent { get; set; }
+    public GenGrid<object> ParentComponent { get; set; }
 
     [Parameter]
     public string Title { get; set; }
@@ -100,7 +104,7 @@ public partial class GenGrid
     public string SearchPlaceHolderText { get; set; } = "Search";
 
     [Parameter, EditorRequired]
-    public ICollection<object> DataSource { get; set; }
+    public ICollection<TModel> DataSource { get; set; }
 
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
@@ -134,7 +138,7 @@ public partial class GenGrid
 
     public GenGrid()
     {
-        GridManager = new GridManager(this);
+        GridManager = new GridManager<TModel>(this);
     }
 
     protected override async Task OnInitializedAsync()
@@ -148,7 +152,7 @@ public partial class GenGrid
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender)
+        if (!firstRender && !GridIsBusy)
             await OnNewItemAddEditInvoker();
     }
 
@@ -162,9 +166,15 @@ public partial class GenGrid
     {
         try
         {
+            GridIsBusy = true;
             switch (ViewState)
             {
                 case ViewState.Create when Create.HasDelegate:
+
+                    if (EditMode == EditMode.Inline)
+                    {
+                        DataSource.RemoveAt(0);
+                    }
                     await Create.InvokeAsync(new GenGridArgs(null, model, EditMode, DataSource.IndexOf(SelectedItem)));
                     break;
 
@@ -184,14 +194,27 @@ public partial class GenGrid
                     throw new ArgumentOutOfRangeException();
             }
 
+            if(EditMode != EditMode.Inline)
+                CurrentGenPage.PreventClose = false;
+
             SearchDisabled = false;
             NewDisabled = false;
             ExpandDisabled = false;
             ViewState = ViewState.None;
+
+            GridIsBusy = false;
+
         }
         catch (Exception e)
         {
+            if (EditMode != EditMode.Inline)
+                CurrentGenPage.PreventClose = true;
+
+            GridIsBusy = false;
         }
+
+        StateHasChanged();
+
     }
 
     public Task OnEditCLick()
@@ -202,12 +225,14 @@ public partial class GenGrid
         //    await Load.InvokeAsync(this);
     }
 
-    private async void OnCancelClick(object element)
+    private async void OnCancelClick(TModel element)
     {
+        if (ViewState == ViewState.None) return;
+
         if (ViewState == ViewState.Create)
             DataSource.Remove(element);
-        else
-            DataSource.Replace(element, OriginalEditItem);
+        else 
+            DataSource.Replace(element, OriginalEditItem.CastTo<TModel>());
 
         ViewState = ViewState.None;
 
@@ -216,26 +241,27 @@ public partial class GenGrid
         Components.ForEach(x => x.Error = false);
     }
 
-    public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage
+    public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
     {
         var paramList = new List<(string, object)>
         {
-            (nameof(GenPage.ViewModel), SelectedItem),
-            (nameof(GenPage.ViewState), ViewState),
-            (nameof(GenPage.GenGrid), this)
+            (nameof(GenPage<TModel>.ViewModel), SelectedItem),
+            (nameof(GenPage<TModel>.ViewState), ViewState),
+            (nameof(GenPage<TModel>.GenGrid), this)
         };
 
         return await ShowDialogAsync<TPage>(paramList.ToArray());
     }
 
-    public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>(params (string key, object value)[] parameters) where TPage : IGenPage
+
+    public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>(params (string key, object value)[] parameters) where TPage : IGenPage<TModel>
     {
         foreach (var prm in parameters)
         {
             DialogParameters.Add(prm.key, prm.value);
         }
 
-        return await DialogService.ShowAsync<GenPage>(Title, DialogParameters, DialogOptions);
+        return await DialogService.ShowAsync<GenPage<TModel>>(Title, DialogParameters, DialogOptions);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)

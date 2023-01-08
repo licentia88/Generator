@@ -1,9 +1,10 @@
-@inherits MudTable<object>
+@typeparam TModel
+@inherits MudTable<TModel>
 @using Generator.Shared.Extensions
 
 @if (DataSource is null) { return; }
 
-<CascadingValue Name="@(nameof(GenGrid.ParentComponent))" Value="this">
+<CascadingValue Name="@(nameof(GenGrid<TModel>.ParentComponent))" Value="this">
 
     @{
         if (GenColumns is not null && IsFirstRender)
@@ -53,7 +54,7 @@
 
         @* ReSharper disable once AsyncVoidLambda *@
         @{
-            <MudTable T="object"
+            <MudTable T="TModel"
                       Items="DataSource"
                       Dense="Dense"
                       RowClassFunc="@RowClassFunc"
@@ -66,11 +67,11 @@
                       Height="Height"
                       @bind-SelectedItem="SelectedItem"
                       SelectedItems="@SelectedItems"
-                      Filter="new Func<object,bool>(SearchFunction)"
+                      Filter="new Func<TModel,bool>(SearchFunction)"
                       Virtualize="Virtualize"
                       OnCommitEditClick="OnEditCLick"
-                      RowEditPreview="async x=>await OnBackUp(x)"
-                      RowEditCancel="x=> OnCancelClick(x)"
+                      RowEditPreview="async x=>await OnBackUp(x.CastTo<TModel>())"
+                      RowEditCancel="x=> OnCancelClick(x.CastTo<TModel>())"
                       RowEditCommit="async x => await OnCommit(x)"
                       IsEditRowSwitchingBlocked="true"
                       ApplyButtonPosition="TableApplyButtonPosition.End"
@@ -154,7 +155,7 @@
                     @{
                         if(EditMode != EditMode.Inline)
                         {
-                            var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item == SelectedItem);
+                            var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item.CastTo<TModel>().Equals(SelectedItem));
                             editingRow?.Context.Table.SetEditingItem(null);
 
                             StateHasChanged();
@@ -227,11 +228,11 @@
                                                Disabled="@button.ButtonDisabled" />
                             }
                         }
+
                         @{
                             if (Delete.HasDelegate)
                             {
                                 <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(()=>OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
-
                             }
                         }
 

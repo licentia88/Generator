@@ -29,7 +29,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public int xxl { get; set; }
 
-    public GenGrid ParentComponent { get; set; }
+    public dynamic ParentComponent { get; set; }
 
     public object Model { get; set; }
 

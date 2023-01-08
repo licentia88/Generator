@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Reflection;
+using FastMember;
 
 namespace Generator.Shared.Extensions;
 
@@ -28,8 +29,28 @@ public static class PropertyExtensions
             return;
         }
 
-        obj.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(obj, propertyValue);
 
+        var property = obj.GetType()
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        
+
+        property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
+
+       
+
+    }
+
+    private static object ChangeToType(object value, Type destinationType)
+    {
+        try
+        {
+            return Convert.ChangeType(value, destinationType);
+        }
+        catch 
+        {
+            return GetDefaultValue(destinationType);
+        }
     }
 
     public static object GetFieldValue<T>(this T obj, string propertyName) //where T:new()

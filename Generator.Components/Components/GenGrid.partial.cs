@@ -9,9 +9,8 @@ using static MudBlazor.CategoryTypes;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid : MudTable<object>, IGenGrid
+public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel>  
 {
-    
     public async Task OnCreateClick()
     {
        await GridManager.Create();
@@ -27,7 +26,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         await InvokeCallBackByViewState(model);
     }
 
-    private bool SearchFunction(object model)
+    private bool SearchFunction(TModel model)
     {
         if (string.IsNullOrEmpty(_searchString)) return true;
 
@@ -66,10 +65,19 @@ public partial class GenGrid : MudTable<object>, IGenGrid
                 return;
             }
 
-            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
+            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
             if (firstItem is null)
                 return;
+
+            var row = firstItem.Target.CastTo<MudTr>();
+
+            if (row.IsEditing)
+            {
+                row.SetFieldValue("hasBeenCanceled", false);
+                row.SetFieldValue("hasBeenCommitted", false);
+                row.SetFieldValue("hasBeenClickedFirstTime", false);
+            }
 
             firstItem?.Invoke();
 
@@ -89,7 +97,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
                 return;
             }
 
-            var firstItem = EditButtonActionList.FirstOrDefault(x => x.Target?.CastTo<MudTr>().Item == SelectedItem);
+            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
             if (firstItem is null)
                 return;
@@ -105,7 +113,7 @@ public partial class GenGrid : MudTable<object>, IGenGrid
         
     }
 
-    private async Task OnBackUp(object element)
+    private async Task OnBackUp(TModel element)
     {
         if (HasErrors()) return;
 

@@ -1,6 +1,7 @@
 ﻿using Generator.Shared.Services;
 using MudBlazor.Services;
 using Generator.Shared.Extensions;
+using Generator.Examples.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,9 @@ builder.Services.RegisterGrpcService<IHeaderButtonService>();
 builder.Services.RegisterGrpcService<IFooterButtonService>();
 builder.Services.RegisterGrpcService<IGridsMService>();
 builder.Services.RegisterGrpcService<IGridsDService>();
+builder.Services.RegisterGrpcService<IUserService>();
 
- 
+
 
 var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
+using System.Reflection;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 
@@ -65,11 +66,15 @@ public class ObjectValidator<TComponent> where TComponent : IGenComponent
             return;
         }
 
+        var custArgument = component.Model.GetType()
+                    .GetProperty(component.BindingField).GetCustomAttribute<DisplayNameAttribute>(true);
+
+        var displayName = custArgument == null ? component.BindingField : custArgument.DisplayName.ToString();
+  
         var valCOntext = new ValidationContext(component.Model)
         {
             MemberName = component.BindingField,
-            DisplayName = component.Model.GetType().GetProperty(component.BindingField)?.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(DisplayNameAttribute))
-            .ConstructorArguments.FirstOrDefault().Value?.ToString() ?? string.Empty
+            DisplayName = displayName
 
         };
 

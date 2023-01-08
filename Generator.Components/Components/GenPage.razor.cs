@@ -1,17 +1,20 @@
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
+using Generator.Shared.Extensions;
+using Mapster;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Components
 {
-    public partial class GenPage
+    public partial class GenPage<TModel>
     {
-        [Parameter]
-        public GenGrid GenGrid { get; set; }
+        
 
-        public bool PreventClose { get; set; }
+        [Parameter]
+        public GenGrid<TModel> GenGrid { get; set; }
+
 
         [Parameter]
         public string Title { get; set; }
@@ -44,25 +47,21 @@ namespace Generator.Components.Components
 
         public bool EnableModelValidation { get; set; }
 
+        public bool PreventClose { get; set; }
+
         public List<IGenComponent> Components { get; set; }
 
-        public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+        
+        protected override Task OnInitializedAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RenderFragment RenderAsGridComponent(object model)
-        {
-            throw new NotImplementedException();
+            GenGrid.CurrentGenPage = this;
+            return base.OnInitializedAsync();
         }
 
         public async Task OnCommit()
         {
+            //IsLastPage = true;
+
             GenGrid.Components.ForEach(x => x.ValidateObject());
 
             if (GenGrid.HasErrors()) return;
@@ -76,7 +75,8 @@ namespace Generator.Components.Components
                 await GenGrid.InvokeCallBackByViewState(ViewModel);
             }
 
-            Close();
+            if(!PreventClose)
+                Close();
         }
 
         public virtual void Close()
@@ -94,5 +94,21 @@ namespace Generator.Components.Components
                 _ => ""
             };
         }
+
+        public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+        {
+            throw new NotImplementedException();
+        }
+
+        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RenderFragment RenderAsGridComponent(object model)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

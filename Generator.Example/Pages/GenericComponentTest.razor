@@ -4,14 +4,13 @@
 @{
     if (InternalDataSource is not null)
     {
-        <GenGrid @ref="GridRef"
+        <GenGrid  
                  Create="async x=>await OnCreate(x)"
                  Update="async x=>await OnUpdate(x)"
                  Delete="async x=>await OnDelete(x)"
                  Cancel="async x=>await Cancel(x)"
-                 Load="async x=>await OnLoad(x)"
-                 Class="m-2"
-                 EditMode="EditMode.Popup"
+                  Class="m-2"
+                 EditMode="EditMode.Inline"
                  Title="GenericTest1"
                  DataSource="InternalDataSource"
                  EnableSearch="true">
@@ -50,7 +49,7 @@
                 <GenTextField BindingField="TT_NULLABLE_DATE" InputType="InputType.Date" Label="NullableDate" Required="true" Clearable="true"/>
             </GenColumns>
             <GenDetailGrid>
-                <GenGrid @ref="GridRef" Class="mt-2"
+                <GenGrid Class="mt-2"
                          EditMode="EditMode.Popup"
                          Title="GenericTest1"
                          DataSource="InternalDataSource"

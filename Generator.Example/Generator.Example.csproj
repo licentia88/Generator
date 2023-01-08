@@ -27,5 +27,8 @@
     <ProjectReference Include="..\Generator.Components\Generator.Components.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
+using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using IComponent = Microsoft.AspNetCore.Components.IComponent;
 
@@ -47,7 +48,7 @@ namespace Generator.Components.Components
 
         [CascadingParameter(Name = nameof(ParentComponent))]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public GenGrid ParentComponent { get; set; }
+        public object ParentComponent { get; set; }
 
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -72,7 +73,8 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            ParentComponent?.Components.Add(this);
+            ParentComponent.CastTo<GenGrid<dynamic>>()?.AddChildComponent(this);
+
 
             return base.OnInitializedAsync();
         }

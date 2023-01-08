@@ -15,7 +15,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     #region CascadingParameters
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public GenGrid ParentComponent { get; set; }
+    public dynamic ParentComponent { get; set; }
 
     #endregion CascadingParameters
 
@@ -75,6 +75,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     protected override Task OnInitializedAsync()
     {
         ParentComponent?.AddChildComponent(this);
+
         return Task.CompletedTask;
     }
 

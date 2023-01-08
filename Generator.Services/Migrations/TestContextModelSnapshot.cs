@@ -22,6 +22,80 @@ namespace Generator.Services.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("Generator.Examples.Shared.ORDERS_D", b =>
+                {
+                    b.Property<int>("OD_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OD_ROWID"), 1L, 1);
+
+                    b.Property<int>("OD_M_REFNO")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OD_NAME")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("OD_PRICE")
+                        .HasPrecision(19, 2)
+                        .HasColumnType("decimal(19,2)");
+
+                    b.Property<int>("OD_QUANTITY")
+                        .HasColumnType("int");
+
+                    b.HasKey("OD_ROWID");
+
+                    b.HasIndex("OD_M_REFNO");
+
+                    b.ToTable("ORDERS_D");
+                });
+
+            modelBuilder.Entity("Generator.Examples.Shared.ORDERS_M", b =>
+                {
+                    b.Property<int>("OM_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OM_ROWID"), 1L, 1);
+
+                    b.Property<string>("OM_DESCRIPTION")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OM_USER_REFNO")
+                        .HasColumnType("int");
+
+                    b.HasKey("OM_ROWID");
+
+                    b.HasIndex("OM_USER_REFNO");
+
+                    b.ToTable("ORDERS_M");
+                });
+
+            modelBuilder.Entity("Generator.Examples.Shared.USER", b =>
+                {
+                    b.Property<int>("U_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("U_ROWID"), 1L, 1);
+
+                    b.Property<int>("U_AGE")
+                        .HasColumnType("int");
+
+                    b.Property<string>("U_NAME")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("U_REGISTER_DATE")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("U_ROWID");
+
+                    b.ToTable("USER");
+                });
+
             modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.CHILD_CLASS", b =>
                 {
                     b.Property<int>("CC_ROWID")
@@ -121,6 +195,24 @@ namespace Generator.Services.Migrations
                     b.ToTable("TEST_TABLE");
                 });
 
+            modelBuilder.Entity("Generator.Examples.Shared.ORDERS_D", b =>
+                {
+                    b.HasOne("Generator.Examples.Shared.ORDERS_M", null)
+                        .WithMany("ORDERS_D")
+                        .HasForeignKey("OD_M_REFNO")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Examples.Shared.ORDERS_M", b =>
+                {
+                    b.HasOne("Generator.Examples.Shared.USER", null)
+                        .WithMany("ORDERS_M")
+                        .HasForeignKey("OM_USER_REFNO")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.CHILD_CLASS", b =>
                 {
                     b.HasOne("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", null)
@@ -137,6 +229,16 @@ namespace Generator.Services.Migrations
                         .HasForeignKey("PC_STRING_TABLE_CODE");
 
                     b.Navigation("STRING_TABLE");
+                });
+
+            modelBuilder.Entity("Generator.Examples.Shared.ORDERS_M", b =>
+                {
+                    b.Navigation("ORDERS_D");
+                });
+
+            modelBuilder.Entity("Generator.Examples.Shared.USER", b =>
+                {
+                    b.Navigation("ORDERS_M");
                 });
 
             modelBuilder.Entity("Generator.Shared.TEST_WILL_DELETE_LATER.PARENT_CLASS", b =>

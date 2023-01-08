@@ -29,7 +29,7 @@ public interface IGenView : IGenCompRenderer
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
 }
 
-public interface IGenPage : IGenView
+public interface IGenPage<TModel> : IGenView
 {
     public MudDialogInstance MudDialog { get; set; }
 
@@ -37,12 +37,10 @@ public interface IGenPage : IGenView
 
     public bool EnableModelValidation { get; set; }
 
-    public GenGrid GenGrid { get; set; }
-
-    public bool PreventClose { get; set; }
+    public GenGrid<TModel> GenGrid { get; set; }
 }
 
-public interface IGenGrid : IGenView
+public interface IGenGrid<TModel> : IGenView  
 {
     public bool HasErrors();// { get; }
 
@@ -62,13 +60,13 @@ public interface IGenGrid : IGenView
 
     public string DeleteText { get; set; }
 
-    public object SelectedItem { get; set; }
+    public TModel SelectedItem { get; set; }
 
     public bool EnableSearch { get; set; }
 
     public bool IsFirstRender { get; set; }
 
-    public ICollection<object> DataSource { get; set; }
+    public ICollection<TModel> DataSource { get; set; }
 
     public bool NewDisabled { get; set; }
 
@@ -86,7 +84,7 @@ public interface IGenGrid : IGenView
 
     public bool DetailClicked { get; set; }
 
-    public GenGrid ParentComponent { get; set; }
+    public GenGrid<object> ParentComponent { get; set; }
 
     public string SearchPlaceHolderText { get; set; }
 }

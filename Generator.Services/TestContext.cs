@@ -1,4 +1,5 @@
-﻿using Generator.Shared.TEST_WILL_DELETE_LATER;
+﻿using Generator.Examples.Shared;
+using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Services
@@ -22,6 +23,11 @@ namespace Generator.Services
         public DbSet<CHILD_CLASS> CHILD_CLASS { get; set; }
 
 
+        public DbSet<USER> USER { get; set; }
+
+        public DbSet<ORDERS_M> ORDERS_M { get; set; }
+
+        public DbSet<ORDERS_D> ORDERS_D { get; set; }
     }
 }
 

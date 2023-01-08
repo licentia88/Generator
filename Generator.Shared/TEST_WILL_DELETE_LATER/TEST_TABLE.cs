@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ProtoBuf.Grpc;
 
 namespace Generator.Shared.TEST_WILL_DELETE_LATER;
 
@@ -20,5 +21,8 @@ public class TEST_TABLE
 	public string TT_DEFAULT_VALUE_STRING { get; set; } = "TESTME";
 
 	public string TT_STRING_TABLE_CODE { get; set; }
+
 }
+
+ 
 

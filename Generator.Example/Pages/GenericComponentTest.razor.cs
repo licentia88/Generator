@@ -5,13 +5,13 @@ using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
+using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.Pages
 {
 	public partial class GenericComponentTest:ComponentBase
 	{
-        public GenGrid GridRef { get; set; }
 
 
         public ObservableCollection<object> InternalDataSource { get; set; }
@@ -39,7 +39,7 @@ namespace Generator.Example.Pages
 
 
             //InternalDataSource.add
-            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(4)); ;
+            InternalDataSource = new ObservableCollection<object>(result.GenObject.DynamicData().Take(2)); ;
 
             ComboDataSource = comboResult.GenObject.DynamicData().ToList();
 
@@ -57,16 +57,14 @@ namespace Generator.Example.Pages
           
         }
 
-        public ValueTask OnCreate(GenGridArgs args)
+        public async ValueTask OnCreate(GenGridArgs args)
         {
-            args.NewData.SetPropertyValue("TT_ROWID", "TEST");
+            //args.NewData.SetPropertyValue("TT_ROWID", "TEST");
 
-            if (args.EditMode != EditMode.Inline)
-            {
-                InternalDataSource.Insert(0, args.NewData);
-            }
-           
-            return ValueTask.CompletedTask;
+            await Task.Delay(3000);
+            InternalDataSource.Insert(0, args.NewData);
+
+            
         }
 
         public ValueTask Cancel(GenGridArgs args)
@@ -93,7 +91,7 @@ namespace Generator.Example.Pages
         {
             if(view.ViewState == ViewState.Create)
             {
-                var prop = view.GetPropertyValue(nameof(GenGrid.SelectedItem));
+                var prop = view.GetPropertyValue(nameof(GenGrid<object>.SelectedItem));
                 prop.SetPropertyValue("TT_ROWID", "222");
 
                 //InternalDataSource.Insert(0, prop);

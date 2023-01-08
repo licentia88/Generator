@@ -1,4 +1,6 @@
-@implements IGenPage
+@typeparam TModel
+
+@implements IGenPage<TModel>
 
 
 <EditForm Model="@ViewModel" OnValidSubmit="OnCommit">

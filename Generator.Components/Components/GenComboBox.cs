@@ -16,7 +16,7 @@ namespace Generator.Components.Components
         public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
 
         [CascadingParameter(Name = nameof(ParentComponent))]
-        public GenGrid ParentComponent { get; set; }
+        public dynamic ParentComponent { get; set; }
 
         [Parameter, EditorRequired]
         public string DisplayField { get; set; }
@@ -80,6 +80,7 @@ namespace Generator.Components.Components
         protected override Task OnInitializedAsync()
         {
             ParentComponent?.AddChildComponent(this);
+
 
             return Task.CompletedTask;
         }

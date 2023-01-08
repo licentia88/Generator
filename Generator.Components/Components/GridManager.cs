@@ -4,11 +4,11 @@ using Mapster;
 
 namespace Generator.Components.Components;
 
-public class GridManager
+public class GridManager<TModel>
 {
-    public GenGrid Grid { get; }
+    public GenGrid<TModel> Grid { get; }
 
-    public GridManager(GenGrid grid)
+    public GridManager(GenGrid<TModel> grid)
     {
         Grid = grid;
     }
@@ -19,23 +19,24 @@ public class GridManager
 
         Grid.ViewState = ViewState.Create;
 
-        var datasourceModelType = Grid.DataSource.GetType().GenericTypeArguments[0];
+        //var datasourceModelType = Grid.DataSource.GetType().GenericTypeArguments[0];
 
         var newData = Grid.Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
-        var adaptedData = newData.Adapt(typeof(Dictionary<string, object>), datasourceModelType);
+        var adaptedData = newData.Adapt<TModel>();
 
         Grid.SelectedItem = adaptedData;
 
         if (Grid.EditMode == EditMode.Inline)
         {
             Grid.DataSource.Insert(0, Grid.SelectedItem);
-
+            Grid.SetEditingItem(Grid.SelectedItem);
+            
             return;
         }
 
 
-        await Grid.ShowDialogAsync<GenPage>();
+        await Grid.ShowDialogAsync<GenPage<TModel>>();
 
     }
 
@@ -43,7 +44,7 @@ public class GridManager
     {
         Grid.ViewState = ViewState.Update;
 
-        await Grid.ShowDialogAsync<GenPage>();
+        await Grid.ShowDialogAsync<GenPage<TModel>>();
 
     }
 }

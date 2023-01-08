@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Server", "Generat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Components", "Generator.Components\Generator.Components.csproj", "{96AD83EE-4D0C-4B40-8ABD-D1ADEAA45C45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Examples.Shared", "Generator.Examples.Shared\Generator.Examples.Shared.csproj", "{EFBE3466-9CFC-4EE6-BCB0-C7B2C7B2DB06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{96AD83EE-4D0C-4B40-8ABD-D1ADEAA45C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96AD83EE-4D0C-4B40-8ABD-D1ADEAA45C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96AD83EE-4D0C-4B40-8ABD-D1ADEAA45C45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFBE3466-9CFC-4EE6-BCB0-C7B2C7B2DB06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFBE3466-9CFC-4EE6-BCB0-C7B2C7B2DB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFBE3466-9CFC-4EE6-BCB0-C7B2C7B2DB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFBE3466-9CFC-4EE6-BCB0-C7B2C7B2DB06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

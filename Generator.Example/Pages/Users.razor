@@ -1,0 +1,21 @@
+﻿@page "/Users"
+@using Generator.Examples.Shared
+
+@{
+    if (DataSource is not null)
+    {
+        <GenGrid DataSource="@DataSource"
+                 EditMode="EditMode.Popup"
+                 Class="m-2"
+                 Create="@( async x=> await CreateAsync(x))"
+                 Update="@( async x=> await UpdateAsync(x))"
+                 Delete="@( async x=> await DeleteAsync(x))">
+            <GenColumns>
+                <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
+                <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />
+                <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
+                               Clearable="true" EnabledOnEdit="false" Label=" Reg. Date" />
+            </GenColumns>
+        </GenGrid>
+    }
+}

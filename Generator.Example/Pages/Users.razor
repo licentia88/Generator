@@ -2,10 +2,9 @@
 @using Generator.Examples.Shared
 
 @{
-    if (DataSource is not null)
-    {
+     
         <GenGrid DataSource="@DataSource"
-                 EditMode="EditMode.Popup"
+                 EditMode="EditMode.Form"
                  Class="m-2"
                  Create="@( async x=> await CreateAsync(x))"
                  Update="@( async x=> await UpdateAsync(x))"
@@ -17,5 +16,5 @@
                                Clearable="true" EnabledOnEdit="false" Label=" Reg. Date" />
             </GenColumns>
         </GenGrid>
-    }
+    
 }

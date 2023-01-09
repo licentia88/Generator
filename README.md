@@ -1,19 +1,41 @@
 # Generator
  
 Three projects are included in this repository.
-**Generator Server** , **Generator UI**, and **Generator Components**
+
+**1 - Generator Components**
+
+**2 - Generator UI**
+
+**3 - Generator Server**
 
  
 ## Project Descriptions
 
 ### Generator Components
-//Will add Description soon
+
+Generator Components are inherited from Mudblazor Components and are intended to be rendered in GenGrid Component.
+The current list of inherited components is as follows:
+
+MudTextField : GenTextBox
+
+GenComboBox : MudSelect
+
+MudCheckBox : GenCheckBox
+
+GenDatePicker : MudDatePicker
+
+Additional Components 
+
+GenSpacer :  a blank component that helps organizing the column spacing of components in Form Views.
+
 ### Generator Service
-//Will add Description soon
+
+Generator UI is a user interface that enables command execution and UI creation without the need for coding.
+
 ### Generator UI
-//Will add Description soon
 
-
+ Generator Server includes generic and  non generic methods needed for Generator UI creation and command execution.
+ 
  
 There are numerous ways you can use the repository.
 (1) use the Generator Components

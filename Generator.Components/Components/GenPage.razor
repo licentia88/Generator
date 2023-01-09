@@ -43,7 +43,7 @@
 
                     </MudGrid>
 
-                    if (GenGrid.EditMode == EditMode.SmartPopup && GenGrid.GenDetailGrid is not null)
+                    if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
                     {
                         <div class="pt-5 pb-5">
                             <CascadingValue Value="ViewModel" Name="@(nameof(ViewModel))">

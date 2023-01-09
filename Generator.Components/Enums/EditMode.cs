@@ -2,5 +2,5 @@
 
 public enum EditMode
 {
-     Inline, Popup, SmartPopup
+     Inline, Form, SmartForm
 }

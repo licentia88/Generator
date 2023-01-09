@@ -84,7 +84,7 @@
                 <HeaderContent>
                     @{
 
-                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        if (HasDetail && EditMode != EditMode.SmartForm)
                         {
                             <MudTh>
 
@@ -116,7 +116,7 @@
                 <RowTemplate>
 
                     @{
-                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        if (HasDetail && EditMode != EditMode.SmartForm)
                         {
                             var expandIcon = Icons.Material.Filled.ExpandMore;
 
@@ -139,7 +139,7 @@
                         foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
                         {
                             @*@onclick:stopPropagation = "EditMode==EditMode.Popup"*@
-                            <MudTd @onclick:stopPropagation="EditMode==EditMode.Popup">
+                            <MudTd @onclick:stopPropagation="EditMode==EditMode.Form">
                                 @item.RenderAsGridComponent(context)
                             </MudTd>
                         }
@@ -165,7 +165,7 @@
                             editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
 
                         }
-                        if (HasDetail && EditMode != EditMode.SmartPopup)
+                        if (HasDetail && EditMode != EditMode.SmartForm)
                         {
                             <MudTd></MudTd>
                         }
@@ -186,7 +186,7 @@
                     @{
 
 
-                        if (EditMode != EditMode.SmartPopup && ShouldDisplay(context) && HasDetail)
+                        if (EditMode != EditMode.SmartForm && ShouldDisplay(context) && HasDetail)
                         {
                             <tr style="display:table-row!important;overflow:hidden">
                                 <td style="display:table-cell!important;overflow:hidden" colspan="12">

@@ -21,6 +21,8 @@ builder.Services.RegisterGrpcService<IFooterButtonService>();
 builder.Services.RegisterGrpcService<IGridsMService>();
 builder.Services.RegisterGrpcService<IGridsDService>();
 builder.Services.RegisterGrpcService<IUserService>();
+builder.Services.RegisterGrpcService<IOrdersMService>();
+builder.Services.RegisterGrpcService<IOrdersDService>();
 
 
 

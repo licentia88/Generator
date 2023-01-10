@@ -4,7 +4,7 @@ using Mapster;
 
 namespace Generator.Components.Components;
 
-public class GridManager<TModel>
+public class GridManager<TModel> where TModel :new()
 {
     public GenGrid<TModel> Grid { get; }
 
@@ -19,13 +19,15 @@ public class GridManager<TModel>
 
         Grid.ViewState = ViewState.Create;
 
-        //var datasourceModelType = Grid.DataSource.GetType().GenericTypeArguments[0];
+        var newData = new TModel();
+        var datasourceModelType = Grid.DataSource.GetType().GenericTypeArguments[0];
 
-        var newData = Grid.Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
+        var result =   Activator.CreateInstance(datasourceModelType);
+        //var newData = Grid.Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
-        var adaptedData = newData.Adapt<TModel>();
+        //var adaptedData = newData.Adapt<TModel>();
 
-        Grid.SelectedItem = adaptedData;
+        Grid.SelectedItem = newData;
 
         if (Grid.EditMode == EditMode.Inline)
         {

@@ -8,7 +8,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components
 {
-    public partial class GenPage<TModel>
+    public partial class GenPage<TModel>: IGenPage<TModel> where TModel :new()
     {
         
 
@@ -40,7 +40,7 @@ namespace Generator.Components.Components
         public EventCallback<GenGridArgs> Cancel { get; set; }
 
         [Parameter]
-        public object ViewModel { get; set; }
+        public TModel ViewModel { get; set; }
 
         [CascadingParameter]
         public MudDialogInstance MudDialog { get; set; }

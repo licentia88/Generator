@@ -4,7 +4,7 @@
 @{
      
         <GenGrid DataSource="@DataSource"
-                 EditMode="EditMode.Form"
+                 EditMode="EditMode.SmartForm"
                  Class="m-2"
                  Create="@( async x=> await CreateAsync(x))"
                  Update="@( async x=> await UpdateAsync(x))"
@@ -15,6 +15,10 @@
                 <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
                                Clearable="true" EnabledOnEdit="false" Label=" Reg. Date" />
             </GenColumns>
+
+            <GenDetailGrid>
+                <OrdersM DataSource="context.ORDERS_M.ToList()" />
+            </GenDetailGrid>
         </GenGrid>
     
 }

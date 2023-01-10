@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid<TModel>  
+public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where TModel :new()
 {
     internal bool GridIsBusy = false;
 
@@ -113,7 +113,7 @@ public partial class GenGrid<TModel>
     public RenderFragment GenHeaderButtons { get; set; }
 
     [Parameter, AllowNull]
-    public RenderFragment<object> GenDetailGrid { get; set; }
+    public RenderFragment<TModel> GenDetailGrid { get; set; }
 
     public bool HasDetail => GenDetailGrid is not null;
 

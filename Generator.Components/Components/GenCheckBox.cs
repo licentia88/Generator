@@ -105,7 +105,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
         var val = (bool)model.GetPropertyValue(BindingField);
 
 
-        builder.RenderComponent(this, ignoreLabels,(nameof(Checked), val));
+        builder.RenderComponent(this, ignoreLabels, (nameof(Checked), val));
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>

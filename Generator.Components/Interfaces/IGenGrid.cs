@@ -1,44 +1,8 @@
-using Generator.Components.Args;
 using Generator.Components.Components;
-using Generator.Components.Enums;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Interfaces;
-
-public interface IGenView : IGenCompRenderer
-{
-    public string Title { get; set; }
-
-    public ViewState ViewState { get; set; }
-
-    public EditMode EditMode { get; set; }
-
-    public object OriginalEditItem { get; set; }
-
-    public EventCallback<GenGridArgs> Create { get; set; }
-
-    public EventCallback<GenGridArgs> Update { get; set; }
-
-    public EventCallback<GenGridArgs> Delete { get; set; }
-
-    public EventCallback<GenGridArgs> Cancel { get; set; }
-
-    public List<IGenComponent> Components { get; set; }
-
-    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
-}
-
-public interface IGenPage<TModel> : IGenView
-{
-    public MudDialogInstance MudDialog { get; set; }
-
-    public object ViewModel { get; set; }
-
-    public bool EnableModelValidation { get; set; }
-
-    public GenGrid<TModel> GenGrid { get; set; }
-}
 
 public interface IGenGrid<TModel> : IGenView  
 {
@@ -78,7 +42,7 @@ public interface IGenGrid<TModel> : IGenView
 
     public RenderFragment GenHeaderButtons { get; set; }
 
-    public RenderFragment<object> GenDetailGrid { get; set; }
+    public RenderFragment<TModel> GenDetailGrid { get; set; }
 
     public bool HasDetail { get; }
 

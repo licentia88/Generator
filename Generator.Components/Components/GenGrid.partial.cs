@@ -9,7 +9,7 @@ using static MudBlazor.CategoryTypes;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel>  
+public partial class GenGrid<TModel> 
 {
     public async Task OnCreateClick()
     {

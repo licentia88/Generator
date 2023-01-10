@@ -1,0 +1,53 @@
+﻿@using Generator.Examples.Shared
+
+
+<GenGrid DataSource="@DataSource"
+         EditMode="EditMode.Form"
+         Class="m-2"
+         Create="@( async x=> await CreateAsync(x))"
+         Update="@( async x=> await UpdateAsync(x))"
+         Delete="@( async x=> await DeleteAsync(x))">
+    <GenColumns>
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)" EnabledOnEdit="false" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" />
+    </GenColumns>
+</GenGrid>
+
+
+@code{
+
+    [Parameter]
+    public List<ORDERS_M> DataSource { get; set; }
+
+    [Inject]
+    public IOrdersMService OrdersMService { get; set; }
+
+    public async ValueTask CreateAsync(GenGridArgs args)
+    {
+        if (args.NewData is not ORDERS_M data) return;
+
+        var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
+
+        DataSource.Add(result);
+    }
+
+    public async ValueTask UpdateAsync(GenGridArgs args)
+    {
+        if (args.NewData is not ORDERS_M data) return;
+
+        var result = await OrdersMService.UpdateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
+
+        DataSource.Replace(data, result);
+
+    }
+
+    public async ValueTask DeleteAsync(GenGridArgs args)
+    {
+        if (args.NewData is not ORDERS_M data) return;
+
+        var result = await OrdersMService.DeleteAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
+
+        DataSource.Remove(data);
+
+    }
+}

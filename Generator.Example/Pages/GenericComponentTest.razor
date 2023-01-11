@@ -4,7 +4,8 @@
 @{
     if (InternalDataSource is not null)
     {
-        <GenGrid  
+        <GenGrid
+                 TModel="object"
                  Create="async x=>await OnCreate(x)"
                  Update="async x=>await OnUpdate(x)"
                  Delete="async x=>await OnDelete(x)"

@@ -8,9 +8,8 @@ using MudBlazor;
 
 namespace Generator.Components.Components
 {
-    public partial class GenPage<TModel>: IGenPage<TModel> where TModel :new()
+    public partial class GenPage<TModel> : IGenPage<TModel> where TModel : new()
     {
-        
 
         [Parameter]
         public GenGrid<TModel> GenGrid { get; set; }
@@ -28,19 +27,31 @@ namespace Generator.Components.Components
         public object OriginalEditItem { get; set; }
 
         [Parameter]
-        public EventCallback<GenGridArgs> Create { get; set; }
+        public EventCallback<GenGridArgs<TModel>> Create { get; set; }
 
         [Parameter]
-        public EventCallback<GenGridArgs> Update { get; set; }
+        public EventCallback<GenGridArgs<TModel>> Update { get; set; }
 
         [Parameter]
-        public EventCallback<GenGridArgs> Delete { get; set; }
+        public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
 
         [Parameter]
-        public EventCallback<GenGridArgs> Cancel { get; set; }
+        public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
+
 
         [Parameter]
-        public TModel ViewModel { get; set; }
+        public TModel SelectedItem { get; set; }
+
+        //private TModel selectedItem;
+
+        //[Parameter]
+        //public TModel SelectedItem { get => selectedItem;
+        //    set
+        //    {
+        //        selectedItem = value;
+        //        StateHasChanged();
+        //    }
+        //}
 
         [CascadingParameter]
         public MudDialogInstance MudDialog { get; set; }
@@ -51,31 +62,40 @@ namespace Generator.Components.Components
 
         public List<IGenComponent> Components { get; set; }
 
-        
+        [Parameter]
+        public EventCallback<IGenView<TModel>> Load { get; set; }
+
         protected override Task OnInitializedAsync()
         {
             GenGrid.CurrentGenPage = this;
+
+            if (Load.HasDelegate)
+                Load.InvokeAsync(this);
+
             return base.OnInitializedAsync();
         }
 
         public async Task OnCommit()
         {
-            //IsLastPage = true;
-
             GenGrid.Components.ForEach(x => x.ValidateObject());
 
             if (GenGrid.HasErrors()) return;
 
-            if (GenGrid.ParentComponent?.ViewState == ViewState.Create)
+            if (((dynamic)GenGrid).ParentComponent?.ViewState == ViewState.Create)
             {
-                await GenGrid.ParentComponent.InvokeCallBackByViewState(ViewModel);
+                await ((dynamic)GenGrid).ParentComponent.InvokeCallBackFromChild();
+
+                ((dynamic)GenGrid).ParentComponent.SelectedItem = ((dynamic)GenGrid).ParentComponent.CurrentGenPage.SelectedItem;
+
+                //Buradan 
+                await OnCommit();
             }
             else
             {
-                await GenGrid.InvokeCallBackByViewState(ViewModel);
+                await GenGrid.InvokeCallBackByViewState(SelectedItem);
             }
 
-            if(!PreventClose)
+            if (!PreventClose)
                 Close();
         }
 
@@ -93,6 +113,12 @@ namespace Generator.Components.Components
                 ViewState.Delete => GenGrid.DeleteText,
                 _ => ""
             };
+        }
+
+        public new void StateHasChanged()
+        {
+
+            base.StateHasChanged();
         }
 
         public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent

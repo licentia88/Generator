@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Generator.Components.Args;
+using Generator.Components.Components;
+using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace Generator.Example.Pages
 {
@@ -14,25 +17,34 @@ namespace Generator.Example.Pages
 
         public List<USER> DataSource { get; set; }
 
+        private IGenView<USER> View { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             var res  = await UserService.ReadAsync();
 
-            DataSource =res;//;.ToList<object>();
+            DataSource =res;
         }
 
-        public async ValueTask CreateAsync(GenGridArgs args)
+        public async ValueTask Load(IGenView<USER> view)
         {
-            if (args.NewData is not USER data) return;
+            View = view;
+        }
+
+        public async ValueTask CreateAsync(GenGridArgs<USER> args)
+        {
+            if (args.NewItem is not USER data) return;
 
             var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
+
+            View.SelectedItem = result;
 
             DataSource.Add(result);
         }
 
-        public async ValueTask UpdateAsync(GenGridArgs args)
+        public async ValueTask UpdateAsync(GenGridArgs<USER> args)
         {
-            if (args.NewData is not USER data) return;
+            if (args.NewItem is not USER data) return;
 
             var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
@@ -40,18 +52,14 @@ namespace Generator.Example.Pages
 
         }
 
-        public async ValueTask DeleteAsync(GenGridArgs args)
+        public async ValueTask DeleteAsync(GenGridArgs<USER> args)
         {
-            if (args.NewData is not USER data) return;
+            if (args.NewItem is not USER data) return;
 
             var result = await UserService.DeleteAsync(new RESPONSE_REQUEST<USER>(data));
 
             DataSource.Remove(data);
-
         }
-
-        
-
     }
 }
 

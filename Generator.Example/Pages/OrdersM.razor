@@ -1,7 +1,7 @@
 ﻿@using Generator.Examples.Shared
 
 
-<GenGrid DataSource="@DataSource"
+<GenGrid DataSource="@DataSource" TModel="ORDERS_M"
          EditMode="EditMode.Form"
          Class="m-2"
          Create="@( async x=> await CreateAsync(x))"
@@ -16,24 +16,36 @@
 
 @code{
 
-    [Parameter]
+
     public List<ORDERS_M> DataSource { get; set; }
+
+    [Parameter]
+    public USER Parent { get; set; }
 
     [Inject]
     public IOrdersMService OrdersMService { get; set; }
 
-    public async ValueTask CreateAsync(GenGridArgs args)
+    protected override Task OnInitializedAsync()
     {
-        if (args.NewData is not ORDERS_M data) return;
+        DataSource = Parent.ORDERS_M.ToList();
+
+        return Task.CompletedTask;
+    }
+
+    public async ValueTask CreateAsync(GenGridArgs<ORDERS_M> args)
+    {
+        if (args.NewItem is not ORDERS_M data) return;
+
+        data.OM_USER_REFNO = Parent.U_ROWID;
 
         var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 
         DataSource.Add(result);
     }
 
-    public async ValueTask UpdateAsync(GenGridArgs args)
+    public async ValueTask UpdateAsync(GenGridArgs<ORDERS_M> args)
     {
-        if (args.NewData is not ORDERS_M data) return;
+        if (args.NewItem is not ORDERS_M data) return;
 
         var result = await OrdersMService.UpdateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 
@@ -41,9 +53,9 @@
 
     }
 
-    public async ValueTask DeleteAsync(GenGridArgs args)
+    public async ValueTask DeleteAsync(GenGridArgs<ORDERS_M> args)
     {
-        if (args.NewData is not ORDERS_M data) return;
+        if (args.NewItem is not ORDERS_M data) return;
 
         var result = await OrdersMService.DeleteAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 

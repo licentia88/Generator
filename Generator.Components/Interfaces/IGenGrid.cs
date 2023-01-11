@@ -4,9 +4,11 @@ using MudBlazor;
 
 namespace Generator.Components.Interfaces;
 
-public interface IGenGrid<TModel> : IGenView  
+public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()  
 {
     public bool HasErrors();// { get; }
+
+    public GenPage<TModel> CurrentGenPage { get; set; }
 
     public IDialogService DialogService { get; set; }
 
@@ -23,8 +25,6 @@ public interface IGenGrid<TModel> : IGenView
     public string UpdateText { get; set; }
 
     public string DeleteText { get; set; }
-
-    public TModel SelectedItem { get; set; }
 
     public bool EnableSearch { get; set; }
 
@@ -48,7 +48,7 @@ public interface IGenGrid<TModel> : IGenView
 
     public bool DetailClicked { get; set; }
 
-    public GenGrid<object> ParentComponent { get; set; }
+    public object ParentComponent { get; set; }
 
     public string SearchPlaceHolderText { get; set; }
 }

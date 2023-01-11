@@ -3,7 +3,7 @@
 @implements IGenPage<TModel>
 
 
-<EditForm Model="@ViewModel" OnValidSubmit="OnCommit">
+<EditForm Model="@SelectedItem" OnValidSubmit="OnCommit">
 
     <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="Close">
         <DialogContent>
@@ -34,7 +34,7 @@
                                     @{
                                         if (component.VisibleOnEdit)
                                         {
-                                            @component.RenderAsComponent(ViewModel)
+                                            @component.RenderAsComponent(SelectedItem)
                                         }
                                     }
                                 </MudItem>
@@ -44,10 +44,12 @@
                     </MudGrid>
 
                     if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
-                    {
+                        {
                         <div class="pt-5 pb-5">
-                            <CascadingValue Value="ViewModel" Name="@(nameof(ViewModel))">
-                                @GenGrid.GenDetailGrid(ViewModel)
+                            <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
+                                <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentComponent))">
+                                    @GenGrid.GenDetailGrid(SelectedItem)
+                                </CascadingValue>
                             </CascadingValue>
                         </div>
                     }

@@ -23,7 +23,7 @@ public partial class GenGrid<TModel>
 
         if (HasErrors()) return;
 
-        await InvokeCallBackByViewState(model);
+        await InvokeCallBackByViewState(SelectedItem);
     }
 
     private bool SearchFunction(TModel model)
@@ -148,7 +148,7 @@ public partial class GenGrid<TModel>
 
         var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
 
-        await  InvokeCallBackByViewState(dataToRemove);
+        await  InvokeCallBackByViewState(dataToRemove.CastTo<TModel>());
  
     }
 }

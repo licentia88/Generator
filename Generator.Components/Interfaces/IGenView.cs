@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Generator.Components.Interfaces;
 
-public interface IGenView : IGenCompRenderer
+public interface IGenView<TModel> : IGenCompRenderer where TModel:new()
 {
     public string Title { get; set; }
 
@@ -14,13 +14,17 @@ public interface IGenView : IGenCompRenderer
 
     public object OriginalEditItem { get; set; }
 
-    public EventCallback<GenGridArgs> Create { get; set; }
+    public TModel SelectedItem { get; set; }
 
-    public EventCallback<GenGridArgs> Update { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Create { get; set; }
 
-    public EventCallback<GenGridArgs> Delete { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Update { get; set; }
 
-    public EventCallback<GenGridArgs> Cancel { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
+
+    public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
+
+    public EventCallback<IGenView<TModel>> Load { get; set; }
 
     public List<IGenComponent> Components { get; set; }
 

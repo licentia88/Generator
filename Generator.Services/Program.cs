@@ -42,6 +42,7 @@ await app.Services.CreateAsyncScope().ServiceProvider.GetService<SeedData>().Fil
 app.RegisterGrpcServices();
 app.MapGrpcService<TestService>().EnableGrpcWeb();
 app.MapGrpcService<UserService>().EnableGrpcWeb();
+app.MapGrpcService<OrdersMService>().EnableGrpcWeb();
 
 
 

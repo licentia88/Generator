@@ -5,6 +5,7 @@ using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazorFix;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Generator.Components.Components;
@@ -13,7 +14,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
 {
     internal bool GridIsBusy = false;
 
-    internal GenPage<TModel> CurrentGenPage { get; set; }
+    public GenPage<TModel> CurrentGenPage { get; set; }
 
     public GridManager<TModel> GridManager { get; }
 
@@ -76,23 +77,23 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     private string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
 
     [Parameter]
-    public EventCallback<GenGridArgs> Create { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Create { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs> Delete { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs> Update { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Update { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs> Cancel { get; set; }
+    public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
 
-    //Form Load
     [Parameter]
-    public EventCallback<IGenView> Load { get; set; }
+    public EventCallback<IGenView<TModel>> Load { get; set; }
+
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public GenGrid<object> ParentComponent { get; set; }
+    public object ParentComponent { get; set; }
 
     [Parameter]
     public string Title { get; set; }
@@ -144,9 +145,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     protected override async Task OnInitializedAsync()
     {
         //Detail Grid den parent gridi refreshleme
-        if (ParentComponent is not null && ParentComponent.DetailClicked)
+        if (ParentComponent is not null && ((dynamic)ParentComponent).DetailClicked)
         {
-            await InvokeAsync(ParentComponent.StateHasChanged);
+            await InvokeAsync(((dynamic)ParentComponent).StateHasChanged);
         }
     }
 
@@ -162,7 +163,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     /// <param name="model"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    internal async Task InvokeCallBackByViewState(object model)
+    internal async Task InvokeCallBackByViewState(TModel model)
     {
         try
         {
@@ -175,19 +176,19 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
                     {
                         DataSource.RemoveAt(0);
                     }
-                    await Create.InvokeAsync(new GenGridArgs(null, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Create.InvokeAsync(new GenGridArgs<TModel>(default, model, EditMode, DataSource.IndexOf(SelectedItem)));
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
-                    await Update.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Update.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
                     break;
 
                 case ViewState.Delete when Delete.HasDelegate:
-                    await Delete.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Delete.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
                     break;
 
                 case ViewState.None when Cancel.HasDelegate:
-                    await Cancel.InvokeAsync(new GenGridArgs(OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Cancel.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
                     break;
 
                 default:
@@ -215,6 +216,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
 
         StateHasChanged();
 
+    }
+
+
+    internal  Task InvokeCallBackFromChild()
+    {
+        return InvokeCallBackByViewState(SelectedItem);
     }
 
     public Task OnEditCLick()
@@ -245,7 +252,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     {
         var paramList = new List<(string, object)>
         {
-            (nameof(GenPage<TModel>.ViewModel), SelectedItem),
+            (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
+            (nameof(GenPage<TModel>.Load), Load),
             (nameof(GenPage<TModel>.ViewState), ViewState),
             (nameof(GenPage<TModel>.GenGrid), this)
         };

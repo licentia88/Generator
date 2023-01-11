@@ -4,10 +4,12 @@
 @{
      
         <GenGrid DataSource="@DataSource"
+                 TModel="USER"
                  EditMode="EditMode.SmartForm"
                  Class="m-2"
                  Create="@( async x=> await CreateAsync(x))"
                  Update="@( async x=> await UpdateAsync(x))"
+                 Load="@(async x=> await Load(x))"
                  Delete="@( async x=> await DeleteAsync(x))">
             <GenColumns>
                 <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
@@ -17,7 +19,12 @@
             </GenColumns>
 
             <GenDetailGrid>
-                <OrdersM DataSource="context.ORDERS_M.ToList()" />
+                @{
+                    if (1 == 1)
+                    {
+                        <OrdersM Parent="context" />
+                    }
+                }
             </GenDetailGrid>
         </GenGrid>
     

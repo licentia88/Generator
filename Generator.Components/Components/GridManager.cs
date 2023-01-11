@@ -15,23 +15,23 @@ public class GridManager<TModel> where TModel :new()
 
     public async Task Create()
     {
+
         Grid.EditButtonActionList.Clear();
 
         Grid.ViewState = ViewState.Create;
 
-        var newData = new TModel();
-        var datasourceModelType = Grid.DataSource.GetType().GenericTypeArguments[0];
+        var newData = Grid.Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
-        var result =   Activator.CreateInstance(datasourceModelType);
-        //var newData = Grid.Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
+        TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel)).AddDestinationTransform(DestinationTransform.EmptyCollectionIfNull);
 
-        //var adaptedData = newData.Adapt<TModel>();
+        var adaptedData = newData.Adapt<TModel>();
 
-        Grid.SelectedItem = newData;
+        Grid.SelectedItem = adaptedData;
 
         if (Grid.EditMode == EditMode.Inline)
         {
             Grid.DataSource.Insert(0, Grid.SelectedItem);
+
             Grid.SetEditingItem(Grid.SelectedItem);
             
             return;

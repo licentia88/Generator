@@ -3,6 +3,7 @@ using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
+using Generator.Examples.Shared;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
@@ -57,22 +58,22 @@ namespace Generator.Example.Pages
           
         }
 
-        public async ValueTask OnCreate(GenGridArgs args)
+        public async ValueTask OnCreate(GenGridArgs<object> args)
         {
             //args.NewData.SetPropertyValue("TT_ROWID", "TEST");
 
             await Task.Delay(3000);
-            InternalDataSource.Insert(0, args.NewData);
+            InternalDataSource.Insert(0, args.NewItem);
 
             
         }
 
-        public ValueTask Cancel(GenGridArgs args)
+        public ValueTask Cancel(GenGridArgs<object> args)
         {
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask OnUpdate(GenGridArgs args)
+        public ValueTask OnUpdate(GenGridArgs<object> args)
         {
             //InternalDataSource.Replace(args.OldData, args.NewData);
 
@@ -80,14 +81,14 @@ namespace Generator.Example.Pages
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask OnDelete(GenGridArgs args)
+        public ValueTask OnDelete(GenGridArgs<object> args)
         {
-            InternalDataSource.Remove(args.NewData);
+            InternalDataSource.Remove(args.NewItem);
 
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask OnLoad(IGenView view)
+        public ValueTask OnLoad(IGenView<object> view)
         {
             if(view.ViewState == ViewState.Create)
             {

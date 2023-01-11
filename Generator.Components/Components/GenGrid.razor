@@ -55,6 +55,7 @@
         @* ReSharper disable once AsyncVoidLambda *@
         @{
             <MudTable T="TModel"
+                      Loading="@GridIsBusy" 
                       Items="DataSource"
                       Dense="Dense"
                       RowClassFunc="@RowClassFunc"

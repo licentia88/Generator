@@ -12,17 +12,11 @@ public interface IGenView<TModel> : IGenCompRenderer where TModel:new()
 
     public EditMode EditMode { get; set; }
 
-    public object OriginalEditItem { get; set; }
+    public TModel OriginalEditItem { get; set; }
 
-    public TModel SelectedItem { get; set; }
+    public TModel SelectedItem { get; internal set; }
 
-    public EventCallback<GenGridArgs<TModel>> Create { get; set; }
-
-    public EventCallback<GenGridArgs<TModel>> Update { get; set; }
-
-    public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
-
-    public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
+   
 
     public EventCallback<IGenView<TModel>> Load { get; set; }
 

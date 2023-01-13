@@ -10,10 +10,8 @@ namespace Generator.Components.Components
 {
     public partial class GenPage<TModel> : IGenPage<TModel> where TModel : new()
     {
-
         [Parameter]
         public GenGrid<TModel> GenGrid { get; set; }
-
 
         [Parameter]
         public string Title { get; set; }
@@ -24,34 +22,29 @@ namespace Generator.Components.Components
         [Parameter]
         public EditMode EditMode { get; set; }
 
-        public object OriginalEditItem { get; set; }
+        public TModel OriginalEditItem { get; set; }
 
         [Parameter]
-        public EventCallback<GenGridArgs<TModel>> Create { get; set; }
+        public EventCallback ChildSubmit { get; set; }
+
+      
+        [Parameter]
+        public EventCallback ParentSubmit { get; set; }
 
         [Parameter]
-        public EventCallback<GenGridArgs<TModel>> Update { get; set; }
-
-        [Parameter]
-        public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
-
-        [Parameter]
-        public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
-
+        public EventCallback<TModel> GridSubmit { get; set; }
+ 
 
         [Parameter]
         public TModel SelectedItem { get; set; }
 
-        //private TModel selectedItem;
+        //[Parameter]
+        //public EventCallback<TModel> CommitEventCallback { get; set; }
 
         //[Parameter]
-        //public TModel SelectedItem { get => selectedItem;
-        //    set
-        //    {
-        //        selectedItem = value;
-        //        StateHasChanged();
-        //    }
-        //}
+        //public EventCallback CommitParentEventCallback { get; set; }
+
+ 
 
         [CascadingParameter]
         public MudDialogInstance MudDialog { get; set; }
@@ -65,6 +58,9 @@ namespace Generator.Components.Components
         [Parameter]
         public EventCallback<IGenView<TModel>> Load { get; set; }
 
+
+        internal ViewState? ParentViewState  => ((dynamic)GenGrid).ParentComponent?.ViewState;
+
         protected override Task OnInitializedAsync()
         {
             GenGrid.CurrentGenPage = this;
@@ -72,8 +68,20 @@ namespace Generator.Components.Components
             if (Load.HasDelegate)
                 Load.InvokeAsync(this);
 
+            GetSubmitTextFromViewState();
             return base.OnInitializedAsync();
         }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            GetSubmitTextFromViewState();
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
+        //public async Task ChildSubmitEvent()
+        //{
+        //    await GenGrid.InvokeCallBackByViewState(SelectedItem, ViewState.Update);
+        //}
 
         public async Task OnCommit()
         {
@@ -81,22 +89,25 @@ namespace Generator.Components.Components
 
             if (GenGrid.HasErrors()) return;
 
-            if (((dynamic)GenGrid).ParentComponent?.ViewState == ViewState.Create)
+            
+            if (ParentViewState is not null && ParentViewState == ViewState.Create)
             {
-                await ((dynamic)GenGrid).ParentComponent.InvokeCallBackFromChild();
+                await ParentSubmit.InvokeAsync();
 
-                ((dynamic)GenGrid).ParentComponent.SelectedItem = ((dynamic)GenGrid).ParentComponent.CurrentGenPage.SelectedItem;
+                //((dynamic)GenGrid).ParentComponent.CurrentGenPage.StateHasChanged();
 
-                //Buradan 
                 await OnCommit();
             }
             else
             {
-                await GenGrid.InvokeCallBackByViewState(SelectedItem);
+                await GridSubmit.InvokeAsync(SelectedItem);
+                //await CommitEventCallback.InvokeAsync(SelectedItem);
             }
 
             if (!PreventClose)
                 Close();
+
+
         }
 
         public virtual void Close()
@@ -104,7 +115,9 @@ namespace Generator.Components.Components
             MudDialog.Close();
         }
 
-        private string GetSubmitTextFromViewState()
+       
+
+        internal string GetSubmitTextFromViewState()
         {
             return ViewState switch
             {
@@ -113,11 +126,13 @@ namespace Generator.Components.Components
                 ViewState.Delete => GenGrid.DeleteText,
                 _ => ""
             };
+
+            //StateHasChanged();
         }
+
 
         public new void StateHasChanged()
         {
-
             base.StateHasChanged();
         }
 

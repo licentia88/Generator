@@ -62,6 +62,20 @@ namespace Generator.Components.Extensions
 
 
     }
- 
+
+
+    internal static class ComponentExtensions
+    {
+        public static GenGrid<object> ConvertToGridObject<TModel>(this GenGrid<TModel> genericClass) where TModel:new ()
+        {
+            var objectType = typeof(GenGrid<object>);
+
+            var genericType = genericClass.GetType();
+
+            var objectClass = (GenGrid<object>)Activator.CreateInstance(objectType);
+
+            return objectClass;
+        }
+    }
 }
 

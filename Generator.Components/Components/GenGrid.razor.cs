@@ -72,9 +72,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
 
     public bool SearchDisabled { get; set; }
 
-    public object OriginalEditItem { get; set; }
+    public TModel OriginalEditItem { get; set; }
 
     private string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
+
+    [CascadingParameter(Name = nameof(ChildSubmit))]
+    public EventCallback ChildSubmit { get; set; }
 
     [Parameter]
     public EventCallback<GenGridArgs<TModel>> Create { get; set; }
@@ -91,6 +94,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     [Parameter]
     public EventCallback<IGenView<TModel>> Load { get; set; }
 
+    [CascadingParameter(Name = nameof(ParentSubmit))]
+    internal EventCallback ParentSubmit { get; set; }
+
+    internal EventCallback<TModel> GridSubmit { get; set; }
 
     [CascadingParameter(Name = nameof(ParentComponent))]
     public object ParentComponent { get; set; }
@@ -142,13 +149,33 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         GridManager = new GridManager<TModel>(this);
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         //Detail Grid den parent gridi refreshleme
         if (ParentComponent is not null && ((dynamic)ParentComponent).DetailClicked)
         {
-            await InvokeAsync(((dynamic)ParentComponent).StateHasChanged);
+            ((dynamic)ParentComponent).StateHasChanged();
         }
+
+        //if (ParentComponent is null)
+        //{
+        //    ParentSubmit = EventCallback.Factory.Create(this, async () =>
+        //    {
+        //        await InvokeCallBackByViewState(SelectedItem, ViewState.Update);
+        //        CurrentGenPage.StateHasChanged();
+        //        await InvokeAsync(StateHasChanged);
+        //    });
+        //}
+       
+
+        GridSubmit = EventCallback.Factory.Create<TModel>(this, async x =>
+        {
+            await InvokeCallBackByViewState(x);
+
+            await InvokeAsync(StateHasChanged);
+        });
+
+        return Task.CompletedTask;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -165,8 +192,15 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     internal async Task InvokeCallBackByViewState(TModel model)
     {
+        await  InvokeCallBackByViewState(model, ViewState.None);
+       
+    }
+
+    internal async Task InvokeCallBackByViewState(TModel model, ViewState state)
+    {
         try
         {
+ 
             GridIsBusy = true;
             switch (ViewState)
             {
@@ -176,52 +210,68 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
                     {
                         DataSource.RemoveAt(0);
                     }
-                    await Create.InvokeAsync(new GenGridArgs<TModel>(default, model, EditMode, DataSource.IndexOf(SelectedItem)));
+
+                    await Create.InvokeAsync(new GenGridArgs<TModel>(default, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
-                    await Update.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Update.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
                     break;
 
                 case ViewState.Delete when Delete.HasDelegate:
-                    await Delete.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Delete.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
                     break;
 
                 case ViewState.None when Cancel.HasDelegate:
-                    await Cancel.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem)));
+                    await Cancel.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            if(EditMode != EditMode.Inline)
-                CurrentGenPage.PreventClose = false;
+           
 
             SearchDisabled = false;
             NewDisabled = false;
             ExpandDisabled = false;
-            ViewState = ViewState.None;
+            ViewState = state;
+            if (CurrentGenPage is not null)
+            {
+                CurrentGenPage.PreventClose = false;
 
+                CurrentGenPage.ViewState = state;
+            }
+               
+
+            //CurrentGenPage?.StateHasChanged();
+            //((dynamic)ParentComponent)?.CurrentGenPage?.StateHasChanged();
+            //CurrentGenPage.GetSubmitTextFromViewState();
             GridIsBusy = false;
 
         }
         catch (Exception e)
         {
-            if (EditMode != EditMode.Inline)
+            //EditMode != EditMode.Inline &&
+            if ( CurrentGenPage is not null)
                 CurrentGenPage.PreventClose = true;
 
             GridIsBusy = false;
         }
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
 
     }
 
-
-    internal  Task InvokeCallBackFromChild()
+    internal  async Task InvokeCallBackFromChild()
     {
-        return InvokeCallBackByViewState(SelectedItem);
+        await InvokeCallBackByViewState(SelectedItem, ViewState.Update);
+
+        CurrentGenPage.StateHasChanged();
+
+        OnBackUp(SelectedItem);
+
+        await InvokeAsync(StateHasChanged);
     }
 
     public Task OnEditCLick()
@@ -254,7 +304,24 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         {
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
             (nameof(GenPage<TModel>.Load), Load),
+            (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),
+            (nameof(GenPage<TModel>.ParentSubmit), ParentSubmit),
+            (nameof(GenPage<TModel>.GridSubmit), GridSubmit),
+             
+            //(nameof(GenPage<TModel>.CommitParentEventCallback), EventCallback.Factory.Create(this, async ()=>
+            //{
+            //    await ((dynamic)ParentComponent)?.InvokeCallBackFromChild();
+                
+
+            //})),
+            //(nameof(GenPage<TModel>.CommitEventCallback), EventCallback.Factory.Create<TModel>(this, async x=>
+            //{
+            //    await InvokeCallBackByViewState(SelectedItem);
+
+            //}
+            //)),
+
             (nameof(GenPage<TModel>.GenGrid), this)
         };
 

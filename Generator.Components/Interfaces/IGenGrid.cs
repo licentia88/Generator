@@ -1,3 +1,4 @@
+using Generator.Components.Args;
 using Generator.Components.Components;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -51,4 +52,12 @@ public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()
     public object ParentComponent { get; set; }
 
     public string SearchPlaceHolderText { get; set; }
+
+    public EventCallback<GenGridArgs<TModel>> Create { get; set; }
+
+    public EventCallback<GenGridArgs<TModel>> Update { get; set; }
+
+    public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
+
+    public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
 }

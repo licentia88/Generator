@@ -1,6 +1,7 @@
 ﻿@using Generator.Examples.Shared
 
 
+
 <GenGrid DataSource="@DataSource" TModel="ORDERS_M"
          EditMode="EditMode.Form"
          Class="m-2"
@@ -12,6 +13,7 @@
         <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" />
     </GenColumns>
 </GenGrid>
+
 
 
 @code{
@@ -36,7 +38,9 @@
     {
         if (args.NewItem is not ORDERS_M data) return;
 
-        data.OM_USER_REFNO = Parent.U_ROWID;
+        if (args.ParentItem is not USER usr) return;
+
+        data.OM_USER_REFNO = usr.U_ROWID;
 
         var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 

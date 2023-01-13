@@ -113,7 +113,18 @@ public partial class GenGrid<TModel>
         
     }
 
-    private async Task OnBackUp(TModel element)
+    internal async ValueTask EditRow()
+    {
+        if (EditMode != EditMode.Inline)
+        {
+            await GridManager.Edit();
+            return;
+        }
+
+        await InvokeLoad();
+    }
+
+    internal void OnBackUp(TModel element)
     {
         if (HasErrors()) return;
 
@@ -127,14 +138,9 @@ public partial class GenGrid<TModel>
 
         OriginalEditItem = element.DeepClone();
 
-        if (EditMode != EditMode.Inline)
-        {
-            await  GridManager.Edit();
-            return;
-        }
-
-        await InvokeLoad();
+      
     }
+
 
     public async Task InvokeLoad()
     {
@@ -146,9 +152,15 @@ public partial class GenGrid<TModel>
     {
         ViewState = ViewState.Delete;
 
-        var dataToRemove = buttonAction.Target.CastTo<MudTr>().Item;
+        TModel dataToRemove = (TModel)buttonAction.Target.CastTo<MudTr>().Item;
+        OriginalEditItem = dataToRemove;
 
         await  InvokeCallBackByViewState(dataToRemove.CastTo<TModel>());
  
+    }
+
+    public new void StateHasChanged()
+    {
+        base.StateHasChanged();
     }
 }

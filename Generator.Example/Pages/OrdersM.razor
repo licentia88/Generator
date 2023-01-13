@@ -27,11 +27,11 @@
     [Inject]
     public IOrdersMService OrdersMService { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        DataSource = Parent.ORDERS_M.ToList();
+        var result = await OrdersMService.ReadAsync(new(Parent.U_ROWID));
 
-        return Task.CompletedTask;
+        DataSource = result;
     }
 
     public async ValueTask CreateAsync(GenGridArgs<ORDERS_M> args)

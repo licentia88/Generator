@@ -157,17 +157,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
             ((dynamic)ParentComponent).StateHasChanged();
         }
 
-        //if (ParentComponent is null)
-        //{
-        //    ParentSubmit = EventCallback.Factory.Create(this, async () =>
-        //    {
-        //        await InvokeCallBackByViewState(SelectedItem, ViewState.Update);
-        //        CurrentGenPage.StateHasChanged();
-        //        await InvokeAsync(StateHasChanged);
-        //    });
-        //}
-       
-
         GridSubmit = EventCallback.Factory.Create<TModel>(this, async x =>
         {
             await InvokeCallBackByViewState(x);

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using FastMember;
 
 namespace Generator.Shared.Extensions;
-
+using Microsoft.CSharp.RuntimeBinder;
 public static class PropertyExtensions
 {
     public static object GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
@@ -20,26 +22,40 @@ public static class PropertyExtensions
             .GetValue(obj) ?? null;
     }
 
-    public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
+    //public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
+    //{
+    //    if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+    //    {
+    //        ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
+
+    //        return;
+    //    }
+
+
+    //    var property = obj.GetType()
+    //        .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+
+
+    //    property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
+
+
+
+    //}
+    public static void SetPropertyValue(this object obj, string propertyName, object value)
     {
-        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+        try
         {
-            ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
-
-            return;
+            var binder = Binder.SetMember(CSharpBinderFlags.None, propertyName, null, new[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) });
+            var callsite = CallSite<Action<CallSite, object, object>>.Create(binder);
+            callsite.Target(callsite, obj, value);
         }
-
-
-        var property = obj.GetType()
-            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-        
-
-        property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
-
-       
-
+        catch (RuntimeBinderException ex)
+        {
+        }
     }
+     
+
 
     private static object ChangeToType(object value, Type destinationType)
     {

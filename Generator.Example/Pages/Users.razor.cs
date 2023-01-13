@@ -15,7 +15,7 @@ namespace Generator.Example.Pages
 		[Inject]
 		public IUserService UserService { get; set; }
 
-        public List<USER> DataSource { get; set; }
+        public ObservableCollection<USER> DataSource { get; set; }
 
         private IGenView<USER> View { get; set; }
 
@@ -23,7 +23,7 @@ namespace Generator.Example.Pages
         {
             var res  = await UserService.ReadAsync();
 
-            DataSource =res;
+            DataSource =new ObservableCollection<USER>(res);
         }
 
         public async ValueTask Load(IGenView<USER> view)
@@ -37,8 +37,10 @@ namespace Generator.Example.Pages
 
             var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
 
-            View.SelectedItem = result;
-
+            args.NewItem.U_ROWID = result.U_ROWID;
+            //args.View.SelectedItem = result;
+            //View.SelectedItem = result;
+            //await Task.Delay(3000);
             DataSource.Add(result);
         }
 
@@ -48,7 +50,7 @@ namespace Generator.Example.Pages
 
             var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
-            DataSource.Replace(data, result);
+            DataSource[args.Index] = result;
 
         }
 

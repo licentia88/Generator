@@ -13,11 +13,20 @@ public class GenGridArgs<TModel> where TModel : new()
         Initialize(originalItem, newItem, editMode, index);
     }
 
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     internal GenGridArgs(TModel? originalItem, TModel newItem, EditMode editMode, int index, IGenView<TModel> view)
-    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         View = view;
+        Initialize(originalItem, newItem, editMode, index);
+    }
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    internal GenGridArgs(TModel? originalItem, TModel newItem, EditMode editMode, int index, IGenView<TModel> view, object parentItem)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    {
+        View = view;
+        ParentItem = parentItem;
         Initialize(originalItem, newItem, editMode, index);
     }
 
@@ -29,15 +38,19 @@ public class GenGridArgs<TModel> where TModel : new()
         Index = index;
     }
 
+    public int Index { get; set; }
+
     public TModel? OriginalItem { get; private set; }
 
     public TModel NewItem { get; private set; }
 
     public EditMode EditMode { get; set; }
 
-    public int Index { get; set; }
+    public object ParentItem { get; set; }
 
     public IGenView<TModel> View { get; set; }
+
+
 }
 
 #nullable disable

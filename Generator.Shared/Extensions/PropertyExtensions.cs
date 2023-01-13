@@ -5,11 +5,13 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using FastMember;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace Generator.Shared.Extensions;
-using Microsoft.CSharp.RuntimeBinder;
+
 public static class PropertyExtensions
 {
+
     public static object GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
     {
         if (obj is null) return default;
@@ -19,43 +21,24 @@ public static class PropertyExtensions
 
         return obj.GetType()
             .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .GetValue(obj) ?? null;
+            ?.GetValue(obj);
     }
 
-    //public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
-    //{
-    //    if ((obj is ExpandoObject || obj is Dictionary<string, object>))
-    //    {
-    //        ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
-
-    //        return;
-    //    }
-
-
-    //    var property = obj.GetType()
-    //        .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-
-
-    //    property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
-
-
-
-    //}
-    public static void SetPropertyValue(this object obj, string propertyName, object value)
+    public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        try
+        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
         {
-            var binder = Binder.SetMember(CSharpBinderFlags.None, propertyName, null, new[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) });
-            var callsite = CallSite<Action<CallSite, object, object>>.Create(binder);
-            callsite.Target(callsite, obj, value);
-        }
-        catch (RuntimeBinderException ex)
-        {
-        }
-    }
-     
+            ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
 
+            return;
+        }
+
+        var property = obj.GetType()
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
+
+    }
 
     private static object ChangeToType(object value, Type destinationType)
     {
@@ -114,8 +97,6 @@ public static class PropertyExtensions
     {
         return new T();
     }
-
-    
 
     public static Dictionary<string, object> CreateNewDictionaryModel(this IDictionary<string, object> type) 
     {

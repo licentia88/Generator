@@ -163,8 +163,8 @@
                             var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item.CastTo<TModel>().Equals(SelectedItem));
                             editingRow?.Context.Table.SetEditingItem(null);
 
-                            StateHasChanged();
- 
+                            //StateHasChanged();
+
                             editingRow.SetFieldValue("hasBeenCanceled", false);
                             editingRow.SetFieldValue("hasBeenCommitted", false);
                             editingRow.SetFieldValue("hasBeenClickedFirstTime", false);

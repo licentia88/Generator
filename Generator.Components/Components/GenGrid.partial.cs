@@ -33,16 +33,6 @@ public partial class GenGrid<TModel>
         var searchableFields = GetComponentsOf<IGenTextField>()
             .Where((x) => x.BindingField is not null && x.VisibleOnGrid);
 
-        //foreach (var field in searchableFields)
-        //{
-        //    var columnValue = model.GetPropertyValue(field.BindingField);
-
-        //    if (columnValue is null) continue;
-
-        //    if (columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-        //        return true;
-        //}
-
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
 
@@ -108,9 +98,7 @@ public partial class GenGrid<TModel>
 
             return;
 
-        }
-
-        
+        }   
     }
 
     internal async ValueTask EditRow()
@@ -134,7 +122,7 @@ public partial class GenGrid<TModel>
 
         SearchDisabled = true;
 
-        SelectedItem = element;
+        SelectedItem = element;//.DeepClone();
 
         OriginalEditItem = element.DeepClone();
 

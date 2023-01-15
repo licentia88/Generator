@@ -53,11 +53,11 @@ public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()
 
     public string SearchPlaceHolderText { get; set; }
 
-    public EventCallback<GenGridArgs<TModel>> Create { get; set; }
+    public EventCallback<TModel> Create { get; set; }
 
-    public EventCallback<GenGridArgs<TModel>> Update { get; set; }
+    public EventCallback<TModel> Update { get; set; }
 
-    public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
+    public EventCallback<TModel> Delete { get; set; }
 
-    public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
+    public EventCallback<TModel> Cancel { get; set; }
 }

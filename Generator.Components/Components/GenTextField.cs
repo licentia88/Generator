@@ -3,6 +3,7 @@ using Generator.Components.Interfaces;
 using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
@@ -15,6 +16,9 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField
 {
+    [CascadingParameter(Name = nameof(CurrentEditContext))]
+    public EditContext CurrentEditContext { get; set; }
+
     public ObjectValidator<GenTextField> ObjectValidator { get; set; } = new ObjectValidator<GenTextField>();
 
     public Type DataType { get; set; }

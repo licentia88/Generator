@@ -1,4 +1,6 @@
-﻿using Generator.Server;
+﻿using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using Generator.Server;
 using Generator.Server.Dependency;
 using Generator.Server.Seed;
 using Generator.Services;
@@ -9,9 +11,21 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var certificate =
+  X509Certificate2.CreateFromPemFile("/Users/asimgunduz/server.crt", Path.ChangeExtension("/Users/asimgunduz/server.crt", "key"));
+
+var verf = certificate.Verify();
+ 
+
 builder.WebHost.ConfigureKestrel(opt =>
 {
-    opt.ListenLocalhost(5010, o => o.Protocols = HttpProtocols.Http2);
+    opt.ListenLocalhost(7178, o =>
+    {
+        o.Protocols = HttpProtocols.Http1;
+        o.UseHttps(certificate);
+    });
+
 });
 
 CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;

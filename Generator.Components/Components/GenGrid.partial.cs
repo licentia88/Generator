@@ -6,16 +6,17 @@ using MudBlazor;
 using Generator.Shared.Extensions;
 using Force.DeepCloner;
 using static MudBlazor.CategoryTypes;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Generator.Components.Components;
 
 public partial class GenGrid<TModel> 
 {
+ 
     public async Task OnCreateClick()
     {
        await GridManager.Create();
-
-    }
+     }
 
     private async Task OnCommit(object model)
     {
@@ -36,70 +37,95 @@ public partial class GenGrid<TModel>
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
 
-     /// <summary>
+    private MudTr GetCurrentRow()
+    {
+        var selectedItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+
+        if (selectedItem is not null)
+        {
+            var row = selectedItem.Target.CastTo<MudTr>();
+            return row;
+        }
+
+        return null;
+        
+    }
+    private void RefreshButtonState()
+    {
+        var row = GetCurrentRow();
+        row.SetFieldValue("hasBeenCanceled", false);
+        row.SetFieldValue("hasBeenCommitted", true);
+        row.SetFieldValue("hasBeenClickedFirstTime", false);
+    }
+
+    private void RollBack()
+    {
+        GetCurrentRow().ManagePreviousEdition();
+    }
+    /// <summary>
     /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
     /// therefore the newly added item is inserted to 0 index of datasource however the component is not rendered at that moment
     /// and this method must be called on after render method
     /// </summary>
     /// <returns></returns>
-    private async Task OnNewItemAddEditInvoker()
-    {
-        if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
-        {
-            if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
-            {
-                await EditButtonRef.OnClick.InvokeAsync();
+    //private async Task OnNewItemAddEditInvoker()
+    //{
+    //    if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
+    //    {
+    //        if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
+    //        {
+    //            await EditButtonRef.OnClick.InvokeAsync();
 
-                IgnoreErrors = true;
+    //            IgnoreErrors = true;
 
-                return;
-            }
+    //            return;
+    //        }
 
-            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+    //        var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
-            if (firstItem is null)
-                return;
+    //        if (firstItem is null)
+    //            return;
 
-            var row = firstItem.Target.CastTo<MudTr>();
+    //        var row = firstItem.Target.CastTo<MudTr>();
 
-            if (row.IsEditing)
-            {
-                row.SetFieldValue("hasBeenCanceled", false);
-                row.SetFieldValue("hasBeenCommitted", false);
-                row.SetFieldValue("hasBeenClickedFirstTime", false);
-            }
+    //        if (row.IsEditing)
+    //        {
+    //            row.SetFieldValue("hasBeenCanceled", false);
+    //            row.SetFieldValue("hasBeenCommitted", false);
+    //            row.SetFieldValue("hasBeenClickedFirstTime", false);
+    //        }
 
-            firstItem?.Invoke();
+    //        firstItem?.Invoke();
 
-            EditButtonActionList.Clear();
+    //        EditButtonActionList.Clear();
 
-            return;
-        }
+    //        return;
+    //    }
 
-        if (ViewState == ViewState.Update && EditMode == EditMode.Inline )
-        {
-            if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
-            {
-                await EditButtonRef.OnClick.InvokeAsync();
+    //    if (ViewState == ViewState.Update && EditMode == EditMode.Inline )
+    //    {
+    //        if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
+    //        {
+    //            await EditButtonRef.OnClick.InvokeAsync();
 
-                IgnoreErrors = true;
+    //            IgnoreErrors = true;
 
-                return;
-            }
+    //            return;
+    //        }
 
-            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+    //        var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
-            if (firstItem is null)
-                return;
+    //        if (firstItem is null)
+    //            return;
 
-            firstItem?.Invoke();
+    //        firstItem?.Invoke();
 
-            EditButtonActionList.Clear();
+    //        EditButtonActionList.Clear();
 
-            return;
+    //        return;
 
-        }   
-    }
+    //    }   
+    //}
 
     internal async ValueTask EditRow()
     {
@@ -108,7 +134,7 @@ public partial class GenGrid<TModel>
             await GridManager.Edit();
             return;
         }
-
+         
         await InvokeLoad();
     }
 

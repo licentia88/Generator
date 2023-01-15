@@ -5,13 +5,18 @@ using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazorFix;
+using System;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using static MudBlazor.CategoryTypes;
 
 namespace Generator.Components.Components;
 
+ 
 public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where TModel :new()
 {
+    internal MudTable<TModel> originalTable { get; set; }
+
     internal bool GridIsBusy = false;
 
     public GenPage<TModel> CurrentGenPage { get; set; }
@@ -80,16 +85,16 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     public EventCallback ChildSubmit { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs<TModel>> Create { get; set; }
+    public EventCallback<TModel> Create { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs<TModel>> Delete { get; set; }
+    public EventCallback<TModel> Delete { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs<TModel>> Update { get; set; }
+    public EventCallback<TModel> Update { get; set; }
 
     [Parameter]
-    public EventCallback<GenGridArgs<TModel>> Cancel { get; set; }
+    public EventCallback<TModel> Cancel { get; set; }
 
     [Parameter]
     public EventCallback<IGenView<TModel>> Load { get; set; }
@@ -167,11 +172,51 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         return Task.CompletedTask;
     }
 
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender && !GridIsBusy)
-            await OnNewItemAddEditInvoker();
+        //var row = GetCurrentRow();
+
+
+
+        if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
+        {
+            if (EditButtonActionList.Any())
+            {
+                var editingRow = GetCurrentRow();
+
+                if (editingRow.IsEditing)
+                {
+                     
+                    return;
+                }
+
+                var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+
+                if (firstItem is null)
+                    return;
+
+                firstItem.Invoke();
+
+                //editingRow.Context.Table.RowEditPreview.Invoke(SelectedItem);
+
+                StateHasChanged();
+                editingRow.IsEditing = true;
+                
+                //editingRow.Context.Table.SetEditingItem(SelectedItem);
+
+                //editingRow.Context.Table.SetSelectedItem(SelectedItem);
+
+                //originalTable.SetEditingItem(SelectedItem);
+            }
+        }
+
+
+
+        Console.WriteLine();
     }
+
+    
 
     /// <summary>
     /// Invokes the eventcallback depending on the viewstate
@@ -200,19 +245,19 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
                         DataSource.RemoveAt(0);
                     }
 
-                    await Create.InvokeAsync(new GenGridArgs<TModel>(default, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
+                    await Create.InvokeAsync(model);
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
-                    await Update.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
+                    await Update.InvokeAsync(model);
                     break;
 
                 case ViewState.Delete when Delete.HasDelegate:
-                    await Delete.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
+                    await Delete.InvokeAsync(model);
                     break;
 
                 case ViewState.None when Cancel.HasDelegate:
-                    await Cancel.InvokeAsync(new GenGridArgs<TModel>((TModel)OriginalEditItem, model, EditMode, DataSource.IndexOf(SelectedItem), CurrentGenPage, (object)((dynamic)ParentComponent)?.SelectedItem));
+                    await Cancel.InvokeAsync(model);
                     break;
 
                 default:
@@ -231,25 +276,23 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
 
                 CurrentGenPage.ViewState = state;
             }
-               
-
-            //CurrentGenPage?.StateHasChanged();
-            //((dynamic)ParentComponent)?.CurrentGenPage?.StateHasChanged();
-            //CurrentGenPage.GetSubmitTextFromViewState();
+                      
             GridIsBusy = false;
 
+            RefreshButtonState();
         }
         catch (Exception e)
         {
-            //EditMode != EditMode.Inline &&
+            RollBack();
+
             if ( CurrentGenPage is not null)
                 CurrentGenPage.PreventClose = true;
 
+            CurrentGenPage?.Close();
             GridIsBusy = false;
+
         }
-
-        await InvokeAsync(StateHasChanged);
-
+        StateHasChanged();
     }
 
     internal  async Task InvokeCallBackFromChild()
@@ -271,20 +314,36 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         //    await Load.InvokeAsync(this);
     }
 
-    private async void OnCancelClick(TModel element)
+    private void OnCancelClick(TModel element)
     {
         if (ViewState == ViewState.None) return;
 
+        //var rw = GetCurrentRow();
+
+        //Console.WriteLine(rw.Item.GetHashCode());
+        //Console.WriteLine(DataSource.First().GetHashCode());
+
+        //Console.WriteLine(OriginalEditItem.GetHashCode());
+
+        //Console.WriteLine(SelectedItem.GetHashCode());
+
+        //Console.WriteLine(element.GetHashCode());
+
+ 
+       
         if (ViewState == ViewState.Create)
             DataSource.Remove(element);
-        else 
-            DataSource.Replace(element, OriginalEditItem.CastTo<TModel>());
+        else
+            DataSource.Replace(element, OriginalEditItem);
+        //DataSource.Replace(element, OriginalEditItem);
 
         ViewState = ViewState.None;
 
-        await InvokeCallBackByViewState(element);
+        //await InvokeCallBackByViewState(element);
+ 
 
         Components.ForEach(x => x.Error = false);
+
     }
 
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
@@ -296,21 +355,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
             (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),
             (nameof(GenPage<TModel>.ParentSubmit), ParentSubmit),
-            (nameof(GenPage<TModel>.GridSubmit), GridSubmit),
-             
-            //(nameof(GenPage<TModel>.CommitParentEventCallback), EventCallback.Factory.Create(this, async ()=>
-            //{
-            //    await ((dynamic)ParentComponent)?.InvokeCallBackFromChild();
-                
-
-            //})),
-            //(nameof(GenPage<TModel>.CommitEventCallback), EventCallback.Factory.Create<TModel>(this, async x=>
-            //{
-            //    await InvokeCallBackByViewState(SelectedItem);
-
-            //}
-            //)),
-
+            (nameof(GenPage<TModel>.GridSubmit), GridSubmit),      
             (nameof(GenPage<TModel>.GenGrid), this)
         };
 

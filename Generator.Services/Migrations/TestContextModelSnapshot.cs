@@ -83,6 +83,7 @@ namespace Generator.Services.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("U_NAME")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("U_REGISTER_DATE")

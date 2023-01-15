@@ -12,7 +12,7 @@ namespace Generator.Shared.Extensions;
 public static class PropertyExtensions
 {
 
-    public static object GetPropertyValue<T>(this T obj, string propertyName) //where T:new()
+    public static object GetPropertyValue<T>(this T obj, string propertyName)  
     {
         if (obj is null) return default;
 
@@ -22,6 +22,8 @@ public static class PropertyExtensions
         return obj.GetType()
             .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             ?.GetValue(obj);
+            
+            
     }
 
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
@@ -167,6 +169,8 @@ public static class PropertyExtensions
          return argument.Equals(default);
          //return EqualityComparer<T>.Default.Equals(typeof(argument), default);
     }
+
+        
 
     public static object GetDefaultValue(this Type type)
     {

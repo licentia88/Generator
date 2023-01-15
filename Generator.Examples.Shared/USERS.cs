@@ -11,6 +11,7 @@ public class USER
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int U_ROWID { get; set; }
 
+    [Required]
     [ProtoMember(2)]
     public string U_NAME { get; set; }
 

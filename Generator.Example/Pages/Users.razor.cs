@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
@@ -31,33 +30,30 @@ namespace Generator.Example.Pages
             View = view;
         }
 
-        public async ValueTask CreateAsync(GenGridArgs<USER> args)
+        public async ValueTask CreateAsync(USER data)
         {
-            if (args.NewItem is not USER data) return;
+             var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
 
-            var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
+            //REQUIRED 
+            data.U_ROWID = result.U_ROWID;
 
-            args.NewItem.U_ROWID = result.U_ROWID;
-            //args.View.SelectedItem = result;
-            //View.SelectedItem = result;
-            //await Task.Delay(3000);
             DataSource.Add(result);
         }
 
-        public async ValueTask UpdateAsync(GenGridArgs<USER> args)
+        public async ValueTask UpdateAsync(USER data)
         {
-            if (args.NewItem is not USER data) return;
-
             var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
-            DataSource[args.Index] = result;
+            var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
+
+            DataSource.Replace(existing, result);
+
+            throw new Exception("TEST");
 
         }
 
-        public async ValueTask DeleteAsync(GenGridArgs<USER> args)
+        public async ValueTask DeleteAsync(USER data)
         {
-            if (args.NewItem is not USER data) return;
-
             var result = await UserService.DeleteAsync(new RESPONSE_REQUEST<USER>(data));
 
             DataSource.Remove(data);

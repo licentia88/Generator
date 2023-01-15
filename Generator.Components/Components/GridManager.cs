@@ -32,10 +32,14 @@ public class GridManager<TModel> where TModel :new()
 
         if (Grid.EditMode == EditMode.Inline)
         {
-            Grid.DataSource.Insert(0, Grid.SelectedItem);
+            Grid.DataSource.Insert(0,Grid.SelectedItem);
 
             Grid.SetEditingItem(Grid.SelectedItem);
-            
+            //Grid.SetSelectedItem(Grid.SelectedItem);
+
+            //Grid.originalTable.SetEditingItem(Grid.SelectedItem);
+
+            //Grid.originalTable.SetSelectedItem(Grid.SelectedItem);
             return;
         }
 

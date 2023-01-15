@@ -94,14 +94,11 @@ namespace Generator.Components.Components
             {
                 await ParentSubmit.InvokeAsync();
 
-                //((dynamic)GenGrid).ParentComponent.CurrentGenPage.StateHasChanged();
-
                 await OnCommit();
             }
             else
             {
                 await GridSubmit.InvokeAsync(SelectedItem);
-                //await CommitEventCallback.InvokeAsync(SelectedItem);
             }
 
             if (!PreventClose)

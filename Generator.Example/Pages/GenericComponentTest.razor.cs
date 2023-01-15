@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
@@ -58,22 +57,22 @@ namespace Generator.Example.Pages
           
         }
 
-        public async ValueTask OnCreate(GenGridArgs<object> args)
+        public async ValueTask OnCreate(object data)
         {
             //args.NewData.SetPropertyValue("TT_ROWID", "TEST");
 
             await Task.Delay(3000);
-            InternalDataSource.Insert(0, args.NewItem);
+            InternalDataSource.Insert(0, data);
 
             
         }
 
-        public ValueTask Cancel(GenGridArgs<object> args)
+        public ValueTask Cancel(object args)
         {
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask OnUpdate(GenGridArgs<object> args)
+        public ValueTask OnUpdate(object data)
         {
             //InternalDataSource.Replace(args.OldData, args.NewData);
 
@@ -81,9 +80,9 @@ namespace Generator.Example.Pages
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask OnDelete(GenGridArgs<object> args)
+        public ValueTask OnDelete(object data)
         {
-            InternalDataSource.Remove(args.NewItem);
+            InternalDataSource.Remove(data);
 
             return ValueTask.CompletedTask;
         }

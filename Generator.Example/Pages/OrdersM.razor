@@ -34,22 +34,18 @@
         DataSource = result;
     }
 
-    public async ValueTask CreateAsync(GenGridArgs<ORDERS_M> args)
+    public async ValueTask CreateAsync(ORDERS_M data)
     {
-        if (args.NewItem is not ORDERS_M data) return;
 
-        if (args.ParentItem is not USER usr) return;
-
-        data.OM_USER_REFNO = usr.U_ROWID;
+        data.OM_USER_REFNO = Parent.U_ROWID;
 
         var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 
         DataSource.Add(result);
     }
 
-    public async ValueTask UpdateAsync(GenGridArgs<ORDERS_M> args)
+    public async ValueTask UpdateAsync(ORDERS_M data)
     {
-        if (args.NewItem is not ORDERS_M data) return;
 
         var result = await OrdersMService.UpdateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 
@@ -57,13 +53,11 @@
 
     }
 
-    public async ValueTask DeleteAsync(GenGridArgs<ORDERS_M> args)
+    public async ValueTask DeleteAsync(ORDERS_M data)
     {
-        if (args.NewItem is not ORDERS_M data) return;
-
         var result = await OrdersMService.DeleteAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 
         DataSource.Remove(data);
 
     }
-}
+    }

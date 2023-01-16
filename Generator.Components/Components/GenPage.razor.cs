@@ -8,7 +8,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components
 {
-    public partial class GenPage<TModel> : IGenPage<TModel> where TModel : new()
+    public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel : new() 
     {
         [Parameter]
         public GenGrid<TModel> GenGrid { get; set; }
@@ -33,7 +33,9 @@ namespace Generator.Components.Components
 
         [Parameter]
         public EventCallback<TModel> GridSubmit { get; set; }
- 
+
+        [Parameter]
+        public EventCallback RefreshParentGrid { get; set; }
 
         [Parameter]
         public TModel SelectedItem { get; set; }
@@ -68,6 +70,7 @@ namespace Generator.Components.Components
             if (Load.HasDelegate)
                 Load.InvokeAsync(this);
 
+            RefreshParentGrid = EventCallback.Factory.Create(this, ()=> GenGrid.RefreshButtonState());
             GetSubmitTextFromViewState();
             return base.OnInitializedAsync();
         }
@@ -110,6 +113,8 @@ namespace Generator.Components.Components
         public virtual void Close()
         {
             MudDialog.Close();
+
+            GenGrid.RefreshButtonState();
         }
 
        
@@ -148,5 +153,9 @@ namespace Generator.Components.Components
             throw new NotImplementedException();
         }
 
+        public void Dispose()
+        {
+            RefreshParentGrid.InvokeAsync();
+        }
     }
 }

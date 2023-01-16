@@ -32,6 +32,7 @@ namespace Generator.Example.Pages
 
         public async ValueTask CreateAsync(USER data)
         {
+            //throw new Exception();
              var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
 
             //REQUIRED 
@@ -48,7 +49,7 @@ namespace Generator.Example.Pages
 
             DataSource.Replace(existing, result);
 
-            throw new Exception("TEST");
+            //throw new Exception("TEST");
 
         }
 

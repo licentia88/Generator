@@ -50,12 +50,23 @@ public partial class GenGrid<TModel>
         return null;
         
     }
-    private void RefreshButtonState()
+
+    internal void RefreshButtonState()
     {
         var row = GetCurrentRow();
-        row.SetFieldValue("hasBeenCanceled", false);
-        row.SetFieldValue("hasBeenCommitted", true);
-        row.SetFieldValue("hasBeenClickedFirstTime", false);
+
+        if (row is not null)
+        {
+            row.SetFieldValue("hasBeenCanceled", false);
+            row.SetFieldValue("hasBeenCommitted", true);
+            row.SetFieldValue("hasBeenClickedFirstTime", false);
+        }
+
+        SearchDisabled = false;
+        NewDisabled = false;
+        ExpandDisabled = false;
+
+        StateHasChanged();
     }
 
     private void RollBack()

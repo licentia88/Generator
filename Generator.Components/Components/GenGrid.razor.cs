@@ -283,7 +283,14 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         }
         catch (Exception e)
         {
-            RollBack();
+            var currentRow = GetCurrentRow();
+
+            if (currentRow is not null)
+            {
+                this.TableContext.ManagePreviousEditedRow(currentRow);
+            }
+           
+            //RollBack();
 
             if ( CurrentGenPage is not null)
                 CurrentGenPage.PreventClose = true;
@@ -292,6 +299,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
             GridIsBusy = false;
 
         }
+
         StateHasChanged();
     }
 

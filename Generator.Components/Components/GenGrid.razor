@@ -72,10 +72,10 @@
                           Virtualize="Virtualize"
                           OnCommitEditClick="OnEditCLick"
                           RowEditPreview="async x=>
-                                            {
-                                                    OnBackUp(x.CastTo<TModel>());
-                                                    await EditRow();
-                                            }"
+                                          {
+                                              OnBackUp(x.CastTo<TModel>());
+                                              await EditRow();
+                                          }"
                           RowEditCancel="x=> OnCancelClick(x.CastTo<TModel>())"
                           RowEditCommit="async x => await OnCommit(x)"
                           IsEditRowSwitchingBlocked="true"
@@ -161,8 +161,7 @@
 
                             var editContext = new EditContext(_context);
 
-
-                        }
+                         }
 
                       
                         <CascadingValue Name="CurrentEditContext" Value="editContext">

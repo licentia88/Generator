@@ -5,7 +5,6 @@ using Mapster;
 using MudBlazor;
 using Generator.Shared.Extensions;
 using Force.DeepCloner;
-using static MudBlazor.CategoryTypes;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace Generator.Components.Components;
@@ -20,9 +19,8 @@ public partial class GenGrid<TModel>
 
     private async Task OnCommit(object model)
     {
-        Components.ForEach(x => x.ValidateObject());
-
-        if (HasErrors()) return;
+        var isValid = await ValidateModel();
+        if (!isValid) return;
 
         await InvokeCallBackByViewState(SelectedItem);
     }
@@ -39,7 +37,7 @@ public partial class GenGrid<TModel>
 
     private MudTr GetCurrentRow()
     {
-        var selectedItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+        var selectedItem = GetRowButtonAction();
 
         if (selectedItem is not null)
         {
@@ -48,7 +46,11 @@ public partial class GenGrid<TModel>
         }
 
         return null;
-        
+    }
+
+    private Action GetRowButtonAction()
+    {
+        return EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
     }
 
     internal void RefreshButtonState()
@@ -73,70 +75,7 @@ public partial class GenGrid<TModel>
     {
         GetCurrentRow().ManagePreviousEdition();
     }
-    /// <summary>
-    /// When a new item is added in inlinemode, for better user experience it has to be on the first row of the table,
-    /// therefore the newly added item is inserted to 0 index of datasource however the component is not rendered at that moment
-    /// and this method must be called on after render method
-    /// </summary>
-    /// <returns></returns>
-    //private async Task OnNewItemAddEditInvoker()
-    //{
-    //    if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
-    //    {
-    //        if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
-    //        {
-    //            await EditButtonRef.OnClick.InvokeAsync();
-
-    //            IgnoreErrors = true;
-
-    //            return;
-    //        }
-
-    //        var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
-
-    //        if (firstItem is null)
-    //            return;
-
-    //        var row = firstItem.Target.CastTo<MudTr>();
-
-    //        if (row.IsEditing)
-    //        {
-    //            row.SetFieldValue("hasBeenCanceled", false);
-    //            row.SetFieldValue("hasBeenCommitted", false);
-    //            row.SetFieldValue("hasBeenClickedFirstTime", false);
-    //        }
-
-    //        firstItem?.Invoke();
-
-    //        EditButtonActionList.Clear();
-
-    //        return;
-    //    }
-
-    //    if (ViewState == ViewState.Update && EditMode == EditMode.Inline )
-    //    {
-    //        if ((!EditButtonActionList.Any() && EditButtonRef is not null) || !IgnoreErrors)
-    //        {
-    //            await EditButtonRef.OnClick.InvokeAsync();
-
-    //            IgnoreErrors = true;
-
-    //            return;
-    //        }
-
-    //        var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
-
-    //        if (firstItem is null)
-    //            return;
-
-    //        firstItem?.Invoke();
-
-    //        EditButtonActionList.Clear();
-
-    //        return;
-
-    //    }   
-    //}
+   
 
     internal async ValueTask EditRow()
     {
@@ -151,7 +90,10 @@ public partial class GenGrid<TModel>
 
     internal void OnBackUp(TModel element)
     {
-        if (HasErrors()) return;
+        //var isValid = await ValidateModel();
+
+        //if (!isValid) return;
+        //if (HasErrors()) return;
 
         NewDisabled = true;
 
@@ -163,7 +105,7 @@ public partial class GenGrid<TModel>
 
         OriginalEditItem = element.DeepClone();
 
-      
+
     }
 
 

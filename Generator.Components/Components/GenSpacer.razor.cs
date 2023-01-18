@@ -48,7 +48,7 @@ namespace Generator.Components.Components
 
         [CascadingParameter(Name = nameof(ParentComponent))]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public object ParentComponent { get; set; }
+        public INonGenGrid ParentComponent { get; set; }
 
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -90,8 +90,9 @@ namespace Generator.Components.Components
 
         };
 
-        public void ValidateObject()
+        public Task ValidateObject()
         {
+            return Task.CompletedTask;
         }
     }
 }

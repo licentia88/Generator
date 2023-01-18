@@ -1,11 +1,15 @@
+using FluentValidation;
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
+using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using MudBlazor.Interfaces;
 using MudBlazorFix;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using static MudBlazor.CategoryTypes;
@@ -13,22 +17,28 @@ using static MudBlazor.CategoryTypes;
 namespace Generator.Components.Components;
 
  
-public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where TModel :new()
+public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TModel> where TModel :new()
 {
-    internal MudTable<TModel> originalTable { get; set; }
+    [Inject]
+    public GenValidator<TModel> GenValidator { get; set; }
 
-    internal bool GridIsBusy = false;
+    [Inject]
+    public IDialogService DialogService { get; set; }
+
+    internal MudTable<TModel> originalTable { get; set; }
 
     public GenPage<TModel> CurrentGenPage { get; set; }
 
     public GridManager<TModel> GridManager { get; }
 
-    [Inject]
-    public IDialogService DialogService { get; set; }
-
     public DialogResult DialogResult { get; set; }
 
     public DialogParameters DialogParameters { get; set; } = new DialogParameters();
+
+    internal List<Action> EditButtonActionList { get; set; } = new();
+
+
+    internal bool GridIsBusy = false;
 
     public DialogOptions DialogOptions { get; set; } = new()
     {
@@ -39,30 +49,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         DisableBackdropClick = true,
         Position = DialogPosition.Center
     };
-
-    internal List<Action> EditButtonActionList { get; set; } = new();
-
-    internal bool IgnoreErrors = true;
-
-    public void OnEditContextButtonClick(EditButtonContext button)
-    {
-        if (ViewState == ViewState.None)
-        {
-            ViewState = ViewState.Update;
-        }
-
-        button.ButtonAction.Invoke();
-    }
-
-    public bool HasErrors()
-    {
-        var result = Components.Any(x => x.Error);
-
-        IgnoreErrors = !result;
-
-        return result;
-    }
-
+ 
     public ViewState ViewState { get; set; } = ViewState.None;
 
     public MudIconButton EditButtonRef { get; set; }
@@ -149,6 +136,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     [Parameter]
     public string DeleteText { get; set; } = "Delete";
 
+    public bool ForceRenderOnce { get; set; } = false;
+
     public GenGrid()
     {
         GridManager = new GridManager<TModel>(this);
@@ -169,15 +158,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
             await InvokeAsync(StateHasChanged);
         });
 
+    
         return Task.CompletedTask;
     }
 
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        //var row = GetCurrentRow();
-
-
+       
 
         if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
         {
@@ -186,37 +173,45 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
                 var editingRow = GetCurrentRow();
 
                 if (editingRow.IsEditing)
-                {
-                     
-                    return;
-                }
+                    return Task.CompletedTask;
 
                 var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
                 if (firstItem is null)
-                    return;
+                    return Task.CompletedTask;
 
                 firstItem.Invoke();
 
-                //editingRow.Context.Table.RowEditPreview.Invoke(SelectedItem);
-
-                StateHasChanged();
+                //Bu Gerekli yoksa surekli OnAfterRenderAsync methoduna duser.
                 editingRow.IsEditing = true;
+                StateHasChanged();
                 
-                //editingRow.Context.Table.SetEditingItem(SelectedItem);
-
-                //editingRow.Context.Table.SetSelectedItem(SelectedItem);
-
-                //originalTable.SetEditingItem(SelectedItem);
             }
         }
+        return Task.CompletedTask;
 
-
-
-        Console.WriteLine();
     }
 
-    
+
+
+    public void OnEditContextButtonClick(EditButtonContext button)
+    {
+        if (ViewState == ViewState.None)
+        {
+            ViewState = ViewState.Update;
+        }
+
+        button.ButtonAction.Invoke();
+    }
+
+    //public bool HasErrors()
+    //{
+    //    var result = Components.Any(x => x.Error);
+
+
+    //    return result;
+    //}
+
 
     /// <summary>
     /// Invokes the eventcallback depending on the viewstate
@@ -407,6 +402,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
     {
         if (Components.Any(x => x.BindingField == childComponent.BindingField)) return;
         Components.Add(childComponent);
+         
     }
 
     private object _selectedDetailObject;
@@ -433,5 +429,40 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IGenGrid<TModel> where 
         if (_selectedDetailObject is null) return false;
 
         return DetailClicked && _selectedDetailObject.Equals(context);
+    }
+
+    public async Task<bool> ValidateModel()
+    {
+        var result = await GenValidator.ValidateModel(SelectedItem);
+
+        if (!result)
+        {
+            GetRowButtonAction().Invoke();
+            await OnAfterRenderAsync(false);
+        }
+
+
+        return result;
+
+    }
+
+    public async Task<bool> ValidateValue(string propertyName)
+    {
+        var component = Components.FirstOrDefault(x => x.BindingField == propertyName);
+
+        var result = await GenValidator.ValidateValue(component,SelectedItem, propertyName);
+
+        if (!result)
+        {
+            GetComponent<IGenComponent>(propertyName).Error = true;
+            GetComponent<IGenComponent>(propertyName).ErrorText = "TEST";
+        }
+
+        return result;
+    }
+
+    public void ResetValidation(IGenComponent component)
+    {
+        GenValidator.ResetValidation(component);
     }
 }

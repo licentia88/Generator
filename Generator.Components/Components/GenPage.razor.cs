@@ -88,11 +88,9 @@ namespace Generator.Components.Components
 
         public async Task OnCommit()
         {
-            GenGrid.Components.ForEach(x => x.ValidateObject());
+            var isValid = await GenGrid.ValidateModel();
+            if (!isValid) return;
 
-            if (GenGrid.HasErrors()) return;
-
-            
             if (ParentViewState is not null && ParentViewState == ViewState.Create)
             {
                 await ParentSubmit.InvokeAsync();

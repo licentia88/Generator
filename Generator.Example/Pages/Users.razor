@@ -1,6 +1,6 @@
 ﻿@page "/Users"
 @using Generator.Examples.Shared
-
+@using Components.Validators
 @{
      
         <GenGrid DataSource="@DataSource"
@@ -14,10 +14,10 @@
                  Delete="@( async x=> await DeleteAsync(x))">
             <GenColumns>
                 
-                <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" Required="true" />
+                <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
                 <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" Required="true"/>
                 <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
-                               TransformOrigin="Origin.BottomLeft"
+                               TransformOrigin="Origin.BottomLeft" 
                                Clearable="true" EnabledOnEdit="false" Label=" Reg. Date" />
             </GenColumns>
 

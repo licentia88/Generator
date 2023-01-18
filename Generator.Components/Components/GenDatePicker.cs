@@ -12,10 +12,8 @@ namespace Generator.Components.Components
 {
     public class GenDatePicker : MudDatePicker, IGenDatePicker
     {
-        ObjectValidator<GenDatePicker> ObjectValidator = new ObjectValidator<GenDatePicker>();
-
         [CascadingParameter(Name = nameof(ParentComponent))]
-        public dynamic  ParentComponent { get; set; }
+        public INonGenGrid  ParentComponent { get; set; }
 
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get; set; }
@@ -79,18 +77,18 @@ namespace Generator.Components.Components
                 base.BuildRenderTree(builder);
         }
 
-        public void OnDateChanged(DateTime? date)
+        public async Task OnDateChanged(DateTime? date)
         {
             Model.SetPropertyValue(BindingField, date);
 
-            ValidateObject();
+            await  ValidateObject();
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
             Model = model;
 
-            DateChanged = EventCallback.Factory.Create<DateTime?>(this, OnDateChanged);
+            DateChanged = EventCallback.Factory.Create<DateTime?>(this, async x => await OnDateChanged(x));
 
             //Date = (DateTime?)model.GetPropertyValue(BindingField);
 
@@ -106,9 +104,9 @@ namespace Generator.Components.Components
 
         };
 
-        public void ValidateObject()
+        public async Task ValidateObject()
         {
-            ObjectValidator.Validate(this);
+            await ParentComponent.ValidateValue(BindingField);
         }
     }
 }

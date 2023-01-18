@@ -13,10 +13,10 @@ namespace Generator.Components.Components
 {
     public class GenComboBox : MudSelect<object>, IGenComboBox
     {
-        public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
+        //public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
 
         [CascadingParameter(Name = nameof(ParentComponent))]
-        public dynamic ParentComponent { get; set; }
+        public INonGenGrid ParentComponent { get; set; }
 
         [Parameter, EditorRequired]
         public string DisplayField { get; set; }
@@ -72,10 +72,7 @@ namespace Generator.Components.Components
         [Parameter, EditorRequired]
         public IEnumerable<object> DataSource { get; set; }
 
-        public GenComboBox()
-        {
-            ObjectValidator = new();
-        }
+        
 
         protected override Task OnInitializedAsync()
         {
@@ -143,9 +140,9 @@ namespace Generator.Components.Components
             RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
         };
 
-        public void ValidateObject()
+        public async Task ValidateObject()
         {
-            ObjectValidator.Validate(this);
+           await  ParentComponent.ValidateValue(BindingField);
         }
     }
 }

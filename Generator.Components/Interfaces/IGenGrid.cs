@@ -1,16 +1,13 @@
 using Generator.Components.Args;
 using Generator.Components.Components;
+using Generator.Components.Validators;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Interfaces;
 
-public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()  
+public interface INonGenGrid
 {
-    public bool HasErrors();// { get; }
-
-    public GenPage<TModel> CurrentGenPage { get; set; }
-
     public IDialogService DialogService { get; set; }
 
     public DialogResult DialogResult { get; set; }
@@ -31,8 +28,6 @@ public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()
 
     public bool IsFirstRender { get; set; }
 
-    public ICollection<TModel> DataSource { get; set; }
-
     public bool NewDisabled { get; set; }
 
     public bool ExpandDisabled { get; set; }
@@ -43,8 +38,6 @@ public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()
 
     public RenderFragment GenHeaderButtons { get; set; }
 
-    public RenderFragment<TModel> GenDetailGrid { get; set; }
-
     public bool HasDetail { get; }
 
     public bool DetailClicked { get; set; }
@@ -53,6 +46,28 @@ public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()
 
     public string SearchPlaceHolderText { get; set; }
 
+    public Task<bool> ValidateModel();
+
+    public Task<bool> ValidateValue(string propertyName);
+
+    public void ResetValidation(IGenComponent component);
+
+    public void AddChildComponent(IGenComponent component);
+
+    public bool ForceRenderOnce { get; set; }
+
+}
+
+public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()  
+{
+    public GenValidator<TModel> GenValidator { get; set; }
+ 
+    public GenPage<TModel> CurrentGenPage { get; set; }
+
+    public ICollection<TModel> DataSource { get; set; }
+
+    public RenderFragment<TModel> GenDetailGrid { get; set; }
+
     public EventCallback<TModel> Create { get; set; }
 
     public EventCallback<TModel> Update { get; set; }
@@ -60,4 +75,5 @@ public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()
     public EventCallback<TModel> Delete { get; set; }
 
     public EventCallback<TModel> Cancel { get; set; }
+ 
 }

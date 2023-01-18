@@ -15,7 +15,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     #region CascadingParameters
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public dynamic ParentComponent { get; set; }
+    public INonGenGrid ParentComponent { get; set; }
 
     #endregion CascadingParameters
 
@@ -117,9 +117,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
         RenderExtensions.RenderGrid(builder, gridValue);
     };
 
-    public void ValidateObject()
+    public Task ValidateObject()
     {
-        
+        return Task.CompletedTask;
     }
 }
 

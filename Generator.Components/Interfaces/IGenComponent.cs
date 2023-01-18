@@ -5,6 +5,7 @@ namespace Generator.Components.Interfaces;
 
 public interface IGenComponent: IGenCompRenderer
 {
+
     public string BindingField { get; set; }
 
     public Type DataType { get; set; }
@@ -29,7 +30,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public int xxl { get; set; }
 
-    public dynamic ParentComponent { get; set; }
+    public INonGenGrid ParentComponent { get; set; }
 
     public object Model { get; set; }
 
@@ -43,7 +44,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public string ErrorText { get; set; }
 
-    public void ValidateObject();
+    public Task ValidateObject();
 
 }
 

@@ -19,14 +19,13 @@ public class GenTextField : MudTextField<object>, IGenTextField
     [CascadingParameter(Name = nameof(CurrentEditContext))]
     public EditContext CurrentEditContext { get; set; }
 
-    public ObjectValidator<GenTextField> ObjectValidator { get; set; } = new ObjectValidator<GenTextField>();
 
     public Type DataType { get; set; }
 
     public object GetDefaultValue => DataType.GetDefaultValue();
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public dynamic ParentComponent { get; set; }
+    public INonGenGrid ParentComponent { get; set; }
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
@@ -77,7 +76,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
     }
 
-    protected override Task OnInitializedAsync()
+    protected override  Task OnInitializedAsync()
     {
 
         if (InputType == InputType.Date)
@@ -93,6 +92,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
             DataType = typeof(string);
         }
 
+        Immediate = true;
         ParentComponent?.AddChildComponent(this);
 
         return Task.CompletedTask;
@@ -118,19 +118,20 @@ public class GenTextField : MudTextField<object>, IGenTextField
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
 
-    public void OnValueChanged(object value)
+    public async Task OnValueChanged(object value)
     {
         Model.SetPropertyValue(BindingField, value);
 
-        ValidateObject();
+        await ParentComponent.ValidateValue(BindingField);
     }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async (builder) =>
     {
         Model = model;
 
-        ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
+        ValueChanged = EventCallback.Factory.Create<object>(this, async x => await OnValueChanged(x));
 
+        
 
         var loValue = model.GetPropertyValue(BindingField);
 
@@ -149,9 +150,10 @@ public class GenTextField : MudTextField<object>, IGenTextField
         RenderExtensions.RenderGrid(builder, data);
     };
 
-    public void ValidateObject()
+    public async Task ValidateObject()
     {
-        ObjectValidator.Validate(this);
+         await ParentComponent.ValidateValue( BindingField);
+
 
     }
 }

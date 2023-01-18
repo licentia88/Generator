@@ -2,6 +2,7 @@
 using MudBlazor.Services;
 using Generator.Shared.Extensions;
 using Generator.Examples.Shared;
+using Generator.Components.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
+builder.Services.RegisterComponents();
 
 //builder.Services.RegisterGrpcService<IGenericServiceBase>();
 //builder.Services.RegisterGrpcService<ITestService>();

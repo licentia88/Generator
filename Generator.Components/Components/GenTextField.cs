@@ -131,7 +131,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
         ValueChanged = EventCallback.Factory.Create<object>(this, async x => await OnValueChanged(x));
 
-        
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentComponent.ValidateValue(BindingField); });
 
         var loValue = model.GetPropertyValue(BindingField);
 

@@ -56,6 +56,8 @@ public interface INonGenGrid
 
     public bool ForceRenderOnce { get; set; }
 
+    public bool HasErrors();
+
 }
 
 public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()  

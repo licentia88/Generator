@@ -89,20 +89,19 @@ namespace Generator.Components.Components
         }
 
 
-        public void OnClearClicked(MouseEventArgs arg)
+        public async Task OnClearClickedAsync(MouseEventArgs arg)
         {
             Model.SetPropertyValue(BindingField, null);
 
-            ValidateObject();
-
+            await ParentComponent.ValidateValue(BindingField);
         }
-        public void OnValueChanged(object value)
+        public async Task OnValueChangedAsync(object value)
         {
             if (value is null) return;
 
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            ValidateObject();
+            await ParentComponent.ValidateValue(BindingField);
 
         }
 
@@ -110,8 +109,10 @@ namespace Generator.Components.Components
         {
             Model = model;
             ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
-            ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClickedAsync(arg));
+            ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChangedAsync);
+
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentComponent.ValidateValue(BindingField); });
 
 
             var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>

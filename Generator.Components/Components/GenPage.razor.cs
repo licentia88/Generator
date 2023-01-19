@@ -71,7 +71,8 @@ namespace Generator.Components.Components
                 Load.InvokeAsync(this);
 
             RefreshParentGrid = EventCallback.Factory.Create(this, ()=> GenGrid.RefreshButtonState());
-            GetSubmitTextFromViewState();
+
+            //GetSubmitTextFromViewState();
             return base.OnInitializedAsync();
         }
 
@@ -86,9 +87,19 @@ namespace Generator.Components.Components
         //    await GenGrid.InvokeCallBackByViewState(SelectedItem, ViewState.Update);
         //}
 
+        public async Task<bool> ValidateAsync()
+        {
+            var result = await GenGrid.ValidateModel();
+
+            StateHasChanged();
+
+            return result;
+        }
+
         public async Task OnCommit()
         {
-            var isValid = await GenGrid.ValidateModel();
+            var isValid = await ValidateAsync();
+
             if (!isValid) return;
 
             if (ParentViewState is not null && ParentViewState == ViewState.Create)

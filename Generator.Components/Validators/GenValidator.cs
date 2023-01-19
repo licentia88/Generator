@@ -39,8 +39,9 @@ public class GenValidator<T> : AbstractValidator<T>
         bool isValid = await Task.Run(() => Validator.TryValidateObject(obj, context, results, true));
 
         if (isValid)
-            return true;
+            return true; 
 
+         
         return false;
     }
  

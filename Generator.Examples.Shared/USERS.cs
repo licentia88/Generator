@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 
@@ -12,6 +13,7 @@ public class USER
     public int U_ROWID { get; set; }
 
     [Required]
+    [DisplayName("User")]
     [ProtoMember(2)]
     public string U_NAME { get; set; }
 

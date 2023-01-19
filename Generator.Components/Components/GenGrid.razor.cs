@@ -12,12 +12,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-using static MudBlazor.CategoryTypes;
-
+ 
 namespace Generator.Components.Components;
 
- 
-public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TModel> where TModel :new()
+public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<TModel> where TModel : new()
 {
     [Inject]
     public GenValidator<TModel> GenValidator { get; set; }
@@ -25,7 +23,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
     [Inject]
     public IDialogService DialogService { get; set; }
 
-    internal MudTable<TModel> originalTable { get; set; }
+    internal MudTable<TModel> OriginalTable { get; set; }
 
     public GenPage<TModel> CurrentGenPage { get; set; }
 
@@ -36,7 +34,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
     public DialogParameters DialogParameters { get; set; } = new DialogParameters();
 
     internal List<Action> EditButtonActionList { get; set; } = new();
-
 
     internal bool GridIsBusy = false;
 
@@ -49,7 +46,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
         DisableBackdropClick = true,
         Position = DialogPosition.Center
     };
- 
+
     public ViewState ViewState { get; set; } = ViewState.None;
 
     public MudIconButton EditButtonRef { get; set; }
@@ -158,21 +155,18 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
             await InvokeAsync(StateHasChanged);
         });
 
-    
         return Task.CompletedTask;
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-       
-
         if (ViewState == ViewState.Create && EditMode == EditMode.Inline)
         {
             if (EditButtonActionList.Any())
             {
                 var editingRow = GetCurrentRow();
 
-                if (editingRow.IsEditing)
+                if (editingRow.IsEditing && !ForceRenderOnce)
                     return Task.CompletedTask;
 
                 var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
@@ -183,16 +177,14 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
                 firstItem.Invoke();
 
                 //Bu Gerekli yoksa surekli OnAfterRenderAsync methoduna duser.
-                editingRow.IsEditing = true;
+
                 StateHasChanged();
-                
+                editingRow.IsEditing = true;
+                ForceRenderOnce = false;
             }
         }
         return Task.CompletedTask;
-
     }
-
-
 
     public void OnEditContextButtonClick(EditButtonContext button)
     {
@@ -204,14 +196,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
         button.ButtonAction.Invoke();
     }
 
-    //public bool HasErrors()
-    //{
-    //    var result = Components.Any(x => x.Error);
+    public bool HasErrors()
+    {
+        var result = Components.Any(x => x.Error);
 
-
-    //    return result;
-    //}
-
+        return result;
+    }
 
     /// <summary>
     /// Invokes the eventcallback depending on the viewstate
@@ -221,15 +211,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     internal async Task InvokeCallBackByViewState(TModel model)
     {
-        await  InvokeCallBackByViewState(model, ViewState.None);
-       
+        await InvokeCallBackByViewState(model, ViewState.None);
     }
 
     internal async Task InvokeCallBackByViewState(TModel model, ViewState state)
     {
         try
         {
- 
             GridIsBusy = true;
             switch (ViewState)
             {
@@ -259,8 +247,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
                     throw new ArgumentOutOfRangeException();
             }
 
-           
-
             SearchDisabled = false;
             NewDisabled = false;
             ExpandDisabled = false;
@@ -271,7 +257,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
 
                 CurrentGenPage.ViewState = state;
             }
-                      
+
             GridIsBusy = false;
 
             RefreshButtonState();
@@ -284,21 +270,20 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
             {
                 this.TableContext.ManagePreviousEditedRow(currentRow);
             }
-           
+
             //RollBack();
 
-            if ( CurrentGenPage is not null)
+            if (CurrentGenPage is not null)
                 CurrentGenPage.PreventClose = true;
 
             CurrentGenPage?.Close();
             GridIsBusy = false;
-
         }
 
         StateHasChanged();
     }
 
-    internal  async Task InvokeCallBackFromChild()
+    internal async Task InvokeCallBackFromChild()
     {
         await InvokeCallBackByViewState(SelectedItem, ViewState.Update);
 
@@ -321,32 +306,29 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
     {
         if (ViewState == ViewState.None) return;
 
+        //ViewState = ViewState.None;
+
+        //RollBack();
+        //Components.ForEach(x => ResetValidation(x));
+
+        //return;
         //var rw = GetCurrentRow();
 
-        //Console.WriteLine(rw.Item.GetHashCode());
-        //Console.WriteLine(DataSource.First().GetHashCode());
+    ;
 
-        //Console.WriteLine(OriginalEditItem.GetHashCode());
-
-        //Console.WriteLine(SelectedItem.GetHashCode());
-
-        //Console.WriteLine(element.GetHashCode());
-
- 
-       
         if (ViewState == ViewState.Create)
             DataSource.Remove(element);
         else
             DataSource.Replace(element, OriginalEditItem);
-        //DataSource.Replace(element, OriginalEditItem);
+
 
         ViewState = ViewState.None;
 
-        //await InvokeCallBackByViewState(element);
- 
+        Components.ForEach(x => ResetValidation(x));
 
-        Components.ForEach(x => x.Error = false);
-
+        //RefreshButtonState sonunda statehaschanged var
+        RefreshButtonState();
+       
     }
 
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
@@ -358,13 +340,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
             (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),
             (nameof(GenPage<TModel>.ParentSubmit), ParentSubmit),
-            (nameof(GenPage<TModel>.GridSubmit), GridSubmit),      
+            (nameof(GenPage<TModel>.GridSubmit), GridSubmit),
             (nameof(GenPage<TModel>.GenGrid), this)
         };
 
         return await ShowDialogAsync<TPage>(paramList.ToArray());
     }
-
 
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>(params (string key, object value)[] parameters) where TPage : IGenPage<TModel>
     {
@@ -402,7 +383,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
     {
         if (Components.Any(x => x.BindingField == childComponent.BindingField)) return;
         Components.Add(childComponent);
-         
     }
 
     private object _selectedDetailObject;
@@ -436,28 +416,23 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
         var result = await GenValidator.ValidateModel(SelectedItem);
 
         if (!result)
-        {
-            GetRowButtonAction().Invoke();
-            await OnAfterRenderAsync(false);
-        }
+            ForceRenderOnce = !result;
 
-
+        StateHasChanged();
         return result;
-
     }
 
     public async Task<bool> ValidateValue(string propertyName)
     {
         var component = Components.FirstOrDefault(x => x.BindingField == propertyName);
 
-        var result = await GenValidator.ValidateValue(component,SelectedItem, propertyName);
+        var result = await GenValidator.ValidateValue(component, SelectedItem, propertyName);
 
         if (!result)
-        {
-            GetComponent<IGenComponent>(propertyName).Error = true;
-            GetComponent<IGenComponent>(propertyName).ErrorText = "TEST";
-        }
+            ForceRenderOnce = !result;
 
+        CurrentGenPage?.ValidateAsync();
+        StateHasChanged();
         return result;
     }
 
@@ -465,4 +440,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>,INonGenGrid, IGenGrid<TM
     {
         GenValidator.ResetValidation(component);
     }
+
+    
 }

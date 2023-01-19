@@ -6,6 +6,7 @@ using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
 namespace Generator.Components.Components
@@ -66,6 +67,7 @@ namespace Generator.Components.Components
         {
             ParentComponent?.AddChildComponent(this);
 
+            //To do check if this line vcan be removed
             Date = (DateTime?)Model?.GetPropertyValue(BindingField);
 
             return Task.CompletedTask;
@@ -81,7 +83,16 @@ namespace Generator.Components.Components
         {
             Model.SetPropertyValue(BindingField, date);
 
-            await  ValidateObject();
+            await ParentComponent.ValidateValue(BindingField);
+
+        }
+
+        protected override void OnClosed()
+        {
+            if (!Error)
+                Task.Run(async() => await ParentComponent.ValidateValue(BindingField));
+
+            base.OnClosed();
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
@@ -89,6 +100,7 @@ namespace Generator.Components.Components
             Model = model;
 
             DateChanged = EventCallback.Factory.Create<DateTime?>(this, async x => await OnDateChanged(x));
+
 
             //Date = (DateTime?)model.GetPropertyValue(BindingField);
 

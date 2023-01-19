@@ -90,10 +90,7 @@ public partial class GenGrid<TModel>
 
     internal void OnBackUp(TModel element)
     {
-        //var isValid = await ValidateModel();
-
-        //if (!isValid) return;
-        //if (HasErrors()) return;
+        if (HasErrors()) return;
 
         NewDisabled = true;
 

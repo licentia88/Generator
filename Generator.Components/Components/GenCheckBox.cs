@@ -89,8 +89,6 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     private void OnValueChanged(bool value)
     {
-
-
         Model.SetPropertyValue(BindingField, value);
 
         Checked = value;
@@ -103,7 +101,6 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
         CheckedChanged = EventCallback.Factory.Create<bool>(this, OnValueChanged);
 
         var val = (bool)model.GetPropertyValue(BindingField);
-
 
         builder.RenderComponent(this, ignoreLabels, (nameof(Checked), val));
     };

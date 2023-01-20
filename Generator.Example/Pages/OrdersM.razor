@@ -36,7 +36,6 @@
 
     public async ValueTask CreateAsync(ORDERS_M data)
     {
-
         data.OM_USER_REFNO = Parent.U_ROWID;
 
         var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));

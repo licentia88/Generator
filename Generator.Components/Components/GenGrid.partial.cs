@@ -35,7 +35,7 @@ public partial class GenGrid<TModel>
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }
 
-    private MudTr GetCurrentRow()
+    internal MudTr GetCurrentRow()
     {
         var selectedItem = GetRowButtonAction();
 

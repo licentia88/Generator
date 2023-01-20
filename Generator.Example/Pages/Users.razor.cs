@@ -37,6 +37,7 @@ namespace Generator.Example.Pages
 
             //REQUIRED 
             data.U_ROWID = result.U_ROWID;
+            data = result;
 
             DataSource.Add(result);
         }

@@ -9,7 +9,7 @@
 }
 <EditForm Model="@SelectedItem" OnValidSubmit="OnCommit">
 
-    <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="Close">
+    <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(async()=> Close())">
         <DialogContent>
 
             @{

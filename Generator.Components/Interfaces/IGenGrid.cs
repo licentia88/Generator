@@ -6,7 +6,7 @@ using MudBlazor;
 
 namespace Generator.Components.Interfaces;
 
-public interface INonGenGrid
+public interface INonGenGrid:INonGenView
 {
     public IDialogService DialogService { get; set; }
 
@@ -42,7 +42,7 @@ public interface INonGenGrid
 
     public bool DetailClicked { get; set; }
 
-    public object ParentComponent { get; set; }
+    public INonGenGrid ParentComponent { get; set; }
 
     public string SearchPlaceHolderText { get; set; }
 
@@ -60,7 +60,7 @@ public interface INonGenGrid
 
 }
 
-public interface IGenGrid<TModel> : IGenView<TModel> where TModel:new()  
+public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:new()  
 {
     public GenValidator<TModel> GenValidator { get; set; }
  

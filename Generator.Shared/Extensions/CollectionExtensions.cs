@@ -1,5 +1,6 @@
 ﻿namespace Generator.Shared.Extensions;
 
+
 public static class CollectionExtensions
 {
     public static void Insert<T>(this ICollection<T> enumerable,int index, T value)

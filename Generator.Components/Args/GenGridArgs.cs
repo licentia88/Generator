@@ -3,6 +3,7 @@ using Generator.Components.Interfaces;
 
 namespace Generator.Components.Args;
 
+
 //#nullable enable
 //public class GenGridArgs<TModel> where TModel : new()
 //{

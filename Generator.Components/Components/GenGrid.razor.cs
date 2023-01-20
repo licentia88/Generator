@@ -89,7 +89,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     internal EventCallback<TModel> GridSubmit { get; set; }
 
     [CascadingParameter(Name = nameof(ParentComponent))]
-    public object ParentComponent { get; set; }
+    public INonGenGrid ParentComponent { get; set; }
 
     [Parameter]
     public string Title { get; set; }
@@ -179,6 +179,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
                 //Bu Gerekli yoksa surekli OnAfterRenderAsync methoduna duser.
 
                 StateHasChanged();
+
                 editingRow.IsEditing = true;
                 ForceRenderOnce = false;
             }

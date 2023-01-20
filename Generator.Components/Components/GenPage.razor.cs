@@ -1,3 +1,4 @@
+using System.Data;
 using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
@@ -27,7 +28,6 @@ namespace Generator.Components.Components
         [Parameter]
         public EventCallback ChildSubmit { get; set; }
 
-      
         [Parameter]
         public EventCallback ParentSubmit { get; set; }
 
@@ -39,13 +39,6 @@ namespace Generator.Components.Components
 
         [Parameter]
         public TModel SelectedItem { get; set; }
-
-        //[Parameter]
-        //public EventCallback<TModel> CommitEventCallback { get; set; }
-
-        //[Parameter]
-        //public EventCallback CommitParentEventCallback { get; set; }
-
  
 
         [CascadingParameter]
@@ -60,8 +53,6 @@ namespace Generator.Components.Components
         [Parameter]
         public EventCallback<IGenView<TModel>> Load { get; set; }
 
-
-        internal ViewState? ParentViewState  => ((dynamic)GenGrid).ParentComponent?.ViewState;
 
         protected override Task OnInitializedAsync()
         {
@@ -82,10 +73,7 @@ namespace Generator.Components.Components
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        //public async Task ChildSubmitEvent()
-        //{
-        //    await GenGrid.InvokeCallBackByViewState(SelectedItem, ViewState.Update);
-        //}
+        
 
         public async Task<bool> ValidateAsync()
         {
@@ -102,8 +90,9 @@ namespace Generator.Components.Components
 
             if (!isValid) return;
 
-            if (ParentViewState is not null && ParentViewState == ViewState.Create)
+            if (GenGrid.ParentComponent.ViewState == ViewState.Create)
             {
+                GenGrid.ParentComponent
                 await ParentSubmit.InvokeAsync();
 
                 await OnCommit();
@@ -114,16 +103,17 @@ namespace Generator.Components.Components
             }
 
             if (!PreventClose)
-                Close();
+                 Close();
 
 
         }
 
         public virtual void Close()
         {
+            GenGrid.OriginalTable.RowEditCancel.Invoke(SelectedItem);
+
             MudDialog.Close();
 
-            GenGrid.RefreshButtonState();
         }
 
        
@@ -137,8 +127,6 @@ namespace Generator.Components.Components
                 ViewState.Delete => GenGrid.DeleteText,
                 _ => ""
             };
-
-            //StateHasChanged();
         }
 
 
@@ -164,6 +152,9 @@ namespace Generator.Components.Components
 
         public void Dispose()
         {
+            if (GenGrid.ViewState != ViewState.None)
+                Close();
+
             RefreshParentGrid.InvokeAsync();
         }
     }

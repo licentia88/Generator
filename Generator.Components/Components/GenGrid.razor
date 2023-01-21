@@ -1,12 +1,15 @@
-@typeparam TModel
+@* ReSharper disable once CSharpWarnings::CS0693 *@
+@typeparam TModel where TModel : new()
 @inherits MudTable<TModel>
+@implements INonGenGrid
+@implements IGenGrid<TModel>
 
-@if (DataSource is null)
+@*@if (DataSource is null)
 {
     return;
-}
+}*@
 
-<CascadingValue Name="@(nameof(ParentComponent))" Value="this">
+<CascadingValue Name="@(nameof(ParentGrid))" Value="this">
 
     @{
         if (GenColumns is not null && IsFirstRender)
@@ -58,7 +61,7 @@
         @{
             <MudTable T="TModel"
                       @ref="OriginalTable"
-                      Loading="@GridIsBusy"
+                      Loading="@(GridIsBusy)"
                       Items="DataSource"
                       Dense="Dense"
                       MultiSelection="MultiSelection"
@@ -75,7 +78,7 @@
                       OnCommitEditClick="OnEditCLick"
                       RowEditPreview="async x => { OnBackUp(x.CastTo<TModel>()); await EditRow(); }"
                       RowEditCancel="x => OnCancelClick(x.CastTo<TModel>())"
-                      RowEditCommit="async x => await OnCommit(x)"
+                      RowEditCommit="async x => await Commit(x)"
                       IsEditRowSwitchingBlocked="true"
                       ApplyButtonPosition="TableApplyButtonPosition.End"
                       EditButtonPosition="TableEditButtonPosition.End"

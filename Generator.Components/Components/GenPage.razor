@@ -13,20 +13,16 @@
         <DialogContent>
 
             @{
-//if (EnableModelValidation)
-//{
                     <DataAnnotationsValidator  />
                    
                 @*}*@
             }
         <MudContainer Style="max-height: 80vh; overflow-y: auto ">
             @{
-
                         <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
                             @foreach (var component in GenGrid.Components)
                             {
-
                                 <MudItem Class="mt-4"
                                          xs="component.xs"
                                          sm="component.sm"
@@ -48,11 +44,8 @@
                 {
                     <div class="pt-5 pb-5">
                         <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
-                            <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentComponent))">
-                                <CascadingValue  Name="@(nameof(ParentSubmit))"
-                                                 Value="@(EventCallback.Factory.Create(this, async ()=> await GenGrid.InvokeCallBackFromChild()))" >
+                            <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
                                     @GenGrid.GenDetailGrid(SelectedItem)
-                                </CascadingValue>
                             </CascadingValue>
                         </CascadingValue>
                     </div>
@@ -61,7 +54,6 @@
         </MudContainer>
         </DialogContent>
         <DialogActions>
-            @*<PageDialogActions @ref="pageDialogActions" TModel="TModel" Page="this" />*@
             <MudButton OnClick="Close">@GenGrid.CancelText</MudButton>
             <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">
                  @(GetSubmitTextFromViewState())

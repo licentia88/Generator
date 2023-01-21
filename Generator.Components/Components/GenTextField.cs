@@ -24,8 +24,8 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
     public object GetDefaultValue => DataType.GetDefaultValue();
 
-    [CascadingParameter(Name = nameof(ParentComponent))]
-    public INonGenGrid ParentComponent { get; set; }
+    [CascadingParameter(Name = nameof(ParentGrid))]
+    public INonGenGrid ParentGrid { get; set; }
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
@@ -93,7 +93,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
         }
 
         Immediate = true;
-        ParentComponent?.AddChildComponent(this);
+        ParentGrid?.AddChildComponent(this);
 
         return Task.CompletedTask;
     }
@@ -122,7 +122,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
     {
         Model.SetPropertyValue(BindingField, value);
 
-        await ParentComponent.ValidateValue(BindingField);
+        await ParentGrid.ValidateValue(BindingField);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async (builder) =>
@@ -131,7 +131,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
         ValueChanged = EventCallback.Factory.Create<object>(this, async x => await OnValueChanged(x));
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentComponent.ValidateValue(BindingField); });
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentGrid.ValidateValue(BindingField); });
 
         var loValue = model.GetPropertyValue(BindingField);
 
@@ -152,7 +152,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
     public async Task ValidateObject()
     {
-         await ParentComponent.ValidateValue( BindingField);
+         await ParentGrid.ValidateValue( BindingField);
 
 
     }

@@ -1,5 +1,6 @@
 using Generator.Components.Args;
 using Generator.Components.Components;
+using Generator.Components.Enums;
 using Generator.Components.Validators;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -8,6 +9,8 @@ namespace Generator.Components.Interfaces;
 
 public interface INonGenGrid:INonGenView
 {
+    public INonGenPage CurrentGenPage { get; set; }
+
     public IDialogService DialogService { get; set; }
 
     public DialogResult DialogResult { get; set; }
@@ -42,9 +45,11 @@ public interface INonGenGrid:INonGenView
 
     public bool DetailClicked { get; set; }
 
-    public INonGenGrid ParentComponent { get; set; }
+    public INonGenGrid ParentGrid { get; set; }
 
     public string SearchPlaceHolderText { get; set; }
+
+    public bool ForceRenderOnce { get; set; }
 
     public Task<bool> ValidateModel();
 
@@ -54,8 +59,6 @@ public interface INonGenGrid:INonGenView
 
     public void AddChildComponent(IGenComponent component);
 
-    public bool ForceRenderOnce { get; set; }
-
     public bool HasErrors();
 
 }
@@ -63,8 +66,6 @@ public interface INonGenGrid:INonGenView
 public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:new()  
 {
     public GenValidator<TModel> GenValidator { get; set; }
- 
-    public GenPage<TModel> CurrentGenPage { get; set; }
 
     public ICollection<TModel> DataSource { get; set; }
 
@@ -78,4 +79,8 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
 
     public EventCallback<TModel> Cancel { get; set; }
  
+    public void OnDetailClicked(TModel context);
+
+   
+
 }

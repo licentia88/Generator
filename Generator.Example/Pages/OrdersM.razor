@@ -19,7 +19,7 @@
 @code{
 
 
-    public List<ORDERS_M> DataSource { get; set; }
+    public List<ORDERS_M> DataSource { get; set; } = new();
 
     [Parameter]
     public USER Parent { get; set; }
@@ -27,11 +27,11 @@
     [Inject]
     public IOrdersMService OrdersMService { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override  async Task OnInitializedAsync()
     {
-        var result = await OrdersMService.ReadAsync(new(Parent.U_ROWID));
+        DataSource  =await OrdersMService.ReadAsync(new(Parent.U_ROWID));
 
-        DataSource = result;
+        //DataSource = result;
     }
 
     public async ValueTask CreateAsync(ORDERS_M data)

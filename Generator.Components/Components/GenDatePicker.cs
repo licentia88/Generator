@@ -13,8 +13,8 @@ namespace Generator.Components.Components
 {
     public class GenDatePicker : MudDatePicker, IGenDatePicker
     {
-        [CascadingParameter(Name = nameof(ParentComponent))]
-        public INonGenGrid  ParentComponent { get; set; }
+        [CascadingParameter(Name = nameof(ParentGrid))]
+        public INonGenGrid  ParentGrid { get; set; }
 
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get; set; }
@@ -65,7 +65,7 @@ namespace Generator.Components.Components
         
         protected override Task OnInitializedAsync()
         {
-            ParentComponent?.AddChildComponent(this);
+            ParentGrid?.AddChildComponent(this);
 
             //To do check if this line vcan be removed
             Date = (DateTime?)Model?.GetPropertyValue(BindingField);
@@ -83,14 +83,14 @@ namespace Generator.Components.Components
         {
             Model.SetPropertyValue(BindingField, date);
 
-            await ParentComponent.ValidateValue(BindingField);
+            await ParentGrid.ValidateValue(BindingField);
 
         }
 
         protected override void OnClosed()
         {
             if (!Error)
-                Task.Run(async() => await ParentComponent.ValidateValue(BindingField));
+                Task.Run(async() => await ParentGrid.ValidateValue(BindingField));
 
             base.OnClosed();
         }
@@ -118,7 +118,7 @@ namespace Generator.Components.Components
 
         public async Task ValidateObject()
         {
-            await ParentComponent.ValidateValue(BindingField);
+            await ParentGrid.ValidateValue(BindingField);
         }
     }
 }

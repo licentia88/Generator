@@ -15,8 +15,8 @@ namespace Generator.Components.Components
     {
         //public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
 
-        [CascadingParameter(Name = nameof(ParentComponent))]
-        public INonGenGrid ParentComponent { get; set; }
+        [CascadingParameter(Name = nameof(ParentGrid))]
+        public INonGenGrid ParentGrid { get; set; }
 
         [Parameter, EditorRequired]
         public string DisplayField { get; set; }
@@ -76,7 +76,7 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            ParentComponent?.AddChildComponent(this);
+            ParentGrid?.AddChildComponent(this);
 
 
             return Task.CompletedTask;
@@ -93,7 +93,7 @@ namespace Generator.Components.Components
         {
             Model.SetPropertyValue(BindingField, null);
 
-            await ParentComponent.ValidateValue(BindingField);
+            await ParentGrid.ValidateValue(BindingField);
         }
         public async Task OnValueChangedAsync(object value)
         {
@@ -101,7 +101,7 @@ namespace Generator.Components.Components
 
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            await ParentComponent.ValidateValue(BindingField);
+            await ParentGrid.ValidateValue(BindingField);
 
         }
 
@@ -112,7 +112,7 @@ namespace Generator.Components.Components
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClickedAsync(arg));
             ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChangedAsync);
 
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentComponent.ValidateValue(BindingField); });
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentGrid.ValidateValue(BindingField); });
 
 
             var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>
@@ -143,7 +143,7 @@ namespace Generator.Components.Components
 
         public async Task ValidateObject()
         {
-           await  ParentComponent.ValidateValue(BindingField);
+           await  ParentGrid.ValidateValue(BindingField);
         }
     }
 }

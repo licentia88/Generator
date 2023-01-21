@@ -25,16 +25,7 @@ namespace Generator.Components.Components
 
         public TModel OriginalEditItem { get; set; }
 
-        [Parameter]
-        public EventCallback ChildSubmit { get; set; }
-
-        [Parameter]
-        public EventCallback ParentSubmit { get; set; }
-
-        [Parameter]
-        public EventCallback<TModel> GridSubmit { get; set; }
-
-        [Parameter]
+        //[Parameter]
         public EventCallback RefreshParentGrid { get; set; }
 
         [Parameter]
@@ -46,7 +37,7 @@ namespace Generator.Components.Components
 
         public bool EnableModelValidation { get; set; }
 
-        public bool PreventClose { get; set; }
+        public bool IsTopLevel { get; set; }
 
         public List<IGenComponent> Components { get; set; }
 
@@ -63,7 +54,6 @@ namespace Generator.Components.Components
 
             RefreshParentGrid = EventCallback.Factory.Create(this, ()=> GenGrid.RefreshButtonState());
 
-            //GetSubmitTextFromViewState();
             return base.OnInitializedAsync();
         }
 
@@ -73,8 +63,6 @@ namespace Generator.Components.Components
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        
-
         public async Task<bool> ValidateAsync()
         {
             var result = await GenGrid.ValidateModel();
@@ -83,37 +71,52 @@ namespace Generator.Components.Components
 
             return result;
         }
-
+ 
         public async Task OnCommit()
         {
-            var isValid = await ValidateAsync();
-
-            if (!isValid) return;
-
-            if (GenGrid.ParentComponent.ViewState == ViewState.Create)
-            {
-                GenGrid.ParentComponent
-                await ParentSubmit.InvokeAsync();
-
-                await OnCommit();
-            }
-            else
-            {
-                await GridSubmit.InvokeAsync(SelectedItem);
-            }
-
-            if (!PreventClose)
-                 Close();
-
-
+           IsTopLevel = true;
+           await  OnCommit(SelectedItem);
         }
 
+        public async Task OnCommit(TModel model)
+        {
+           await  OnCommit(model, ViewState);
+        }
+
+        public  async Task OnCommit(TModel model, ViewState viewState)
+        {
+            if (!await ValidateAsync()) return;
+            
+            if (GenGrid.ParentGrid?.ViewState == ViewState.Create)
+                await GenGrid.ParentGrid.CurrentGenPage.OnCommitAndWait();
+
+            await GenGrid.OnCommit(SelectedItem, viewState);
+
+            await CloseIfAllowed();
+        }
+
+        public async Task OnCommitAndWait()
+        {
+            await GenGrid.OnCommit(SelectedItem, ViewState.Update);
+
+            ViewState = ViewState.Update;
+
+            StateHasChanged();
+        }
+
+
+        private ValueTask CloseIfAllowed()
+        {
+            if (IsTopLevel)
+                Close();
+
+            return ValueTask.CompletedTask;
+        }
         public virtual void Close()
         {
             GenGrid.OriginalTable.RowEditCancel.Invoke(SelectedItem);
 
             MudDialog.Close();
-
         }
 
        
@@ -137,25 +140,19 @@ namespace Generator.Components.Components
 
         public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
         {
-            throw new NotImplementedException();
+            return GenGrid.GetComponent<TComponent>(bindingField);
         }
-
-        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public RenderFragment RenderAsGridComponent(object model)
-        {
-            throw new NotImplementedException();
-        }
-
+ 
         public void Dispose()
         {
             if (GenGrid.ViewState != ViewState.None)
                 Close();
 
             RefreshParentGrid.InvokeAsync();
+
+            MudDialog.Dispose();
         }
+
+       
     }
 }

@@ -16,15 +16,29 @@ public interface INonGenView
     public List<IGenComponent> Components { get; set; }
 
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
+
+    public void StateHasChanged();
+
+    public Task OnCommit();
+
+    public Task OnCommitAndWait();
+
 }
 
-
-public interface IGenView<TModel> : INonGenView, IGenCompRenderer where TModel:new()
+/// <summary>
+/// Has common properties 
+/// </summary>
+/// <typeparam name="TModel"></typeparam>
+public interface IGenView<TModel> : INonGenView where TModel:new()
 {
     public TModel OriginalEditItem { get; set; }
 
-    public TModel SelectedItem { get; internal set; }
+    public TModel SelectedItem { get;  set; }
  
     public EventCallback<IGenView<TModel>> Load { get; set; }
+
+    public Task OnCommit(TModel model);
+
+    public Task OnCommit(TModel model, ViewState viewState);
 }
 

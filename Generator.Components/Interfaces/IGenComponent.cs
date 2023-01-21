@@ -30,7 +30,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public int xxl { get; set; }
 
-    public INonGenGrid ParentComponent { get; set; }
+    public INonGenGrid ParentGrid { get; set; }
 
     public object Model { get; set; }
 

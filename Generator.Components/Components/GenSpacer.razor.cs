@@ -46,9 +46,9 @@ namespace Generator.Components.Components
         [Parameter, EditorRequired]
         public int xxl { get; set; }
 
-        [CascadingParameter(Name = nameof(ParentComponent))]
+        [CascadingParameter(Name = nameof(ParentGrid))]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public INonGenGrid ParentComponent { get; set; }
+        public INonGenGrid ParentGrid { get; set; }
 
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -73,7 +73,7 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            ParentComponent.CastTo<GenGrid<dynamic>>()?.AddChildComponent(this);
+            ParentGrid.CastTo<GenGrid<dynamic>>()?.AddChildComponent(this);
 
 
             return base.OnInitializedAsync();

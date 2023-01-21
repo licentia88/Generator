@@ -14,15 +14,20 @@ namespace Generator.Example.Pages
 		[Inject]
 		public IUserService UserService { get; set; }
 
-        public ObservableCollection<USER> DataSource { get; set; }
+        public ObservableCollection<USER> DataSource { get; set; } = new();
 
         private IGenView<USER> View { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            await Task.Delay(4000);
+
             var res  = await UserService.ReadAsync();
 
-            DataSource =new ObservableCollection<USER>(res);
+            
+
+            DataSource = new ObservableCollection<USER>(res);
+
         }
 
         public async ValueTask Load(IGenView<USER> view)

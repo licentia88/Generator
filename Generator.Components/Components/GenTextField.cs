@@ -1,13 +1,11 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -118,20 +116,20 @@ public class GenTextField : MudTextField<object>, IGenTextField
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
 
-    public async Task OnValueChanged(object value)
+    public void OnValueChanged(object value)
     {
         Model.SetPropertyValue(BindingField, value);
 
-        await ParentGrid.ValidateValue(BindingField);
+        ParentGrid.ValidateValue(BindingField);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async (builder) =>
     {
         Model = model;
 
-        ValueChanged = EventCallback.Factory.Create<object>(this, async x => await OnValueChanged(x));
+        ValueChanged = EventCallback.Factory.Create<object>(this, x =>  OnValueChanged(x));
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentGrid.ValidateValue(BindingField); });
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { if (!Error)  ParentGrid.ValidateValue(BindingField); });
 
         var loValue = model.GetPropertyValue(BindingField);
 
@@ -150,9 +148,9 @@ public class GenTextField : MudTextField<object>, IGenTextField
         RenderExtensions.RenderGrid(builder, data);
     };
 
-    public async Task ValidateObject()
+    public void ValidateObject()
     {
-         await ParentGrid.ValidateValue( BindingField);
+          ParentGrid.ValidateValue( BindingField);
 
 
     }

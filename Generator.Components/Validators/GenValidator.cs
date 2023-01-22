@@ -30,13 +30,13 @@ public class GenValidator<T> : AbstractValidator<T>
         notEmptyMethod.Invoke(null, new object[] { result });
     }
 
-    public async Task<bool> ValidateModel(T obj)
+    public  bool ValidateModel(T obj)
     {
         var results = new List<ValidationResult>();
 
         var context = new ValidationContext(obj);
 
-        bool isValid = await Task.Run(() => Validator.TryValidateObject(obj, context, results, true));
+        bool isValid = Validator.TryValidateObject(obj, context, results, true);
 
         if (isValid)
             return true; 
@@ -45,7 +45,7 @@ public class GenValidator<T> : AbstractValidator<T>
         return false;
     }
  
-    public async Task<bool> ValidateValue(IGenComponent component, T model, string propertyName)
+    public bool ValidateValue(IGenComponent component, T model, string propertyName)
     {
         var results = new List<ValidationResult>();
 
@@ -57,7 +57,7 @@ public class GenValidator<T> : AbstractValidator<T>
 
         var value = model.GetPropertyValue(propertyName);
 
-        bool isValid = await Task.Run(() => Validator.TryValidateProperty(value, context, results));
+        bool isValid = Validator.TryValidateProperty(value, context, results);
 
         if (isValid)
         {

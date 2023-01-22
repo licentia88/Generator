@@ -20,11 +20,8 @@ namespace Generator.Example.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            await Task.Delay(4000);
 
             var res  = await UserService.ReadAsync();
-
-            
 
             DataSource = new ObservableCollection<USER>(res);
 

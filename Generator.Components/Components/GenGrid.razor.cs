@@ -1,16 +1,11 @@
 using FluentValidation;
-using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using MudBlazor.Interfaces;
 using MudBlazorFix;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using Force.DeepCloner;
 
@@ -21,20 +16,20 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     [Inject]
     public GenValidator<TModel> GenValidator { get; set; }
 
-    public new TModel SelectedItem
-    {
-        get => base.SelectedItem;
-        set => base.SelectedItem = value;
-    }
+    //public new TModel SelectedItem
+    //{
+    //    get => base.SelectedItem;
+    //    set => base.SelectedItem = value;
+    //}
     
     [Inject]
     public IDialogService DialogService { get; set; }
 
-    internal MudTable<TModel> OriginalTable { get; set; }
+    internal MudTable<TModel> OriginalTable { get; set; }   //
 
     public INonGenPage CurrentGenPage { get; set; }
 
-    public GridManager<TModel> GridManager { get; }
+    internal GridManager<TModel> GridManager { get; }
 
     public DialogResult DialogResult { get; set; }
 
@@ -56,7 +51,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public ViewState ViewState { get; set; } = ViewState.None;
 
-    public MudIconButton EditButtonRef { get; set; }
+    internal MudIconButton EditButtonRef { get; set; }
 
     public bool DetailClicked { get; set; }
 
@@ -387,9 +382,9 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
         return DetailClicked && _selectedDetailObject.Equals(context);
     }
 
-    public async Task<bool> ValidateModel()
+    public bool ValidateModel()
     {
-        var result = await GenValidator.ValidateModel(SelectedItem);
+        var result = GenValidator.ValidateModel(SelectedItem);
 
         if (!result)
             ForceRenderOnce = !result;
@@ -398,11 +393,11 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
         return result;
     }
 
-    public async Task<bool> ValidateValue(string propertyName)
+    public  bool ValidateValue(string propertyName)
     {
         var component = Components.FirstOrDefault(x => x.BindingField == propertyName);
 
-        var result = await GenValidator.ValidateValue(component, SelectedItem, propertyName);
+        var result =  GenValidator.ValidateValue(component, SelectedItem, propertyName);
 
         if (!result)
             ForceRenderOnce = !result;
@@ -424,7 +419,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     private async Task Commit(object model)
     {
-        var isValid = await ValidateModel();
+        var isValid =  ValidateModel();
         if (!isValid) return;
 
         await OnCommit(SelectedItem);

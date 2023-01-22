@@ -44,7 +44,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public string ErrorText { get; set; }
 
-    public Task ValidateObject();
+    public void ValidateObject();
 
 }
 

@@ -89,19 +89,19 @@ namespace Generator.Components.Components
         }
 
 
-        public async Task OnClearClickedAsync(MouseEventArgs arg)
+        public void OnClearClicked(MouseEventArgs arg)
         {
             Model.SetPropertyValue(BindingField, null);
 
-            await ParentGrid.ValidateValue(BindingField);
+            ParentGrid.ValidateValue(BindingField);
         }
-        public async Task OnValueChangedAsync(object value)
+        public void OnValueChanged(object value)
         {
             if (value is null) return;
 
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            await ParentGrid.ValidateValue(BindingField);
+            ParentGrid.ValidateValue(BindingField);
 
         }
 
@@ -109,10 +109,10 @@ namespace Generator.Components.Components
         {
             Model = model;
             ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClickedAsync(arg));
-            ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChangedAsync);
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
+            ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
 
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () => { if (!Error) await ParentGrid.ValidateValue(BindingField); });
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { if (!Error)  ParentGrid.ValidateValue(BindingField); });
 
 
             var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>
@@ -141,9 +141,9 @@ namespace Generator.Components.Components
             RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
         };
 
-        public async Task ValidateObject()
+        public void ValidateObject()
         {
-           await  ParentGrid.ValidateValue(BindingField);
+            ParentGrid.ValidateValue(BindingField);
         }
     }
 }

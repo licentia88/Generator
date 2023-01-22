@@ -75,22 +75,22 @@ namespace Generator.Components.Components
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null)
+            if (Model is not null )
                 base.BuildRenderTree(builder);
         }
 
-        public async Task OnDateChanged(DateTime? date)
+        public void OnDateChanged(DateTime? date)
         {
             Model.SetPropertyValue(BindingField, date);
 
-            await ParentGrid.ValidateValue(BindingField);
+            ParentGrid.ValidateValue(BindingField);
 
         }
 
         protected override void OnClosed()
         {
             if (!Error)
-                Task.Run(async() => await ParentGrid.ValidateValue(BindingField));
+                 ParentGrid.ValidateValue(BindingField);
 
             base.OnClosed();
         }
@@ -99,7 +99,7 @@ namespace Generator.Components.Components
         {
             Model = model;
 
-            DateChanged = EventCallback.Factory.Create<DateTime?>(this, async x => await OnDateChanged(x));
+            DateChanged = EventCallback.Factory.Create<DateTime?>(this, x =>  OnDateChanged(x));
 
 
             //Date = (DateTime?)model.GetPropertyValue(BindingField);
@@ -116,9 +116,9 @@ namespace Generator.Components.Components
 
         };
 
-        public async Task ValidateObject()
+        public void ValidateObject()
         {
-            await ParentGrid.ValidateValue(BindingField);
+            ParentGrid.ValidateValue(BindingField);
         }
     }
 }

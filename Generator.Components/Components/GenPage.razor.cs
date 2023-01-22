@@ -63,9 +63,9 @@ namespace Generator.Components.Components
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        public async Task<bool> ValidateAsync()
+        public bool ValidateAsync()
         {
-            var result = await GenGrid.ValidateModel();
+            var result =  GenGrid.ValidateModel();
 
             StateHasChanged();
 
@@ -85,7 +85,7 @@ namespace Generator.Components.Components
 
         public  async Task OnCommit(TModel model, ViewState viewState)
         {
-            if (!await ValidateAsync()) return;
+            if (!ValidateAsync()) return;
             
             if (GenGrid.ParentGrid?.ViewState == ViewState.Create)
                 await GenGrid.ParentGrid.CurrentGenPage.OnCommitAndWait();

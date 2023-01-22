@@ -18,5 +18,5 @@ public interface INonGenPage: INonGenView
 
     public void Close();
 
-    public Task<bool> ValidateAsync();
+    public bool ValidateAsync();
 }

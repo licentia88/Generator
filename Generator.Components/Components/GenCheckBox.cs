@@ -6,7 +6,6 @@ using Generator.Shared.Extensions;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
-using Generator.Components.Validators;
 
 namespace Generator.Components.Components;
 
@@ -114,9 +113,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
         RenderExtensions.RenderGrid(builder, gridValue);
     };
 
-    public Task ValidateObject()
+    public void ValidateObject()
     {
-        return Task.CompletedTask;
+        ParentGrid.ValidateValue(BindingField);
     }
 }
 

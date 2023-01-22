@@ -3,11 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
-using IComponent = Microsoft.AspNetCore.Components.IComponent;
 
 namespace Generator.Components.Components
 {
-	public partial class GenSpacer:IGenSpacer
+    public partial class GenSpacer:IGenSpacer
     {
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public string BindingField { get; set; }
@@ -90,9 +89,8 @@ namespace Generator.Components.Components
 
         };
 
-        public Task ValidateObject()
+        public void ValidateObject()
         {
-            return Task.CompletedTask;
         }
     }
 }

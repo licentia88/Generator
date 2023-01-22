@@ -1,6 +1,3 @@
-using Generator.Components.Args;
-using Generator.Components.Components;
-using Generator.Components.Enums;
 using Generator.Components.Validators;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -51,9 +48,9 @@ public interface INonGenGrid:INonGenView
 
     public bool ForceRenderOnce { get; set; }
 
-    public Task<bool> ValidateModel();
+    public bool ValidateModel();
 
-    public Task<bool> ValidateValue(string propertyName);
+    public bool ValidateValue(string propertyName);
 
     public void ResetValidation(IGenComponent component);
 

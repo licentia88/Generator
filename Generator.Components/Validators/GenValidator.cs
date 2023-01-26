@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using FluentValidation;
+using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.FSharp.Data.UnitSystems.SI.UnitNames;
@@ -11,7 +12,6 @@ namespace Generator.Components.Validators;
 
 public class GenValidator<T> : AbstractValidator<T>
 {
- 
     private void GenericRuleFor(string propertyName)
     {
         var type = typeof(T);
@@ -44,8 +44,16 @@ public class GenValidator<T> : AbstractValidator<T>
          
         return false;
     }
- 
+
     public bool ValidateValue(IGenComponent component, T model, string propertyName)
+    {
+        if (model.IsModel())
+            return ValidateModelValue(component, model, propertyName);
+
+        return ValidateExpandObject(component, model, propertyName);
+    }
+
+    private bool ValidateModelValue(IGenComponent component, T model, string propertyName)
     {
         var results = new List<ValidationResult>();
 
@@ -68,6 +76,57 @@ public class GenValidator<T> : AbstractValidator<T>
         SetError(component, results.FirstOrDefault().ErrorMessage);
 
         return false;
+    }
+
+    private bool ValidateExpandObject(IGenComponent component, T model, string propertyName)
+    {
+
+        if (component.Required)
+        {
+            var resIsNull = model.GetPropertyValue(component.BindingField).IsNullOrDefault();
+
+            if (resIsNull)
+            {
+                SetError(component, $"Required");
+
+                return false;
+            }
+        }
+
+        if (component.HasProperty(nameof(IGenTextField.MaxLength)))
+        {
+            var maxlength = component.GetPropertyValue(nameof(IGenTextField.MaxLength)).CastTo<int>();
+
+            var compLength = model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
+
+            var lengthresult = compLength > maxlength;
+
+            if (!lengthresult)
+            {
+                SetError(component, $"Max {maxlength} characters");
+
+                return false;
+            }
+        }
+
+        if (component.HasProperty(nameof(IGenTextField.MinLength)))
+        {
+            var minLength = component.GetPropertyValue(nameof(IGenTextField.MinLength)).CastTo<int>();
+
+            var compLength = model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
+
+            var lengthresult = compLength < minLength;
+
+            if (!lengthresult)
+            {
+                SetError(component, $"Min {minLength} characters");
+
+                return false;
+            }
+        }
+
+        return true;
+       
     }
 
     private async Task<bool> ValidateValue2(IGenComponent component, T model, string propertyName)

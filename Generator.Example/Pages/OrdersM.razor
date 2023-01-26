@@ -9,7 +9,7 @@
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">
     <GenColumns>
-        <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)" EnabledOnEdit="false" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)"  Label="RefNo" Disabled="true" />
         <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" />
     </GenColumns>
 </GenGrid>

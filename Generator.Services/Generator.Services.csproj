@@ -15,7 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.50.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.51.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.0.179" />

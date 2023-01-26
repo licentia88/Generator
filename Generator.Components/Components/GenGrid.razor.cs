@@ -8,6 +8,7 @@ using MudBlazor;
 using MudBlazorFix;
 using System.Diagnostics.CodeAnalysis;
 using Force.DeepCloner;
+using Generator.Components.Extensions;
 
 namespace Generator.Components.Components;
 
@@ -170,6 +171,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
                 StateHasChanged();
 
                 editingRow.IsEditing = true;
+
                 ForceRenderOnce = false;
             }
         }
@@ -201,7 +203,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public Task OnCommit(TModel model)
     {
-        return OnCommit(model, ViewState);
+        return OnCommit(model, ViewState.None);
     }
 
     public async Task OnCommit(TModel model, ViewState viewState)
@@ -370,10 +372,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     }
 
 
-    public void OnDetailClicked()
-    {
-     
-    }
+    
 
     private bool ShouldDisplay(object context)
     {
@@ -384,7 +383,12 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public bool ValidateModel()
     {
-        var result = GenValidator.ValidateModel(SelectedItem);
+        var result = true;
+
+        if (SelectedItem.IsModel())
+            result = GenValidator.ValidateModel(SelectedItem);
+        else
+            result = Components.All(x=> GenValidator.ValidateValue(x,SelectedItem,x.BindingField));
 
         if (!result)
             ForceRenderOnce = !result;
@@ -392,6 +396,8 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
         StateHasChanged();
         return result;
     }
+
+
 
     public  bool ValidateValue(string propertyName)
     {
@@ -430,7 +436,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
         if (string.IsNullOrEmpty(_searchString)) return true;
 
         var searchableFields = GetComponentsOf<IGenTextField>()
-            .Where((x) => x.BindingField is not null && x.VisibleOnGrid);
+            .Where((x) => x.BindingField is not null && x.GridVisible);
 
         return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
     }

@@ -58,7 +58,6 @@ namespace Generator.Shared.Extensions
             return serializer.Pickle(thisObj);
         }
 
-      
         public static T Deserialize<T>(this byte[] bytes)
         {
             return serializer.UnPickle<T>(bytes);

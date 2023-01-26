@@ -82,6 +82,9 @@ namespace Generator.Services.Migrations
                     b.Property<int>("U_AGE")
                         .HasColumnType("int");
 
+                    b.Property<string>("U_LASTNAME")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("U_NAME")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc.ClientFactory;
 
-namespace Generator.Shared.Extensions
+namespace Generator.Examples.Shared.Extensions
 {
     public static class DependencyExtensions
     {
@@ -59,8 +59,6 @@ namespace Generator.Shared.Extensions
             })
            .ConfigurePrimaryHttpMessageHandler(x => hand);
         }
-
-        
 
         public static void RegisterGrpcServiceWithSsl2<TService>(this IServiceCollection services, string address) where TService : class
         {
@@ -112,23 +110,6 @@ namespace Generator.Shared.Extensions
 
             
         }
-
-
-        //public static void RegisterGrpcService3<TService>(this IServiceCollection Services) where TService : class
-        //{
-        //    var cert = new X509Certificate2("/Users/asimgunduz/server.crt", "/Users/asimgunduz/server.key");
-        //    var handler = new HttpClientHandler();
-        //    handler.ServerCertificateCustomValidationCallback = (a, b, c, d) => true;
-        //    handler.ClientCertificates.Add(cert);
-        //    var client = new HttpClient(handler);
-
-        //    var opt = new GrpcChannelOptions()
-        //    {
-        //        HttpClient = client,
-        //    };
-
-        //    var channel = GrpcClientFactory.CreateClient<TService>(_configuration["Connection:gRPCServerHostURI"], opt);
-        //}
 
     }
 }

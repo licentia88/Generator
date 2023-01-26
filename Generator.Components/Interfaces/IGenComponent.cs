@@ -12,11 +12,11 @@ public interface IGenComponent: IGenCompRenderer
 
     public int Order { get; set; }
 
-    public bool VisibleOnEdit { get; set; } 
+    public bool EditorEnabled { get; set; } 
 
-    public bool VisibleOnGrid { get; set; } 
+    public bool EditorVisible { get; set; } 
 
-    public bool EnabledOnEdit { get; set; } 
+    public bool GridVisible { get; set; } 
 
     public int xs { get; set; }
 

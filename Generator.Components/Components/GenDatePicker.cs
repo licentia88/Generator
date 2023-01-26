@@ -35,13 +35,13 @@ namespace Generator.Components.Components
         public int Order { get; set; }
 
         [Parameter]
-        public bool VisibleOnEdit { get; set; } = true;
+        public bool EditorEnabled { get; set; } = true;
 
         [Parameter]
-        public bool VisibleOnGrid { get; set; } = true;
+        public bool EditorVisible { get; set; } = true;
 
         [Parameter]
-        public bool EnabledOnEdit { get; set; } = true;
+        public bool GridVisible { get; set; } = true;
 
         [Parameter]
         public int xs { get; set; } = 12;
@@ -104,7 +104,7 @@ namespace Generator.Components.Components
 
             //Date = (DateTime?)model.GetPropertyValue(BindingField);
 
-            builder.RenderComponent(this,ignoreLabels);
+            builder.RenderComponent(this,ignoreLabels, (nameof(Disabled), !EditorEnabled));
         };
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>

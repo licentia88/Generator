@@ -94,12 +94,25 @@
 
                             </MudTh>
                         }
-                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
+
+                        Func<IGenComponent, bool> predicate;
+
+                        if (ViewState != ViewState.None)
+                        {
+                            predicate = x => x.EditorVisible;
+                        }
+                        else
+                        {
+                            predicate = x => x.GridVisible;
+                        }
+
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(predicate))
                         {
                             <MudTh>
                                 @item.Label
                             </MudTh>
                         }
+
                     }
                     <MudTh>
 
@@ -139,7 +152,7 @@
                         }
 
 
-                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid))
+                        foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.GridVisible))
                         {
                             //onclick: stopPropagation = "EditMode==EditMode.Popup"
                             <MudTd @onclick:stopPropagation="EditMode == EditMode.Form">
@@ -185,7 +198,7 @@
                                 <MudTd></MudTd>
                             }
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.VisibleOnGrid).ToList())
+                            foreach (var item in GetComponentsOf<IGenComponent>().ToList())
                             {
                                 <MudTd Style="width: auto !important">
                                     @item.RenderAsComponent(_context, true)

@@ -43,13 +43,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     public int Order { get; set; }
 
     [Parameter]
-    public bool VisibleOnEdit { get; set; } = true;
+    public bool EditorEnabled { get; set; } = true;
 
     [Parameter]
-    public bool VisibleOnGrid { get; set; } = true;
+    public bool EditorVisible { get; set; } = true;
 
     [Parameter]
-    public bool EnabledOnEdit { get; set; } = true;
+    public bool GridVisible { get; set; } = true;
+ 
 
     [Parameter]
     public int xs { get; set; } = 12;
@@ -101,7 +102,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
         var val = (bool)model.GetPropertyValue(BindingField);
 
-        builder.RenderComponent(this, ignoreLabels, (nameof(Checked), val));
+        builder.RenderComponent(this, ignoreLabels, (nameof(Checked), val), (nameof(Disabled), !EditorEnabled));
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>

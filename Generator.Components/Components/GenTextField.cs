@@ -33,20 +33,23 @@ public class GenTextField : MudTextField<object>, IGenTextField
     public string BindingField { get; set; }
 
     [Parameter]
+    public int MinLength { get; set; }
+
+    [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
     public int Width { get; set; }
 
     [Parameter]
     public int Order { get; set; }
- 
-    [Parameter]
-    public bool VisibleOnEdit { get; set; } = true;
 
     [Parameter]
-    public bool VisibleOnGrid { get; set; } = true;
+    public bool EditorEnabled { get; set; } = true;
 
     [Parameter]
-    public bool EnabledOnEdit { get; set; } = true;
+    public bool EditorVisible { get; set; } = true;
+
+    [Parameter]
+    public bool GridVisible { get; set; } = true;
 
     [Parameter]
     public int xs { get; set; } = 12;
@@ -133,7 +136,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
 
         var loValue = model.GetPropertyValue(BindingField);
 
-        builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue));
+        builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), (nameof(Disabled), !EditorEnabled));
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>

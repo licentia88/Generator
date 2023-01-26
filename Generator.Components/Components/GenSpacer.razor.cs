@@ -19,14 +19,14 @@ namespace Generator.Components.Components
         public int Order { get; set; }
 
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-        public bool VisibleOnEdit { get; set; } = true;
+        public bool EditorEnabled { get; set; } = true;
 
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-        public bool VisibleOnGrid { get; set; } = true;
+        public bool EditorVisible { get; set; } = true;
 
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-        public bool EnabledOnEdit { get; set; } = true;
-
+        public bool GridVisible { get; set; } = true;
+      
         [Parameter, EditorRequired]
         public int xs { get; set; }
 

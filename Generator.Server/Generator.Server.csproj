@@ -48,7 +48,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.50.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.51.0" />
     <PackageReference Include="ZString" Version="2.5.0" />
   </ItemGroup>
   <ItemGroup>

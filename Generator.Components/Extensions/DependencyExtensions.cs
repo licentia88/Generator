@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Generator.Components.Extensions
 {
+
+
+
     public static class DependencyExtensions
     {
         public static void RegisterComponents(this IServiceCollection Services)

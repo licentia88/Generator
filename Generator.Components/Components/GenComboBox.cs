@@ -43,13 +43,13 @@ namespace Generator.Components.Components
         public int Order { get; set; }
 
         [Parameter]
-        public bool VisibleOnEdit { get; set; } = true;
+        public bool EditorEnabled { get; set; } = true;
 
         [Parameter]
-        public bool VisibleOnGrid { get; set; } = true;
+        public bool EditorVisible { get; set; } = true;
 
         [Parameter]
-        public bool EnabledOnEdit { get; set; } = true;
+        public bool GridVisible { get; set; } = true;
 
         [Parameter]
         public int xs { get; set; } = 12;
@@ -131,7 +131,7 @@ namespace Generator.Components.Components
 
             var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
-            builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), innerFragment);
+            builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), (nameof(Disabled), !EditorEnabled), innerFragment);
         };
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>

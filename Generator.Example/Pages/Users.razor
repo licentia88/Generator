@@ -6,19 +6,23 @@
         <GenGrid DataSource="@DataSource"
                  TModel="USER"
                  Title="Users"
-                 EditMode="EditMode.SmartForm"
+                 EditMode="EditMode.Inline"
                  Class="m-2"
                  Create="@( async x=> await CreateAsync(x))"
                  Update="@( async x=> await UpdateAsync(x))"
                  Load="@(async x=> await Load(x))"
                  Delete="@( async x=> await DeleteAsync(x))">
             <GenColumns>
-                
-                <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
-                <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" Required="true"/>
+
+                <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name"   />
+                 
+                <GenTextField BindingField="@nameof(USER.U_LASTNAME)" Label="Last Name"  GridVisible="false" EditorEnabled="false" />
+
+                <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" Required="true" />
+
                 <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
-                               TransformOrigin="Origin.BottomLeft"  Required="true"
-                               Clearable="true" EnabledOnEdit="false" Label=" Reg. Date" />
+                               TransformOrigin="Origin.BottomLeft" Required="true"
+                               Clearable="true"  Label=" Reg. Date" />
             </GenColumns>
 
             <GenDetailGrid>

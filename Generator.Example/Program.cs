@@ -3,6 +3,7 @@ using MudBlazor.Services;
 using Generator.Shared.Extensions;
 using Generator.Examples.Shared;
 using Generator.Components.Extensions;
+using Generator.Examples.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

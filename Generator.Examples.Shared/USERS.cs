@@ -17,12 +17,17 @@ public class USER
     [ProtoMember(2)]
     public string U_NAME { get; set; }
 
+    [DisplayName("Last Name")]
     [ProtoMember(3)]
-    public int U_AGE { get; set; }
+    public string U_LASTNAME { get; set; }
 
     [ProtoMember(4)]
+    public int U_AGE { get; set; }
+
+    [ProtoMember(5)]
     public DateTime U_REGISTER_DATE { get; set; }
 
+    [ProtoMember(6)]
     [ForeignKey(nameof(Shared.ORDERS_M.OM_USER_REFNO))]
     public ICollection<ORDERS_M> ORDERS_M { get; set; } = new HashSet<ORDERS_M>();
 }

@@ -7,13 +7,13 @@ namespace Generator.Shared.Services;
 [Service]
 public interface IGenericServiceBase<TModel> where TModel:class, new()
 {
-    public ValueTask<RESPONSE_RESULT<List<TModel>>> QueryAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
+    public Task<RESPONSE_RESULT<List<TModel>>> QueryAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
 
-    public ValueTask<RESPONSE_RESULT<List<TModel>>> QueryRelationalAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
+    public Task<RESPONSE_RESULT<List<TModel>>> QueryRelationalAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
 
-    public ValueTask<RESPONSE_RESULT<TModel>> AddAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
+    public Task<RESPONSE_RESULT<TModel>> AddAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
 
-    public ValueTask<RESPONSE_RESULT<TModel>> Updatesync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
+    public Task<RESPONSE_RESULT<TModel>> Updatesync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
 
-    public ValueTask<RESPONSE_RESULT<TModel>> RemoveAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
+    public Task<RESPONSE_RESULT<TModel>> RemoveAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default);
 }

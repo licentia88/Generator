@@ -14,7 +14,7 @@ namespace Generator.Services.Services
             Db = provider.GetService<TestContext>();
         }
 
-        public async ValueTask<USER> CreateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
+        public async Task<USER> CreateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
         {
             Db.USER.Add(request.Data);
 
@@ -23,12 +23,12 @@ namespace Generator.Services.Services
             return request.Data;
         }
 
-        public async ValueTask<List<USER>> ReadAsync(CallContext context = default)
+        public async Task<List<USER>> ReadAsync(CallContext context = default)
         {
             return await Db.USER.AsNoTracking().ToListAsync();
         }
 
-        public async ValueTask<USER> UpdateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
+        public async Task<USER> UpdateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
         {
             Db.USER.Update(request.Data);
 
@@ -37,7 +37,7 @@ namespace Generator.Services.Services
             return request.Data;
         }
 
-        public async ValueTask<USER> DeleteAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
+        public async Task<USER> DeleteAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
         {
             Db.USER.Remove(request.Data);
 

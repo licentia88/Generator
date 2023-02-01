@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using Generator.Server.DatabaseResolvers;
 using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Models.Shema;
@@ -17,6 +18,8 @@ namespace Generator.Server.Services;
  
 public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbContext
 {
+    protected readonly IDictionary<string, Func<IDatabaseManager>> ConnectionFactory;
+
     public Lazy<List<GRIDS_M>> Components { get; set; }
 
     protected TContext Db { get; set; }
@@ -25,12 +28,12 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
 
     public IServiceProvider Provider { get; set; }
 
-
+       
 
     public ServiceBase(IServiceProvider provider)
     {
         Db = provider.GetService<TContext>();
-
+        ConnectionFactory = provider.GetService<IDictionary<string, Func<IDatabaseManager>>>();
         Provider = provider;
     }
 
@@ -72,9 +75,9 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
     }
 
 
-    public ValueTask<RESPONSE_RESULT> QueryAsync(RESPONSE_REQUEST request, CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryAsync(RESPONSE_REQUEST request, CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
@@ -83,17 +86,17 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> QueryRelationalAsync(RESPONSE_REQUEST request, CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryRelationalAsync(RESPONSE_REQUEST request, CallContext context = default)
     {
         throw new NotImplementedException();
     }
 
-    public ValueTask<RESPONSE_RESULT> ExecuteNonQuery(CallContext context = default)
+    public Task<RESPONSE_RESULT> ExecuteNonQuery(CallContext context = default)
     {
         throw new NotImplementedException();
     }
 
-    public ValueTask<RESPONSE_RESULT> QueryScalar(CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryScalar(CallContext context = default)
     {
         throw new NotImplementedException();
     }
@@ -103,17 +106,17 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
         throw new NotImplementedException();
     }
 
-    public ValueTask<RESPONSE_RESULT> AddAsync(RESPONSE_REQUEST request, CallContext context = default)
+    public Task<RESPONSE_RESULT> AddAsync(RESPONSE_REQUEST request, CallContext context = default)
     {
         throw new NotImplementedException();
     }
 
-    public ValueTask<RESPONSE_RESULT> Updatesync(RESPONSE_REQUEST request, CallContext context = default)
+    public Task<RESPONSE_RESULT> Updatesync(RESPONSE_REQUEST request, CallContext context = default)
     {
         throw new NotImplementedException();
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteAsync(RESPONSE_REQUEST request, CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteAsync(RESPONSE_REQUEST request, CallContext context = default)
     {
         throw new NotImplementedException();
     }

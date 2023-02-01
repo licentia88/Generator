@@ -99,21 +99,4 @@
 
 
 
-@{
-    @*if (DataSource is not null)
-        {
-            <MudTable Items="@DataSource" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
-                <HeaderContent>
-                    <MudTh>RowId</MudTh>
-                    <MudTh>Desc</MudTh>
-
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="RefNo">@context["TT_ROWID"]</MudTd>
-                    <MudTd DataLabel="Desc">@context["TT_DESC"]</MudTd>
-                </RowTemplate>
-            </MudTable>
-        }*@
-
-
-}
+ 

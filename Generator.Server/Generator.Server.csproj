@@ -24,11 +24,15 @@
     <None Remove="Grpc.AspNetCore.Web" />
     <None Remove="SqlPlace" />
     <None Remove="ZString" />
+    <None Remove="Helpers\" />
+    <None Remove="OptionsTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="Services\" />
     <Folder Include="Seed\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="OptionsTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GenFu" Version="1.6.0" />
@@ -50,6 +54,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.51.0" />
     <PackageReference Include="ZString" Version="2.5.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="6.21.90" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.90" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />

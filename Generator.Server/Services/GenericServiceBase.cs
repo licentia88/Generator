@@ -27,23 +27,21 @@ public abstract class GenericServiceBase<TContext,TModel> :IGenericServiceBase<T
         return A.ListOf<TModel>(number);
     }
 
-    public ValueTask<RESPONSE_RESULT<List<TModel>>> QueryAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
+    public Task<RESPONSE_RESULT<List<TModel>>> QueryAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
     {
-        return Delegates.ExecuteModelAsync(async () =>
+        return TaskHandler.ExecuteModelAsync(async () =>
         {
             return await Db.Set<TModel>().AsNoTracking().ToListAsync();
         });
     }
 
-    public ValueTask<RESPONSE_RESULT<List<TModel>>> QueryRelationalAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
-    {
+    public Task<RESPONSE_RESULT<List<TModel>>> QueryRelationalAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default) =>
         //TODO:DO Later
         throw new NotImplementedException();
-    }
 
-    public ValueTask<RESPONSE_RESULT<TModel>> AddAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
+    public Task<RESPONSE_RESULT<TModel>> AddAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
     {
-        return Delegates.ExecuteModelAsync(async () =>
+        return TaskHandler.ExecuteModelAsync(async () =>
         {
             await Db.Set<TModel>().AddAsync(request.RR_DATA);
 
@@ -53,9 +51,9 @@ public abstract class GenericServiceBase<TContext,TModel> :IGenericServiceBase<T
         });
     }
 
-    public ValueTask<RESPONSE_RESULT<TModel>> Updatesync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
+    public Task<RESPONSE_RESULT<TModel>> Updatesync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
     {
-        return Delegates.ExecuteModelAsync(async () =>
+        return TaskHandler.ExecuteModelAsync(async () =>
         {
              Db.Set<TModel>().Update(request.RR_DATA);
 
@@ -65,9 +63,9 @@ public abstract class GenericServiceBase<TContext,TModel> :IGenericServiceBase<T
         });
     }
 
-    public ValueTask<RESPONSE_RESULT<TModel>> RemoveAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
+    public Task<RESPONSE_RESULT<TModel>> RemoveAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)
     {
-        return Delegates.ExecuteModelAsync(async () =>
+        return TaskHandler.ExecuteModelAsync(async () =>
         {
             Db.Set<TModel>().Remove(request.RR_DATA);
 

@@ -117,7 +117,9 @@ namespace Generator.Example.Pages
 
         private async void QueryStream()
         {
-            await foreach (var item in ITestService.QueryStream())
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+             await foreach (var item in ITestService.QueryStream(cts.Token))
             {
                 var streamedData = item.GenObject.DynamicData().ToList();
 
@@ -125,6 +127,7 @@ namespace Generator.Example.Pages
 
                 StateHasChanged();
 
+                //cts.Cancel();
             }
         }
 

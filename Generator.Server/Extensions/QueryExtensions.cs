@@ -92,6 +92,43 @@ public static class QueryExtensions
         }
      }
 
+    //oracle
+    public static async IAsyncEnumerable<List<IDictionary<string, object>>> QueryStreamAsyncOracle(this DbConnection connection, string query, string OrderBy = default, int pageSize = 30, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
+    {
+        int pageIndex = 0;
+
+        bool hasMore;
+
+        do
+        {
+            await connection.OpenAsync();
+
+            OrderBy = string.IsNullOrEmpty(OrderBy) ? " ORDER BY 1 " : OrderBy;
+
+            var newQuery = $"SELECT * FROM (SELECT a.*, ROWNUM rnum FROM ({query} {OrderBy}) a WHERE ROWNUM <= {(pageIndex + 1) * pageSize}) WHERE rnum > {pageIndex * pageSize} ";
+
+            var command = connection.CreateCommand();
+            command.CommandText = newQuery;
+            command.CommandType = CommandType.Text;
+            command.AddParameters(parameters);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            var columns = reader.GetColumnSchema().ToList();
+
+            var dataList = await reader.ReadDataAsync();
+
+            pageIndex++;
+
+            hasMore = reader.HasRows;
+
+            yield return dataList;
+        }
+        while (hasMore);
+
+        connection.Close();
+    }
+
     public static async IAsyncEnumerable<List<IDictionary<string, object>>> QueryStreamAsync(this DbConnection connection, string query,string OrderBy = default, int pageSize = 30, params (string Key, LogicalOperator LogicalOperator, object[] Value)[] parameters)
     {
         await using var command = connection.CreateCommand();

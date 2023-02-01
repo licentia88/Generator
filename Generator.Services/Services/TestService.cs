@@ -1,4 +1,5 @@
-﻿using Generator.Server.Extensions;
+﻿using System.Data;
+using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
 using Generator.Shared.Extensions;
@@ -8,6 +9,7 @@ using Generator.Shared.TEST_WILL_DELETE_LATER;
 using GenFu;
 using Mapster;
 using MBrace.FsPickler;
+using Microsoft.AspNetCore.Connections;
 //using MBrace.FsPickler.Json;
 using ProtoBuf.Grpc;
 
@@ -15,28 +17,15 @@ namespace Generator.Services.Services;
 
 public class TestService : ServiceBase<TestContext>, ITestService, IDisposable 
 {
-    //public DbConnection Connection { get; set; }
-
-     
-    //TODO: OpenIfleri kontrol et
     public TestService(IServiceProvider provider) : base(provider)
     {
-        //Connection = new DbConnection();
-        //var faker = CreateFakeData<GRIDS_M>(5);
-
-        //Connection.ConnectionString = "Server=Localhost;Database=TestContext;User Id=sa;Password=LucidNala88!;TrustServerCertificate=true"
-        //Db.Database.SetConnectionString("Server=Localhost;Database=TestContext;User Id=sa;Password=LucidNala88!;TrustServerCertificate=true");
-        //ChangeDb(nameof(TestContext));
-
-        //ChangeDb(nameof(GeneratorContext));
-        //Db = provider.GetService<TestContext>();
     }
 
 
     //Part 1
-    public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {  
             var newData = A.New<STRING_TABLE>();
 
@@ -50,9 +39,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
    
 
-    public ValueTask<RESPONSE_RESULT> InsertWithIdentityTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> InsertWithIdentityTest(CallContext context = default)
     {
-        return  Delegates.ExecuteAsync(async () =>
+        return  TaskHandler.ExecuteAsync(async () =>
         {
             var serializer = FsPickler.CreateBinarySerializer();
 
@@ -72,9 +61,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> InsertWithoutIdentityTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> InsertWithoutIdentityTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
 
             var newData = A.New<COMPUTED_TABLE>();
@@ -87,19 +76,25 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> QueryAsync(CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryAsync(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
+            //var connectionFactory = ConnectionFactory["DefaultConnection"].Invoke();
+
+            var connectionFactory2 = ConnectionFactory["GeneratorConnection"].Invoke();
+
+            await connectionFactory2.ExecuteQueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
             return new GenObject(result);
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> QueryScalarTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryScalarTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var result = await GeneratorConnection.QueryScalar<int>($"SELECT 1 FROM {nameof(TEST_TABLE)}");
 
@@ -113,14 +108,10 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
     public new async IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context = default)
     {
-        //return Delegates.ExecuteStreamAsync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
-
         await foreach (var data in GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"))
         {
             yield return new RESPONSE_RESULT(new GenObject(data));
         }
-
-         //sync(() => GeneratorConnection.QueryStreamAsync($"SELECT * FROM {nameof(TEST_TABLE)}"));
     }
 
 
@@ -138,9 +129,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
     }
 
-    public ValueTask<RESPONSE_RESULT> QueryAsyncObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryAsyncObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var result = await GeneratorConnection.QueryAsync<TEST_TABLE>($"SELECT * FROM {nameof(TEST_TABLE)}");
 
@@ -148,9 +139,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> InsertWithIdentityTestObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> InsertWithIdentityTestObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
 
             var newData = await CreateFakeDataAsync(nameof(TEST_TABLE), 1);
@@ -163,9 +154,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> InsertWithCodeTableTestObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> InsertWithCodeTableTestObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var newData = await CreateFakeDataAsync(nameof(STRING_TABLE), 1);
 
@@ -177,9 +168,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> InsertWithoutIdentityTestObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> InsertWithoutIdentityTestObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var newData = await CreateFakeDataAsync(nameof(COMPUTED_TABLE), 1);
 
@@ -198,9 +189,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public ValueTask<RESPONSE_RESULT> UpdateCodeTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> UpdateCodeTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
  
@@ -210,9 +201,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> UpdateCodeModelTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> UpdateCodeModelTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
 
@@ -222,9 +213,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> UpdateIdentityTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> UpdateIdentityTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
 
@@ -234,9 +225,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> UpdateIdentityModelTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> UpdateIdentityModelTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
 
@@ -246,9 +237,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> UpdateComputedTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> UpdateComputedTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
 
@@ -258,9 +249,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> UpdateComputedModelTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> UpdateComputedModelTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
 
@@ -270,9 +261,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteWithIdentityTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteWithIdentityTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
@@ -282,9 +273,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteWithCodeTableTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteWithCodeTableTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
 
@@ -294,9 +285,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteWithoutIdentityTest(CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteWithoutIdentityTest(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
 
@@ -306,9 +297,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         }); 
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteWithIdentityTestObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteWithIdentityTestObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
@@ -318,9 +309,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         }); 
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteWithCodeTableTestObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteWithCodeTableTestObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
 
@@ -331,9 +322,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> DeleteWithoutIdentityTestObject(CallContext context = default)
+    public Task<RESPONSE_RESULT> DeleteWithoutIdentityTestObject(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
 
@@ -343,9 +334,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         });
     }
 
-    public ValueTask<RESPONSE_RESULT> QueryTestStringDataAsync(CallContext context = default)
+    public Task<RESPONSE_RESULT> QueryTestStringDataAsync(CallContext context = default)
     {
-        return Delegates.ExecuteAsync(async () =>
+        return TaskHandler.ExecuteAsync(async () =>
         {
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
 

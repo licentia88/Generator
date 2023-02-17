@@ -1,8 +1,12 @@
 ﻿namespace Generator.Server.DatabaseResolvers
 {
+
     public interface IDatabaseManager
     {
+
         Task ExecuteQueryAsync(string query);
+
+
     }
 
     public class DatabaseManager: IDatabaseManager

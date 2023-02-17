@@ -1,7 +1,9 @@
-﻿using System.Net;
+﻿using System.Configuration;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Generator.Server;
 using Generator.Server.Dependency;
+using Generator.Server.Extensions;
 using Generator.Server.Seed;
 using Generator.Services;
 using Generator.Services.Services;
@@ -33,16 +35,20 @@ CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
 // Additional configuration is required to successfully run gRPC on macOS.
 // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
+
+
+
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddDbContext<TestContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnection("DefaultConnection")));
 
 builder.Services.AddDbContext<GeneratorContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GeneratorConnection"),
+    options.UseSqlServer(builder.Configuration.GetConnection("GeneratorConnection"),
     b => b.MigrationsAssembly("Generator.Service")));
 
 builder.Services.RegisterGenerator();
+builder.Services.RegisterGenServer();
 
 var app = builder.Build();
 

@@ -60,6 +60,7 @@
     <None Remove="Services\" />
     <None Remove="MessagePack" />
     <None Remove="SqlPlace" />
+    <None Remove="Massive %28copy%29\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">

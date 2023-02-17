@@ -1,4 +1,5 @@
-﻿using MudBlazor.Services;
+﻿using Generator.Examples.Shared.Extensions;
+using MudBlazor.Services;
 using Generator.Shared.Services;
 using Generator.Shared.Extensions;
 

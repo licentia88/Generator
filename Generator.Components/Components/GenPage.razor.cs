@@ -92,7 +92,7 @@ namespace Generator.Components.Components
 
             await GenGrid.OnCommit(SelectedItem, viewState);
 
-            await CloseIfAllowed();
+            CloseIfAllowed();
         }
 
         public async Task OnCommitAndWait()
@@ -105,21 +105,27 @@ namespace Generator.Components.Components
         }
 
 
-        private ValueTask CloseIfAllowed()
+        private void CloseIfAllowed()
         {
-            if (IsTopLevel)
-                Close();
-
-            return ValueTask.CompletedTask;
-        }
-        public virtual void Close()
-        {
-            GenGrid.OriginalTable.RowEditCancel.Invoke(SelectedItem);
-
+            if (!IsTopLevel) return;
+            GenGrid.RefreshButtonState();
+            ViewState = ViewState.None;
             MudDialog.Close();
         }
+        public void Close()
+        {
+            Close(false);
+            CloseIfAllowed();
+        }
 
-       
+        public void Close(bool force)
+        {
+            if (force) IsTopLevel = true;
+
+            CloseIfAllowed();
+
+        }
+
 
         internal string GetSubmitTextFromViewState()
         {
@@ -145,9 +151,13 @@ namespace Generator.Components.Components
  
         public void Dispose()
         {
-            if (GenGrid.ViewState != ViewState.None)
-                Close();
+            if (ViewState != ViewState.None)
+            {
+                MudDialog.Close();
+                GenGrid.OriginalTable.RowEditCancel.Invoke(SelectedItem);
+            }
 
+            
             RefreshParentGrid.InvokeAsync();
 
             MudDialog.Dispose();

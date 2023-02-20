@@ -14,16 +14,21 @@ namespace Generator.Example.Pages
 		[Inject]
 		public IUserService UserService { get; set; }
 
-        public ObservableCollection<USER> DataSource { get; set; } = new();
+        [Inject]
+        public Lazy<List<USER>> userList { get; set; }
+
+        public List<USER> DataSource { get; set; } = new();
 
         private IGenView<USER> View { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
 
-            var res  = await UserService.ReadAsync();
+            //var res  = await UserService.ReadAsync();
 
-            DataSource = new ObservableCollection<USER>(res);
+            //DataSource = new ObservableCollection<USER>(res);
+
+            DataSource = userList.Value;
 
         }
 
@@ -46,11 +51,11 @@ namespace Generator.Example.Pages
 
         public async ValueTask UpdateAsync(USER data)
         {
-            var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
+            //var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
             var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
 
-            DataSource.Replace(existing, result);
+            DataSource.Replace(existing, data);
 
             //throw new Exception("TEST");
 

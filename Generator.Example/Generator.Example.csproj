@@ -13,12 +13,14 @@
     <None Remove="Grpc.Net.Client" />
     <None Remove="Grpc.Net.Client.Web" />
     <None Remove="Humanizer.Core" />
+    <None Remove="InjectionTest\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="6.1.4" />
     <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.0.179" />
     <PackageReference Include="Grpc.Net.Client" Version="2.51.0" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+    <PackageReference Include="GenFu" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Components\Generator.Components.csproj">
@@ -27,5 +29,8 @@
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InjectionTest\" />
   </ItemGroup>
 </Project>

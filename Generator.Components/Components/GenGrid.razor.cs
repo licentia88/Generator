@@ -354,7 +354,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public void AddChildComponent(IGenComponent childComponent)
     {
-        if (Components.Any(x => x.BindingField == childComponent.BindingField)) return;
+        if (Components.Any(x => x is not GenSpacer &&  x.BindingField == childComponent.BindingField)) return;
         Components.Add(childComponent);
     }
 
@@ -459,6 +459,8 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
         return EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
     }
 
+
+    
     internal void RefreshButtonState()
     {
         var row = GetCurrentRow();

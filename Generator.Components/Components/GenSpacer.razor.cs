@@ -72,7 +72,7 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            ParentGrid.CastTo<GenGrid<dynamic>>()?.AddChildComponent(this);
+            ParentGrid?.AddChildComponent(this);
 
 
             return base.OnInitializedAsync();

@@ -4,6 +4,9 @@ using Generator.Shared.Extensions;
 using Generator.Examples.Shared;
 using Generator.Components.Extensions;
 using Generator.Examples.Shared.Extensions;
+using System;
+using System.Collections.Generic;
+using Generator.Example.InjectionTest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 builder.Services.RegisterComponents();
+builder.Services.AddSingleton<Lazy<List<USER>>>();
+builder.Services.AddSingleton<InjectionClass>();
+
+
 
 //builder.Services.RegisterGrpcService<IGenericServiceBase>();
 //builder.Services.RegisterGrpcService<ITestService>();
@@ -41,6 +48,8 @@ builder.Services.RegisterGrpcServiceWithSsl2<IOrdersDService>("https://localhost
 
 var app = builder.Build();
 
+var serv = app.Services.GetService<InjectionClass>();
+serv.FillTable();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

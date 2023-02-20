@@ -11,7 +11,7 @@
 
     <EditForm Model="@SelectedItem" OnValidSubmit="OnCommit">
 
-        <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(async()=> Close())">
+        <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))">
             <DialogContent>
 
                 @{
@@ -56,7 +56,7 @@
                 </MudContainer>
             </DialogContent>
             <DialogActions>
-                <MudButton OnClick="Close">@GenGrid.CancelText</MudButton>
+                <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>
                 <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">
                     @(GetSubmitTextFromViewState())
                 </MudButton>

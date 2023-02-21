@@ -17,7 +17,7 @@ public static class PropertyExtensions
         if (obj is null) return default;
 
         if ((obj is ExpandoObject || obj is Dictionary<string, object>))
-            return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
+            return ((IDictionary<string, object>)obj)[propertyName] ?? null;
 
         return obj.GetType()
             .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -30,7 +30,7 @@ public static class PropertyExtensions
     {
         if ((obj is ExpandoObject || obj is Dictionary<string, object>))
         {
-            ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
+            ((IDictionary<string, object>)obj)[propertyName] = propertyValue;
 
             return;
         }
@@ -46,7 +46,7 @@ public static class PropertyExtensions
     {
         try
         {
-            return Convert.ChangeType(value, destinationType);
+            return Convert.ChangeType(value, Nullable.GetUnderlyingType(destinationType)??destinationType);
         }
         catch 
         {

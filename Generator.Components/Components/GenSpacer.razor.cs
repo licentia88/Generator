@@ -70,6 +70,8 @@ namespace Generator.Components.Components
 
         public string ErrorText { get; set; }
 
+        public IGenComponent Reference { get; set; }
+
         protected override Task OnInitializedAsync()
         {
             ParentGrid?.AddChildComponent(this);

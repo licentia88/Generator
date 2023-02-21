@@ -5,6 +5,7 @@ namespace Generator.Components.Interfaces;
 
 public interface IGenComponent: IGenCompRenderer
 {
+    public IGenComponent Reference { get; set; }
 
     public string BindingField { get; set; }
 

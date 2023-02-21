@@ -72,6 +72,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
 
     //bool HasErrors { get; set; } 
 
+    public IGenComponent Reference { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         ParentGrid?.AddChildComponent(this);

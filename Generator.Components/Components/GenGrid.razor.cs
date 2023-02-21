@@ -17,12 +17,18 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     [Inject]
     public GenValidator<TModel> GenValidator { get; set; }
 
-    //public new TModel SelectedItem
-    //{
-    //    get => base.SelectedItem;
-    //    set => base.SelectedItem = value;
-    //}
-    
+    [Parameter]
+    public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
+
+    [Parameter]
+    public bool CloseButton { get; set; } = true;
+
+    [Parameter]
+    public bool CloseOnEscapeKey { get; set; } = true;
+
+    [Parameter]
+    public bool DisableBackdropClick { get; set; } = true;
+
     [Inject]
     public IDialogService DialogService { get; set; }
 
@@ -40,15 +46,18 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     private bool GridIsBusy = false;
 
-    public DialogOptions DialogOptions { get; set; } = new()
+    public DialogOptions DialogOptions()
     {
-        MaxWidth = MaxWidth.Medium,
-        FullWidth = true,
-        CloseButton = true,
-        CloseOnEscapeKey = true,
-        DisableBackdropClick = true,
-        Position = DialogPosition.Center
-    };
+        return new DialogOptions
+        {
+            MaxWidth = MaxWidth,
+            FullWidth = true,
+            CloseButton = CloseButton,
+            CloseOnEscapeKey = CloseOnEscapeKey,
+            DisableBackdropClick = DisableBackdropClick,
+            Position = DialogPosition.Center
+        };
+    }
 
     public ViewState ViewState { get; set; } = ViewState.None;
 
@@ -320,6 +329,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     {
         var paramList = new List<(string, object)>
         {
+            (nameof(GenPage<TModel>.Components), Components),
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
             (nameof(GenPage<TModel>.Load), Load),
             (nameof(GenPage<TModel>.Title), Title),
@@ -337,12 +347,12 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
             DialogParameters.Add(prm.key, prm.value);
         }
 
-        return await DialogService.ShowAsync<GenPage<TModel>>(Title, DialogParameters, DialogOptions);
+        return await DialogService.ShowAsync<GenPage<TModel>>(Title, DialogParameters, DialogOptions());
     }
 
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
     {
-        var item = Components.FirstOrDefault(x => x.BindingField.Equals(bindingField));
+        var item = Components.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
 
         return item is null ? default : item.CastTo<TComponent>();
     }

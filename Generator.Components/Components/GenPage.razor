@@ -4,64 +4,69 @@
 
 
 @{
-    if (SelectedItem is null)
-        return;
-}
-<CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+    if (SelectedItem is null) return;
 
-    <EditForm Model="@SelectedItem" OnValidSubmit="OnCommit">
 
-        <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))">
-            <DialogContent>
+    <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+        <EditForm Model="@SelectedItem" OnValidSubmit="OnCommit">
 
-                @{
-                    <DataAnnotationsValidator />
+            <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))">
+                <DialogContent>
 
-                    @*}*@
-                }
-                <MudContainer Style="max-height: 80vh; overflow-y: auto ">
                     @{
-                        <MudGrid Justify="Justify.FlexStart" Spacing="0">
+                        <DataAnnotationsValidator />
 
-                            @foreach (var component in GenGrid.Components)
-                            {
-                                <MudItem Class="mt-4"
-                                         xs="component.xs"
-                                         sm="component.sm"
-                                         md="component.md"
-                                         lg="component.lg"
-                                         xl="component.xl"
-                                         xxl="component.xxl">
-                                    @{
-                                        if (component.EditorVisible)
-                                        {
-                                            @component.RenderAsComponent(SelectedItem)
-                                        }
-                                    }
-                                </MudItem>
-                            }
-                        </MudGrid>
-
-                        if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
-                        {
-                            <div class="pt-5 pb-5">
-                                <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
-                                    <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
-                                        @GenGrid.GenDetailGrid(SelectedItem)
-                                    </CascadingValue>
-                                </CascadingValue>
-                            </div>
-                        }
+                        @*}*@
                     }
-                </MudContainer>
-            </DialogContent>
-            <DialogActions>
-                <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>
-                <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">
-                    @(GetSubmitTextFromViewState())
-                </MudButton>
-            </DialogActions>
-        </MudDialog>
-    </EditForm>
+                    <MudContainer Class="m-0 p-2" Style="max-height: 80vh; overflow-y: scroll; max-width:100%!important">
+                        @{
+                            <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-</CascadingValue>
+                                @{
+                                    foreach (var component in Components)
+                                    {
+                                        <MudItem Class="mt-4"
+                                                 xs="component.xs"
+                                                 sm="component.sm"
+                                                 md="component.md"
+                                                 lg="component.lg"
+                                                 xl="component.xl"
+                                                 xxl="component.xxl">
+                                            @{
+                                                if (component.EditorVisible)
+                                                {
+                                                    @component.RenderAsComponent(SelectedItem)
+                                                }
+                                            }
+                                        </MudItem>
+                                    }
+                                }
+                            </MudGrid>
+
+                            if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
+                            {
+                                <div class="pt-5 pb-5" style="overflow-x:scroll!important">
+                                    <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
+                                        <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+                                            @GenGrid.GenDetailGrid(SelectedItem)
+                                        </CascadingValue>
+                                    </CascadingValue>
+                                </div>
+                            }
+                        }
+                    </MudContainer>
+                </DialogContent>
+                <DialogActions>
+                    <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>
+                    <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">
+                        @(GetSubmitTextFromViewState())
+                    </MudButton>
+                </DialogActions>
+            </MudDialog>
+        </EditForm>
+
+    </CascadingValue>
+    
+
+
+}

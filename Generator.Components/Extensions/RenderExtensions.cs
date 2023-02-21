@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.Metrics;
+using System.Reflection;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
@@ -41,7 +42,7 @@ namespace Generator.Components.Extensions
                 builder.AddAttribute(i, additional.Key, additional.Value);
                 i++;
             }
-            
+            builder.AddComponentReferenceCapture(i++, ins => { component.Reference = (IGenComponent)ins; });
             builder.CloseComponent();
 
         }

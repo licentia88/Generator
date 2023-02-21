@@ -5,6 +5,7 @@
 <GenGrid DataSource="@DataSource" TModel="ORDERS_M"
          EditMode="EditMode.Form"
          Class="m-2"
+         Load="OnLoadAsync"
          Create="@( async x=> await CreateAsync(x))"
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">
@@ -34,6 +35,18 @@
         //DataSource = result;
     }
 
+    public async Task OnLoadAsync(IGenView<ORDERS_M> page)
+    {
+        var result =  page.GetComponent<GenTextField>(nameof(ORDERS_M.OM_DESCRIPTION));
+
+        ((GenTextField)result).ValueChanged = EventCallback.Factory.Create<object>(this, x => { ValChanged(x); result.OnValueChanged(x); });
+        //EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+
+    }
+    public void ValChanged(object str)
+    {
+        Console.WriteLine(str);
+    }
     public async ValueTask CreateAsync(ORDERS_M data)
     {
         data.OM_USER_REFNO = Parent.U_ROWID;

@@ -72,7 +72,8 @@ namespace Generator.Components.Components
         [Parameter, EditorRequired]
         public IEnumerable<object> DataSource { get; set; }
 
-        
+        public IGenComponent Reference { get; set; }
+
 
         protected override Task OnInitializedAsync()
         {

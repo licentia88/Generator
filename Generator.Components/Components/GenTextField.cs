@@ -69,6 +69,8 @@ public class GenTextField : MudTextField<object>, IGenTextField
     [Parameter]
     public int xxl { get; set; } = 12;
 
+    public IGenComponent Reference { get; set; }
+
     //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

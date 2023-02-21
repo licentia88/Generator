@@ -61,8 +61,8 @@ namespace Generator.Components.Components
         [Parameter]
         public int xxl { get; set; } = 12;
 
+        public IGenComponent Reference { get; set; }
 
-        
         protected override Task OnInitializedAsync()
         {
             ParentGrid?.AddChildComponent(this);

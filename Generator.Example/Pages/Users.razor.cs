@@ -24,11 +24,11 @@ namespace Generator.Example.Pages
         protected override async Task OnInitializedAsync()
         {
 
-            //var res  = await UserService.ReadAsync();
+            var res  = await UserService.ReadAsync();
 
-            //DataSource = new ObservableCollection<USER>(res);
+            DataSource = res;
 
-            DataSource = userList.Value;
+            //DataSource = userList.Value;
 
         }
 

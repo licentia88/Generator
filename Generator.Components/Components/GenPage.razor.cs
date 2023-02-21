@@ -39,28 +39,36 @@ namespace Generator.Components.Components
 
         public bool IsTopLevel { get; set; }
 
+        [Parameter]
         public List<IGenComponent> Components { get; set; }
 
         [Parameter]
         public EventCallback<IGenView<TModel>> Load { get; set; }
 
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
             GenGrid.CurrentGenPage = this;
 
-            if (Load.HasDelegate)
-                Load.InvokeAsync(this);
+     
 
             RefreshParentGrid = EventCallback.Factory.Create(this, ()=> GenGrid.RefreshButtonState());
 
-            return base.OnInitializedAsync();
+            await base.OnInitializedAsync();
+          
         }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (firstRender)
+            {
+                if (Load.HasDelegate)
+                   await  Load.InvokeAsync(this);
+            }
+
             GetSubmitTextFromViewState();
-            return base.OnAfterRenderAsync(firstRender);
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         public bool ValidateAsync()
@@ -92,6 +100,8 @@ namespace Generator.Components.Components
 
             await GenGrid.OnCommit(SelectedItem, viewState);
 
+            ViewState = ViewState.None;
+
             CloseIfAllowed();
         }
 
@@ -109,7 +119,6 @@ namespace Generator.Components.Components
         {
             if (!IsTopLevel) return;
             GenGrid.RefreshButtonState();
-            ViewState = ViewState.None;
             MudDialog.Close();
         }
         public void Close()
@@ -144,9 +153,13 @@ namespace Generator.Components.Components
             base.StateHasChanged();
         }
 
+       
+
         public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
         {
-            return GenGrid.GetComponent<TComponent>(bindingField);
+            var item = Components.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField))?.Reference;
+
+            return item is null ? default : item.CastTo<TComponent>();
         }
  
         public void Dispose()

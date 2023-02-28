@@ -9,7 +9,7 @@ using Generator.Components.Extensions;
 
 namespace Generator.Components.Components;
 
-public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
+public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<GenCheckBox>
 {
     #region CascadingParameters
 
@@ -119,6 +119,11 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox
     public void ValidateObject()
     {
         ParentGrid.ValidateValue(BindingField);
+    }
+
+    public GenCheckBox GetReference()
+    {
+        return (GenCheckBox)this.Reference;
     }
 }
 

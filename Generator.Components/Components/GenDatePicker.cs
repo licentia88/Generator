@@ -11,7 +11,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components
 {
-    public class GenDatePicker : MudDatePicker, IGenDatePicker
+    public class GenDatePicker : MudDatePicker, IGenDatePicker,IComponentMethods<GenDatePicker>
     {
         [CascadingParameter(Name = nameof(ParentGrid))]
         public INonGenGrid  ParentGrid { get; set; }
@@ -119,6 +119,11 @@ namespace Generator.Components.Components
         public void ValidateObject()
         {
             ParentGrid.ValidateValue(BindingField);
+        }
+
+        public GenDatePicker GetReference()
+        {
+            return (GenDatePicker)this.Reference;
         }
     }
 }

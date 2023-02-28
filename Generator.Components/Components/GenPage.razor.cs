@@ -5,6 +5,7 @@ using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Mapster;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Generator.Components.Components
@@ -45,12 +46,17 @@ namespace Generator.Components.Components
         [Parameter]
         public EventCallback<IGenView<TModel>> Load { get; set; }
 
+        [Parameter]
+        public EventCallback<IGenView<TModel>> OnRender { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
             GenGrid.CurrentGenPage = this;
 
-     
+
+            if (Load.HasDelegate)
+                await Load.InvokeAsync(this);
 
             RefreshParentGrid = EventCallback.Factory.Create(this, ()=> GenGrid.RefreshButtonState());
 
@@ -60,11 +66,16 @@ namespace Generator.Components.Components
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                if (Load.HasDelegate)
-                   await  Load.InvokeAsync(this);
-            }
+            //if (firstRender)
+            //{
+            //    if (Load.HasDelegate)
+            //        await Load.InvokeAsync(this);
+
+            //}
+
+            if (OnRender.HasDelegate)
+                await OnRender.InvokeAsync(this);
+
 
             GetSubmitTextFromViewState();
 
@@ -74,8 +85,8 @@ namespace Generator.Components.Components
         public bool ValidateAsync()
         {
             var result =  GenGrid.ValidateModel();
-
-            StateHasChanged();
+            
+            //StateHasChanged();
 
             return result;
         }
@@ -157,7 +168,7 @@ namespace Generator.Components.Components
 
         public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
         {
-            var item = Components.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField))?.Reference;
+            var item = Components.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
 
             return item is null ? default : item.CastTo<TComponent>();
         }

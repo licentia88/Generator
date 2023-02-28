@@ -9,6 +9,8 @@ using MudBlazorFix;
 using System.Diagnostics.CodeAnalysis;
 using Force.DeepCloner;
 using Generator.Components.Extensions;
+using Mapster;
+using static MudBlazor.CategoryTypes;
 
 namespace Generator.Components.Components;
 
@@ -36,7 +38,6 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public INonGenPage CurrentGenPage { get; set; }
 
-    internal GridManager<TModel> GridManager { get; }
 
     public DialogResult DialogResult { get; set; }
 
@@ -93,7 +94,10 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     [Parameter]
     public EventCallback<IGenView<TModel>> Load { get; set; }
 
- 
+    [Parameter]
+    public EventCallback<IGenView<TModel>> OnRender { get; set; }
+
+
     [CascadingParameter(Name = nameof(ParentGrid))]
     public INonGenGrid ParentGrid { get; set; }
 
@@ -106,8 +110,10 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     [Parameter]
     public string SearchPlaceHolderText { get; set; } = "Search";
 
+
     [Parameter, EditorRequired]
     public ICollection<TModel> DataSource { get; set; }
+    
 
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
@@ -141,10 +147,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public bool ForceRenderOnce { get; set; }
 
-    public GenGrid()
-    {
-        GridManager = new GridManager<TModel>(this);
-    }
+    
 
     protected override Task OnInitializedAsync()
     {
@@ -205,6 +208,50 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
         return result;
     }
 
+    public async Task CreateClick()
+    {
+
+        EditButtonActionList.Clear();
+
+        ViewState = ViewState.Create;
+
+        var newData =  Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
+
+        TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel)).AddDestinationTransform(DestinationTransform.EmptyCollectionIfNull);
+
+        var adaptedData = newData.Adapt<TModel>();
+
+        SelectedItem = adaptedData;
+
+        if (EditMode == EditMode.Inline)
+        {
+            DataSource.Insert(0, SelectedItem);
+
+            SetEditingItem(SelectedItem);
+            //Grid.SetSelectedItem(Grid.SelectedItem);
+
+            //Grid.originalTable.SetEditingItem(Grid.SelectedItem);
+
+            //Grid.originalTable.SetSelectedItem(Grid.SelectedItem);
+            return;
+        }
+
+        OnBackUp(SelectedItem);
+        await ShowDialogAsync<GenPage<TModel>>();
+
+    }
+
+    //private ICollection<TModel> ActualDataSource()
+    //{
+    //    return OriginalTable?.Items.ToList() ?? DataSource;
+    //}
+    public async Task EditClick()
+    {
+        ViewState = ViewState.Update;
+
+        await ShowDialogAsync<GenPage<TModel>>();
+
+    }
     public Task OnCommit()
     {
         return OnCommit(SelectedItem, ViewState);
@@ -332,6 +379,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
             (nameof(GenPage<TModel>.Components), Components),
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
             (nameof(GenPage<TModel>.Load), Load),
+            (nameof(GenPage<TModel>.OnRender), OnRender),
             (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),
             (nameof(GenPage<TModel>.GenGrid), this)
@@ -430,7 +478,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     public async Task OnCreateClick()
     {
-       await GridManager.Create();
+       await CreateClick();
      }
 
     private async Task Commit(object model)
@@ -466,6 +514,8 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
 
     private Action GetRowButtonAction()
     {
+        //var test = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).ToList(); 
+
         return EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
     }
 
@@ -499,7 +549,7 @@ public partial class GenGrid<TModel> :  MudTable<TModel> ,INonGenGrid, IGenGrid<
     {
         if (EditMode != EditMode.Inline)
         {
-            await GridManager.Edit();
+            await EditClick();
             return;
         }
          

@@ -9,7 +9,8 @@
                  TModel="USER"
                  Title="Users"
                  MaxWidth="MaxWidth.ExtraLarge"
-                 EditMode="EditMode.SmartForm"
+                 EditMode="EditMode.Inline"
+                 EnableSearch="false"
                  Class="m-2"
                  Create="@( async x=> await CreateAsync(x))"
                  Update="@( async x=> await UpdateAsync(x))"
@@ -28,9 +29,9 @@
                                Clearable="true" Label=" Reg. Date" />
             </GenColumns>
 
-            <GenDetailGrid>
+            @*<GenDetailGrid>
                 <OrdersM Parent="context" />
-            </GenDetailGrid>
+            </GenDetailGrid>*@
         </GenGrid>
     }
 

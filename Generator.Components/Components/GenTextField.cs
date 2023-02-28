@@ -12,7 +12,7 @@ using System.Globalization;
 
 namespace Generator.Components.Components;
 
-public class GenTextField : MudTextField<object>, IGenTextField
+public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 {
     [CascadingParameter(Name = nameof(CurrentEditContext))]
     public EditContext CurrentEditContext { get; set; }
@@ -128,7 +128,7 @@ public class GenTextField : MudTextField<object>, IGenTextField
         ParentGrid.ValidateValue(BindingField);
     }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async (builder) =>
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) =>  builder =>
     {
         Model = model;
 
@@ -158,6 +158,11 @@ public class GenTextField : MudTextField<object>, IGenTextField
           ParentGrid.ValidateValue( BindingField);
 
 
+    }
+
+    public GenTextField GetReference()
+    {
+        return (GenTextField)this.Reference;
     }
 }
 

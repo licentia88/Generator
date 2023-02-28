@@ -1,11 +1,11 @@
-@typeparam TModel
+@typeparam TModel where TModel : new() 
 
+ 
 @implements IGenPage<TModel>
-
+@implements IDisposable
 
 @{
     if (SelectedItem is null) return;
-
 
     <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
         <EditForm Model="@SelectedItem" OnValidSubmit="OnCommit">
@@ -16,32 +16,34 @@
                     @{
                         <DataAnnotationsValidator />
 
-                        @*}*@
                     }
                     <MudContainer Class="m-0 p-2" Style="max-height: 80vh; overflow-y: scroll; max-width:100%!important">
                         @{
-                            <MudGrid Justify="Justify.FlexStart" Spacing="0">
+                            <div style="overflow-x:hidden; overflow-y:hidden;">
+                                <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-                                @{
-                                    foreach (var component in Components)
-                                    {
-                                        <MudItem Class="mt-4"
-                                                 xs="component.xs"
-                                                 sm="component.sm"
-                                                 md="component.md"
-                                                 lg="component.lg"
-                                                 xl="component.xl"
-                                                 xxl="component.xxl">
-                                            @{
-                                                if (component.EditorVisible)
-                                                {
-                                                    @component.RenderAsComponent(SelectedItem)
+                                    @{
+                                        foreach (var component in Components)
+                                        {
+                                            <MudItem Class="mt-4"
+                                             xs="component.xs"
+                                             sm="component.sm"
+                                             md="component.md"
+                                             lg="component.lg"
+                                             xl="component.xl"
+                                             xxl="component.xxl">
+                                                @{
+                                                    if (component.EditorVisible)
+                                                    {
+                                                        @component.RenderAsComponent(SelectedItem)
+                                                    }
                                                 }
-                                            }
-                                        </MudItem>
+                                            </MudItem>
+                                        }
                                     }
-                                }
-                            </MudGrid>
+                                </MudGrid>
+                            </div>
+                           
 
                             if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
                             {

@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Generator.Components.Components
 {
-    public class GenComboBox : MudSelect<object>, IGenComboBox
+    public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<GenComboBox>
     {
         //public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
 
@@ -145,6 +145,11 @@ namespace Generator.Components.Components
         public void ValidateObject()
         {
             ParentGrid.ValidateValue(BindingField);
+        }
+
+        public GenComboBox GetReference()
+        {
+            return (GenComboBox)this.Reference;
         }
     }
 }

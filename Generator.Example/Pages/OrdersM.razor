@@ -5,7 +5,8 @@
 <GenGrid DataSource="@DataSource" TModel="ORDERS_M"
          EditMode="EditMode.Form"
          Class="m-2"
-         Load="OnLoadAsync"
+         Load="OnLoad"
+         OnRender="OnRender"
          Create="@( async x=> await CreateAsync(x))"
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">
@@ -28,6 +29,9 @@
     [Inject]
     public IOrdersMService OrdersMService { get; set; }
 
+
+    GenTextField descTextField;
+
     protected override  async Task OnInitializedAsync()
     {
         DataSource  =await OrdersMService.ReadAsync(new(Parent.U_ROWID));
@@ -35,17 +39,23 @@
         //DataSource = result;
     }
 
-    public async Task OnLoadAsync(IGenView<ORDERS_M> page)
+    public void OnLoad(IGenView<ORDERS_M> page)
     {
-        var result =  page.GetComponent<GenTextField>(nameof(ORDERS_M.OM_DESCRIPTION));
+        descTextField = page.GetComponent<GenTextField>(nameof(ORDERS_M.OM_DESCRIPTION));
+        page.SelectedItem.OM_DESCRIPTION = "test";
+        descTextField.Class = "";
+        //page.StateHasChanged();
+    }
 
-        ((GenTextField)result).ValueChanged = EventCallback.Factory.Create<object>(this, x => { ValChanged(x); result.OnValueChanged(x); });
-        //EventCallback.Factory.Create<object>(this, x => OnValueChanged(x));
+    public void OnRender(IGenView<ORDERS_M> page)
+    {
+ 
+        descTextField.GetReference().ValueChanged = EventCallback.Factory.Create<object>(this, ValChanged);
 
     }
     public void ValChanged(object str)
     {
-        Console.WriteLine(str);
+        descTextField.OnValueChanged(str);
     }
     public async ValueTask CreateAsync(ORDERS_M data)
     {

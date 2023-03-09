@@ -60,7 +60,7 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
         var dataName = fakeDataType.GetType().Name;
 
 
-        var fakeList = A.ListOf(fakeDataType.GetType(), number);
+        var fakeList = GenFu.GenFu.ListOf(fakeDataType.GetType(), number);
 
         // var savePath = fakeList.CreateCsv();
 

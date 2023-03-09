@@ -6,6 +6,7 @@ using Generator.Examples.Shared;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
+using MudBlazor;
 
 namespace Generator.Example.Pages
 {
@@ -21,14 +22,16 @@ namespace Generator.Example.Pages
 
         private IGenView<USER> View { get; set; }
 
+
+ 
         protected override async Task OnInitializedAsync()
         {
 
-            //var res  = await UserService.ReadAsync();
+            var res  = await UserService.ReadAsync();
 
-            //DataSource = res;
+            DataSource = res;
 
-            DataSource = userList.Value.Take(5).ToList();
+            //DataSource = userList.Value;
 
         }
 
@@ -46,12 +49,12 @@ namespace Generator.Example.Pages
             data.U_ROWID = result.U_ROWID;
             data = result;
 
-            DataSource.Add(result);
+            DataSource.Add(data);
         }
 
         public async ValueTask UpdateAsync(USER data)
         {
-            //var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
+            var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
             var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
 

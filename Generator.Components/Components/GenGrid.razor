@@ -81,11 +81,11 @@
                           OnCommitEditClick="OnEditCLick"
                           RowEditPreview="async x => { OnBackUp(x.CastTo<TModel>()); await EditRow(); }"
                           RowEditCancel="x => OnCancelClick(x.CastTo<TModel>())"
-                          RowEditCommit="async x => await Commit(x)"
+                          RowEditCommit="async x => await Commit()"
                           IsEditRowSwitchingBlocked="true"
                           ApplyButtonPosition="TableApplyButtonPosition.End"
                           EditButtonPosition="TableEditButtonPosition.End"
-                          EditTrigger="TableEditTrigger.EditButton"
+                          EditTrigger="@RowEditTrigger"
                           ReadOnly="false"
                           CanCancelEdit="true">
 
@@ -172,47 +172,35 @@
                     </RowTemplate>
 
                     <RowEditingTemplate Context="_context">
-
+ 
                         @{
-                            var editContext = new EditContext(_context);
-
-                        }
-
-
-                        <CascadingValue Name="CurrentEditContext" Value="editContext">
-                            <EditForm EditContext="editContext">
-                                <DataAnnotationsValidator />
-                                <ValidationSummary Model="_context" />
-                            </EditForm>
-
-                            @{
-                                if (EditMode != EditMode.Inline)
-                                {
-                                    var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item.CastTo<TModel>().Equals(SelectedItem));
-                                    editingRow?.Context.Table.SetEditingItem(null);
+                            if (EditMode != EditMode.Inline)
+                            {
+                                var currentRow = OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem));
+                                var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item.CastTo<TModel>().Equals(SelectedItem));
+                                editingRow?.Context.Table.SetEditingItem(null);
 
 
-                                    editingRow.SetFieldValue("hasBeenCanceled", false);
-                                    editingRow.SetFieldValue("hasBeenCommitted", false);
-                                    editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
-                                }
-                                if (HasDetail && EditMode != EditMode.SmartForm)
-                                {
-                                    <MudTd></MudTd>
-                                }
-
-                                foreach (var item in GetComponentsOf<IGenComponent>().ToList())
-                                {
-                                    <MudTd Style="width: auto !important">
-                                        @item.RenderAsComponent(_context, true)
-                                    </MudTd>
-                                }
-
-                                <MudTh>
-
-                                </MudTh>
+                                editingRow.SetFieldValue("hasBeenCanceled", false);
+                                editingRow.SetFieldValue("hasBeenCommitted", false);
+                                editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
                             }
-                        </CascadingValue>
+                            if (HasDetail && EditMode != EditMode.SmartForm)
+                            {
+                                <MudTd></MudTd>
+                            }
+
+                            foreach (var item in GetComponentsOf<IGenComponent>().ToList())
+                            {
+                                <MudTd Style="width: auto !important">
+                                    @item.RenderAsComponent(_context, true)
+                                </MudTd>
+                            }
+
+                            <MudTh>
+
+                            </MudTh>
+                        }
 
 
                     </RowEditingTemplate>
@@ -241,10 +229,13 @@
                             @{
                                 if (Update.HasDelegate)
                                 {
+                                    TModel model = (TModel)button.ButtonAction.Target.CastTo<MudTr>().Item;
+
                                     if (!EditButtonActionList.Contains(button.ButtonAction))
                                         EditButtonActionList.Add(button.ButtonAction);
-                                    <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@( async () => { if (ViewState == ViewState.None) { ViewState = ViewState.Update; } button.ButtonAction.Invoke(); })"
-                                                   Disabled="@button.ButtonDisabled" />
+
+                                        <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@( async () => { if (ViewState == ViewState.None) { ViewState = ViewState.Update; } button.ButtonAction.Invoke(); })"
+                                                                       Disabled="@button.ButtonDisabled" />
                                 }
                             }
 

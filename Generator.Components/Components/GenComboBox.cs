@@ -149,7 +149,7 @@ namespace Generator.Components.Components
 
         public GenComboBox GetReference()
         {
-            return (GenComboBox)this.Reference;
+            return (GenComboBox)Reference;
         }
     }
 }

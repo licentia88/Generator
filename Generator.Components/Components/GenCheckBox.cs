@@ -123,7 +123,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public GenCheckBox GetReference()
     {
-        return (GenCheckBox)this.Reference;
+        return (GenCheckBox)Reference;
     }
 }
 

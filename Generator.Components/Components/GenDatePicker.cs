@@ -123,7 +123,7 @@ namespace Generator.Components.Components
 
         public GenDatePicker GetReference()
         {
-            return (GenDatePicker)this.Reference;
+            return (GenDatePicker)Reference;
         }
     }
 }

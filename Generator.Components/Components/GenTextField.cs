@@ -14,9 +14,7 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 {
-    [CascadingParameter(Name = nameof(CurrentEditContext))]
-    public EditContext CurrentEditContext { get; set; }
-
+    
 
     public Type DataType { get; set; }
 
@@ -162,7 +160,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public GenTextField GetReference()
     {
-        return (GenTextField)this.Reference;
+        return (GenTextField)Reference;
     }
 }
 

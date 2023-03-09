@@ -50,12 +50,12 @@ internal class TableSchema
         {
             string ColumnName = rowColumn[3].ToString();
             var dataType = rowColumn[7].ToString().SqlToType();
-            this.ColumnList.Add(new Columns() { TableName = TableName, FieldName = ColumnName, DataType = dataType });
+            ColumnList.Add(new Columns() { TableName = TableName, FieldName = ColumnName, DataType = dataType });
         }
 
         DataTable schemaPrimaryKey = connection.GetSchema("IndexColumns", restrictions);
 
-        foreach (System.Data.DataRow rowPrimaryKey in schemaPrimaryKey.Rows)
+        foreach (DataRow rowPrimaryKey in schemaPrimaryKey.Rows)
         {
             string indexName = rowPrimaryKey[2].ToString();
 
@@ -72,7 +72,7 @@ internal class TableSchema
 
             if (indexName.IndexOf("UQ_") != -1)
             {
-                this.UniqueKeyList.Add(new UniqueKey()
+                UniqueKeyList.Add(new UniqueKey()
                 {
                     TableName = TableName,
                     FieldName = rowPrimaryKey[6].ToString(),
@@ -87,10 +87,10 @@ internal class TableSchema
         DataTable schemaForeignKeys = connection.GetSchema("ForeignKeys", restrictions);
 
 
-        foreach (System.Data.DataRow rowFK in schemaForeignKeys.Rows)
+        foreach (DataRow rowFK in schemaForeignKeys.Rows)
         {
 
-            this.ForeignKeyList.Add(new ForeignKey()
+            ForeignKeyList.Add(new ForeignKey()
             {
                 ForeignName = rowFK[2].ToString(),
                 TableName = TableName,

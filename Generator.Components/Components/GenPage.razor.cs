@@ -86,7 +86,7 @@ namespace Generator.Components.Components
         {
             var result =  GenGrid.ValidateModel();
             
-            //StateHasChanged();
+            StateHasChanged();
 
             return result;
         }

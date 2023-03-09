@@ -3,11 +3,13 @@
 @using Components.Validators
 @{
 
+ 
     if (DataSource is not null)
     {
-        <GenGrid DataSource="@DataSource"
+        <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<10).ToList()" 
                  TModel="USER"
                  Title="Users"
+                 RowEditTrigger="TableEditTrigger.RowClick"
                  MaxWidth="MaxWidth.ExtraLarge"
                  EditMode="EditMode.Inline"
                  EnableSearch="false"

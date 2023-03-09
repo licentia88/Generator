@@ -9,12 +9,12 @@ public class ClassGenerator
 
     public ClassGenerator(string ClassName)
     {
-        this.asemblyName = new AssemblyName(ClassName);
+        asemblyName = new AssemblyName(ClassName);
     }
 
     public ClassGenerator()
     {
-        this.asemblyName = new AssemblyName("Dynamic"); 
+        asemblyName = new AssemblyName("Dynamic"); 
     }
 
 
@@ -23,9 +23,9 @@ public class ClassGenerator
     {
         if (item.Count == 0) return null;
 
-        var DynamicClass = this.CreateClass();
+        var DynamicClass = CreateClass();
 
-        this.CreateConstructor(DynamicClass);
+        CreateConstructor(DynamicClass);
 
         foreach (var field in item)
         {
@@ -42,9 +42,9 @@ public class ClassGenerator
     {
         if (item.Count == 0) return null;
 
-        var DynamicClass = this.CreateClass();
+        var DynamicClass = CreateClass();
 
-        this.CreateConstructor(DynamicClass);
+        CreateConstructor(DynamicClass);
 
         foreach (var field in item)
         {
@@ -63,7 +63,7 @@ public class ClassGenerator
     {
         AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(asemblyName, AssemblyBuilderAccess.Run);
         ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
-        TypeBuilder typeBuilder = moduleBuilder.DefineType(this.asemblyName.FullName
+        TypeBuilder typeBuilder = moduleBuilder.DefineType(asemblyName.FullName
                             , TypeAttributes.Public |
                             TypeAttributes.Class |
                             TypeAttributes.AutoClass |

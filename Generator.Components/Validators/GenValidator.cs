@@ -19,7 +19,7 @@ public class GenValidator<T> : AbstractValidator<T>
         var param = Expression.Parameter(type);
         var propertyExpression = Expression.Property(param, property);
         var lambda = Expression.Lambda(typeof(Func<,>).MakeGenericType(type, property.PropertyType), propertyExpression, param);
-        var thisType = this.GetType();
+        var thisType = GetType();
         var ruleForMethod = thisType.GetMethod("RuleFor", BindingFlags.Public | BindingFlags.Instance);
         var genericRuleForMethod = ruleForMethod.MakeGenericMethod(property.PropertyType);
         // result is used by extension method

@@ -20,7 +20,7 @@ namespace Generator.Example.InjectionTest
 
 		public void FillTable()
 		{
-            UserList.Value.AddRange(A.ListOf<USER>());
+            UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>());
 
         }
     }

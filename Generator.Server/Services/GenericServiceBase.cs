@@ -24,7 +24,7 @@ public abstract class GenericServiceBase<TContext,TModel> :IGenericServiceBase<T
 
     protected List<TModel> CreateFakeData(int number)
     {
-        return A.ListOf<TModel>(number);
+        return GenFu.GenFu.ListOf<TModel>(number);
     }
 
     public Task<RESPONSE_RESULT<List<TModel>>> QueryAsync(RESPONSE_REQUEST<TModel> request, CallContext context = default)

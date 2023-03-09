@@ -27,7 +27,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {  
-            var newData = A.New<STRING_TABLE>();
+            var newData = GenFu.GenFu.New<STRING_TABLE>();
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
 
@@ -45,7 +45,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         {
             var serializer = FsPickler.CreateBinarySerializer();
 
-            var newData = A.New<TEST_TABLE>();
+            var newData = GenFu.GenFu.New<TEST_TABLE>();
 
             newData.TT_NULLABLE_DATE = null;
             //newData.TT_DEFAULT_VALUE_STRING = "";
@@ -66,7 +66,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         return TaskHandler.ExecuteAsync(async () =>
         {
 
-            var newData = A.New<COMPUTED_TABLE>();
+            var newData = GenFu.GenFu.New<COMPUTED_TABLE>();
 
             var dictType = newData.Adapt<IDictionary<string, object>>();
 

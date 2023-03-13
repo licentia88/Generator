@@ -30,7 +30,12 @@ public class GenValidator<T> : AbstractValidator<T>
         notEmptyMethod.Invoke(null, new object[] { result });
     }
 
-    public  bool ValidateModel(T obj)
+    public bool ValidateModel(T obj)
+    {
+        return ValidateModel(obj, null);
+    }
+
+    public bool ValidateModel(T obj,IList<IGenComponent> components)
     {
         var results = new List<ValidationResult>();
 
@@ -38,10 +43,21 @@ public class GenValidator<T> : AbstractValidator<T>
 
         bool isValid = Validator.TryValidateObject(obj, context, results, true);
 
-        if (isValid)
-            return true; 
+        if(components is not null)
+        {
+            foreach (var result in results)
+            {
+                var errorMessage = result.ErrorMessage;
+                var property = result.MemberNames.FirstOrDefault();
+                var component = components.FirstOrDefault(x => x.BindingField == property);
 
-         
+                SetError(component, errorMessage);
+            }
+        }
+        if (isValid)
+            return true;
+
+
         return false;
     }
 

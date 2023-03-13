@@ -1,19 +1,16 @@
-@* ReSharper disable once CSharpWarnings::CS0693 *@
 @typeparam TModel where TModel : new()
 @inherits MudTable<TModel>
 @implements INonGenGrid
 @implements IGenGrid<TModel>
-
-@*@if (DataSource is null)
-{
-    return;
-}*@
+ 
 
 <CascadingValue Name="@(nameof(ParentGrid))" Value="this">
 
     @{
         if (GenColumns is not null && IsFirstRender)
         {
+            UseTableItems = false;
+
             @GenColumns
             IsFirstRender = false;
         }
@@ -57,11 +54,17 @@
             }
         </MudGrid>
 
-        @* ReSharper disable once AsyncVoidLambda *@
-        @{
+         @{
 
-            if (DataSource is not null)
-            {
+             if (DataSource is not null)
+             {
+                 if (DataSource.Count != 0)
+                 {
+                     if (UseTableItems && OriginalTable is not null && OriginalTable.Items is not null)
+                         DataSource = OriginalTable?.Items.ToList();
+                 }
+
+
                 <MudTable T="TModel"
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
@@ -78,8 +81,7 @@
                           SelectedItems="@SelectedItems"
                           Filter="new Func<TModel, bool>(SearchFunction)"
                           Virtualize="Virtualize"
-                          OnCommitEditClick="OnEditCLick"
-                          RowEditPreview="async x => { OnBackUp(x.CastTo<TModel>()); await EditRow(); }"
+                          RowEditPreview="async x =>await MyRowEditPreview(x)"
                           RowEditCancel="x => OnCancelClick(x.CastTo<TModel>())"
                           RowEditCommit="async x => await Commit()"
                           IsEditRowSwitchingBlocked="true"
@@ -157,7 +159,6 @@
 
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.GridVisible))
                             {
-                                //onclick: stopPropagation = "EditMode==EditMode.Popup"
                                 <MudTd @onclick:stopPropagation="EditMode == EditMode.Form">
                                     @item.RenderAsGridComponent(context)
                                 </MudTd>
@@ -172,25 +173,28 @@
                     </RowTemplate>
 
                     <RowEditingTemplate Context="_context">
- 
+
                         @{
                             if (EditMode != EditMode.Inline)
                             {
                                 var currentRow = OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem));
                                 var editingRow = EditButtonActionList.Select(x => x.Target.CastTo<MudTr>()).FirstOrDefault(x => x.Item.CastTo<TModel>().Equals(SelectedItem));
-                                editingRow?.Context.Table.SetEditingItem(null);
+                                if(editingRow is not null)
+                                {
+                                    editingRow?.Context.Table.SetEditingItem(null);
 
 
-                                editingRow.SetFieldValue("hasBeenCanceled", false);
-                                editingRow.SetFieldValue("hasBeenCommitted", false);
-                                editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
+                                    editingRow.SetFieldValue("hasBeenCanceled", false);
+                                    editingRow.SetFieldValue("hasBeenCommitted", false);
+                                    editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
+                                }
                             }
                             if (HasDetail && EditMode != EditMode.SmartForm)
                             {
                                 <MudTd></MudTd>
                             }
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().ToList())
+                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible).ToList())
                             {
                                 <MudTd Style="width: auto !important">
                                     @item.RenderAsComponent(_context, true)
@@ -234,8 +238,8 @@
                                     if (!EditButtonActionList.Contains(button.ButtonAction))
                                         EditButtonActionList.Add(button.ButtonAction);
 
-                                        <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@( async () => { if (ViewState == ViewState.None) { ViewState = ViewState.Update; } button.ButtonAction.Invoke(); })"
-                                                                       Disabled="@button.ButtonDisabled" />
+                                    <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@( async () => { if (ViewState == ViewState.None) { ViewState = ViewState.Update; } button.ButtonAction.Invoke(); })"
+                                                   Disabled="@button.ButtonDisabled" />
                                 }
                             }
 
@@ -249,6 +253,12 @@
                         </div>
                     </EditButtonContent>
                 </MudTable>
+
+                if(OriginalTable is not null && IsFirstRender2 && OriginalTable.Items?.Count()!=0)
+                {
+                    UseTableItems = true;
+                    IsFirstRender2 = false;
+                }
             }
 
 

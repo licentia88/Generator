@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
@@ -27,9 +28,9 @@ namespace Generator.Example.Pages
         protected override async Task OnInitializedAsync()
         {
 
-            var res  = await UserService.ReadAsync();
+            DataSource =  await UserService.ReadAsync();
 
-            DataSource = res;
+            //DataSource = res;
 
             //DataSource = userList.Value;
 

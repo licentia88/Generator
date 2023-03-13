@@ -2,8 +2,9 @@
 
 
 
-<GenGrid DataSource="@DataSource" TModel="ORDERS_M"
-         EditMode="EditMode.Form"
+<GenGrid DataSource="@(DataSource.Where(x=> x.OM_DESCRIPTION.Contains("test")).ToList())"
+         TModel="ORDERS_M"
+         EditMode="EditMode.Inline"
          Class="m-2"
          Load="OnLoad"
          OnRender="OnRender"

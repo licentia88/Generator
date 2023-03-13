@@ -14,6 +14,7 @@ public class ORDERS_M
     [ProtoMember(2)]
     public int OM_USER_REFNO { get; set; }
 
+    [Required]
     [ProtoMember(3)]
     public string OM_DESCRIPTION { get; set; }
 

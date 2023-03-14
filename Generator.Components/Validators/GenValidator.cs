@@ -54,11 +54,7 @@ public class GenValidator<T> : AbstractValidator<T>
                 SetError(component, errorMessage);
             }
         }
-        if (isValid)
-            return true;
-
-
-        return false;
+        return isValid;
     }
 
     public bool ValidateValue(IGenComponent component, T model, string propertyName)

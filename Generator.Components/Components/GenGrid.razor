@@ -58,11 +58,8 @@
 
              if (DataSource is not null)
              {
-                 if (DataSource.Count != 0)
-                 {
-                     if (UseTableItems && OriginalTable is not null && OriginalTable.Items is not null)
-                         DataSource = OriginalTable?.Items.ToList();
-                 }
+                 if (UseTableItems && OriginalTable is not null && OriginalTable.Items is not null)
+                     DataSource = OriginalTable?.Items.ToList();
 
 
                 <MudTable T="TModel"
@@ -169,6 +166,20 @@
                             </MudTd>
 
 
+
+
+                           
+                            if (Delete.HasDelegate && RowEditTrigger == TableEditTrigger.RowClick)
+                            {
+                                <MudTd>
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" />
+
+                                </MudTd>
+
+                            }
+                            
+
+
                         }
                     </RowTemplate>
 
@@ -201,9 +212,9 @@
                                 </MudTd>
                             }
 
-                            <MudTh>
-
-                            </MudTh>
+                    <MudTd>
+                      
+                    </MudTd>
                         }
 
 
@@ -219,6 +230,8 @@
                                     </td>
                                 </tr>
                             }
+
+
                         }
 
                     </ChildRowContent>
@@ -246,7 +259,8 @@
                             @{
                                 if (Delete.HasDelegate)
                                 {
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(button.ButtonAction))" Disabled="@button.ButtonDisabled" />
+                                    Console.WriteLine(button.ToString());
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(new TModel()))" Disabled="@button.ButtonDisabled" />
                                 }
                             }
 

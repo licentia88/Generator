@@ -72,6 +72,8 @@ namespace Generator.Components.Components
 
         public IGenComponent Reference { get; set; }
 
+        public Action<object> ValueChangedAction { get; set; }
+
         protected override Task OnInitializedAsync()
         {
             ParentGrid?.AddChildComponent(this);

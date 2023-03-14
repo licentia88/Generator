@@ -72,7 +72,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     //bool HasErrors { get; set; } 
 
-    public IGenComponent Reference { get; set; }
+    //public IGenComponent Reference { get; set; }
+
+    public Action<object> ValueChangedAction { get; set; }
 
     protected override Task OnInitializedAsync()
     {
@@ -100,7 +102,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     {
         Model = model;
 
-        CheckedChanged = EventCallback.Factory.Create<bool>(this, OnValueChanged);
+        ValueChangedAction = x => OnValueChanged(x.CastTo<bool>());
+
+        CheckedChanged = EventCallback.Factory.Create<bool>(this, x=>  ValueChangedAction.Invoke(x));
 
         var val = (bool)model.GetPropertyValue(BindingField);
 
@@ -121,10 +125,10 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         ParentGrid.ValidateValue(BindingField);
     }
 
-    public GenCheckBox GetReference()
-    {
-        return (GenCheckBox)Reference;
-    }
+    //public GenCheckBox GetReference()
+    //{
+    //    return (GenCheckBox)Reference;
+    //}
 }
 
 

@@ -4,12 +4,12 @@
 @{
 
  
-    <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<10).ToList()"
+    <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).ToList()"
              TModel="USER"
              Title="Users"
              RowEditTrigger="TableEditTrigger.RowClick"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.SmartForm"
+             EditMode="EditMode.Form"
              EnableSearch="false"
              Class="m-2"
              Create="@( async x=> await CreateAsync(x))"
@@ -20,12 +20,15 @@
 
             <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
             <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
-            <GenTextField BindingField="@nameof(USER.U_LASTNAME)" Label="Last Name" GridVisible="false" EditorEnabled="false" />
+            <GenTextField BindingField="@nameof(USER.U_LASTNAME)"
+                          Label="Last Name"
+                          GridVisible="false"
+                          EditorEnabled="false" />
 
-            <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" Required="true" />
+            <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />
 
             <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
-                           TransformOrigin="Origin.BottomLeft" Required="true"
+                           TransformOrigin="Origin.BottomLeft"
                            Clearable="true" Label=" Reg. Date" />
         </GenColumns>
 

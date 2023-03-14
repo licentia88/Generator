@@ -4,7 +4,8 @@
 
 <GenGrid DataSource="@(DataSource.Where(x=> x.OM_DESCRIPTION.Contains("test")).ToList())"
          TModel="ORDERS_M"
-         EditMode="EditMode.Inline"
+         EditMode="EditMode.Form"
+         RowEditTrigger="TableEditTrigger.RowClick"
          Class="m-2"
          Load="OnLoad"
          OnRender="OnRender"
@@ -43,15 +44,16 @@
     public void OnLoad(IGenView<ORDERS_M> page)
     {
         descTextField = page.GetComponent<GenTextField>(nameof(ORDERS_M.OM_DESCRIPTION));
-        page.SelectedItem.OM_DESCRIPTION = "test";
-        descTextField.Class = "";
-        //page.StateHasChanged();
+        //descTextField.ValueChangedAction = x => ValChanged(x);
+        //descTextField.ValueChanged = EventCallback.Factory.Create<object>(this, ValChanged);
+        //page.SelectedItem.OM_DESCRIPTION = "test";
     }
 
     public void OnRender(IGenView<ORDERS_M> page)
     {
- 
-        descTextField.GetReference().ValueChanged = EventCallback.Factory.Create<object>(this, ValChanged);
+        descTextField.ValueChangedAction = x => ValChanged(x);
+
+        //descTextField.GetReference().ValueChanged = EventCallback.Factory.Create<object>(this, ValChanged);
 
     }
     public void ValChanged(object str)

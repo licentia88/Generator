@@ -14,8 +14,6 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 {
-    
-
     public Type DataType { get; set; }
 
     public object GetDefaultValue => DataType.GetDefaultValue();
@@ -67,7 +65,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public int xxl { get; set; } = 12;
 
-    public IGenComponent Reference { get; set; }
+    //public IGenComponent Reference { get; set; }
 
     //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -118,19 +116,22 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
+    public Action<object> ValueChangedAction { get; set; }
 
     public void OnValueChanged(object value)
     {
         Model.SetPropertyValue(BindingField, value);
 
-        ParentGrid.ValidateValue(BindingField);
+        //ValueChangedAction.Invoke(value);
+        //ParentGrid.ValidateValue(BindingField);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) =>  builder =>
     {
         Model = model;
 
-        ValueChanged = EventCallback.Factory.Create<object>(this, x =>  OnValueChanged(x));
+        ValueChangedAction = x => OnValueChanged(x);
+        ValueChanged = EventCallback.Factory.Create<object>(this, x => ValueChangedAction.Invoke(x));
 
         OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { if (!Error)  ParentGrid.ValidateValue(BindingField); });
 
@@ -158,10 +159,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     }
 
-    public GenTextField GetReference()
-    {
-        return (GenTextField)Reference;
-    }
+    //public GenTextField GetReference()
+    //{
+    //    return (GenTextField)Reference;
+    //}
 }
 
 

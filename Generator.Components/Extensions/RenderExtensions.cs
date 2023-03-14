@@ -42,7 +42,7 @@ namespace Generator.Components.Extensions
                 builder.AddAttribute(i, additional.Key, additional.Value);
                 i++;
             }
-            builder.AddComponentReferenceCapture(i++, ins => { component.Reference = (IGenComponent)ins; });
+            //builder.AddComponentReferenceCapture(i++, ins => { component.Reference = (IGenComponent)ins; });
             builder.CloseComponent();
 
         }

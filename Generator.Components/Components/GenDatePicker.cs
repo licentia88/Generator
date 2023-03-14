@@ -11,7 +11,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components
 {
-    public class GenDatePicker : MudDatePicker, IGenDatePicker,IComponentMethods<GenDatePicker>
+    public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<GenDatePicker>
     {
         [CascadingParameter(Name = nameof(ParentGrid))]
         public INonGenGrid  ParentGrid { get; set; }
@@ -61,7 +61,7 @@ namespace Generator.Components.Components
         [Parameter]
         public int xxl { get; set; } = 12;
 
-        public IGenComponent Reference { get; set; }
+        public Action<object> ValueChangedAction { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -83,7 +83,7 @@ namespace Generator.Components.Components
         {
             Model.SetPropertyValue(BindingField, date);
 
-            ParentGrid.ValidateValue(BindingField);
+            //ParentGrid.ValidateValue(BindingField);
 
         }
 
@@ -98,8 +98,10 @@ namespace Generator.Components.Components
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
             Model = model;
+           
+            ValueChangedAction = x => OnDateChanged(x.CastTo<DateTime?>());
 
-            DateChanged = EventCallback.Factory.Create<DateTime?>(this, x =>  OnDateChanged(x));
+            DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => ValueChangedAction.Invoke(x));
 
 
             //Date = (DateTime?)model.GetPropertyValue(BindingField);
@@ -121,10 +123,7 @@ namespace Generator.Components.Components
             ParentGrid.ValidateValue(BindingField);
         }
 
-        public GenDatePicker GetReference()
-        {
-            return (GenDatePicker)Reference;
-        }
+       
     }
 }
 

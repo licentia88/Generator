@@ -72,8 +72,8 @@ namespace Generator.Components.Components
         [Parameter, EditorRequired]
         public IEnumerable<object> DataSource { get; set; }
 
-        public IGenComponent Reference { get; set; }
-
+        //public IGenComponent Reference { get; set; }
+        public Action<object> ValueChangedAction { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -102,16 +102,21 @@ namespace Generator.Components.Components
 
             Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            ParentGrid.ValidateValue(BindingField);
+            //ParentGrid.ValidateValue(BindingField);
 
         }
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
         {
             Model = model;
+
+            ValueChangedAction = x => OnValueChanged(x);
+
             ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
+
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
-            ValueChanged = EventCallback.Factory.Create<object>(this, OnValueChanged);
+
+            ValueChanged = EventCallback.Factory.Create<object>(this, x=> ValueChangedAction(x));
 
             OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { if (!Error)  ParentGrid.ValidateValue(BindingField); });
 
@@ -147,10 +152,10 @@ namespace Generator.Components.Components
             ParentGrid.ValidateValue(BindingField);
         }
 
-        public GenComboBox GetReference()
-        {
-            return (GenComboBox)Reference;
-        }
+        //public GenComboBox GetReference()
+        //{
+        //    return (GenComboBox)Reference;
+        //}
     }
 }
 

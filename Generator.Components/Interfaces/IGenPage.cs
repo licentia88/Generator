@@ -16,6 +16,8 @@ public interface INonGenPage: INonGenView
 
     public bool IsTopLevel { get; set; }
 
+    public bool IsValid { get; set; }
+
     public void Close();
 
     public bool ValidateAsync();

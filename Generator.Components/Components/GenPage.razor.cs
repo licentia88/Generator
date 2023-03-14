@@ -12,6 +12,9 @@ namespace Generator.Components.Components
 {
     public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel : new() 
     {
+        [CascadingParameter]
+        public MudDialogInstance MudDialog { get; set; }
+
         [Parameter]
         public GenGrid<TModel> GenGrid { get; set; }
 
@@ -32,13 +35,13 @@ namespace Generator.Components.Components
         [Parameter]
         public TModel SelectedItem { get; set; }
  
-
-        [CascadingParameter]
-        public MudDialogInstance MudDialog { get; set; }
-
+ 
         public bool EnableModelValidation { get; set; }
 
         public bool IsTopLevel { get; set; }
+
+        public bool IsValid { get; set; }
+
 
         [Parameter]
         public List<IGenComponent> Components { get; set; }
@@ -66,13 +69,6 @@ namespace Generator.Components.Components
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            //if (firstRender)
-            //{
-            //    if (Load.HasDelegate)
-            //        await Load.InvokeAsync(this);
-
-            //}
-
             if (OnRender.HasDelegate)
                 await OnRender.InvokeAsync(this);
 
@@ -84,17 +80,23 @@ namespace Generator.Components.Components
 
         public bool ValidateAsync()
         {
-            var result =  GenGrid.ValidateModel();
+            IsValid =  GenGrid.ValidateModel();
             
             StateHasChanged();
 
-            return result;
+            return IsValid;
         }
- 
+
+        public void onInvalidSubmit()
+        {
+            ValidateAsync();
+        }
+
+        
         public async Task OnCommit()
         {
            IsTopLevel = true;
-           await  OnCommit(SelectedItem);
+           await  OnCommit(SelectedItem, ViewState.None);
         }
 
         public async Task OnCommit(TModel model)
@@ -105,22 +107,32 @@ namespace Generator.Components.Components
         public  async Task OnCommit(TModel model, ViewState viewState)
         {
             if (!ValidateAsync()) return;
-            
+
+            //Parent Save
             if (GenGrid.ParentGrid?.ViewState == ViewState.Create)
                 await GenGrid.ParentGrid.CurrentGenPage.OnCommitAndWait();
 
-            await GenGrid.OnCommit(SelectedItem, viewState);
+            if (IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
+            {
+                await GenGrid.OnCommit(SelectedItem, viewState);
 
-            ViewState = ViewState.None;
+                ViewState = ViewState.None;
 
-            CloseIfAllowed();
+                CloseIfAllowed();
+            }
+ 
         }
 
         public async Task OnCommitAndWait()
         {
-            await GenGrid.OnCommit(SelectedItem, ViewState.Update);
+            ValidateAsync();
 
-            ViewState = ViewState.Update;
+            if (IsValid)
+            {
+                ViewState = ViewState.Update;
+
+                await GenGrid.OnCommit(SelectedItem, ViewState.Update);
+            }
 
             StateHasChanged();
         }
@@ -130,6 +142,7 @@ namespace Generator.Components.Components
         {
             if (!IsTopLevel) return;
             GenGrid.RefreshButtonState();
+            GenGrid.ResetValidation();
             MudDialog.Close();
         }
         public void Close()
@@ -183,7 +196,7 @@ namespace Generator.Components.Components
 
             
             RefreshParentGrid.InvokeAsync();
-
+            GenGrid.ResetValidation();
             MudDialog.Dispose();
         }
 

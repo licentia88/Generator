@@ -9,7 +9,7 @@
     @{
         if (GenColumns is not null && IsFirstRender)
         {
-            UseTableItems = false;
+            //UseTableItems = false;
 
             @GenColumns
             IsFirstRender = false;
@@ -58,10 +58,7 @@
 
              if (DataSource is not null)
              {
-                 if (UseTableItems && OriginalTable is not null && OriginalTable.Items is not null)
-                     DataSource = OriginalTable?.Items.ToList();
-
-
+              
                 <MudTable T="TModel"
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
@@ -268,12 +265,8 @@
                     </EditButtonContent>
                 </MudTable>
 
-                if(OriginalTable is not null && IsFirstRender2 && OriginalTable.Items?.Count()!=0)
-                {
-                    UseTableItems = true;
-                    IsFirstRender2 = false;
+                  
                 }
-            }
 
 
         }

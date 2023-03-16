@@ -118,7 +118,7 @@ namespace Generator.Components.Components
 
             ValueChanged = EventCallback.Factory.Create<object>(this, x=> ValueChangedAction(x));
 
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { if (!Error)  ParentGrid.ValidateValue(BindingField); });
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
 
 
             var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>

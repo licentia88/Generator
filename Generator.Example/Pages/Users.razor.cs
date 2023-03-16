@@ -52,7 +52,10 @@ namespace Generator.Example.Pages
 
             DataSource.Add(data);
         }
-
+        public void TEST()
+        {
+            DataSource = userList.Value;
+        }
         public async ValueTask UpdateAsync(USER data)
         {
             var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));

@@ -10,7 +10,8 @@ using System.Diagnostics.CodeAnalysis;
 using Force.DeepCloner;
 using Generator.Components.Extensions;
 using Mapster;
-using static MudBlazor.CategoryTypes;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Generator.Components.Components;
 
@@ -76,7 +77,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public bool IsFirstRender { get; set; } = true;
 
-    public bool IsFirstRender2 { get; set; } = true;
+    //public bool TableRendered { get; set; } = false;
 
 
     public bool SearchDisabled { get; set; }
@@ -170,13 +171,22 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-         if ((ViewState == ViewState.Create || ViewState == ViewState.Update) && EditMode == EditMode.Inline)
+        if ((ViewState == ViewState.Create || ViewState == ViewState.Update) && EditMode == EditMode.Inline)
         {
             //if (EditButtonActionList.Any())
             //{
             var editingRow = GetCurrentRow();
 
-            if (editingRow is null) return Task.CompletedTask;
+            if (editingRow is null)
+            {
+                //row bossa once itemi tekrar ekle
+                DataSource.Insert(0, SelectedItem);
+                OriginalTable.Items = DataSource.ToList();
+                StateHasChanged();
+                ValidateModel();
+
+                return Task.CompletedTask;
+            }
 
 
             if (editingRow.IsEditing && !ForceRenderOnce)
@@ -251,7 +261,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return OnCommit(model, ViewState.None);
     }
 
-    private bool UseTableItems = true;
+    //private bool UseTableItems = true;
 
     public async Task OnCommit(TModel model, ViewState viewState)
     {
@@ -259,7 +269,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         {
             GridIsBusy = true;
 
-            UseTableItems = false;
+            //UseTableItems = false;
 
             _ShouldRender = false;
 
@@ -301,6 +311,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
             GridIsBusy = false;
 
+            //UseTableItems = true;
+
+
             RefreshButtonState();
 
         }
@@ -326,9 +339,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
  
         _ShouldRender = true;
 
+
         StateHasChanged();
 
-        UseTableItems = false;
 
     }
 
@@ -500,26 +513,33 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
         if (EditMode == EditMode.Inline)
         {
-
             DataSource.Insert(0, adaptedData);
 
             SelectedItem = adaptedData;
+
+            //StateHasChanged();
+
             return;
         }
 
         SelectedItem = adaptedData;
 
         OnBackUp(SelectedItem);
+
         await ShowDialogAsync<GenPage<TModel>>();
 
-
     }
-
+    
     private async Task Commit()
     {
         var isValid = ValidateModel();
 
-        if (!isValid) return;
+        if (!isValid)
+        {
+            //UseTableItems = true;
+            StateHasChanged();
+            return;
+        }
 
         await OnCommit(SelectedItem);
     }
@@ -655,11 +675,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public async Task OnDeleteClicked(TModel model)
     {
         ViewState = ViewState.Delete;
-        UseTableItems = false;
-        //TModel dataToRemove = (TModel)buttonAction.Target.CastTo<MudTr>().Item;
+        
         OriginalEditItem = model;
 
-        await OnCommit(model);
+        await OnCommit(model, ViewState.None);
 
     }
 

@@ -3,13 +3,13 @@
 @using Components.Validators
 @{
 
- 
+    <MudButton OnClick="TEST">Click</MudButton>
     <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).ToList()"
              TModel="USER"
              Title="Users"
              RowEditTrigger="TableEditTrigger.RowClick"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.Form"
+             EditMode="EditMode.Inline"
              EnableSearch="false"
              Class="m-2"
              Create="@( async x=> await CreateAsync(x))"
@@ -23,7 +23,7 @@
             <GenTextField BindingField="@nameof(USER.U_LASTNAME)"
                           Label="Last Name"
                           GridVisible="false"
-                          EditorEnabled="false" />
+                          EditorEnabled="true" />
 
             <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />
 

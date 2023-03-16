@@ -59,6 +59,7 @@ namespace Generator.Services.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OM_ROWID"), 1L, 1);
 
                     b.Property<string>("OM_DESCRIPTION")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OM_USER_REFNO")
@@ -83,6 +84,7 @@ namespace Generator.Services.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("U_LASTNAME")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("U_NAME")

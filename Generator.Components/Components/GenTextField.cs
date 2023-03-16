@@ -13,7 +13,8 @@ using System.Globalization;
 namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
-{
+{ 
+
     public Type DataType { get; set; }
 
     public object GetDefaultValue => DataType.GetDefaultValue();
@@ -131,9 +132,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         Model = model;
 
         ValueChangedAction = x => OnValueChanged(x);
+
         ValueChanged = EventCallback.Factory.Create<object>(this, x => ValueChangedAction.Invoke(x));
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { if (!Error)  ParentGrid.ValidateValue(BindingField); });
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {  ParentGrid.ValidateValue(BindingField); });
 
         var loValue = model.GetPropertyValue(BindingField);
 

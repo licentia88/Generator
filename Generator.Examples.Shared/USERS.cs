@@ -12,11 +12,12 @@ public class USER
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int U_ROWID { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Zorunlu alan")]
     [DisplayName("User")]
     [ProtoMember(2)]
     public string U_NAME { get; set; }
 
+    [Required(ErrorMessage = "Zorunlu alan")]
     [DisplayName("Last Name")]
     [ProtoMember(3)]
     public string U_LASTNAME { get; set; }

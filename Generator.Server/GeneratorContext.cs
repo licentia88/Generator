@@ -5,6 +5,7 @@ namespace Generator.Server;
 
 public class GeneratorContext: DbContext
 {
+
     public GeneratorContext(DbContextOptions<GeneratorContext> options) : base(options)
     {
         //Database.EnsureCreated();

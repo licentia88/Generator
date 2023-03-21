@@ -107,9 +107,19 @@
 
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(predicate))
                             {
-                                <MudTh>
-                                    @item.Label
-                                </MudTh>
+                                if (!EnableSorting)
+                                {
+                                    <MudTh>
+                                        @item.Label
+                                    </MudTh>
+                                }
+                                else
+                                {
+                                    <MudTh>
+                                       <MudTableSortLabel SortBy="new Func<TModel, object>(x=> x.GetPropertyValue(item.BindingField))">@item.Label</MudTableSortLabel>
+                                    </MudTh>
+                                }
+
                             }
 
                         }

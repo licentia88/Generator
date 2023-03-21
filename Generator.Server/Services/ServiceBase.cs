@@ -10,15 +10,18 @@ using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using GenFu;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols;
 using ProtoBuf.Grpc;
+using static Generator.Server.GeneratorContext;
 
 namespace Generator.Server.Services;
 
  
 public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbContext
 {
-    protected readonly IDictionary<string, Func<IDatabaseManager>> ConnectionFactory;
+    protected readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
 
     public Lazy<List<GRIDS_M>> Components { get; set; }
 
@@ -28,19 +31,18 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
 
     public IServiceProvider Provider { get; set; }
 
-       
+    public SqlQueryFactory SqlQueryFactory(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
+
+    public IConfigurationBuilder ConfigurationBuilder { get; set; }
 
     public ServiceBase(IServiceProvider provider)
     {
-        Db = provider.GetService<TContext>();
-        ConnectionFactory = provider.GetService<IDictionary<string, Func<IDatabaseManager>>>();
         Provider = provider;
+        Db = provider.GetService<TContext>();
+        ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
     }
 
  
-    
-
-
     protected async ValueTask<List<object>> CreateFakeDataAsync(string tableName, int number)
     {
         await using var command = GeneratorConnection.CreateCommand();

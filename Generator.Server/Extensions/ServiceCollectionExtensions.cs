@@ -39,13 +39,13 @@ public static class ServiceCollectionExtensions
 
     private static void AddConnectionFactories(this IServiceCollection services, List<Connections> connections)
     {
-        services.AddSingleton<IDictionary<string, Func<IDatabaseManager>>>(provider =>
+        services.AddSingleton<IDictionary<string, Func<SqlQueryFactory>>>(provider =>
         {
-            var connectionFactories = new Dictionary<string, Func<IDatabaseManager>>();
+            var connectionFactories = new Dictionary<string, Func<SqlQueryFactory>>();
 
             foreach (var ConnectionSetting in connections)
             {
-                connectionFactories.Add(ConnectionSetting.Name, () => ConnectionHelper.AddDatabaseResolver(ConnectionSetting));
+                connectionFactories.Add(ConnectionSetting.Name, () => new SqlQueryFactory(ConnectionHelper.AddDatabaseResolver(ConnectionSetting)));
             }
             return connectionFactories;
         });

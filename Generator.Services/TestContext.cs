@@ -1,9 +1,11 @@
 ﻿using Generator.Examples.Shared;
+using Generator.Shared.Models;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Services
 {
+   
     public class TestContext : DbContext
     {
         public TestContext(DbContextOptions<TestContext> options) : base(options)

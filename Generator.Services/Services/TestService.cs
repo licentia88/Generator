@@ -1,16 +1,13 @@
-﻿using System.Data;
-using Generator.Server.Extensions;
+﻿using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
+using Generator.Shared.Enums;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
-using GenFu;
 using Mapster;
 using MBrace.FsPickler;
-using Microsoft.AspNetCore.Connections;
-//using MBrace.FsPickler.Json;
 using ProtoBuf.Grpc;
 
 namespace Generator.Services.Services;
@@ -19,6 +16,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 {
     public TestService(IServiceProvider provider) : base(provider)
     {
+       
     }
 
 
@@ -26,12 +24,15 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     public Task<RESPONSE_RESULT> InsertWithCodeTableTest(CallContext context = default)
     {
         return TaskHandler.ExecuteAsync(async () =>
-        {  
+        {
+
             var newData = GenFu.GenFu.New<STRING_TABLE>();
 
-            var dictType = newData.Adapt<IDictionary<string, object>>();
+            var dictionaryModel = newData.Adapt<IDictionary<string, object>>();
 
-            var result = await GeneratorConnection.InsertAsync(nameof(STRING_TABLE), dictType);
+            var test = await SqlQueryFactory("DefaultConnection").InsertAsync(nameof(STRING_TABLE), dictionaryModel);
+
+            var result = await GeneratorConnection.InsertAsync(nameof(STRING_TABLE), dictionaryModel);
 
             return new GenObject(result);
         });
@@ -50,10 +51,11 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
             newData.TT_NULLABLE_DATE = null;
             //newData.TT_DEFAULT_VALUE_STRING = "";
 
-            var dictType = newData.Adapt<IDictionary<string, object>>();
+            var dictionaryModel = newData.Adapt<IDictionary<string, object>>();
 
- 
-           var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictType);
+            var test = await SqlQueryFactory("DefaultConnection").InsertAsync(nameof(TEST_TABLE), dictionaryModel);
+
+            var result = await GeneratorConnection.InsertAsync(nameof(TEST_TABLE), dictionaryModel);
 
 
            return new GenObject(result);
@@ -84,9 +86,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
             var connectionFactory2 = ConnectionFactory["GeneratorConnection"].Invoke();
 
-            await connectionFactory2.ExecuteQueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            //await connectionFactory2.ExecuteQueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
-            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)} WHERE TT_DESC IN(@TT_DESC)" , ("TT_DESC", LogicalOperator.In, new[] {"denim"}));
 
             return new GenObject(result);
         });
@@ -194,7 +196,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
- 
+
+            var test = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(STRING_TABLE), EXISTINGDATA.FirstOrDefault());
+
             var result = await GeneratorConnection.UpdateAsync(nameof(STRING_TABLE), EXISTINGDATA.First());
 
             return new GenObject(result);
@@ -219,6 +223,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
 
+            var test = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(TEST_TABLE), EXISTINGDATA.FirstOrDefault());
+
             var result = await GeneratorConnection.UpdateAsync(nameof(TEST_TABLE), EXISTINGDATA.First());
 
             return new GenObject(result);
@@ -242,6 +248,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         return TaskHandler.ExecuteAsync(async () =>
         {
             var EXISTINGDATA = await GeneratorConnection.QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
+
+            var test = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(COMPUTED_TABLE), EXISTINGDATA.FirstOrDefault());
 
             var result = await GeneratorConnection.UpdateAsync(nameof(COMPUTED_TABLE), EXISTINGDATA.First());
 

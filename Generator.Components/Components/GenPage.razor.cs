@@ -80,7 +80,7 @@ namespace Generator.Components.Components
 
         public bool ValidateAsync()
         {
-            IsValid =  GenGrid.ValidateModel();
+            IsValid =  GenGrid.ValidateModel(true);
             
             StateHasChanged();
 

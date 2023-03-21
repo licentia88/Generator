@@ -4,18 +4,20 @@
 @{
 
     <MudButton OnClick="TEST">Click</MudButton>
+
     <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).ToList()"
              TModel="USER"
              Title="Users"
-             RowEditTrigger="TableEditTrigger.RowClick"
+             RowEditTrigger="TableEditTrigger.EditButton"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.Inline"
-             EnableSearch="false"
+             EditMode="EditMode.Form"
+             EnableSearch="true"
+             EnableSorting="true"
              Class="m-2"
              Create="@( async x=> await CreateAsync(x))"
              Update="@( async x=> await UpdateAsync(x))"
-             Load="@(async x=> await Load(x))"
-             Delete="@( async x=> await DeleteAsync(x))">
+             Delete="@( async x=> await DeleteAsync(x))"
+             Load="@(async x=> await Load(x))">
         <GenColumns>
 
             <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />

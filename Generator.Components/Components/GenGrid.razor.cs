@@ -32,6 +32,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter]
     public bool DisableBackdropClick { get; set; } = true;
 
+    [Parameter]
+    public bool EnableSorting { get; set; } = false;
+
     [Inject]
     public IDialogService DialogService { get; set; }
 
@@ -183,7 +186,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
                 DataSource.Insert(0, SelectedItem);
                 OriginalTable.Items = DataSource.ToList();
                 StateHasChanged();
-                ValidateModel();
+                ValidateModel(true);
 
                 return Task.CompletedTask;
             }
@@ -454,12 +457,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return DetailClicked && _selectedDetailObject.Equals(context);
     }
 
-    public bool ValidateModel()
+    public bool ValidateModel(bool all=false)
     {
         var result = true;
 
         if (SelectedItem.IsModel())
-            result = GenValidator.ValidateModel(SelectedItem,Components);
+            result = GenValidator.ValidateModel(SelectedItem,all?Components:null);
         else
             result = Components.All(x => GenValidator.ValidateValue(x, SelectedItem, x.BindingField));
 
@@ -548,24 +551,48 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     {
         if (string.IsNullOrEmpty(_searchString)) return true;
 
-        var searchableFields = GetComponentsOf<IGenTextField>()
-            .Where((x) => x.BindingField is not null && x.GridVisible);
+        var searchableFields = GetComponentsOf<IGenComponent>().Where((x) => x.BindingField is not null && x.GridVisible);
 
-        return searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null).Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
+        foreach (var component in searchableFields)
+        {
+            if (component is IGenComboBox combobox)
+            {
+                var comboboxModel = combobox.DataSource.FirstOrDefault(x => x.GetPropertyValue(combobox.ValueField).ToString() == model.GetPropertyValue(combobox.BindingField).ToString());
+
+                if (comboboxModel is null) continue;
+
+                if (comboboxModel.GetPropertyValue(combobox.DisplayField).ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+            }
+
+            if (component is IGenCheckBox checkBox)
+            {
+                var propValue = model.GetPropertyValue(checkBox.BindingField);
+
+                if (propValue is not null && propValue is bool boolValue)
+                {
+                    if (boolValue && checkBox.TrueText.Equals(_searchString, StringComparison.OrdinalIgnoreCase))
+                        return true;
+
+                    if (!boolValue && checkBox.FalseText.Equals(_searchString, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+
+
+            }
+        }
+
+        var result = searchableFields.Select(field => model.GetPropertyValue(field.BindingField)).Where(columnValue => columnValue is not null)
+                              .Any(columnValue => columnValue.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
+
+        return result;
     }
 
     internal MudTr GetCurrentRow()
     {
         return OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
-        var selectedItem = GetRowButtonAction();
-
-        if (selectedItem is not null)
-        {
-            var row = selectedItem.Target.CastTo<MudTr>();
-            return row;
-        }
-
-        return null;
+       
     }
 
     private Action GetRowButtonAction()

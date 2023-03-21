@@ -41,7 +41,7 @@ public static class ConnectionHelper
 
         if (connection is OracleConnection)
         {
-            return new OracleManager(connection);
+            return new OracleServerManager(connection);
         }
 
         if (connection is SqlConnection)

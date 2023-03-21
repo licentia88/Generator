@@ -61,6 +61,8 @@ public static class QueryExtensions
 
             await using var result = await command.ExecuteReaderAsync(CommandBehavior.Default);
 
+            
+
             var columns = result.GetColumnSchema().ToList();
 
             var dataList = await result.ReadDataAsync();
@@ -139,7 +141,7 @@ public static class QueryExtensions
 
         do
         {
-            await command.Connection.OpenIfAsync();
+            await OpenAsync(command.Connection);
 
             OrderBy = string.IsNullOrEmpty(OrderBy) ? " ORDER BY 1 " : OrderBy;
 
@@ -233,6 +235,7 @@ public static class QueryExtensions
             throw new Exception(e.Message);
         }
     }
+   
 
     public static async ValueTask<TReturnType> InsertAsync<TReturnType>(this DbConnection connection, IDictionary<string, object> model)
     {
@@ -371,8 +374,8 @@ public static class QueryExtensions
 
         while (await reader.ReadAsync())
         {
-            var newObj = expObj.CreateNew<Dictionary<string, object>>();
-
+             var newObj = expObj.CreateNew<Dictionary<string, object>>();
+            
             foreach (var column in columns)
                 newObj.Add(column.ColumnName, reader.GetColumnValue(column.ColumnName));
 
@@ -415,25 +418,25 @@ public static class QueryExtensions
             command.Parameters.AddRange(parameterArray.ToArray());
     }
 
-    public static async Task OpenIfAsync(this DbCommand command)
+    public static async Task OpenAsync(this DbCommand command)
     {
         if (command.Connection.State != ConnectionState.Open)
             await command.Connection.OpenAsync();
     }
 
-    public static async Task OpenIfAsync(this DbConnection Connection)
+    public static async Task OpenAsync(this DbConnection Connection)
     {
         if (Connection.State != ConnectionState.Open)
             await Connection.OpenAsync();
     }
 
-    public static void OpenIf(this DbCommand Command)
+    public static void Open(this DbCommand Command)
     {
         if (Command.Connection.State != ConnectionState.Open)
             Command.Connection.Open();
     }
 
-    public static void OpenIf(this DbConnection Connection)
+    public static void Open(this DbConnection Connection)
     {
         if (Connection.State != ConnectionState.Open)
             Connection.Open();

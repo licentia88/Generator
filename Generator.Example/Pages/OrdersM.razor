@@ -2,7 +2,7 @@
 
 
 
-<GenGrid DataSource="@(DataSource.Where(x=> x.OM_DESCRIPTION.Contains("test")).ToList())"
+<GenGrid DataSource="@(DataSource)"
          TModel="ORDERS_M"
          EditMode="EditMode.Form"
          RowEditTrigger="TableEditTrigger.RowClick"

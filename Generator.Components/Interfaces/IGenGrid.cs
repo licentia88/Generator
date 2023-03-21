@@ -34,6 +34,8 @@ public interface INonGenGrid:INonGenView
 
     public bool SearchDisabled { get; set; }
 
+    public bool EnableSorting { get; set; }
+
     public RenderFragment GenColumns { get; set; }
 
     public RenderFragment GenHeaderButtons { get; set; }
@@ -48,7 +50,7 @@ public interface INonGenGrid:INonGenView
 
     public bool ForceRenderOnce { get; set; }
 
-    public bool ValidateModel();
+    public bool ValidateModel(bool all=false);
 
     public bool ValidateValue(string propertyName);
 

@@ -12,6 +12,10 @@ public interface ITestService
 
     public Task<RESPONSE_RESULT> QueryAsync(CallContext context = default);
 
+    public Task<RESPONSE_RESULT> ParametricQuery(CallContext context = default);
+
+    public Task<RESPONSE_RESULT> ExecuteSp(CallContext context = default);
+
     public Task<RESPONSE_RESULT> QueryTestStringDataAsync(CallContext context = default);
 
 

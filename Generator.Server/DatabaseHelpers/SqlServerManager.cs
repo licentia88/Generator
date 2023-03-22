@@ -24,9 +24,9 @@ namespace Generator.Server.DatabaseResolvers
         {
             var isAutoInrementQuery = IsAutoIncrementStatement(TableName);
 
-            var queryParameters = new Dictionary<string, object> { { nameof(TableName), TableName } };
+            var whereStatement = new WhereStatement(nameof(TableName), TableName);
 
-            var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, queryParameters, CommandBehavior);
+            var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, CommandBehavior, CommandType.Text, whereStatement);
 
             string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
 
@@ -37,7 +37,7 @@ namespace Generator.Server.DatabaseResolvers
 
             var insertStatement = CreateInsertStatement(TableName, Model,primaryKeyName,IsIdentity);
 
-            var insertResult = await QueryAsync(insertStatement, Model);
+            var insertResult = await QueryAsync(insertStatement, WhereStatement.CreateStatementCollection(Model));
  
             return insertResult.FirstOrDefault();
         }
@@ -46,9 +46,9 @@ namespace Generator.Server.DatabaseResolvers
         {
             var isAutoInrementQuery = IsAutoIncrementStatement(TableName);
 
-            var queryParameters = new Dictionary<string, object> { { nameof(TableName), TableName } };
+            var whereStatement = new WhereStatement(nameof(TableName), TableName);
 
-            var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, queryParameters, CommandBehavior);
+             var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, CommandBehavior, CommandType.Text, whereStatement);
 
             string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
 
@@ -56,14 +56,63 @@ namespace Generator.Server.DatabaseResolvers
 
             var updateStatement = CreateUpdateStatement(TableName, Model, primaryKeyName);
 
-            var updateResult = await QueryAsync(updateStatement, Model);
+            var updateResult = await QueryAsync(updateStatement, WhereStatement.CreateStatementCollection(Model));
 
             return updateResult.FirstOrDefault();
 
 
         }
 
-        public async Task<List<IDictionary<string,object>>> QueryAsync(string Query, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
+        //public  Task<List<IDictionary<string,object>>> QueryAsync(string Query, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
+        //{
+        //    return QueryAsync(Query, Model, CommandBehavior, null);
+        //}
+
+        //public async Task<List<IDictionary<string, object>>> QueryAsync(string Query, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default, params WhereStatement[] WhereStatementParameters)
+        //{
+        //    var command = Connection.CreateCommand();
+
+        //    await command.OpenAsync();
+
+        //    command.CommandText = Query;
+
+        //    AddParameters(command, Model, Model?.Select(x => x.Key).ToArray());
+
+        //    AddWhereStatementParameters(command, WhereStatementParameters);
+            
+        //    var result = await ExecuteCommandAsync(command, CommandBehavior);
+
+        //    await command.Connection.CloseAsync();
+
+        //    return result;
+        //}
+
+
+        public async Task<IDictionary<string, object>> DeleteAsync(string TableName, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
+        {
+            var isAutoInrementQuery = IsAutoIncrementStatement(TableName);
+
+            WhereStatement whereStatement = new WhereStatement(nameof(TableName), TableName);
+
+            var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, CommandBehavior, CommandType.Text, whereStatement);
+
+            string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
+
+            bool IsIdentity = (bool)(isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>());
+
+            var deleteStatement = CreateDeleteStatement(TableName, primaryKeyName);
+
+            var deleteStatementResult = await QueryAsync(deleteStatement, WhereStatement.CreateStatementCollection(Model));
+
+            return Model;
+        }
+
+        public Task<List<IDictionary<string, object>>> QueryAsync(string Query,  params WhereStatement[] WhereStatementParameters)
+        {
+            return QueryAsync(Query, CommandBehavior.Default, CommandType.Text, WhereStatementParameters);
+        }
+
+        public async Task<List<IDictionary<string, object>>> QueryAsync(string Query, CommandBehavior CommandBehavior, CommandType CommandType, params WhereStatement[] WhereStatementParameters)
         {
             var command = Connection.CreateCommand();
 
@@ -71,7 +120,9 @@ namespace Generator.Server.DatabaseResolvers
 
             command.CommandText = Query;
 
-            AddParameters(command, Model, Model?.Select(x => x.Key).ToArray());
+            command.CommandType = CommandType;
+
+            AddWhereStatementParameters(command, WhereStatementParameters);
 
             var result = await ExecuteCommandAsync(command, CommandBehavior);
 

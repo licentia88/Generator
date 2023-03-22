@@ -10,6 +10,8 @@ using Generator.Shared.Extensions;
 using ObjectExtensions = Generator.Server.Extensions.ObjectExtensions;
 using System.Collections.Generic;
 using System.Data.Common;
+using Generator.Shared.Models;
+using System.Text;
 
 namespace Generator.Server.DatabaseResolvers
 {
@@ -17,8 +19,6 @@ namespace Generator.Server.DatabaseResolvers
     public abstract class DatabaseManager 
     {
         public DbConnection Connection { get; set; }
-
-        //public ConnectionStringSettings ConnectionSettings { get; set; }
 
         internal async Task OpenConnectionAsync()
         {
@@ -59,6 +59,81 @@ namespace Generator.Server.DatabaseResolvers
             }
 
         }
+
+        internal void AddWhereStatementParameters(DbCommand command, params WhereStatement[] WhereStatementParameters)
+        {
+            try
+            {
+                if (WhereStatementParameters is null) return;
+
+                var numberOfPropertyValues = WhereStatementParameters
+                                            .Where(x=> x.PropertyValues.Count !=0)
+                                            .SelectMany(x => x.PropertyValues).Count();
+
+                DbParameter[] parameters = new DbParameter[numberOfPropertyValues];
+
+                var parameterIndex = 0;
+
+                foreach (var whereStatement in WhereStatementParameters)
+                {
+                    var parameterName = whereStatement.PropertyName;
+
+                    if (whereStatement.PropertyValues.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    if (whereStatement.PropertyValues.Count == 1)
+                    {
+                        var parameter = command.CreateParameter();
+
+                        parameter.ParameterName = $"@{parameterName}";
+
+                        parameter.Value = whereStatement.PropertyValues.FirstOrDefault()??DBNull.Value;
+
+                        parameters[parameterIndex] = parameter;
+
+                        parameterIndex++;
+
+                    }
+
+                    if (whereStatement.PropertyValues.Count > 1)
+                    {
+                        //Birden fazla property olmasi In Veya Not In Clause dur
+
+                        var queryReplacementString = new StringBuilder();
+
+                        for (int j = 0; j < whereStatement.PropertyValues.Count; j++)
+                        {
+                            var parameter = command.CreateParameter();
+
+                            var paramName = $"@{parameterName}{j}";
+
+                            parameter.ParameterName = paramName;
+                            parameter.Value = whereStatement.PropertyValues[j];
+                            queryReplacementString.Append($"{paramName}, ");
+
+                            parameters[parameterIndex] = parameter;
+
+                            parameterIndex++;
+
+                        }
+                        queryReplacementString = queryReplacementString.Remove(queryReplacementString.Length-2, 2);
+
+                        command.CommandText = command.CommandText.Replace($"@{parameterName}", queryReplacementString.ToString());
+
+                    }
+                }
+                
+                if (parameters is not null && parameters.Count() > 0)
+                    command.Parameters.AddRange(parameters);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
         private async Task<List<IDictionary<string, object>>> GetDataTableFromDataReaderAsync(DbDataReader dataReader)
         {
             var resultSet = new List<IDictionary<string, object>>();
@@ -67,8 +142,7 @@ namespace Generator.Server.DatabaseResolvers
 
             while (await dataReader.ReadAsync())
             {
-
-                var newObj = new ExpandoObject() as IDictionary<string, object>;
+                var newObj = new Dictionary<string, object>();// new ExpandoObject() as IDictionary<string, object>;
 
                 foreach (var column in columns)
                     newObj.Add(column.ColumnName, dataReader.GetColumnValue(column.ColumnName));
@@ -89,7 +163,7 @@ namespace Generator.Server.DatabaseResolvers
             while (dataReader.Read())
             {
                 //Type.GetType(dataRow["DataType"]
-                var newObj = new ExpandoObject() as IDictionary<string, object>;
+                var newObj = new Dictionary<string, object>();// new ExpandoObject() as IDictionary<string, object>;
 
                 foreach (DataColumn column in schemaTable.Columns)
                     newObj.Add(column.ColumnName, dataReader.GetColumnValue(column.ColumnName));

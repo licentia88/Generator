@@ -1,7 +1,7 @@
-﻿using Generator.Server.Extensions;
+﻿using System.Data;
+using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Services;
-using Generator.Shared.Enums;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
@@ -88,7 +88,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
             //await connectionFactory2.ExecuteQueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
-            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)} WHERE TT_DESC IN(@TT_DESC)" , ("TT_DESC", LogicalOperator.In, new[] {"denim"}));
+            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
             return new GenObject(result);
         });
@@ -275,6 +275,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
+            var r1= await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(TEST_TABLE), quey.First());
             var result = await GeneratorConnection.DeleteAsync(nameof(TEST_TABLE), quey.First());
 
             return new GenObject(result);
@@ -287,6 +288,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
 
+            var r1 = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(STRING_TABLE), quey.First());
+
             var result = await GeneratorConnection.DeleteAsync(nameof(STRING_TABLE), quey.First());
 
             return new GenObject(result);
@@ -298,6 +301,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         return TaskHandler.ExecuteAsync(async () =>
         {
             var quey = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
+
+            var r1 = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(STRING_TABLE), quey.First());
 
             var result = await GeneratorConnection.DeleteAsync(nameof(COMPUTED_TABLE), quey.First());
 
@@ -350,5 +355,35 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
             return new GenObject(result);
         });
+    }
+
+    public async Task<RESPONSE_RESULT> ParametricQuery(CallContext context = default)
+    {
+        var whereStatement = new WhereStatement("CT_ROWID", "apparel");
+       
+
+        //whereStatement.AddPropertyValue("apparel");
+        //whereStatement.AddPropertyValue("bag");
+        //whereStatement.AddPropertyValue("batch");
+
+        var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)} WHERE CT_ROWID IN (@CT_ROWID)", whereStatement);
+
+        throw new NotImplementedException();
+    }
+
+    public async Task<RESPONSE_RESULT> ExecuteSp(CallContext context = default)
+    {
+        var sqlManager = SqlQueryFactory("DefaultConnection");
+
+        var EXISTINGDATA = await sqlManager.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE",null);
+
+        var newWhereStatement = new WhereStatement("TT_ROWID", EXISTINGDATA.First()["TT_ROWID"]);
+
+        
+
+        var test = await SqlQueryFactory("DefaultConnection").QueryAsync("ExampleStoredProcedure", CommandBehavior.Default,CommandType.StoredProcedure, newWhereStatement);
+
+        Console.WriteLine();
+        throw new NotImplementedException();
     }
 }

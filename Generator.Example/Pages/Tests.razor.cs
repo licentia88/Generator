@@ -20,6 +20,20 @@ namespace Generator.Example.Pages
             return base.OnInitializedAsync();
         }
 
+        private async void ParametricQuery()
+        {
+            var result = await ITestService.ParametricQuery();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
+        private async void ExecuteSP()
+        {
+            var result = await ITestService.ExecuteSp();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
         private async void InsertWithCodeTableTest()
         {
             var result = await ITestService.InsertWithCodeTableTest();

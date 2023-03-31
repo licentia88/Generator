@@ -67,7 +67,6 @@ public class TaskHandler
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            //TODO
             throw new Exception(ex.Message);
         }
     }

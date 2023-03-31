@@ -39,9 +39,40 @@
                         }
                     }
                 </MudGrid>
+
+                @{
+                    if (GenSearchFields is not null)
+                    {
+                        var adaptedData = CreateNewDataModel();
+                        <MudGrid Class="m-1">
+                            <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
+                                <CascadingValue Value="adaptedData" Name="@(nameof(IGenComponent.Model))">
+                                    @GenSearchFields
+                                </CascadingValue>
+                            </CascadingValue>
+                        </MudGrid>
+                        if (Search.HasDelegate)
+                        {
+                        <MudGrid Class="m-1" Justify="Justify.FlexEnd" >
+                            <MudItem Class="mr-8" xs="2" sm="2" md="2" lg="2" xl="2" xxl="2">
+                                <MudGrid Justify="Justify.Center">
+                                    <MudItem>
+                                        <MudFab EndIcon="@Icons.Material.Filled.Search"
+                                                Color="Color.Info"
+                                                Size="Size.Medium"
+                                                Label="Search"
+                                                @onclick="OnSearchClicked" Disabled="SearchDisabled" />
+                                    </MudItem>
+                                </MudGrid>
+                            </MudItem>
+                        </MudGrid>
+                        }
+                    }
+                }
+
             </CardHeaderContent>
             <CardHeaderActions>
-
+               
             </CardHeaderActions>
         </MudCardHeader>
 
@@ -50,6 +81,7 @@
                 if (GenHeaderButtons is not null)
                 {
                     @GenHeaderButtons
+                   
                 }
             }
         </MudGrid>
@@ -76,7 +108,7 @@
                           Filter="new Func<TModel, bool>(SearchFunction)"
                           Virtualize="Virtualize"
                           RowEditPreview="async x =>await MyRowEditPreview(x)"
-                          RowEditCancel="x => OnCancelClick(x.CastTo<TModel>())"
+                          RowEditCancel="async x => await OnCancelClick(x.CastTo<TModel>())"
                           RowEditCommit="async x => await Commit()"
                           IsEditRowSwitchingBlocked="true"
                           ApplyButtonPosition="TableApplyButtonPosition.End"
@@ -97,16 +129,28 @@
                             Func<IGenComponent, bool> predicate;
 
                             if (ViewState != ViewState.None)
-                            {
-                                predicate = x => x.EditorVisible;
+                            {   //edit create vs
+                                predicate = x => x.EditorVisible && x is not GenSpacer;
                             }
                             else
                             {
-                                predicate = x => x.GridVisible;
+                                predicate = x => x is not GenSpacer;
                             }
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(predicate))
+                            foreach (var item in GetComponentsOf<IGenComponent>().Where(predicate).OrderBy(x => x.Order))
                             {
+                                if (ViewState == ViewState.None)
+                                {
+                                    if (!item.GridVisible)
+                                    {
+                                        <MudTh>
+
+                                        </MudTh>
+                                        continue;
+                                    }
+                                }
+
+
                                 if (!EnableSorting)
                                 {
                                     <MudTh>
@@ -116,11 +160,13 @@
                                 else
                                 {
                                     <MudTh>
-                                       <MudTableSortLabel SortBy="new Func<TModel, object>(x=> x.GetPropertyValue(item.BindingField))">@item.Label</MudTableSortLabel>
+                                        <MudTableSortLabel SortBy="new Func<TModel, object>(x=> x.GetPropertyValue(item.BindingField))">@item.Label</MudTableSortLabel>
                                     </MudTh>
                                 }
 
+
                             }
+
 
                         }
                         <MudTh>
@@ -161,21 +207,24 @@
                             }
 
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.GridVisible))
+                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x is not GenSpacer).OrderBy(x => x.Order))
                             {
+                                if (!item.GridVisible)
+                                {
+                                    <MudTd>
+
+                                    </MudTd>
+                                    continue;
+                                }
                                 <MudTd @onclick:stopPropagation="EditMode == EditMode.Form">
                                     @item.RenderAsGridComponent(context)
                                 </MudTd>
                             }
 
-                            <MudTd>
-
-                            </MudTd>
-
+                              //CreateTusuYerineGelecek kolon
+                              <MudTd></MudTd>
 
 
-
-                           
                             if (Delete.HasDelegate && RowEditTrigger == TableEditTrigger.RowClick)
                             {
                                 <MudTd>
@@ -184,7 +233,7 @@
                                 </MudTd>
 
                             }
-                            
+
 
 
                         }
@@ -212,16 +261,16 @@
                                 <MudTd></MudTd>
                             }
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible).ToList())
+                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible && x is not GenSpacer).OrderBy(x=> x.Order).ToList())
                             {
-                                <MudTd Style="width: auto !important">
+                                <MudTd Style="width: auto !important">  
                                     @item.RenderAsComponent(_context, true)
                                 </MudTd>
                             }
 
-                    <MudTd>
+                                <MudTd>
                       
-                    </MudTd>
+                                </MudTd>
                         }
 
 
@@ -249,25 +298,33 @@
 
                     <EditButtonContent Context="button">
 
+                        @{
+
+                            TModel model = (TModel)button.ButtonAction.Target.CastTo<MudTr>().Item;
+                        }
+
                         <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
                             @{
                                 if (Update.HasDelegate)
                                 {
-                                    TModel model = (TModel)button.ButtonAction.Target.CastTo<MudTr>().Item;
-
                                     if (!EditButtonActionList.Contains(button.ButtonAction))
                                         EditButtonActionList.Add(button.ButtonAction);
 
-                                    <MudIconButton @ref="EditButtonRef" Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@( async () => { if (ViewState == ViewState.None) { ViewState = ViewState.Update; } button.ButtonAction.Invoke(); })"
-                                                   Disabled="@button.ButtonDisabled" />
+                                        <MudIconButton @ref="EditButtonRef"
+                                                       Size="@Size.Small"
+                                                       Icon="@Icons.Outlined.Edit"
+                                                       Class="pa-0"
+                                                       OnClick="()=>OnEditContextButtonClick(button)"
+                                                       Disabled="@button.ButtonDisabled" />
                                 }
+ 
                             }
 
                             @{
                                 if (Delete.HasDelegate)
                                 {
                                     Console.WriteLine(button.ToString());
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(new TModel()))" Disabled="@button.ButtonDisabled" />
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="@button.ButtonDisabled" />
                                 }
                             }
 
@@ -275,7 +332,8 @@
                     </EditButtonContent>
                 </MudTable>
 
-                  
+                    IsRendered = true;
+
                 }
 
 

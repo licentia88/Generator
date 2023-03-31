@@ -8,7 +8,7 @@ public interface IGenComboBox: IGenComponent
 
     public string ValueField { get; set; }
 
-    public void OnValueChanged(object value);
+    public void SetValue(object value);
 
 
 }

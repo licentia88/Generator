@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Generator.Components.Components
 {
@@ -74,13 +75,27 @@ namespace Generator.Components.Components
 
         public Action<object> ValueChangedAction { get; set; }
 
+        [CascadingParameter(Name = nameof(IsSearchField))]
+        public bool IsSearchField { get; set; }
+
+
         protected override Task OnInitializedAsync()
         {
-            ParentGrid?.AddChildComponent(this);
+            if (IsSearchField)
+                ParentGrid?.AddSearchFieldComponent(this);
+            else
+                ParentGrid?.AddChildComponent(this);
 
 
-            return base.OnInitializedAsync();
+            return Task.CompletedTask;
         }
+
+        //protected override void BuildRenderTree(RenderTreeBuilder builder)
+        //{
+        //    if (Model is not null || ParentGrid.IsRendered)
+        //        base.BuildRenderTree(builder);
+        //}
+ 
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
@@ -95,6 +110,11 @@ namespace Generator.Components.Components
 
         public void ValidateObject()
         {
+        }
+
+        public object GetValue()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -77,6 +77,8 @@ public class GenValidator<T> : AbstractValidator<T>
 
         var value = model.GetPropertyValue(propertyName);
 
+        if (value is null) return false;
+
         bool isValid = Validator.TryValidateProperty(value, context, results);
 
         if (isValid)

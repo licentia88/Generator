@@ -15,10 +15,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.51.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.52.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
-    <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.0.179" />
+    <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.1.1" />
     <PackageReference Include="GenFu" Version="1.6.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">

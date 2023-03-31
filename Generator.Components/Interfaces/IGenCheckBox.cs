@@ -11,7 +11,7 @@ public interface IGenCheckBox : IGenComponent
     public string FalseText { get; set; }
 
     //public  Action<bool> ValueChangedAction { get; set; }
-    //public void OnCheckChanged(bool value);
+    public void SetValue(bool value);
 
 
 

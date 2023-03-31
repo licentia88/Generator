@@ -3,10 +3,11 @@ using MudBlazor.Services;
 using Generator.Shared.Extensions;
 using Generator.Examples.Shared;
 using Generator.Components.Extensions;
-using Generator.Examples.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using Generator.Example.InjectionTest;
+using Generator.Client;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,32 +18,17 @@ CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
-builder.Services.RegisterComponents();
+builder.Services.RegisterGeneratorComponents();
 builder.Services.AddSingleton<Lazy<List<USER>>>();
 builder.Services.AddSingleton<InjectionClass>();
 
 
+ 
 
-//builder.Services.RegisterGrpcService<IGenericServiceBase>();
-//builder.Services.RegisterGrpcService<ITestService>();
-//builder.Services.RegisterGrpcService<IDatabaseService>();
-//builder.Services.RegisterGrpcService<IHeaderButtonService>();
-//builder.Services.RegisterGrpcService<IFooterButtonService>();
-//builder.Services.RegisterGrpcService<IGridsMService>();
-//builder.Services.RegisterGrpcService<IGridsDService>();
-//builder.Services.RegisterGrpcService<IUserService>();
-//builder.Services.RegisterGrpcService<IOrdersMService>();
-//builder.Services.RegisterGrpcService<IOrdersDService>();
-
-builder.Services.RegisterGrpcServiceWithSsl2<ITestService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IDatabaseService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IHeaderButtonService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IFooterButtonService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IGridsMService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IGridsDService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IUserService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IOrdersMService>("https://localhost:7178");
-builder.Services.RegisterGrpcServiceWithSsl2<IOrdersDService>("https://localhost:7178");
+builder.Services.RegisterGrpcService<ITestService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+builder.Services.RegisterGrpcService<IUserService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+builder.Services.RegisterGrpcService<IOrdersMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+builder.Services.RegisterGrpcService<IOrdersDService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 
 
 

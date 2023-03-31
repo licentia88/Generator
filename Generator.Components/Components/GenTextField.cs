@@ -15,15 +15,13 @@ namespace Generator.Components.Components;
 public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 { 
 
-    public Type DataType { get; set; }
-
-    public object GetDefaultValue => DataType.GetDefaultValue();
-
     [CascadingParameter(Name = nameof(ParentGrid))]
     public INonGenGrid ParentGrid { get; set; }
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
+
+    
 
     [Parameter]
     [EditorRequired]
@@ -66,12 +64,17 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public int xxl { get; set; } = 12;
 
-    //public IGenComponent Reference { get; set; }
 
-    //Gridin basinda cagirdigimiz icin buraya duser, tabi model null oldugu icin renderlemiyoruz
+    public Type DataType { get; set; }
+
+    public object GetDefaultValue => DataType.GetDefaultValue();
+
+    [CascadingParameter( Name = nameof(IsSearchField))]
+    public bool IsSearchField { get; set; }
+ 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null)
+        if (Model is not null || ParentGrid.IsRendered)
             base.BuildRenderTree(builder);
 
     }
@@ -93,7 +96,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
 
         Immediate = true;
-        ParentGrid?.AddChildComponent(this);
+
+        if (IsSearchField)
+            ParentGrid?.AddSearchFieldComponent(this);
+        else
+            ParentGrid?.AddChildComponent(this);
+
 
         return Task.CompletedTask;
     }
@@ -117,25 +125,31 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
-    public Action<object> ValueChangedAction { get; set; }
+   
 
-    public void OnValueChanged(object value)
+    public void SetValue(object value)
     {
-        Model.SetPropertyValue(BindingField, value);
+        Model?.SetPropertyValue(BindingField, value);
+     }
 
-        //ValueChangedAction.Invoke(value);
-        //ParentGrid.ValidateValue(BindingField);
+    public void OnClearClicked(MouseEventArgs arg)
+    {
+
+        Model.SetPropertyValue(BindingField, null);
+
     }
-
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) =>  builder =>
     {
         Model = model;
 
-        ValueChangedAction = x => OnValueChanged(x);
-
-        ValueChanged = EventCallback.Factory.Create<object>(this, x => ValueChangedAction.Invoke(x));
-
+        if(!ValueChanged.HasDelegate)
+        {
+            ValueChanged = EventCallback.Factory.Create<object>(this, x => SetValue(x));
+        }
+       
         OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {  ParentGrid.ValidateValue(BindingField); });
+
+        OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
 
         var loValue = model.GetPropertyValue(BindingField);
 
@@ -159,6 +173,11 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
           ParentGrid.ValidateValue( BindingField);
 
 
+    }
+
+    public object GetValue()
+    {
+        return this.GetFieldValue(nameof(_value));
     }
 
     //public GenTextField GetReference()

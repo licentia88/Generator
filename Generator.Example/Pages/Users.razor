@@ -10,26 +10,42 @@
              Title="Users"
              RowEditTrigger="TableEditTrigger.EditButton"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.Form"
-             EnableSearch="true"
+             EditMode="EditMode.SmartForm"
+             EnableSearch="false"
              EnableSorting="true"
+             OnBeforeShowDialog="x=>OnBeforeLoad(x)"
              Class="m-2"
+             Search="async x=> await Search(x)"
              Create="@( async x=> await CreateAsync(x))"
              Update="@( async x=> await UpdateAsync(x))"
              Delete="@( async x=> await DeleteAsync(x))"
-             Load="@(async x=> await Load(x))">
+             Load="@( x=> Load(x))">
+        <GenSearchFields>
+
+            <MudItem xs="5" sm="5" md="5" lg="5" xl="5" xxl="5">
+                <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="true" />
+            </MudItem>
+
+            <MudItem xs="1" sm="1" md="1" lg="1" xl="1" xxl="1"></MudItem>
+           
+            <MudItem xs="5" sm="5" md="5" lg="5" xl="5" xxl="5">
+                <GenDatePicker Clearable="true" BindingField="DateField" 
+                    Label="DateExample" Required="true" />
+            </MudItem>
+        </GenSearchFields>
         <GenColumns>
 
             <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
+
             <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
-            <GenTextField BindingField="@nameof(USER.U_LASTNAME)"
-                          Label="Last Name"
-                          GridVisible="false"
-                          EditorEnabled="true" />
+
+            <GenTextField BindingField="@nameof(USER.U_LASTNAME)"  
+                          Label="Last Name" />
 
             <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />
 
             <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
+                           DateChanged="x=> OnDateChanged(x)"
                            TransformOrigin="Origin.BottomLeft"
                            Clearable="true" Label=" Reg. Date" />
         </GenColumns>

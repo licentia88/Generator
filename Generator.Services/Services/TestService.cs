@@ -82,12 +82,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            //var connectionFactory = ConnectionFactory["DefaultConnection"].Invoke();
-
-            var connectionFactory2 = ConnectionFactory["GeneratorConnection"].Invoke();
-
-            //await connectionFactory2.ExecuteQueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
-
+           
             var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
             return new GenObject(result);
@@ -368,7 +363,8 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
         var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)} WHERE CT_ROWID IN (@CT_ROWID)", whereStatement);
 
-        throw new NotImplementedException();
+
+        return new RESPONSE_RESULT(new GenObject(result));
     }
 
     public async Task<RESPONSE_RESULT> ExecuteSp(CallContext context = default)
@@ -379,11 +375,23 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
         var newWhereStatement = new WhereStatement("TT_ROWID", EXISTINGDATA.First()["TT_ROWID"]);
 
-        
+        //ExampleFunction
 
-        var test = await SqlQueryFactory("DefaultConnection").QueryAsync("ExampleStoredProcedure", CommandBehavior.Default,CommandType.StoredProcedure, newWhereStatement);
+        var result = await SqlQueryFactory("DefaultConnection").QueryAsync("ExampleStoredProcedure", CommandBehavior.Default,CommandType.StoredProcedure, newWhereStatement);
 
         Console.WriteLine();
-        throw new NotImplementedException();
+        return new RESPONSE_RESULT(new GenObject(result));
+    }
+
+    public async Task<RESPONSE_RESULT> ExecuteFunction(CallContext context = default)
+    {
+
+        var spMetaData = await SqlQueryFactory("DefaultConnection").GetMethodParameters("ExampleStoredProcedure");
+        var newWhereStatement = new WhereStatement("long", 9);
+
+        var result = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT dbo.ExampleFunction(@long)", CommandBehavior.Default, CommandType.Text, newWhereStatement);
+
+        return new RESPONSE_RESULT(new GenObject(result));
+
     }
 }

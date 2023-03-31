@@ -19,6 +19,8 @@ namespace Generator.Components.Components
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get; set; }
 
+     
+
         [Parameter]
         [EditorRequired]
         public string BindingField { get; set; }
@@ -61,35 +63,48 @@ namespace Generator.Components.Components
         [Parameter]
         public int xxl { get; set; } = 12;
 
-        public Action<object> ValueChangedAction { get; set; }
 
+        [CascadingParameter(Name = nameof(IsSearchField))]
+        public bool IsSearchField { get; set; }
+
+       
         protected override Task OnInitializedAsync()
         {
-            ParentGrid?.AddChildComponent(this);
+            if (IsSearchField)
+                ParentGrid?.AddSearchFieldComponent(this);
+            else
+            {
+                if(Model is not null)
+                {
+                    Date = (DateTime?)Model?.GetPropertyValue(BindingField);
+                }
 
-            //To do check if this line vcan be removed
-            Date = (DateTime?)Model?.GetPropertyValue(BindingField);
+                ParentGrid?.AddChildComponent(this);
+            }
+
+
+
 
             return Task.CompletedTask;
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null )
+            if (Model is not null || ParentGrid.IsRendered)
                 base.BuildRenderTree(builder);
+
         }
 
-        public void OnDateChanged(DateTime? date)
+        public void SetValue(DateTime? date)
         {
-            Model.SetPropertyValue(BindingField, date);
+            Model?.SetPropertyValue(BindingField, date);
 
             //ParentGrid.ValidateValue(BindingField);
-
-        }
+         }
 
         protected override void OnClosed()
         {
-            if (!Error)
+            if (!Error && !IsSearchField)
                  ParentGrid.ValidateValue(BindingField);
 
             base.OnClosed();
@@ -97,23 +112,28 @@ namespace Generator.Components.Components
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
-            Model = model;
            
-            ValueChangedAction = x => OnDateChanged(x.CastTo<DateTime?>());
+            Model = model;
 
-            DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => ValueChangedAction.Invoke(x));
+            if (!DateChanged.HasDelegate)
+            {
+                DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => SetValue(x.CastTo<DateTime?>()));
+            }
+
+            var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
 
 
-            //Date = (DateTime?)model.GetPropertyValue(BindingField);
+                builder.RenderComponent(this, ignoreLabels,(nameof(_value),valDate), (nameof(Disabled), !EditorEnabled));
 
-            builder.RenderComponent(this,ignoreLabels, (nameof(Disabled), !EditorEnabled));
         };
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
             var val = (DateTime?)model.GetPropertyValue(BindingField);
 
-            if(val is not null)
+           
+
+            if (val is not null)
                 RenderExtensions.RenderGrid(builder, val.Value.ToString(DateFormat));
 
         };
@@ -122,8 +142,11 @@ namespace Generator.Components.Components
         {
             ParentGrid.ValidateValue(BindingField);
         }
+        public object GetValue()
+        {
+            return this.GetFieldValue(nameof(_value));
+        }
 
-       
     }
 }
 

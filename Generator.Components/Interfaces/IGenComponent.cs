@@ -5,7 +5,9 @@ namespace Generator.Components.Interfaces;
 
 public interface IGenComponent: IGenCompRenderer
 {
-    //public IGenComponent Reference { get; set; }
+    public object GetValue();
+
+    public bool IsSearchField { get; set; }
 
     public string BindingField { get; set; }
 
@@ -47,7 +49,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public void ValidateObject();
 
-    public Action<object> ValueChangedAction { get; set; }
+    //public Action<object> ValueChangedAction { get; set; }
 
 }
 

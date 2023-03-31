@@ -1,4 +1,5 @@
 ﻿using Generator.Components.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Interfaces;
@@ -6,6 +7,8 @@ namespace Generator.Components.Interfaces;
 public interface IGenPage<TModel> : INonGenPage, IGenView<TModel> where TModel:new()
 {
     public GenGrid<TModel> GenGrid { get; set; }
+
+
 }
 
 public interface INonGenPage: INonGenView

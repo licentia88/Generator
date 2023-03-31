@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Data.Common;
+using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
@@ -24,7 +25,7 @@ namespace Generator.Example.Pages
         private IGenView<USER> View { get; set; }
 
 
- 
+        
         protected override async Task OnInitializedAsync()
         {
 
@@ -36,9 +37,39 @@ namespace Generator.Example.Pages
 
         }
 
-        public async ValueTask Load(IGenView<USER> view)
+
+        public void OnBeforeLoad(IGenGrid<USER> grid)
+        {
+            //if (grid.SelectedItem.U_AGE == 0)
+            //{
+            //    grid.ShouldShowDialog = false;
+            //}
+        }
+
+        private GenTextField U_LASTNAME;
+        private GenDatePicker U_REGISTER_DATE;
+
+        public void OnDateChanged(DateTime? date)
+        {
+            U_REGISTER_DATE.SetValue(date);
+            U_LASTNAME.SetValue("VALUE SET!!");
+            //View.StateHasChanged();
+        }
+
+        public  void Load(IGenView<USER> view)
         {
             View = view;
+
+            U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
+
+            U_REGISTER_DATE = view.GetComponent<GenDatePicker>(nameof(USER.U_REGISTER_DATE));
+        }
+
+        public async ValueTask Search(SearchArgs components)
+        {
+            var wherestatements = components.WhereStatementCollection();
+
+            Console.WriteLine();
         }
 
         public async ValueTask CreateAsync(USER data)
@@ -46,10 +77,12 @@ namespace Generator.Example.Pages
             //throw new Exception();
              var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
 
+
             //REQUIRED 
             data.U_ROWID = result.U_ROWID;
             data = result;
 
+ 
             DataSource.Add(data);
         }
         public void TEST()

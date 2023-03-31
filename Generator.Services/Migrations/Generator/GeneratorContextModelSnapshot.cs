@@ -21,156 +21,253 @@ namespace Generator.Services.Migrations.Generator
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", b =>
                 {
-                    b.Property<int>("COMP_ROWID")
+                    b.Property<int>("CB_ROWID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("COMP_ROWID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CB_ROWID"), 1L, 1);
 
-                    b.Property<string>("COMP_DATABASE")
+                    b.Property<string>("CB_CODE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CB_COMMAND_TYPE")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CB_COMPONENT_TYPE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CB_DATABASE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CB_DESCRIPTION")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CB_SQL_COMMAND")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CB_TITLE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CB_ROWID");
+
+                    b.ToTable("COMPONENT_BASE");
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.DISPLAY_FIELDS", b =>
+                {
+                    b.Property<int>("DF_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DF_ROWID"), 1L, 1);
+
+                    b.Property<string>("DF_ALIAS_FIELD")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DF_COMPONENT_REFNO")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DF_DATABASE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DF_FIELD_NAME")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DF_TABLE_NAME")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DF_ROWID");
+
+                    b.HasIndex("DF_COMPONENT_REFNO");
+
+                    b.ToTable("DISPLAY_FIELDS");
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PERMISSIONS", b =>
+                {
+                    b.Property<int>("PER_ROWID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PER_ROWID"), 1L, 1);
+
+                    b.Property<string>("PER_AUTH_CODE")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("COMP_TITLE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("COMP_TYPE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("COMP_ROWID");
-
-                    b.HasIndex("COMP_DATABASE");
-
-                    b.ToTable("COMPONENT");
-                });
-
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.DATABASES", b =>
-                {
-                    b.Property<string>("DatabaseIdentifier")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConnectionString")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DatabaseIdentifier");
-
-                    b.ToTable("DATABASES");
-                });
-
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.FOOTER_BUTTON", b =>
-                {
-                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT");
-
-                    b.Property<int>("FB_GRID_REFNO")
+                    b.Property<int>("PER_COMPONENT_REFNO")
                         .HasColumnType("int");
 
-                    b.HasIndex("FB_GRID_REFNO");
+                    b.Property<string>("PER_COMP_AUTH_CODE")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("FOOTER_BUTTON");
+                    b.Property<string>("PER_COMP_TYPE")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PER_DESCRIPTION")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PER_ROWID");
+
+                    b.HasIndex("PER_COMPONENT_REFNO", "PER_AUTH_CODE")
+                        .IsUnique()
+                        .HasFilter("[PER_AUTH_CODE] IS NOT NULL");
+
+                    b.ToTable("PERMISSIONS");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_M", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.BUTTONS_BASE", b =>
                 {
-                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT");
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT_BASE");
 
-                    b.ToTable("GRIDS_M");
-                });
-
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTON", b =>
-                {
-                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT");
-
-                    b.Property<int>("HB_GRID_REFNO")
+                    b.Property<int>("BB_PAGE_REFNO")
                         .HasColumnType("int");
 
-                    b.HasIndex("HB_GRID_REFNO");
+                    b.HasIndex("BB_PAGE_REFNO");
 
-                    b.ToTable("HEADER_BUTTON");
+                    b.ToTable("BUTTONS_BASE");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_D", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_M", b =>
                 {
-                    b.HasBaseType("Generator.Shared.Models.ComponentModels.GRIDS_M");
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.COMPONENT_BASE");
 
-                    b.Property<int>("GD_M_REFNO")
+                    b.Property<bool>("PM_CREATE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PM_DELETE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("PM_READ")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PM_TABLE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PM_UPDATE")
+                        .HasColumnType("bit");
+
+                    b.ToTable("PAGES_M");
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRID_BUTTONS", b =>
+                {
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.BUTTONS_BASE");
+
+                    b.ToTable("GRID_BUTTONS");
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTONS", b =>
+                {
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.BUTTONS_BASE");
+
+                    b.ToTable("HEADER_BUTTONS");
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_D", b =>
+                {
+                    b.HasBaseType("Generator.Shared.Models.ComponentModels.PAGES_M");
+
+                    b.Property<int>("PD_M_REFNO")
                         .HasColumnType("int");
 
-                    b.HasIndex("GD_M_REFNO");
+                    b.HasIndex("PD_M_REFNO")
+                        .IsUnique()
+                        .HasFilter("[PD_M_REFNO] IS NOT NULL");
 
-                    b.ToTable("GRIDS_D");
+                    b.ToTable("PAGES_D");
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.DISPLAY_FIELDS", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.ComponentModels.DATABASES", "DATABASES")
-                        .WithMany()
-                        .HasForeignKey("COMP_DATABASE");
-
-                    b.Navigation("DATABASES");
-                });
-
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.FOOTER_BUTTON", b =>
-                {
-                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT", null)
-                        .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.ComponentModels.FOOTER_BUTTON", "COMP_ROWID")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
-                        .WithMany("FOOTER_BUTTON")
-                        .HasForeignKey("FB_GRID_REFNO")
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", null)
+                        .WithMany("DISPLAY_FIELDS")
+                        .HasForeignKey("DF_COMPONENT_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_M", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PERMISSIONS", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT", null)
-                        .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.ComponentModels.GRIDS_M", "COMP_ROWID")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTON", b =>
-                {
-                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT", null)
-                        .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.ComponentModels.HEADER_BUTTON", "COMP_ROWID")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
-                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
-                        .WithMany("HEADER_BUTTON")
-                        .HasForeignKey("HB_GRID_REFNO")
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", null)
+                        .WithMany("PERMISSIONS")
+                        .HasForeignKey("PER_COMPONENT_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_D", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.BUTTONS_BASE", b =>
                 {
-                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
+                    b.HasOne("Generator.Shared.Models.ComponentModels.PAGES_M", null)
+                        .WithMany("BUTTONS_BASE")
+                        .HasForeignKey("BB_PAGE_REFNO")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", null)
                         .WithOne()
-                        .HasForeignKey("Generator.Shared.Models.ComponentModels.GRIDS_D", "COMP_ROWID")
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.BUTTONS_BASE", "CB_ROWID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_M", b =>
+                {
+                    b.HasOne("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", null)
+                        .WithOne()
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.PAGES_M", "CB_ROWID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRID_BUTTONS", b =>
+                {
+                    b.HasOne("Generator.Shared.Models.ComponentModels.BUTTONS_BASE", null)
+                        .WithOne()
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.GRID_BUTTONS", "CB_ROWID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTONS", b =>
+                {
+                    b.HasOne("Generator.Shared.Models.ComponentModels.BUTTONS_BASE", null)
+                        .WithOne()
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.HEADER_BUTTONS", "CB_ROWID")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_D", b =>
+                {
+                    b.HasOne("Generator.Shared.Models.ComponentModels.PAGES_M", null)
+                        .WithOne()
+                        .HasForeignKey("Generator.Shared.Models.ComponentModels.PAGES_D", "CB_ROWID")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("Generator.Shared.Models.ComponentModels.GRIDS_M", null)
-                        .WithMany("GRIDS_D")
-                        .HasForeignKey("GD_M_REFNO")
+                    b.HasOne("Generator.Shared.Models.ComponentModels.PAGES_M", null)
+                        .WithMany("PAGES_D")
+                        .HasForeignKey("PD_M_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRIDS_M", b =>
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", b =>
                 {
-                    b.Navigation("FOOTER_BUTTON");
+                    b.Navigation("DISPLAY_FIELDS");
 
-                    b.Navigation("GRIDS_D");
+                    b.Navigation("PERMISSIONS");
+                });
 
-                    b.Navigation("HEADER_BUTTON");
+            modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_M", b =>
+                {
+                    b.Navigation("BUTTONS_BASE");
+
+                    b.Navigation("PAGES_D");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,6 +7,7 @@ using Mapster;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
+using static MudBlazor.CategoryTypes;
 
 namespace Generator.Components.Components
 {
@@ -47,12 +48,13 @@ namespace Generator.Components.Components
         public List<IGenComponent> Components { get; set; }
 
         [Parameter]
-        public EventCallback<IGenView<TModel>> Load { get; set; }
+        public List<IGenComponent> SearchFieldComponents { get; set; }
+
 
         [Parameter]
-        public EventCallback<IGenView<TModel>> OnRender { get; set; }
+        public EventCallback<IGenView<TModel>> Load { get; set; }
 
-
+     
         protected override async Task OnInitializedAsync()
         {
             GenGrid.CurrentGenPage = this;
@@ -69,8 +71,8 @@ namespace Generator.Components.Components
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (OnRender.HasDelegate)
-                await OnRender.InvokeAsync(this);
+            //if (OnRender.HasDelegate)
+            //    await OnRender.InvokeAsync(this);
 
 
             GetSubmitTextFromViewState();
@@ -188,18 +190,25 @@ namespace Generator.Components.Components
  
         public void Dispose()
         {
-            if (ViewState != ViewState.None)
+             if (ViewState != ViewState.None)
             {
                 MudDialog.Close();
                 GenGrid.OriginalTable.RowEditCancel.Invoke(SelectedItem);
             }
 
-            
+ 
             RefreshParentGrid.InvokeAsync();
             GenGrid.ResetValidation();
             MudDialog.Dispose();
+
+           
         }
 
-       
+        public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+        {
+            var item = SearchFieldComponents.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
+
+            return item is null ? default : item.CastTo<TComponent>();
+        }
     }
 }

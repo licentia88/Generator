@@ -5,14 +5,12 @@ using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Models.Shema;
 using Generator.Shared.Models;
-using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using GenFu;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Protocols;
 using ProtoBuf.Grpc;
 using static Generator.Server.GeneratorContext;
 
@@ -23,7 +21,6 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
 {
     protected readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
 
-    public Lazy<List<GRIDS_M>> Components { get; set; }
 
     protected TContext Db { get; set; }
 

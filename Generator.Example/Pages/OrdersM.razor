@@ -4,17 +4,16 @@
 
 <GenGrid DataSource="@(DataSource)"
          TModel="ORDERS_M"
-         EditMode="EditMode.Form"
+         EditMode="EditMode.Inline"
          RowEditTrigger="TableEditTrigger.RowClick"
          Class="m-2"
          Load="OnLoad"
-         OnRender="OnRender"
          Create="@( async x=> await CreateAsync(x))"
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">
     <GenColumns>
         <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)"  Label="RefNo" Disabled="true" />
-        <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" ValueChanged="x => ValChanged(x)" />
     </GenColumns>
 </GenGrid>
 
@@ -49,16 +48,10 @@
         //page.SelectedItem.OM_DESCRIPTION = "test";
     }
 
-    public void OnRender(IGenView<ORDERS_M> page)
-    {
-        descTextField.ValueChangedAction = x => ValChanged(x);
-
-        //descTextField.GetReference().ValueChanged = EventCallback.Factory.Create<object>(this, ValChanged);
-
-    }
+    
     public void ValChanged(object str)
     {
-        descTextField.OnValueChanged(str);
+        descTextField.SetValue(str);
     }
     public async ValueTask CreateAsync(ORDERS_M data)
     {

@@ -45,15 +45,24 @@
     <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.1.26" />
-    <PackageReference Include="protobuf-net.Grpc" Version="1.0.179" />
+    <PackageReference Include="protobuf-net" Version="3.2.16" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.1.1" />
     <PackageReference Include="AvroConvert" Version="3.3.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />
-    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.0.179" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.51.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.51.0" />
+    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.1.1" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.52.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.52.0" />
     <PackageReference Include="FsPickler" Version="5.3.2" />
     <PackageReference Include="FsPickler.Json" Version="5.3.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Models\ComponentModels\FOOTER_BUTTON.cs" />
+    <Compile Remove="Models\ComponentModels\DATABASES.cs" />
+    <Compile Remove="Models\ComponentModels\GRIDS_D.cs" />
+    <Compile Remove="Models\ComponentModels\HEADER_BUTTON.cs" />
+    <Compile Remove="Models\ComponentModels\GRIDS_M.cs" />
+    <Compile Remove="Models\ComponentModels\COMPONENT.cs" />
   </ItemGroup>
 </Project>

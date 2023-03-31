@@ -2,5 +2,5 @@
 
 public interface IGenDatePicker: IGenComponent
 {
-    public void OnDateChanged(DateTime? date);
+    public void SetValue(DateTime? date);
 }

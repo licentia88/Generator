@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Configuration;
 using Generator.Server.Models.Shema;
-using Microsoft.Data.SqlClient;
 using System.Reflection.PortableExecutable;
 using System.Dynamic;
 using Generator.Server.Extensions;

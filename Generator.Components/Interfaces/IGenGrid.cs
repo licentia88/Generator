@@ -1,3 +1,4 @@
+using Generator.Components.Args;
 using Generator.Components.Validators;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -36,7 +37,11 @@ public interface INonGenGrid:INonGenView
 
     public bool EnableSorting { get; set; }
 
+    public bool IsRendered { get; set; }
+
     public RenderFragment GenColumns { get; set; }
+
+    public RenderFragment GenSearchFields { get; set; }
 
     public RenderFragment GenHeaderButtons { get; set; }
 
@@ -58,7 +63,10 @@ public interface INonGenGrid:INonGenView
 
     public void AddChildComponent(IGenComponent component);
 
+    public void AddSearchFieldComponent(IGenComponent component);
+
     public bool HasErrors();
+
 
 }
 
@@ -77,7 +85,23 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
     public EventCallback<TModel> Delete { get; set; }
 
     public EventCallback<TModel> Cancel { get; set; }
- 
+
+    public EventCallback<TModel> OnBeforeSubmit { get; set; }
+
+    public EventCallback<TModel> OnAfterSubmit { get; set; }
+
+    public EventCallback<TModel> OnBeforeCancel { get; set; }
+
+    public EventCallback<TModel> OnAfterCancel { get; set; }
+
+    public bool ShouldShowDialog { get; set; }
+
+    public EventCallback<IGenGrid<TModel>> OnBeforeShowDialog { get; set; }
+
+    public EventCallback OnClose { get; set; }
+
+    public EventCallback<SearchArgs> Search { get; set; }
+
     public void OnDetailClicked(TModel context);
 
    

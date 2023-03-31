@@ -21,6 +21,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
+ 
+
     [Parameter]
     [EditorRequired()]
     public string BindingField { get; set; }
@@ -74,26 +76,29 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     //public IGenComponent Reference { get; set; }
 
-    public Action<object> ValueChangedAction { get; set; }
+    [CascadingParameter(Name = nameof(IsSearchField))]
+    public bool IsSearchField { get; set; }
 
     protected override Task OnInitializedAsync()
     {
-        ParentGrid?.AddChildComponent(this);
+        if (IsSearchField)
+            ParentGrid?.AddSearchFieldComponent(this);
+        else
+            ParentGrid?.AddChildComponent(this);
 
         return Task.CompletedTask;
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null )
-        {
+        if (Model is not null || ParentGrid.IsRendered)
             base.BuildRenderTree(builder);
-        }
+
     }
 
-    private void OnValueChanged(bool value)
+    public void SetValue(bool value)
     {
-        Model.SetPropertyValue(BindingField, value);
+        Model?.SetPropertyValue(BindingField, value);
 
         Checked = value;
     }
@@ -102,9 +107,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     {
         Model = model;
 
-        ValueChangedAction = x => OnValueChanged(x.CastTo<bool>());
-
-        CheckedChanged = EventCallback.Factory.Create<bool>(this, x=>  ValueChangedAction.Invoke(x));
+        if (!CheckedChanged.HasDelegate)
+            CheckedChanged = EventCallback.Factory.Create<bool>(this, x => SetValue(x));
 
         var val = (bool)model.GetPropertyValue(BindingField);
 
@@ -123,6 +127,11 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     public void ValidateObject()
     {
         ParentGrid.ValidateValue(BindingField);
+    }
+
+    public object GetValue()
+    {
+        return this.GetFieldValue(nameof(_value));
     }
 
     //public GenCheckBox GetReference()

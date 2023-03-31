@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Generator.Components.Components
 {
     public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<GenComboBox>
     {
-        //public ObjectValidator<GenComboBox> ObjectValidator { get; set; } = new();
-
         [CascadingParameter(Name = nameof(ParentGrid))]
         public INonGenGrid ParentGrid { get; set; }
 
@@ -27,6 +27,7 @@ namespace Generator.Components.Components
         [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
         public object Model { get; set; }
 
+       
         [Parameter]
         [EditorRequired]
         public string BindingField { get; set; }
@@ -73,51 +74,60 @@ namespace Generator.Components.Components
         public IEnumerable<object> DataSource { get; set; }
 
         //public IGenComponent Reference { get; set; }
-        public Action<object> ValueChangedAction { get; set; }
+        //[Parameter]
+        //public Action<object> ValueChangedAction { get; set; }
+
+        [CascadingParameter(Name = nameof(IsSearchField))]
+        public bool IsSearchField { get; set; }
+
 
         protected override Task OnInitializedAsync()
         {
-            ParentGrid?.AddChildComponent(this);
+            
 
+            if (IsSearchField)
+                ParentGrid?.AddSearchFieldComponent(this);
+            else
+                ParentGrid?.AddChildComponent(this);
 
             return Task.CompletedTask;
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null )
+            if (Model is not null || ParentGrid.IsRendered)
                 base.BuildRenderTree(builder);
         }
 
 
         public void OnClearClicked(MouseEventArgs arg)
         {
+            
             Model.SetPropertyValue(BindingField, null);
 
-            ParentGrid.ValidateValue(BindingField);
         }
-        public void OnValueChanged(object value)
+
+        public void SetValue(object value)
         {
             if (value is null) return;
 
-            Model.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
+            Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
             //ParentGrid.ValidateValue(BindingField);
 
         }
 
-        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
+        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async builder =>
         {
             Model = model;
 
-            ValueChangedAction = x => OnValueChanged(x);
+            if (!ValueChanged.HasDelegate)
+                ValueChanged = EventCallback.Factory.Create<object>(this, x => SetValue(x));
 
             ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
 
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
-
-            ValueChanged = EventCallback.Factory.Create<object>(this, x=> ValueChangedAction(x));
-
+ 
             OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
 
 
@@ -125,24 +135,29 @@ namespace Generator.Components.Components
             {
                 var i = 1000;
 
-                foreach (var data in DataSource)
+                if(DataSource is not null)
                 {
-                    treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
+                    foreach (var data in DataSource)
+                    {
+                        treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
-                    treeBuilder.AddAttribute(i++, nameof(Value), data);
+                        treeBuilder.AddAttribute(i++, nameof(Value), data);
 
-                    treeBuilder.CloseComponent();
+                        treeBuilder.CloseComponent();
+                    }
                 }
+                
             }));
 
-            var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
+ 
+            var loValue = DataSource?.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
             builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), (nameof(Disabled), !EditorEnabled), innerFragment);
         };
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
-            var selectedField = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
+            var selectedField = DataSource?.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
             RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
         };
@@ -152,6 +167,10 @@ namespace Generator.Components.Components
             ParentGrid.ValidateValue(BindingField);
         }
 
+        public object GetValue()
+        {
+            return this.GetFieldValue(nameof(_value));
+        }
         //public GenComboBox GetReference()
         //{
         //    return (GenComboBox)Reference;

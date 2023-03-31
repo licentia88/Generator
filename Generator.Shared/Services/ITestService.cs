@@ -5,7 +5,6 @@ using ProtoBuf.Grpc.Configuration;
 namespace Generator.Shared.Services;
 
 [Service]
-
 public interface ITestService
 {
     public IAsyncEnumerable<RESPONSE_RESULT> QueryStream(CallContext context = default);
@@ -15,6 +14,9 @@ public interface ITestService
     public Task<RESPONSE_RESULT> ParametricQuery(CallContext context = default);
 
     public Task<RESPONSE_RESULT> ExecuteSp(CallContext context = default);
+
+    public Task<RESPONSE_RESULT> ExecuteFunction(CallContext context = default);
+
 
     public Task<RESPONSE_RESULT> QueryTestStringDataAsync(CallContext context = default);
 

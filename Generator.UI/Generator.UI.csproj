@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -13,16 +13,28 @@
     <None Remove="Grpc.Net.Client" />
     <None Remove="Grpc.Net.Client.Web" />
     <None Remove="protobuf-net.Grpc.ClientFactory" />
+    <None Remove="Pages\GeneratorPages\" />
+    <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.0.17" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.51.0" />
-    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.0.179" />
+    <PackageReference Include="MudBlazor" Version="6.1.4" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.52.0" />
+    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Generator.Client\Generator.Client.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Generator.Components\Generator.Components.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\GeneratorPages\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ namespace Generator.Components.Extensions
 
     public static class DependencyExtensions
     {
-        public static void RegisterComponents(this IServiceCollection Services)
+        public static void RegisterGeneratorComponents(this IServiceCollection Services)
         {
             Services.AddScoped(typeof(GenValidator<>));
         }

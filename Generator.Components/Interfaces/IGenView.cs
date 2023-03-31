@@ -15,7 +15,12 @@ public interface INonGenView
 
     public List<IGenComponent> Components { get; set; }
 
+    public List<IGenComponent> SearchFieldComponents { get; set; }
+
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
+
+    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
+
 
     public void StateHasChanged();
 
@@ -34,6 +39,7 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
     public TModel OriginalEditItem { get; set; }
 
     public TModel SelectedItem { get;  set; }
+    
  
     public EventCallback<IGenView<TModel>> Load { get; set; }
 

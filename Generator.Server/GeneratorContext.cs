@@ -1,3 +1,4 @@
+//using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ComponentModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,19 +12,25 @@ public class GeneratorContext: DbContext
         //Database.EnsureCreated();
     }
 
-    public DbSet<COMPONENT> COMPONENT { get; set; }
 
-    public DbSet<DATABASES> DATABASES { get; set; }
+    public DbSet<COMPONENT_BASE> COMPONENT_BASE { get; set; }
 
-    public DbSet<GRIDS_D> GRIDS_D { get; set; }
+    public DbSet<BUTTONS_BASE> BUTTONS_BASE { get; set; }
 
-    public DbSet<GRIDS_M> GRIDS_M { get; set; }
+    public DbSet<PAGES_M> PAGES_M { get; set; }
 
-    public DbSet<HEADER_BUTTON> HEADER_BUTTON { get; set; }
+    public DbSet<PAGES_D> PAGES_D { get; set; }
 
-    public DbSet<FOOTER_BUTTON> FOOTER_BUTTON { get; set; }
+    public DbSet<DISPLAY_FIELDS> DISPLAY_FIELDS { get; set; }
+
+    public DbSet<HEADER_BUTTONS> HEADER_BUTTONS { get; set; }
+
+    public DbSet<GRID_BUTTONS> GRID_BUTTONS { get; set; }
+
+    public DbSet<PERMISSIONS> PERMISSIONS { get; set; }
+
+    
 
 
 }
 
- 

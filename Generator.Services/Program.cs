@@ -59,7 +59,7 @@ app.UseGrpcWeb();
 await app.Services.CreateAsyncScope().ServiceProvider.GetService<SeedData>().FillComponentsAsync();
 // Configure the HTTP request pipeline.
 
-app.RegisterGrpcServices();
+app.RegisterGeneratorServices();
 app.MapGrpcService<TestService>().EnableGrpcWeb();
 app.MapGrpcService<UserService>().EnableGrpcWeb();
 app.MapGrpcService<OrdersMService>().EnableGrpcWeb();

@@ -34,6 +34,16 @@ namespace Generator.Example.Pages
             var data = result.GenObject.DynamicData().First();
         }
 
+        private async void ExecuteFunction()
+        {
+            var result = await ITestService.ExecuteFunction();
+
+            var data = result.GenObject.DynamicData().First();
+        }
+
+
+        
+
         private async void InsertWithCodeTableTest()
         {
             var result = await ITestService.InsertWithCodeTableTest();

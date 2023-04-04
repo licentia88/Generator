@@ -39,9 +39,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Inject]
     public IDialogService DialogService { get; set; }
 
-    [Parameter]
-    public TableEditTrigger RowEditTrigger { get; set; } = TableEditTrigger.EditButton;
-
     public MudTable<TModel> OriginalTable { get; set; }   //
 
     public INonGenPage CurrentGenPage { get; set; }
@@ -211,9 +208,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             //if (EditButtonActionList.Any())
             //{
             var editingRow = GetCurrentRow();
-
-            
-
+ 
             if (editingRow is null)
             {
                 //row bossa once itemi tekrar ekle
@@ -330,7 +325,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         {
             GridIsBusy = true;
 
-            _ShouldRender = false;
+            //_ShouldRender = false;
 
             if (OnBeforeSubmit.HasDelegate)
                await OnBeforeSubmit.InvokeAsync(model);
@@ -842,14 +837,16 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return _ShouldRender;
     }
 
-    public async Task InvokeLoad()
+    public  Task InvokeLoad()
     {
         if (Load.HasDelegate)
         {
             _ShouldRender = false;
-            await Load.InvokeAsync(this);
+             Load.InvokeAsync(this);
             _ShouldRender = true;
         }
+
+        return Task.CompletedTask;
     }
 
     public async Task OnDeleteClicked(TModel model)

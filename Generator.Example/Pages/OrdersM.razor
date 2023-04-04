@@ -5,7 +5,7 @@
 <GenGrid DataSource="@(DataSource)"
          TModel="ORDERS_M"
          EditMode="EditMode.Inline"
-         RowEditTrigger="TableEditTrigger.RowClick"
+         EditTrigger="TableEditTrigger.RowClick"
          Class="m-2"
          Load="OnLoad"
          Create="@( async x=> await CreateAsync(x))"
@@ -48,7 +48,7 @@
         //page.SelectedItem.OM_DESCRIPTION = "test";
     }
 
-    
+
     public void ValChanged(object str)
     {
         descTextField.SetValue(str);
@@ -64,7 +64,6 @@
 
     public async ValueTask UpdateAsync(ORDERS_M data)
     {
-
         var result = await OrdersMService.UpdateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
 
         DataSource.Replace(data, result);

@@ -94,7 +94,15 @@
                 <MudTable T="TModel"
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
+                          LoadingProgressColor="@LoadingProgressColor"
                           Items="DataSource"
+                          CancelEditIcon="@CancelEditIcon"
+                          CancelEditTooltip="@CancelEditTooltip"
+                          CommitEditIcon="@CommitEditIcon"
+                          CommitEditTooltip="@CommitEditTooltip"
+                          Bordered="@Bordered"
+                          Outlined="@Outlined"
+                          Striped="@Striped"
                           Dense="Dense"
                           MultiSelection="MultiSelection"
                           Breakpoint="Breakpoint.None"
@@ -113,7 +121,7 @@
                           IsEditRowSwitchingBlocked="true"
                           ApplyButtonPosition="TableApplyButtonPosition.End"
                           EditButtonPosition="TableEditButtonPosition.End"
-                          EditTrigger="@RowEditTrigger"
+                          EditTrigger="@EditTrigger"
                           ReadOnly="false"
                           CanCancelEdit="true">
 
@@ -154,7 +162,7 @@
                                 if (!EnableSorting)
                                 {
                                     <MudTh>
-                                        @item.Label
+                                        <span>@item.Label </span>
                                     </MudTh>
                                 }
                                 else
@@ -212,7 +220,7 @@
                                 if (!item.GridVisible)
                                 {
                                     <MudTd>
-
+                                        
                                     </MudTd>
                                     continue;
                                 }
@@ -225,7 +233,7 @@
                               <MudTd></MudTd>
 
 
-                            if (Delete.HasDelegate && RowEditTrigger == TableEditTrigger.RowClick)
+                            if (Delete.HasDelegate && EditTrigger == TableEditTrigger.RowClick)
                             {
                                 <MudTd>
                                     <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" />

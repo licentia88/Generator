@@ -74,8 +74,10 @@ namespace Generator.Example.Pages
 
         public async ValueTask CreateAsync(USER data)
         {
+          
             //throw new Exception();
              var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
+
 
 
             //REQUIRED 
@@ -91,6 +93,7 @@ namespace Generator.Example.Pages
         }
         public async ValueTask UpdateAsync(USER data)
         {
+
             var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
             var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);

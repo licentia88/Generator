@@ -65,6 +65,8 @@ public class GenValidator<T> : AbstractValidator<T>
         return ValidateExpandObject(component, model, propertyName);
     }
 
+
+     
     private bool ValidateModelValue(IGenComponent component, T model, string propertyName)
     {
         var results = new List<ValidationResult>();
@@ -77,7 +79,7 @@ public class GenValidator<T> : AbstractValidator<T>
 
         var value = model.GetPropertyValue(propertyName);
 
-        if (value is null) return false;
+        //if (value is null) return false;
 
         bool isValid = Validator.TryValidateProperty(value, context, results);
 

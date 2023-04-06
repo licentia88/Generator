@@ -53,7 +53,6 @@ namespace Generator.Example.Pages
         {
             U_REGISTER_DATE.SetValue(date);
             U_LASTNAME.SetValue("VALUE SET!!");
-            //View.StateHasChanged();
         }
 
         public  void Load(IGenView<USER> view)
@@ -67,7 +66,7 @@ namespace Generator.Example.Pages
 
         public async ValueTask Search(SearchArgs components)
         {
-            var wherestatements = components.WhereStatementCollection();
+            var wherestatements = components.WhereStatements;
 
             Console.WriteLine();
         }

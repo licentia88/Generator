@@ -3,6 +3,8 @@
 @using Components.Validators
 @{
 
+    if (userList is null) return;
+
     <MudButton OnClick="TEST">Click</MudButton>
 
     <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).ToList()"
@@ -23,16 +25,34 @@
              Load="@( x=> Load(x))">
         <GenSearchFields>
 
-            <MudItem xs="5" sm="5" md="5" lg="5" xl="5" xxl="5">
-                <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="true" />
-            </MudItem>
+            <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="true"
+                          xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" />
 
-            <MudItem xs="1" sm="1" md="1" lg="1" xl="1" xxl="1"></MudItem>
-           
-            <MudItem xs="5" sm="5" md="5" lg="5" xl="5" xxl="5">
-                <GenDatePicker Clearable="true" BindingField="DateField" 
-                    Label="DateExample" Required="true" />
-            </MudItem>
+            <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
+
+            <GenComboBox DataSource="userList.Value"
+                         DisplayField="@nameof(USER.U_NAME)"
+                         ValueField="@nameof(USER.U_ROWID)"
+                         Clearable="true" BindingField="comboField"
+                         xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+                         Label="Peopel" Required="true" />
+
+
+            <GenDatePicker Clearable="true"
+                           BindingField="DateField"
+                           xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+                           Label="DateExample" Required="true" />
+
+            <GenSpacer  xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
+
+           <GenCheckBox  xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+                         BindingField="CheckBoxText"
+                         Label="Test CheckBOx"
+                         LabelPosition="LabelPosition.End"
+                         TrueText="Evet"
+                         FalseText="Hayir" />
+
+
         </GenSearchFields>
         <GenColumns>
 
@@ -40,7 +60,7 @@
 
             <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
 
-            <GenTextField BindingField="@nameof(USER.U_LASTNAME)"  
+            <GenTextField BindingField="@nameof(USER.U_LASTNAME)"
                           Label="Last Name" />
 
             <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />

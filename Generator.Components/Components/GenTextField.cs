@@ -12,7 +12,7 @@ using System.Globalization;
 
 namespace Generator.Components.Components;
 
-public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
+public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField> 
 { 
 
     [CascadingParameter(Name = nameof(ParentGrid))]
@@ -21,8 +21,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
-    
-
+ 
     [Parameter]
     [EditorRequired]
     public string BindingField { get; set; }
@@ -71,17 +70,17 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     [CascadingParameter( Name = nameof(IsSearchField))]
     public bool IsSearchField { get; set; }
- 
+
+   
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null || ParentGrid.IsRendered)
+        if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
 
     }
 
     protected override  Task OnInitializedAsync()
     {
-
         if (InputType == InputType.Date)
         {
             Converter = _dateConverter;
@@ -134,24 +133,43 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public void OnClearClicked(MouseEventArgs arg)
     {
-
-        Model.SetPropertyValue(BindingField, null);
-
+        Model?.SetPropertyValue(BindingField, null);
     }
+
+    private void SetCallBackEvents()
+    {
+        if (!ValueChanged.HasDelegate)
+            ValueChanged = EventCallback.Factory.Create<object>(this, x => SetValue(x));
+
+        if (IsSearchField)
+        {
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) =>
+            {
+                SetValue(null);
+                ParentGrid.ValidateSearchFields(BindingField);
+            });
+
+           
+
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ParentGrid.ValidateSearchFields(BindingField));
+        }
+        else
+        {
+  
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
+
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
+        }
+    }
+
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) =>  builder =>
     {
-        Model = model;
+        if(Model is null || Model.GetType().Name == "Object")
+            Model = model;
 
-        if(!ValueChanged.HasDelegate)
-        {
-            ValueChanged = EventCallback.Factory.Create<object>(this, x => SetValue(x));
-        }
-       
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {  ParentGrid.ValidateValue(BindingField); });
+        SetCallBackEvents();
 
-        OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
-
-        var loValue = model.GetPropertyValue(BindingField);
+        var loValue = Model.GetPropertyValue(BindingField);
 
         builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), (nameof(Disabled), !EditorEnabled));
     };
@@ -180,10 +198,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         return this.GetFieldValue(nameof(_value));
     }
 
-    //public GenTextField GetReference()
-    //{
-    //    return (GenTextField)Reference;
-    //}
+   
 }
 
 

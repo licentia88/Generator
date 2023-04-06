@@ -77,20 +77,18 @@ namespace Generator.Components.Components
                 if(Model is not null)
                 {
                     Date = (DateTime?)Model?.GetPropertyValue(BindingField);
+                    ParentGrid?.AddChildComponent(this);
+
                 }
 
-                ParentGrid?.AddChildComponent(this);
             }
-
-
-
-
+ 
             return Task.CompletedTask;
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null || ParentGrid.IsRendered)
+            if (Model is not null && Model.GetType().Name != "Object")
                 base.BuildRenderTree(builder);
 
         }
@@ -104,35 +102,55 @@ namespace Generator.Components.Components
 
         protected override void OnClosed()
         {
-            if (!Error && !IsSearchField)
-                 ParentGrid.ValidateValue(BindingField);
+            if (!Error)
+            {
+                if (!IsSearchField)
+                    ParentGrid.ValidateValue(BindingField);
+                else
+                    ParentGrid.ValidateSearchFields(BindingField);                  
+            }
+            
 
             base.OnClosed();
         }
 
+        private void SetCallBackEvents()
+        {
+            if (IsSearchField)
+            {
+                this.DateChanged = EventCallback.Factory.Create<DateTime?>(this, x =>
+                {
+                    SetValue(x.CastTo<DateTime?>());
+                    ParentGrid.ValidateSearchFields(BindingField);
+                });
+            }
+            else
+            {
+                if (!DateChanged.HasDelegate)
+                {
+                    DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => SetValue(x.CastTo<DateTime?>()));
+                }
+            }
+        }
+
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {
-           
-            Model = model;
+            if (Model is null || Model.GetType().Name == "Object")
+                Model = model;
 
-            if (!DateChanged.HasDelegate)
-            {
-                DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => SetValue(x.CastTo<DateTime?>()));
-            }
+            SetCallBackEvents();
 
-            var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
+             var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
 
 
-                builder.RenderComponent(this, ignoreLabels,(nameof(_value),valDate), (nameof(Disabled), !EditorEnabled));
+            builder.RenderComponent(this, ignoreLabels,(nameof(_value),valDate), (nameof(Disabled), !EditorEnabled));
 
         };
 
         public RenderFragment RenderAsGridComponent(object model) => (builder) =>
         {
             var val = (DateTime?)model.GetPropertyValue(BindingField);
-
-           
-
+             
             if (val is not null)
                 RenderExtensions.RenderGrid(builder, val.Value.ToString(DateFormat));
 

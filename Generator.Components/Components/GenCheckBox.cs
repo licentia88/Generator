@@ -6,6 +6,7 @@ using Generator.Shared.Extensions;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Generator.Components.Components;
 
@@ -82,7 +83,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     protected override Task OnInitializedAsync()
     {
         if (IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
+             ParentGrid?.AddSearchFieldComponent(this);
         else
             ParentGrid?.AddChildComponent(this);
 
@@ -91,7 +92,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null || ParentGrid.IsRendered)
+        if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
 
     }
@@ -103,14 +104,20 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         Checked = value;
     }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+    private void SetCallBackEvents()
     {
-        Model = model;
-
         if (!CheckedChanged.HasDelegate)
             CheckedChanged = EventCallback.Factory.Create<bool>(this, x => SetValue(x));
+    }
 
-        var val = (bool)model.GetPropertyValue(BindingField);
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+    {
+        if (Model is null || Model.GetType().Name == "Object")
+            Model = model;
+
+        SetCallBackEvents();
+
+        var val = (Model.GetPropertyValue(BindingField))??false;
 
         builder.RenderComponent(this, ignoreLabels, (nameof(Checked), val), (nameof(Disabled), !EditorEnabled));
     };

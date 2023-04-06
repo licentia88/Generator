@@ -83,8 +83,6 @@ namespace Generator.Components.Components
 
         protected override Task OnInitializedAsync()
         {
-            
-
             if (IsSearchField)
                 ParentGrid?.AddSearchFieldComponent(this);
             else
@@ -95,7 +93,7 @@ namespace Generator.Components.Components
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (Model is not null || ParentGrid.IsRendered)
+            if (Model is not null && Model.GetType().Name != "Object")
                 base.BuildRenderTree(builder);
         }
 
@@ -117,25 +115,47 @@ namespace Generator.Components.Components
 
         }
 
-        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async builder =>
+        private void SetCallBackEvents()
         {
-            Model = model;
+            ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
 
             if (!ValueChanged.HasDelegate)
                 ValueChanged = EventCallback.Factory.Create<object>(this, x => SetValue(x));
 
-            ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
+            if (IsSearchField)
+            {
+                OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) =>
+                {
+                    Model?.SetPropertyValue(BindingField, null);
 
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
+                    ParentGrid.ValidateSearchFields(BindingField);
+                });
+
+                OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ParentGrid.ValidateSearchFields(BindingField));
+            }
+            else
+            {
  
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
+                OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
 
+                OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
+            }
+
+
+        }
+
+        public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => async builder =>
+        {
+            if (Model is null || Model.GetType().Name == "Object")
+                Model = model;
+
+            SetCallBackEvents();
 
             var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>
             {
                 var i = 1000;
 
-                if(DataSource is not null)
+                if (DataSource is not null)
                 {
                     foreach (var data in DataSource)
                     {
@@ -146,11 +166,11 @@ namespace Generator.Components.Components
                         treeBuilder.CloseComponent();
                     }
                 }
-                
+
             }));
 
- 
-            var loValue = DataSource?.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
+
+            var loValue = DataSource?.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == Model.GetPropertyValue(BindingField)?.ToString());
 
             builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), (nameof(Disabled), !EditorEnabled), innerFragment);
         };

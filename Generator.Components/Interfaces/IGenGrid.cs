@@ -59,6 +59,12 @@ public interface INonGenGrid:INonGenView
 
     public bool ValidateValue(string propertyName);
 
+    public bool ValidateSearchFields();
+
+    public bool ValidateSearchFields(IEnumerable<IGenComponent> searchFields);
+
+    public bool ValidateSearchFields(string bindingField);
+ 
     public void ResetValidation(IGenComponent component);
 
     public void AddChildComponent(IGenComponent component);
@@ -94,7 +100,7 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
 
     public EventCallback<TModel> OnAfterCancel { get; set; }
 
-    public bool ShouldShowDialog { get; set; }
+    public bool ShowDialog { get; set; }
 
     public EventCallback<IGenGrid<TModel>> OnBeforeShowDialog { get; set; }
 

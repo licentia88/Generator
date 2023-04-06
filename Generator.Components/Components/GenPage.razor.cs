@@ -80,14 +80,17 @@ namespace Generator.Components.Components
             await base.OnAfterRenderAsync(firstRender);
         }
 
+       
+
         public bool ValidateAsync()
         {
             IsValid =  GenGrid.ValidateModel(true);
-            
             StateHasChanged();
 
             return IsValid;
         }
+
+
 
         public void onInvalidSubmit()
         {

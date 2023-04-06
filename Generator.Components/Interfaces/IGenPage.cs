@@ -24,4 +24,5 @@ public interface INonGenPage: INonGenView
     public void Close();
 
     public bool ValidateAsync();
-}
+
+ }

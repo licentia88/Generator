@@ -133,7 +133,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public INonGenGrid ParentGrid { get; set; }
 
 
-    public bool ShouldShowDialog { get; set; } = true;
+    public bool ShowDialog { get; set; } = true;
 
     [Parameter]
     public string Title { get; set; }
@@ -153,13 +153,16 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public RenderFragment GenColumns { get; set; }
 
     [Parameter, AllowNull]
+    public RenderFragment GenSearchFields { get; set; }
+
+
+    [Parameter, AllowNull]
     public RenderFragment GenHeaderButtons { get; set; }
 
     [Parameter, AllowNull]
     public RenderFragment<TModel> GenDetailGrid { get; set; }
 
-    [Parameter, AllowNull]
-    public RenderFragment GenSearchFields { get; set; }
+
 
 
     public bool HasDetail => GenDetailGrid is not null;
@@ -272,9 +275,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             SelectedItem = item;
             await OnBeforeShowDialog.InvokeAsync(this);
 
-            if (!ShouldShowDialog)
+            if (!ShowDialog)
             {
-                ShouldShowDialog = true;
+                ShowDialog = true;
                 SelectedItem = default;
                 return;
             }
@@ -453,6 +456,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (OnClose.HasDelegate)
             await OnClose.InvokeAsync();
 
+        IsFirstRender = true;
+        IsRendered = false;
+        Components.Clear();
+
     }
 
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
@@ -483,7 +490,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         {
            await  OnBeforeShowDialog.InvokeAsync(this);
         }
-        if (ShouldShowDialog)
+        if (ShowDialog)
             return await DialogService.ShowAsync<GenPage<TModel>>(Title, DialogParameters, DialogOptions());
 
  
@@ -549,6 +556,39 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return DetailClicked && _selectedDetailObject.Equals(context);
     }
 
+
+
+    public bool ValidateSearchFields(IEnumerable<IGenComponent> searchFields)
+    {
+        foreach (var comp in searchFields.Where(x=> x.Required))
+        {
+            var currentVal = comp.Model.GetPropertyValue(comp.BindingField);
+
+            if (currentVal is null || currentVal == default || string.IsNullOrEmpty(currentVal?.ToString()))
+                comp.Error = true;
+            else
+                comp.Error = false;
+
+        }
+
+        var isValid = searchFields.All(x => !x.Error);
+
+        StateHasChanged();
+        return isValid;
+    }
+
+    public bool ValidateSearchFields(string bindingField)
+    {
+
+        return ValidateSearchFields(SearchFieldComponents.Where(x=>x.BindingField == bindingField));
+    }
+
+    public bool ValidateSearchFields()
+    {
+        return ValidateSearchFields(SearchFieldComponents);
+    }
+
+
     public bool ValidateModel(bool all=false)
     {
         var result = true;
@@ -566,26 +606,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return result;
     }
 
-
-    public bool ValidateSearchFields()
-    {
-        foreach (var comp in SearchFieldComponents)
-        {
-            var currentVal = comp.GetValue();
-
-            if (currentVal is null || currentVal == default || string.IsNullOrEmpty(currentVal?.ToString()))
-                comp.Error = true;
-            else
-                comp.Error = false;
-
-        }
-
-        var isValid = SearchFieldComponents.All(x=>!x.Error);
-
-        return isValid;
-    }
-
-
     public bool ValidateValue(string propertyName)
     {
         var component = Components.FirstOrDefault(x => x.BindingField == propertyName);
@@ -595,10 +615,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (!result)
             ForceRenderOnce = !result;
 
-        CurrentGenPage?.ValidateAsync();
+        CurrentGenPage?.StateHasChanged();
         StateHasChanged();
         return result;
     }
+
+   
 
     public void ResetValidation()
     {
@@ -641,9 +663,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             SelectedItem = adaptedData;
             await OnBeforeShowDialog.InvokeAsync(this);
 
-            if (!ShouldShowDialog)
+            if (!ShowDialog)
             {
-                ShouldShowDialog = true;
+                ShowDialog = true;
                 SelectedItem = default;
                 return;
             }

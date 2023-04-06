@@ -1,0 +1,152 @@
+﻿@page "/Pages"
+
+@inherits PagesBase<PAGES_M, IPagesMService>
+
+@{
+    if (DatabaseInformationList is null) return;
+}
+
+
+<GenGrid DataSource="@DataSource"
+         Class="m-2"
+         TModel="PAGES_M"
+         MaxWidth="MaxWidth.ExtraLarge"
+         Create="async x=> await CreateAsync(x)"
+         Update="async x=> await UpdateAsync(x)"
+         Delete="async x=> await DeleteAsync(x)"
+         Search="async x=> await ReadAsync(x)"
+         OnClose="OnClose"
+         Load="async (arg) => await OnLoadAsync(arg)"
+         Title="Sayfalar"
+         EditMode="EditMode.SmartForm">
+
+    <GenColumns>
+
+        @*Row1*@
+        <GenSpacer xs="12" sm="12" md="5" lg="5" xl="5" xxl="5" />
+
+        <GenComboBox DataSource="@TableInformationList"
+                     xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                     Label="Table"
+                     Order="1"
+                     BindingField="@(nameof(PAGES_M.CB_TABLE))"
+                     ValueChanged="x=> OnTableSelectionChanged(x)"
+                     ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
+                     DisplayField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))" />
+
+        <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox DataSource="@DatabaseInformationList"
+                     Order="0"
+                     xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                     Label="Database"
+                     BindingField="@(nameof(PAGES_M.CB_DATABASE))"
+                     ValueChanged="async x => await OnDatabaseChangedAsync(x)"
+                     ValueField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))"
+                     DisplayField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))" />
+
+        @*Row2*@
+        <GenTextField BindingField="@nameof(PAGES_M.CB_CODE)"
+                      Order="2"
+                      xs="12" sm="12" md="2" lg="2" xl="2" xxl="2"
+                      Label="Page Code" />
+
+        <GenSpacer xs="12" sm="12" md="3" lg="3" xl="3" xxl="3" />
+
+        <GenTextField BindingField="@nameof(PAGES_M.CB_TITLE)"
+                      Order="3"
+                      xs="12" sm="12" md="7" lg="7" xl="7" xxl="7"
+                      Label="Page Title" />
+
+        @*Row3*@
+        <GenTextField BindingField="@nameof(PAGES_M.CB_DESCRIPTION)"
+                      xs="12" sm="12" md="12" lg="12" xl="12" xxl="12"
+                      Order="4"
+                      Lines="5"
+                      Label="Description" />
+
+        @*Row4*@
+        <GenCheckBox BindingField="@nameof(PAGES_M.PM_CREATE)"
+                     xs="12" sm="12" md="2" lg="2" xl="2" xxl="2"
+                     Order="5"
+                     TrueText="Yes" FalseText="No"
+                     Label="Create" />
+
+        <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(PAGES_M.PM_READ)"
+                     GridVisible="false"
+                     xs="12" sm="12" md="2" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+                     EditorEnabled="false"
+                     Label="Read" />
+
+        <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(PAGES_M.PM_UPDATE)"
+                     Order="5"
+                     xs="12" sm="12" md="2" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+                     Label="Edit" />
+
+        <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(PAGES_M.PM_DELETE)"
+                     xs="12" sm="12" md="2" lg="2" xl="2" xxl="2"
+                     Order="6"
+                     TrueText="Yes" FalseText="No"
+                     Label="Delete" />
+
+        <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
+
+        @*Row5*@
+        <GenComboBox DataSource="CommandTypes"
+                     xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                     Label="Command Type"
+                     Order="7"
+                     ValueChanged="x=> CommandTypeChanged(x)"
+                     BindingField="@nameof(PAGES_M.CB_COMMAND_TYPE)"
+                     DisplayField="@(nameof(COMMAND_TYPES.CT_DESC))"
+                     ValueField="@nameof(COMMAND_TYPES.CT_ROWID)" />
+
+        <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox DataSource="StoredProcedures"
+                     xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                     Label="Stored Procedures"
+                     Order="8"
+                     EditorVisible="false"
+                     GridVisible="false"
+                     ValueChanged="x=> StoredProcedureChanged(x)"
+                     BindingField="@nameof(StoredProcedureCombo)"
+                     DisplayField="@(nameof(STORED_PROCEDURES.SP_NAME))"
+                     ValueField="@nameof(STORED_PROCEDURES.SP_NAME)" />
+
+        <GenSpacer xs="12" sm="12" md="5" lg="5" xl="5" xxl="5" />
+
+
+        @*Row6*@
+
+        <GenTextField BindingField="@nameof(SqlQueryTextField)"
+                      xs="12" sm="12" md="12" lg="12" xl="12" xxl="12"
+                      ValueChanged="x=> SqlQueryTextFieldChanged(x)"
+                      EditorVisible="false"
+                      GridVisible="false"
+                      Order="9" 
+                      Lines="10"
+                      Label="Query" />
+
+    </GenColumns>
+
+    <GenDetailGrid>
+        <MudTabs Style="width:100%!important" Color="Color.Primary">
+            <MudTabPanel Text="Display Fields">
+                <DisplayFieldsPage ParentModel="context" DisableDisplayFields="DisableDisplayFields" />
+            </MudTabPanel>
+            <MudTabPanel Text="Page Detail">
+                <GridPagesD ParentModel="context" />
+            </MudTabPanel>
+        </MudTabs>
+    </GenDetailGrid>
+</GenGrid>
+

@@ -17,6 +17,8 @@ public interface INonGenGrid:INonGenView
 
     public DialogOptions DialogOptions();
 
+    public bool Disabled { get; set; }
+
     public string CancelText { get; set; }
 
     public string CreateText { get; set; }

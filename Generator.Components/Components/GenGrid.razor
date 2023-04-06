@@ -207,7 +207,7 @@
                                 {
                                     <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
                                         <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                                            <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled" />
+                                            <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled|| Disabled" />
                                         </MudGrid>
                                     </div>
                                 }
@@ -259,7 +259,7 @@
                             if (Delete.HasDelegate && EditTrigger == TableEditTrigger.RowClick)
                             {
                                 <MudTd>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" />
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" Disabled="Disabled" />
 
                                 </MudTd>
 
@@ -270,9 +270,22 @@
                         }
                     </RowTemplate>
 
+                    
                     <RowEditingTemplate Context="_context">
 
                         @{
+                            if (Disabled)
+                            {
+                                EditTrigger = TableEditTrigger.EditButton;
+                                StateHasChanged();
+                            }
+                            else
+                            {
+                                EditTrigger = OriginalTrigger;
+                                StateHasChanged();
+                            }
+
+
                             if (EditMode != EditMode.Inline)
                             {
                                 var currentRow = OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem));
@@ -302,6 +315,7 @@
                             <MudTd>
 
                             </MudTd>
+
                         }
 
 
@@ -309,11 +323,14 @@
 
                     <ChildRowContent>
                         @{
+                            
                             if (EditMode != EditMode.SmartForm && ShouldDisplay(context) && HasDetail)
                             {
                                 <tr style="display: table-row !important; overflow: hidden">
                                     <td style="display: table-cell !important; overflow: hidden" colspan="12">
-                                        @GenDetailGrid(context)
+                                        <CascadingValue Value="Disabled" Name="@nameof(Disabled)">
+                                            @GenDetailGrid(context)
+                                        </CascadingValue>
                                     </td>
                                 </tr>
                             }
@@ -346,7 +363,7 @@
                                                    Icon="@Icons.Outlined.Edit"
                                                    Class="pa-0"
                                                    OnClick="()=>OnEditContextButtonClick(button)"
-                                                   Disabled="@button.ButtonDisabled" />
+                                                   Disabled="button.ButtonDisabled||Disabled" />
                                 }
 
                             }
@@ -354,8 +371,7 @@
                             @{
                                 if (Delete.HasDelegate)
                                 {
-                                    Console.WriteLine(button.ToString());
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="@button.ButtonDisabled" />
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="button.ButtonDisabled||Disabled" />
                                 }
                             }
 

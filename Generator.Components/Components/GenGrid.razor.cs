@@ -43,6 +43,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public INonGenPage CurrentGenPage { get; set; }
 
+    
 
     public DialogResult DialogResult { get; set; }
 
@@ -127,7 +128,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter]
     public EventCallback OnClose { get; set; }
 
-  
+    [Parameter]
+    public bool Disabled { get; set; }
 
     [CascadingParameter(Name = nameof(ParentGrid))]
     public INonGenGrid ParentGrid { get; set; }
@@ -170,6 +172,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter, EditorRequired]
     public EditMode EditMode { get; set; }
 
+    private TableEditTrigger OriginalTrigger;
+
     public bool NewDisabled { get; set; }
 
 
@@ -194,6 +198,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     protected override Task OnInitializedAsync()
     {
+        OriginalTrigger = EditTrigger;
         //Detail Grid den parent gridi refreshleme, neyini?
         //Burada bu koda ihtiyac var mi emin degilim
         if (ParentGrid is not null && ParentGrid.DetailClicked)

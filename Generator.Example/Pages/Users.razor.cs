@@ -86,21 +86,20 @@ namespace Generator.Example.Pages
  
             DataSource.Add(data);
         }
+        private bool IsDisabled = false;
+
         public void TEST()
         {
-            DataSource = userList.Value;
+            IsDisabled = !IsDisabled;
         }
+
         public async ValueTask UpdateAsync(USER data)
         {
-
             var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
             var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
 
             DataSource.Replace(existing, data);
-
-            //throw new Exception("TEST");
-
         }
 
         public async ValueTask DeleteAsync(USER data)

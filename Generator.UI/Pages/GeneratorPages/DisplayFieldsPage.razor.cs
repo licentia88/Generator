@@ -17,10 +17,13 @@ namespace Generator.UI.Pages.GeneratorPages
         [Inject]
         public IDatabaseService DatabaseServices { get; set; }
 
-        public List<DATABASE_INFORMATION> DataBaseList { get; set; }  
+        [Parameter]
+        public List<DATABASE_INFORMATION> DataBaseList { get; set; }
 
-        public List<TABLE_INFORMATION> TableList { get; set; }  
+        [Parameter]
+        public bool DisableDisplayFields { get; set; }
 
+        [Parameter]
         public List<DISPLAY_FIELD_INFORMATION> DisplayFieldsList { get; set; }
  
         private IGenView<DISPLAY_FIELDS> currentPage;
@@ -28,12 +31,7 @@ namespace Generator.UI.Pages.GeneratorPages
         private GenTextField DisplayFieldTextbox;
 
         private GenComboBox DisplayFieldComboBox;
-
-        [Parameter]
-        public bool DisableDisplayFields { get; set; }
-
-        private bool HasErrors = false;
-
+ 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -45,72 +43,45 @@ namespace Generator.UI.Pages.GeneratorPages
             {
                 NotificationsView.Notifications.Add(new NotificationVM("Select Database", MudBlazor.Severity.Warning));
             }
-
+             
             if (ParentModel.CB_COMMAND_TYPE == 0)
             {
                 NotificationsView.Notifications.Add(new NotificationVM("Select Command Type", MudBlazor.Severity.Warning));
             }
-
-            if (ParentModel.CB_COMMAND_TYPE == CommandType.Text.CastTo<int>() && string.IsNullOrEmpty(ParentModel.CB_TABLE))
-            {
-                NotificationsView.Notifications.Add(new NotificationVM("Select Table", MudBlazor.Severity.Warning));
-            }
-
-
-
+ 
             if (ParentModel.CB_COMMAND_TYPE == CommandType.StoredProcedure.CastTo<int>() && string.IsNullOrEmpty(ParentModel.CB_SQL_COMMAND))
             {
                 NotificationsView.Notifications.Add(new NotificationVM("Select Procedure", MudBlazor.Severity.Warning));
             }
 
-            if(NotificationsView.Notifications.Any())
+            
+
+            if (NotificationsView.Notifications.Any())
                 grid.ShowDialog = false;
 
-
             NotificationsView.Fire();
-
-
         }
 
         public async Task OnLoad(IGenView<DISPLAY_FIELDS> page)
         {
             currentPage = page;
 
-            DisplayFieldTextbox = page.GetComponent<GenTextField>(nameof(DisplayFieldTextbox));
-            DisplayFieldComboBox = page.GetComponent<GenComboBox>(nameof(DisplayFieldComboBox));
-            DisplayFieldTextbox.BindingField = nameof(DISPLAY_FIELDS.DF_FIELD_NAME);
-            DisplayFieldComboBox.BindingField = nameof(DISPLAY_FIELDS.DF_FIELD_NAME);
+            currentPage.SelectedItem.DF_DATABASE = ParentModel.CB_DATABASE;
 
+            currentPage.SelectedItem.DF_STORED_PROCEDURE = ParentModel.CB_SQL_COMMAND;
 
-            var result = await DatabaseServices.GetDatabaseList();
+            currentPage.SelectedItem.DF_TABLE = ParentModel.CB_TABLE;
 
-            //DataBaseList = result.Data;
+            var result = await DatabaseServices.GetStoredProcedureFields(new((ParentModel.CB_DATABASE,ParentModel.CB_SQL_COMMAND)));
 
+            DisplayFieldsList = result.Data;
 
+            page.GetComponent<GenComboBox>(nameof(DISPLAY_FIELDS.DF_FIELD_NAME)).DataSource = DisplayFieldsList;
 
-
-            //var parameter = (SelectedDatabase, StoredProcedureName);
-
-            //var response = await DatabaseServices.GetStoredProcedureFields(new(parameter));
-
-            //DisplayFieldsList = response.Data;
-
-            //var parameter = (SelectedDatabase, SelectedTable);
-
-            //var response = await DatabaseServices.GetStoredProcedureFields(new(parameter));
-
-            //DisplayFieldsList = response.Data;
-
-
-            //DisplayFieldComboBox.EditorVisible = true;
 
         }
 
-        public void OnClose()
-        {
-            DisplayFieldTextbox.BindingField = nameof(DisplayFieldTextbox);
-            DisplayFieldComboBox.BindingField = nameof(DisplayFieldComboBox);
-        }
+        
 
         public Task CreateAsync(DISPLAY_FIELDS model)
         {
@@ -133,15 +104,7 @@ namespace Generator.UI.Pages.GeneratorPages
         }
 
        
-        public async Task OnDatabaseChangedAsync(object model)
-        {
-
-        }
-
-        public async Task OnTableChangedAsync(object model)
-        {
-
-        }
+        
         
     }
 }

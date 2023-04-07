@@ -139,9 +139,12 @@
     </GenColumns>
 
     <GenDetailGrid>
-        <MudTabs Style="width:100%!important" Color="Color.Primary">
+        <MudTabs Style="width:100%!important" Color="Color.Dark">
             <MudTabPanel Text="Display Fields">
-                <DisplayFieldsPage ParentModel="context" DisableDisplayFields="DisableDisplayFields" />
+                <DisplayFieldsPage ParentModel="context"
+                                   DisplayFieldsList="dat"
+                                   DataBaseList="DatabaseInformationList"
+                                   DisableDisplayFields="DisableDisplayFields" />
             </MudTabPanel>
             <MudTabPanel Text="Page Detail">
                 <GridPagesD ParentModel="context" />

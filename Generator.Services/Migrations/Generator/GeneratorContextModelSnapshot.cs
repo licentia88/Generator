@@ -30,6 +30,7 @@ namespace Generator.Services.Migrations.Generator
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CB_ROWID"), 1L, 1);
 
                     b.Property<string>("CB_CODE")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CB_COMMAND_TYPE")
@@ -39,15 +40,21 @@ namespace Generator.Services.Migrations.Generator
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_DATABASE")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_DESCRIPTION")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_SQL_COMMAND")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CB_TABLE")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_TITLE")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CB_ROWID");
@@ -63,9 +70,6 @@ namespace Generator.Services.Migrations.Generator
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DF_ROWID"), 1L, 1);
 
-                    b.Property<string>("DF_ALIAS_FIELD")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DF_COMPONENT_REFNO")
                         .HasColumnType("int");
 
@@ -75,7 +79,11 @@ namespace Generator.Services.Migrations.Generator
                     b.Property<string>("DF_FIELD_NAME")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DF_TABLE_NAME")
+                    b.Property<string>("DF_STORED_PROCEDURE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DF_TITLE")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DF_ROWID");
@@ -143,9 +151,6 @@ namespace Generator.Services.Migrations.Generator
 
                     b.Property<bool>("PM_READ")
                         .HasColumnType("bit");
-
-                    b.Property<string>("PM_TABLE")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PM_UPDATE")
                         .HasColumnType("bit");

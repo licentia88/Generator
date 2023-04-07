@@ -100,7 +100,7 @@ public class DatabaseServices : IDatabaseService
 
             var query = $"SELECT NAME DFI_NAME FROM SYS.DM_EXEC_DESCRIBE_FIRST_RESULT_SET('EXEC {storedProcedureName}', NULL, 0)";
 
-            var queryResult = await SqlQueryFactory(connectionName).GetStoredProcedureFieldMetaDataAsync(query);
+            var queryResult = await SqlQueryFactory(connectionName).QueryAsync(query);
 
             var adaptedData = queryResult.Adapt<List<DISPLAY_FIELD_INFORMATION>>();
 

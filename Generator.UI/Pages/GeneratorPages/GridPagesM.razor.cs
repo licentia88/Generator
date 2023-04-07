@@ -13,6 +13,7 @@ using Generator.UI.Models;
 using System.Collections.ObjectModel;
 using ProtoBuf.Meta;
 using Force.DeepCloner;
+using Generator.UI.Extensions;
 
 namespace Generator.UI.Pages.GeneratorPages
 {
@@ -68,12 +69,19 @@ namespace Generator.UI.Pages.GeneratorPages
 
         public IGenView<PAGES_M> currentpage;
 
+        private List<DISPLAY_FIELD_INFORMATION> dat;
         private void StoredProcedureChanged(object model)
         {
             if (model is not STORED_PROCEDURES sp) return;
 
             //StoredProcedureCombo.Value = model;
             StoredProcedureCombo.SetValue(model);
+
+            Task.Run(async () =>
+            {
+                var result = await DatabaseServices.GetStoredProcedureFields(new((currentpage.SelectedItem.CB_DATABASE, sp.SP_NAME)));
+                dat = result.Data;
+            });
 
             //currentpage.SelectedItem.CB_SQL_COMMAND = sp.SP_NAME;
             DisableDisplayFields = false;
@@ -121,7 +129,7 @@ namespace Generator.UI.Pages.GeneratorPages
                 SqlQueryTextField.EditorVisible = false;
 
                 var result = await DatabaseServices.GetStoredProcedures(new RESPONSE_REQUEST<string>(currentpage.SelectedItem.CB_DATABASE));
-
+ 
                 StoredProcedures = result.Data;
 
                 StoredProcedureCombo.DataSource = StoredProcedures;
@@ -167,14 +175,13 @@ namespace Generator.UI.Pages.GeneratorPages
 
         public void OnClose()
         {
-            StoredProcedureCombo.BindingField = nameof(StoredProcedureCombo);
+            //StoredProcedureCombo.BindingField = nameof(StoredProcedureCombo);
 
-            SqlQueryTextField.BindingField = nameof(SqlQueryTextField);
+            //SqlQueryTextField.BindingField = nameof(SqlQueryTextField);
         }
 
         public async Task OnLoadAsync(IGenView<PAGES_M> page)
         {
-            
             currentpage = page;
             page.SelectedItem.PM_READ = true;
 

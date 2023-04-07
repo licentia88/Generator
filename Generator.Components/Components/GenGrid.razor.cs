@@ -13,6 +13,7 @@ using Mapster;
 using System.ComponentModel;
 using System.Diagnostics;
 using Generator.Components.Args;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Generator.Components.Components;
 
@@ -43,7 +44,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public INonGenPage CurrentGenPage { get; set; }
 
-    
 
     public DialogResult DialogResult { get; set; }
 
@@ -172,8 +172,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter, EditorRequired]
     public EditMode EditMode { get; set; }
 
-    private TableEditTrigger OriginalTrigger;
-
     public bool NewDisabled { get; set; }
 
 
@@ -198,7 +196,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     protected override Task OnInitializedAsync()
     {
-        OriginalTrigger = EditTrigger;
         //Detail Grid den parent gridi refreshleme, neyini?
         //Burada bu koda ihtiyac var mi emin degilim
         if (ParentGrid is not null && ParentGrid.DetailClicked)
@@ -212,11 +209,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     protected override  Task OnAfterRenderAsync(bool firstRender)
     {
         if ((ViewState == ViewState.Create || ViewState == ViewState.Update) && EditMode == EditMode.Inline)
-        {           
+        {
             //if (EditButtonActionList.Any())
             //{
             var editingRow = GetCurrentRow();
- 
+
             if (editingRow is null)
             {
                 //row bossa once itemi tekrar ekle
@@ -252,7 +249,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             }
             else
             {
-                editingRow.OnRowClicked(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+                if (Disabled)
+                {
+
+                    editingRow.Context.Table.RowEditCancel.Invoke(null);
+                    StateHasChanged();
+                    ForceRenderOnce = false;
+
+                    return Task.CompletedTask;
+                }
+                else
+                    editingRow.OnRowClicked(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
 
             }
 
@@ -805,13 +812,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     private async Task MyRowEditPreview(object model)
     {
-        //if (OnBeforeShowDialog.HasDelegate)
-        //{
-        //    await OnBeforeShowDialog.InvokeAsync(this);
+        
 
-
-        //    return;
-        //}
 
         if (ViewState != ViewState.Create)
             ViewState = ViewState.Update;
@@ -822,7 +824,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     }
 
-    internal async ValueTask EditRow()
+     internal async ValueTask EditRow()
     {
         //ViewState = ViewState.Update;
 
@@ -851,8 +853,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         SelectedItem = element;//.DeepClone();
 
         OriginalEditItem = element.DeepClone();
-
-
     }
 
     private bool _ShouldRender = true;

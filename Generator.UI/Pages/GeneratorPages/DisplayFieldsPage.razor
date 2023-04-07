@@ -2,6 +2,7 @@
 @inherits PagesBase<COMPONENT_BASE, DISPLAY_FIELDS, IDisplayFieldsService>
 
 
+ 
 <GenGrid DataSource="@DataSource"
          Class="m-2"
          TModel="DISPLAY_FIELDS"
@@ -11,58 +12,47 @@
          Update="async x=> await UpdateAsync(x)"
          Delete="async x=> await DeleteAsync(x)"
          Search="async x=> await ReadAsync()"
-         OnClose="OnClose"
          OnBeforeShowDialog="x=> OnBeforeShow(x)"
          Load="x=> OnLoad(x)"
          Title="Display Fields"
-         EditMode="EditMode.Inline">
+         EditMode="EditMode.Form">
 
     <GenColumns>
 
-        @*Row1*@
+
         <GenSpacer xs="12" sm="12" md="5" lg="5" xl="5" xxl="5" />
 
-        <GenComboBox DataSource="@TableList"
-                     xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
-                     Label="Table"
-                     Order="1"
-                     Clearable="true"
-                     BindingField="@(nameof(DISPLAY_FIELDS.DF_TABLE_NAME))"
-                     ValueChanged="x=> OnTableChangedAsync(x)"
-                     ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
-                     DisplayField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))" />
+        <GenTextField BindingField="@nameof(DISPLAY_FIELDS.DF_STORED_PROCEDURE)"
+                      xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                      EditorEnabled="false"
+                      Label="Stored Procedure" />
 
         <GenSpacer xs="12" sm="12" md="1" lg="1" xl="1" xxl="1" />
 
         <GenComboBox DataSource="@DataBaseList"
-                     Order="0"
                      xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
                      Label="Database"
+                     EditorEnabled="false"
                      BindingField="@(nameof(DISPLAY_FIELDS.DF_DATABASE))"
-                     ValueChanged="async x => await OnDatabaseChangedAsync(x)"
                      ValueField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))"
                      DisplayField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))" />
 
         @*Row2*@
-        <GenTextField BindingField="@nameof(DisplayFieldTextbox)"
-                      Order="2"
-                      EditorVisible="false"
-                      xs="12" sm="12" md="2" lg="3" xl="3" xxl="3"
-                      Label="Field Name" />
+        <GenComboBox BindingField="@nameof(DISPLAY_FIELDS.DF_FIELD_NAME)"
+                     DataSource="DisplayFieldsList"
+                     DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                     Label="Field Name" />
 
-        <GenComboBox  BindingField="@nameof(DisplayFieldComboBox)"
-                      DataSource="DisplayFieldsList"
-                      DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
-                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
-                      Order="2"
-                      EditorVisible="false"
-                      xs="12" sm="12" md="2" lg="3" xl="3" xxl="3"
-                      Label="Field Name" />
+        <GenSpacer xs="12" sm="12" md="2" lg="2" xl="2" xxl="2" />
 
-        <GenSpacer xs="12" sm="12" md="9" lg="9" xl="9" xxl="9" />
+        <GenTextField BindingField="@nameof(DISPLAY_FIELDS.DF_TITLE)"
+                      xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
+                      Label="Title" />
 
 
-
+        <GenSpacer xs="12" sm="12" md="4" lg="4" xl="4" xxl="4" />
 
 
     </GenColumns>

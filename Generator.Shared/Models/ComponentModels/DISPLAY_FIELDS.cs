@@ -18,11 +18,19 @@ public class DISPLAY_FIELDS
     public string DF_FIELD_NAME { get; set; }
 
     [ProtoMember(4)]
-    public string DF_ALIAS_FIELD { get; set; }
+    public string DF_COMMAND_TYPE { get; set; }
 
+    [Required]
     [ProtoMember(5)]
-    public string DF_DATABASE { get; set; }
+    public string DF_TITLE { get; set; }
 
     [ProtoMember(6)]
-    public string DF_TABLE_NAME { get; set; }
+    public string DF_DATABASE { get; set; }
+
+    [ProtoMember(7)]
+    public string DF_STORED_PROCEDURE { get; set; }
+
+    [ProtoMember(8)]
+    public string DF_TABLE { get; set; }
+
 }

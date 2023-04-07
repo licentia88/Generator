@@ -138,7 +138,7 @@
                           SelectedItems="@SelectedItems"
                           Filter="new Func<TModel, bool>(SearchFunction)"
                           Virtualize="Virtualize"
-                          RowEditPreview="async x =>await MyRowEditPreview(x)"
+                          RowEditPreview="async x => await MyRowEditPreview(x)"
                           RowEditCancel="async x => await OnCancelClick(x.CastTo<TModel>())"
                           RowEditCommit="async x => await Commit()"
                           IsEditRowSwitchingBlocked="true"
@@ -274,16 +274,21 @@
                     <RowEditingTemplate Context="_context">
 
                         @{
-                            if (Disabled)
-                            {
-                                EditTrigger = TableEditTrigger.EditButton;
-                                StateHasChanged();
-                            }
-                            else
-                            {
-                                EditTrigger = OriginalTrigger;
-                                StateHasChanged();
-                            }
+                            //if (Disabled && EditTrigger != TableEditTrigger.EditButton)
+                            //{
+                            //    EditTrigger = TableEditTrigger.EditButton;
+                            //    //OriginalTable.TableContext.TableStateHasChanged();
+                            //    StateHasChanged();
+                            //}
+                            //else
+                            //{
+                            //    if(EditTrigger != OriginalTrigger)
+                            //    {
+                            //        EditTrigger = OriginalTrigger;
+                            //        StateHasChanged();
+                            //    }
+
+                            //}
 
 
                             if (EditMode != EditMode.Inline)

@@ -35,8 +35,8 @@ namespace Generator.Components.Components
 
         [Parameter]
         public TModel SelectedItem { get; set; }
- 
- 
+
+
         public bool EnableModelValidation { get; set; }
 
         public bool IsTopLevel { get; set; }

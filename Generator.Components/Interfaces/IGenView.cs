@@ -21,8 +21,10 @@ public interface INonGenView
 
     public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
 
+    public bool IsTopLevel { get; set; }
 
     public void StateHasChanged();
+
 
     public Task OnCommit();
 
@@ -39,8 +41,9 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
     public TModel OriginalEditItem { get; set; }
 
     public TModel SelectedItem { get;  set; }
-    
- 
+
+    public Dictionary<string,object> Parameters { get; set; }
+
     public EventCallback<IGenView<TModel>> Load { get; set; }
 
     public Task OnCommit(TModel model);

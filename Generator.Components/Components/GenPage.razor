@@ -17,46 +17,53 @@
                         <DataAnnotationsValidator />
 
                     }
-                    <MudContainer Class="m-0 p-2" Style="max-height: 80vh; overflow-y: scroll; max-width:100%!important">
-                        @{
-                            <div style="overflow-x:hidden; overflow-y:hidden;">
-                                <MudGrid Justify="Justify.FlexStart" Spacing="0">
+                <MudContainer Class="m-0 p-2" Style="max-height: 80vh; overflow-y: scroll; max-width:100%!important">
+                    @{
+                        <div style="overflow-x:hidden; overflow-y:hidden;">
+                            <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-                                    @{
-                                        foreach (var component in Components)
-                                        {
-                                            <MudItem Class="mt-4"
-                                             xs="component.xs"
-                                             sm="component.sm"
-                                             md="component.md"
-                                             lg="component.lg"
-                                             xl="component.xl"
-                                             xxl="component.xxl">
-                                                @{
-                                                    if (component.EditorVisible)
-                                                    {
-                                                        @component.RenderAsComponent(SelectedItem)
-                                                    }
+                                @{
+                                    foreach (var component in Components)
+                                    {
+                                        <MudItem Class="mt-4"
+                                                 xs="component.xs"
+                                                 sm="component.sm"
+                                                 md="component.md"
+                                                 lg="component.lg"
+                                                 xl="component.xl"
+                                                 xxl="component.xxl">
+                                            @{
+                                                if (component.EditorVisible)
+                                                {
+                                                    @component.RenderAsComponent(SelectedItem)
                                                 }
-                                            </MudItem>
-                                        }
+                                            }
+                                        </MudItem>
                                     }
-                                </MudGrid>
-                            </div>
-                           
+                                }
+                            </MudGrid>
+                        </div>
 
-                            if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
-                            {
-                                <div class="pt-5 pb-5" style="overflow-x:scroll!important">
-                                    <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
-                                        <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
-                                            @GenGrid.GenDetailGrid(SelectedItem)
+
+                        if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
+                        {
+                            @*<div class="pt-5 pb-5" style="overflow-x:scroll!important">*@
+                            <div style=" overflow-y: scroll!important; ">
+                                <div style="overflow-x:hidden; overflow-y:hidden;">
+                                    <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
+                                        <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
+                                            <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+                                                @GenGrid.GenDetailGrid(SelectedItem)
+                                            </CascadingValue>
                                         </CascadingValue>
                                     </CascadingValue>
+
                                 </div>
-                            }
+                            </div>
+
                         }
-                    </MudContainer>
+                    }
+                </MudContainer>
                 </DialogContent>
                 <DialogActions>
                     <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>

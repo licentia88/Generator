@@ -7,12 +7,12 @@
 
     <MudButton OnClick="TEST">Click</MudButton>
 
-    <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).ToList()"
+    <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).OrderBy(x=>x.U_AGE).ToList()"
              TModel="USER"
              Title="Users"
-             EditTrigger="TableEditTrigger.RowClick"
+             EditTrigger="TableEditTrigger.EditButton"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.Inline"
+             EditMode="EditMode.SmartForm"
              EnableSearch="false"
              Disabled="IsDisabled"
              EnableSorting="false"
@@ -56,6 +56,7 @@
 
         </GenSearchFields>
         <GenColumns>
+            <GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Name" />
 
             <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
 

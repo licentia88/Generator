@@ -79,12 +79,12 @@ namespace Generator.Example.Pages
 
 
 
-            //REQUIRED 
+            ////REQUIRED 
             data.U_ROWID = result.U_ROWID;
             data = result;
 
  
-            DataSource.Add(data);
+            DataSource.Add(result);
         }
         private bool IsDisabled = false;
 

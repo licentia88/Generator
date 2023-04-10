@@ -17,7 +17,6 @@ public interface INonGenPage: INonGenView
 
     public bool EnableModelValidation { get; set; }
 
-    public bool IsTopLevel { get; set; }
 
     public bool IsValid { get; set; }
 

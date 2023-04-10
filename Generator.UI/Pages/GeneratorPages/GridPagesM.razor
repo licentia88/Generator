@@ -15,9 +15,9 @@
          Update="async x=> await UpdateAsync(x)"
          Delete="async x=> await DeleteAsync(x)"
          Search="async x=> await ReadAsync(x)"
-         OnClose="OnClose"
+         Close="OnClose"
          Load="async (arg) => await OnLoadAsync(arg)"
-         Title="Sayfalar"
+         Title="Sayfalar" ed
          EditMode="EditMode.SmartForm">
 
     <GenColumns>
@@ -29,6 +29,7 @@
                      xs="12" sm="12" md="3" lg="3" xl="3" xxl="3"
                      Label="Table"
                      Order="1"
+                     Clearable="true"
                      BindingField="@(nameof(PAGES_M.CB_TABLE))"
                      ValueChanged="x=> OnTableSelectionChanged(x)"
                      ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"

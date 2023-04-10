@@ -259,7 +259,7 @@
                             if (Delete.HasDelegate && EditTrigger == TableEditTrigger.RowClick)
                             {
                                 <MudTd>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" Disabled="Disabled" />
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" Disabled="Disabled || CancelDisabled" />
 
                                 </MudTd>
 

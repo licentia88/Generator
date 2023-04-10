@@ -6,7 +6,7 @@ using MudBlazor;
 
 namespace Generator.UI.Pages
 {
-    public partial class PagesBase<TModel, TService> where TService : IGenericServiceBase<TModel> where TModel : new()
+    public partial class PagesBase<TModel, TService> //where TService : IGenericServiceBase<TModel> where TModel : new()
     {
         [Inject]
         public TService Service { get; set; }

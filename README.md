@@ -47,6 +47,25 @@ There are numerous ways you can use the repository.
 
 ## Installation
 
+Install latest version using 
+
+.Net CLI
+
+dotnet add package Generator.Components  
+
+or 
+
+Package Manager 
+
+NuGet\Install-Package Generator.Components 
+
+add  the following to _Imports.razor
+
+@using Generator.Components.Components
+@using Generator.Components.Enums
+@using Generator.Components.Interfaces;
+ 
+
 ## Basic Usage
 
 ## Road Map

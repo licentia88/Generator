@@ -50,14 +50,19 @@ There are numerous ways you can use the repository.
 Install latest version using 
 
 .Net CLI
+======
 
 dotnet add package Generator.Components  
 
-or 
 
-Package Manager 
+Package Manager
+======
 
 NuGet\Install-Package Generator.Components 
+
+
+_Imports.razor
+======
 
 add  the following to _Imports.razor
 

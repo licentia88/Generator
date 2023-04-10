@@ -29,6 +29,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public bool CloseButton { get; set; } = true;
 
     [Parameter]
+    public Dictionary<string,object> Parameters { get; set; } = new();
+
+    [CascadingParameter(Name = nameof(Parameters))]
+    private Dictionary<string, object> _Parameters { get => Parameters; set => Parameters = value; }
+
+    [Parameter]
     public bool CloseOnEscapeKey { get; set; } = true;
 
     [Parameter]
@@ -126,10 +132,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public EventCallback<TModel> OnAfterCancel { get; set; }
 
     [Parameter]
-    public EventCallback OnClose { get; set; }
+    public EventCallback Close { get; set; }
 
     [Parameter]
     public bool Disabled { get; set; }
+
+    public bool CancelDisabled { get; set; }
 
     [CascadingParameter(Name = nameof(ParentGrid))]
     public INonGenGrid ParentGrid { get; set; }
@@ -166,7 +174,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
 
 
-
     public bool HasDetail => GenDetailGrid is not null;
 
     [Parameter, EditorRequired]
@@ -174,6 +181,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public bool NewDisabled { get; set; }
 
+    public bool IsTopLevel { get; set; }
 
     public bool ExpandDisabled { get; set; }
 
@@ -259,7 +267,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
                     return Task.CompletedTask;
                 }
                 else
+                {
                     editingRow.OnRowClicked(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+                    CancelDisabled = true;
+                }
 
             }
 
@@ -310,11 +321,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     }
 
 
-
-    //private ICollection<TModel> ActualDataSource()
-    //{
-    //    return OriginalTable?.Items.ToList() ?? DataSource;
-    //}
+ 
     public async Task EditClick()
     {
         ViewState = ViewState.Update;
@@ -322,6 +329,34 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         await ShowDialogAsync<GenPage<TModel>>();
 
     }
+
+    private async Task Commit()
+    {
+        var isValid = ValidateModel();
+
+        if (!isValid)
+        {
+            //UseTableItems = true;
+            StateHasChanged();
+            return;
+        }
+
+        IsTopLevel = true;
+
+        //Parent Save
+        if (ParentGrid?.ViewState == ViewState.Create)
+        {
+            await ParentGrid.OnCommitAndWait();
+        }
+
+        if (IsTopLevel)
+        {
+            await OnCommit(SelectedItem, ViewState.None);
+
+        }
+
+    }
+
     public Task OnCommit()
     {
         return OnCommit(SelectedItem, ViewState);
@@ -336,6 +371,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public async Task OnCommit(TModel model, ViewState viewState)
     {
+
+       
+
         try
         {
             GridIsBusy = true;
@@ -349,11 +387,14 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             {
                 case ViewState.Create when Create.HasDelegate:
 
-                    if (EditMode == EditMode.Inline)
-                    {
-                        DataSource.RemoveAt(0);
-                    }
                     await Create.InvokeAsync(model);
+
+                    DataSource.Remove(SelectedItem);
+
+                     //if (EditMode == EditMode.Inline)
+                    //{
+                    //    DataSource.RemoveAt(0);
+                    //}
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
@@ -385,6 +426,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
             GridIsBusy = false;
 
+ 
             RefreshButtonState();
 
             if (OnAfterSubmit.HasDelegate)
@@ -413,9 +455,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
  
         _ShouldRender = true;
 
-        if (OnClose.HasDelegate)
-            await OnClose.InvokeAsync(this);
+        if (Close.HasDelegate)
+            await Close.InvokeAsync(this);
 
+        ForceRenderAll();
         StateHasChanged();
     }
 
@@ -423,13 +466,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public async Task OnCommitAndWait()
     {
+
         await OnCommit(SelectedItem, ViewState.Update);
 
-        CurrentGenPage.StateHasChanged();
+        CurrentGenPage.ViewState = ViewState.Update;
+
+        CurrentGenPage?.StateHasChanged();
 
         OnBackUp(SelectedItem);
 
         await InvokeAsync(StateHasChanged);
+
     }
 
     public Task OnEditCLick()
@@ -465,15 +512,19 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (OnAfterCancel.HasDelegate)
             await OnAfterCancel.InvokeAsync(OriginalEditItem);
 
-        if (OnClose.HasDelegate)
-            await OnClose.InvokeAsync();
+        if (Close.HasDelegate)
+            await Close.InvokeAsync();
 
+
+        ForceRenderAll();
+
+    }
+    private void ForceRenderAll()
+    {
         IsFirstRender = true;
         IsRendered = false;
         Components.Clear();
-
     }
-
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
     {
         var paramList = new List<(string, object)>
@@ -482,6 +533,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             (nameof(GenPage<TModel>.Components), Components),
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
             (nameof(GenPage<TModel>.Load), Load),
+              (nameof(GenPage<TModel>.Parameters), Parameters),
             //(nameof(GenPage<TModel>.OnRender), OnRender),
             (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),
@@ -608,7 +660,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (SelectedItem.IsModel())
             result = GenValidator.ValidateModel(SelectedItem,all?Components:null);
         else
-            result = Components.All(x => GenValidator.ValidateValue(x, SelectedItem, x.BindingField));
+            result = Components.Where(x=> x is not GenSpacer && x.EditorVisible).All(x => GenValidator.ValidateValue(x, SelectedItem, x.BindingField));
 
         if (!result)
             ForceRenderOnce = !result;
@@ -705,19 +757,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     }
     
-    private async Task Commit()
-    {
-        var isValid = ValidateModel();
-
-        if (!isValid)
-        {
-            //UseTableItems = true;
-            StateHasChanged();
-            return;
-        }
-
-        await OnCommit(SelectedItem);
-    }
+    
 
     private bool SearchFunction(TModel model)
     {
@@ -793,7 +833,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             }
            
 
-            row.SetFieldValue("hasBeenCanceled", false);
+            row.SetFieldValue("hasBeenCanceled", true);
             row.SetFieldValue("hasBeenCommitted", false);
             row.SetFieldValue("hasBeenClickedFirstTime", false);
         }
@@ -801,7 +841,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         SearchDisabled = false;
         NewDisabled = false;
         ExpandDisabled = false;
-
+        CancelDisabled = false;
         StateHasChanged();
     }
 
@@ -886,7 +926,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     }
 
-    public new async void StateHasChanged()
+    public new  void StateHasChanged()
     {
       
         base.StateHasChanged();

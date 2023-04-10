@@ -54,7 +54,12 @@ namespace Generator.Components.Components
         [Parameter]
         public EventCallback<IGenView<TModel>> Load { get; set; }
 
-     
+        [Parameter]
+        public Dictionary<string, object> Parameters { get; set; } = new();
+
+        [CascadingParameter(Name =nameof(Parameters))]
+        private Dictionary<string, object> _Parameters { get => Parameters; set => Parameters = value; }
+
         protected override async Task OnInitializedAsync()
         {
             GenGrid.CurrentGenPage = this;

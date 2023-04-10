@@ -184,6 +184,7 @@ namespace Generator.UI.Pages.GeneratorPages
         {
             currentpage = page;
             page.SelectedItem.PM_READ = true;
+            page.Parameters.AddOrReplace("TEST",1);
 
             StoredProcedureCombo = page.GetComponent<GenComboBox>(nameof(StoredProcedureCombo));
 

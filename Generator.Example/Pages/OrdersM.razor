@@ -5,7 +5,7 @@
 <GenGrid DataSource="@(DataSource)"
          TModel="ORDERS_M"
          EditMode="EditMode.Inline"
-         EditTrigger="TableEditTrigger.RowClick"
+         EditTrigger="TableEditTrigger.EditButton"
          Class="m-2"
          Load="OnLoad"
          Create="@( async x=> await CreateAsync(x))"
@@ -55,6 +55,7 @@
     }
     public async ValueTask CreateAsync(ORDERS_M data)
     {
+       
         data.OM_USER_REFNO = Parent.U_ROWID;
 
         var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));

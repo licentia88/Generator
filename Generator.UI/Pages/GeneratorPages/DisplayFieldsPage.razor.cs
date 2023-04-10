@@ -65,8 +65,7 @@ namespace Generator.UI.Pages.GeneratorPages
         public async Task OnLoad(IGenView<DISPLAY_FIELDS> page)
         {
             currentPage = page;
-
-            currentPage.SelectedItem.DF_DATABASE = ParentModel.CB_DATABASE;
+             currentPage.SelectedItem.DF_DATABASE = ParentModel.CB_DATABASE;
 
             currentPage.SelectedItem.DF_STORED_PROCEDURE = ParentModel.CB_SQL_COMMAND;
 

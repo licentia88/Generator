@@ -62,7 +62,9 @@ NuGet\Install-Package Generator.Components
 add  the following to _Imports.razor
 
 @using Generator.Components.Components
+
 @using Generator.Components.Enums
+
 @using Generator.Components.Interfaces;
  
 

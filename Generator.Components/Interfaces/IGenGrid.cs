@@ -19,6 +19,8 @@ public interface INonGenGrid:INonGenView
 
     public bool Disabled { get; set; }
 
+    public string SearchText { get; set; }
+
     public string CancelText { get; set; }
 
     public string CreateText { get; set; }

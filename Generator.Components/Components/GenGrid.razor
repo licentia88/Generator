@@ -20,7 +20,7 @@
         }
     }
 
-    <MudCard Elevation="4" Style="@(Style ?? "width:100%important")" Class="@Class">
+    <MudCard Elevation="4" Style="@(Style ?? "width:100%important;overflow-x:hidden!important;")" Class="@Class">
         <MudCardHeader>
             <CardHeaderContent>
                 <MudGrid>
@@ -45,52 +45,57 @@
                 </MudGrid>
 
                 @{
-                    if (GenSearchFields is not null)
-                    {
-                        var searchFieldModel = new Dictionary<string, object>();
+                    <MudGrid Class="mt-5">
+                                    @{
+                                        if (GenSearchFields is not null)
+                                        {
+                                            var searchFieldModel = new Dictionary<string, object>();
 
-                        foreach (var item in SearchFieldComponents.Where(x=> x is not GenSpacer))
-                        {
-                            searchFieldModel.Add(item.BindingField, null);
-                        }
+                                            foreach (var item in SearchFieldComponents.Where(x => x is not GenSpacer))
+                                            {
+                                                searchFieldModel.Add(item.BindingField, null);
+                                            }
 
-                        <MudGrid Class="mt-5">
 
-                            <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
-                                @{
-                                    foreach (IGenComponent searchComp in SearchFieldComponents.OrderBy(x => x.Order).ToList())
-                                    {
 
-                                        <MudItem xs="searchComp.xs"
-                                                 sm="searchComp.sm"
-                                                 md="searchComp.md"
-                                                 lg="searchComp.lg"
-                                                 xl="searchComp.xl"
-                                                 xxl="searchComp.xxl">
-                                            @searchComp.RenderAsComponent(searchFieldModel)
-                                        </MudItem>
+                                            <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
+                                                @{
+                                                    foreach (IGenComponent searchComp in SearchFieldComponents.OrderBy(x => x.Order).ToList())
+                                                    {
+                                                        <MudItem xs="searchComp.xs"
+                                                                 sm="searchComp.sm"
+                                                                 md="searchComp.md"
+                                                                 lg="searchComp.lg"
+                                                                 xl="searchComp.xl"
+                                                                 xxl="searchComp.xxl">
+                                                            @searchComp.RenderAsComponent(searchFieldModel)
+                                                        </MudItem>
+                                                    }
+                                                }
+                                            </CascadingValue>
+                                        }
                                     }
-                                }
-                            </CascadingValue>
+                                    @{
+                                        if (Search.HasDelegate)
+                                        {
+                                            <MudGrid Class="m-2" Justify="Justify.FlexEnd">
+                                                <MudItem Class="mr-15" xs="2" sm="2" md="2" lg="2" xl="2" xxl="2">
+                                                    <MudGrid Justify="Justify.FlexEnd">
+                                                        <MudItem>
+                                                            <MudFab EndIcon="@Icons.Material.Filled.Search"
+                                                                    Color="Color.Info"
+                                                                    Size="Size.Medium"
+                                                                    Label="@SearchText"
+                                                                    @onclick="OnSearchClicked" Disabled="SearchDisabled" />
+                                                        </MudItem>
+                                                    </MudGrid>
+                                                </MudItem>
+                                            </MudGrid>
+                                        }
+                                    }
 
-                        </MudGrid>
-                        if (Search.HasDelegate)
-                        {
-                            <MudGrid Class="m-1" Justify="Justify.FlexEnd">
-                                <MudItem Class="mr-8" xs="2" sm="2" md="2" lg="2" xl="2" xxl="2">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem>
-                                            <MudFab EndIcon="@Icons.Material.Filled.Search"
-                                                    Color="Color.Info"
-                                                    Size="Size.Medium"
-                                                    Label="Search"
-                                                    @onclick="OnSearchClicked" Disabled="SearchDisabled" />
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudItem>
-                            </MudGrid>
-                        }
-                    }
+                                </MudGrid>
+                   
                 }
 
             </CardHeaderContent>

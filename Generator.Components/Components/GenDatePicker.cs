@@ -75,12 +75,9 @@ namespace Generator.Components.Components
             else
             {
                 if(Model is not null)
-                {
                     Date = (DateTime?)Model?.GetPropertyValue(BindingField);
-                    ParentGrid?.AddChildComponent(this);
 
-                }
-
+                ParentGrid?.AddChildComponent(this);
             }
  
             return Task.CompletedTask;

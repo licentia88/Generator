@@ -1,4 +1,3 @@
-using FluentValidation;
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Components.Validators;
@@ -187,6 +186,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     [Parameter]
     public string CancelText { get; set; } = "Cancel";
+
+    [Parameter]
+    public string SearchText { get; set; }  
+
 
     [Parameter]
     public string CreateText { get; set; } = "Create";

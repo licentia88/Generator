@@ -15,6 +15,8 @@
              EditMode="EditMode.SmartForm"
              EnableSearch="false"
              Disabled="IsDisabled"
+             SearchText="Search"
+             CancelText="Iptal"
              EnableSorting="false"
              MultiSelection="true"
              OnBeforeShowDialog="x=>OnBeforeLoad(x)"
@@ -56,7 +58,7 @@
 
         </GenSearchFields>
         <GenColumns>
-            <GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Name" />
+            <GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Ref No" />
 
             <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
 

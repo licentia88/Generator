@@ -3,9 +3,9 @@ using ProtoBuf.Grpc.Configuration;
 
 namespace Generator.Shared.Services;
 
-[Service]
-public interface IPagesDService : IGenericServiceBase<PAGES_D> 
-{
+//[Service]
+//public interface IPagesDService : IGenericServiceBase<PAGES_D> 
+//{
 
-}
+//}
 

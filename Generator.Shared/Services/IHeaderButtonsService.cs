@@ -3,9 +3,9 @@ using ProtoBuf.Grpc.Configuration;
 
 namespace Generator.Shared.Services;
 
-[Service]
-public interface IHeaderButtonsService : IGenericServiceBase<HEADER_BUTTONS>
-{
+//[Service]
+//public interface IHeaderButtonsService : IGenericServiceBase<HEADER_BUTTONS>
+//{
 
-}
+//}
 

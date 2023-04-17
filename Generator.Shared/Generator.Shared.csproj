@@ -64,5 +64,13 @@
     <Compile Remove="Models\ComponentModels\HEADER_BUTTON.cs" />
     <Compile Remove="Models\ComponentModels\GRIDS_M.cs" />
     <Compile Remove="Models\ComponentModels\COMPONENT.cs" />
+    <Compile Remove="Models\ComponentModels\COMPONENT_BASE.cs" />
+    <Compile Remove="Models\ComponentModels\BUTTONS_BASE.cs" />
+    <Compile Remove="Models\ComponentModels\PAGES_D.cs" />
+    <Compile Remove="Models\ComponentModels\CRUD_BUTTONS.cs" />
+    <Compile Remove="Models\ComponentModels\GRID_BUTTONS.cs" />
+    <Compile Remove="Models\ComponentModels\HEADER_BUTTONS.cs" />
+    <Compile Remove="Models\ComponentModels\DISPLAY_FIELDS.cs" />
+    <Compile Remove="Models\ComponentModels\PAGES_M.cs" />
   </ItemGroup>
 </Project>

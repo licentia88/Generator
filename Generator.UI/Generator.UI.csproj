@@ -39,4 +39,14 @@
     <Folder Include="Models\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Pages\GeneratorPages\GridPagesD.razor.cs" />
+    <Compile Remove="Pages\GeneratorPages\DisplayFieldsPage.razor.cs" />
+    <Compile Remove="Pages\GeneratorPages\GridPagesM.razor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Pages\GeneratorPages\GridPagesD.razor" />
+    <Content Remove="Pages\GeneratorPages\DisplayFieldsPage.razor" />
+    <Content Remove="Pages\GeneratorPages\GridPagesM.razor" />
+  </ItemGroup>
 </Project>

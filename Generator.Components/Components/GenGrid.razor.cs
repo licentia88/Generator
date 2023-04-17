@@ -717,7 +717,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (!ValidateSearchFields()) return;
 
         SearchDisabled = true;
+        GridIsBusy = true;
         await Search.InvokeAsync(new SearchArgs(SearchFieldComponents));
+        GridIsBusy = false;
         SearchDisabled = false;
     }
 

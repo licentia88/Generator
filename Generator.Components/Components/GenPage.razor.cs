@@ -68,7 +68,7 @@ namespace Generator.Components.Components
             if (Load.HasDelegate)
                 await Load.InvokeAsync(this);
 
-            RefreshParentGrid = EventCallback.Factory.Create(this, ()=> GenGrid.RefreshButtonState());
+            RefreshParentGrid = EventCallback.Factory.Create(this, GenGrid.RefreshButtonState);
 
             await base.OnInitializedAsync();
           

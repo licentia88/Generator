@@ -18,9 +18,9 @@ public static class Registrations
 
     public static void RegisterGeneratorServices(this WebApplication app)
     {
-        app.MapGrpcService<PagesMService>().EnableGrpcWeb();
-        app.MapGrpcService<PagesDService>().EnableGrpcWeb();
-        app.MapGrpcService<DisplayFieldsService>().EnableGrpcWeb();
+        //app.MapGrpcService<PagesMService>().EnableGrpcWeb();
+        //app.MapGrpcService<PagesDService>().EnableGrpcWeb();
+        //app.MapGrpcService<DisplayFieldsService>().EnableGrpcWeb();
         app.MapGrpcService<DatabaseServices>().EnableGrpcWeb();
     }
 

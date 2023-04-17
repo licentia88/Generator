@@ -9,10 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using Force.DeepCloner;
 using Generator.Components.Extensions;
 using Mapster;
-using System.ComponentModel;
-using System.Diagnostics;
 using Generator.Components.Args;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Generator.Components.Components;
 
@@ -58,6 +55,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
 
     public bool GridIsBusy = false;
+
+    
 
     public DialogOptions DialogOptions()
     {
@@ -203,7 +202,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public bool ForceRenderOnce { get; set; }
 
     public bool IsRendered { get; set; }
-   
+
+    public GenGrid()
+    {
+        EditTrigger = TableEditTrigger.EditButton;
+    }
 
     protected override Task OnInitializedAsync()
     {

@@ -90,12 +90,16 @@ namespace Generator.Components.Components
             return Task.CompletedTask;
         }
 
+        public void Initialize()
+        {
+
+        }
         //protected override void BuildRenderTree(RenderTreeBuilder builder)
         //{
         //    if (Model is not null || ParentGrid.IsRendered)
         //        base.BuildRenderTree(builder);
         //}
- 
+
 
         public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
         {

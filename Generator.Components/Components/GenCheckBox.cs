@@ -7,6 +7,7 @@ using System.ComponentModel;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
 using Microsoft.AspNetCore.Components.Web;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Generator.Components.Components;
 
@@ -88,6 +89,12 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
             ParentGrid?.AddChildComponent(this);
 
         return Task.CompletedTask;
+    }
+
+    public void Initialize()
+    {
+        if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+ 
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)

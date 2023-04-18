@@ -70,17 +70,20 @@ namespace Generator.Components.Components
        
         protected override Task OnInitializedAsync()
         {
+            Initialize();
             if (IsSearchField)
                 ParentGrid?.AddSearchFieldComponent(this);
             else
-            {
-                if(Model is not null)
-                    Date = (DateTime?)Model?.GetPropertyValue(BindingField);
-
                 ParentGrid?.AddChildComponent(this);
-            }
- 
+
             return Task.CompletedTask;
+        }
+
+        public void Initialize()
+        {
+            if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+
+            Date = (DateTime?)Model?.GetPropertyValue(BindingField);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)

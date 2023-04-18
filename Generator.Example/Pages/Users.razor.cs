@@ -44,6 +44,8 @@ namespace Generator.Example.Pages
             //{
             //    grid.ShouldShowDialog = false;
             //}
+
+            //grid.ShowDialog = false;
         }
 
         private GenTextField U_LASTNAME;
@@ -55,6 +57,11 @@ namespace Generator.Example.Pages
             U_LASTNAME.SetValue("VALUE SET!!");
         }
 
+        public void OntextChanged(object date)
+        {
+            U_LASTNAME.SetValue("VALUE SET!!");
+        }
+        
         public  void Load(IGenView<USER> view)
         {
             View = view;

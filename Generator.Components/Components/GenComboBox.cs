@@ -91,6 +91,13 @@ namespace Generator.Components.Components
             return Task.CompletedTask;
         }
 
+        public void Initialize()
+        {
+            if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+
+        }
+
+
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             if (Model is not null && Model.GetType().Name != "Object")

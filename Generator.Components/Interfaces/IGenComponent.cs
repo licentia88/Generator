@@ -49,6 +49,7 @@ public interface IGenComponent: IGenCompRenderer
 
     public void ValidateObject();
 
+    public void Initialize();
     //public Action<object> ValueChangedAction { get; set; }
 
 }

@@ -2,7 +2,6 @@
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
@@ -81,6 +80,21 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     protected override  Task OnInitializedAsync()
     {
+        Initialize();
+
+        if (IsSearchField)
+            ParentGrid?.AddSearchFieldComponent(this);
+        else
+            ParentGrid?.AddChildComponent(this);
+
+
+        return Task.CompletedTask;
+    }
+
+    public void Initialize()
+    {
+        if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+
         if (InputType == InputType.Date)
         {
             Converter = _dateConverter;
@@ -96,15 +110,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         Immediate = true;
 
-        if (IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
-        else
-            ParentGrid?.AddChildComponent(this);
-
-
-        return Task.CompletedTask;
     }
-
     private Converter<object> _stringConverter = new()
     {
         SetFunc = value => value?.ToString(),
@@ -139,11 +145,11 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     private void SetCallBackEvents()
     {
         if (!ValueChanged.HasDelegate)
-            ValueChanged = EventCallback.Factory.Create<object>(this, x => SetValue(x));
+            ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
         if (IsSearchField)
         {
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) =>
+            OnClearButtonClick = EventCallback.Factory.Create(this, (MouseEventArgs arg) =>
             {
                 SetValue(null);
                 ParentGrid.ValidateSearchFields(BindingField);
@@ -155,10 +161,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
         else
         {
-  
+            
             OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
 
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs arg) => OnClearClicked(arg));
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
         }
     }
 

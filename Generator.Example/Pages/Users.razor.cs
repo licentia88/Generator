@@ -54,7 +54,7 @@ namespace Generator.Example.Pages
         public void OnDateChanged(DateTime? date)
         {
             U_REGISTER_DATE.SetValue(date);
-            U_LASTNAME.SetValue("VALUE SET!!");
+            //U_LASTNAME.SetValue("VALUE SET!!");
         }
 
         public void OntextChanged(object date)
@@ -64,7 +64,11 @@ namespace Generator.Example.Pages
         
         public  void Load(IGenView<USER> view)
         {
+            //Console.WriteLine(view.ViewState.ToString());
             View = view;
+
+            if (view.SelectedItem.U_AGE == 0)
+                view.ShoulShowDialog = false;
 
             U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
 

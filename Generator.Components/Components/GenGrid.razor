@@ -139,7 +139,7 @@
                           FixedHeader="FixedHeader"
                           FixedFooter="FixedFooter"
                           Height="Height"
-                          RowsPerPage="@RowsPerPage"
+                          
                           @bind-SelectedItem="SelectedItem"
                           SelectedItems="@SelectedItems"
                           Filter="new Func<TModel, bool>(SearchFunction)"
@@ -213,7 +213,7 @@
                                 {
                                     <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
                                         <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                                            <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="OnCreateClick" Disabled="NewDisabled|| Disabled" />
+                                            <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=> { NewDisabled = true; await OnCreateClick(); NewDisabled = false; }" Disabled="NewDisabled|| Disabled" />
                                         </MudGrid>
                                     </div>
                                 }
@@ -318,8 +318,9 @@
 
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible && x is not GenSpacer).OrderBy(x => x.Order).ToList())
                             {
-                                if (EditMode != EditMode.Inline)
+                                if (EditMode != EditMode.Inline || !ShoulShowDialog)
                                 {
+                                    
                                     <MudTd Style="width: auto !important">
                                         @item.RenderAsGridComponent(_context)
                                     </MudTd>

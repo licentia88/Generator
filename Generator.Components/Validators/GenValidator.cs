@@ -22,6 +22,7 @@ public class GenValidator<T>
     {
         var results = new List<ValidationResult>();
 
+        if (obj is null) return default;
         var context = new ValidationContext(obj);
 
         bool isValid = Validator.TryValidateObject(obj, context, results, true);

@@ -12,8 +12,16 @@
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">
     <GenColumns>
-        <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)"  Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)" Label="RefNo" Disabled="true" />
         <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" ValueChanged="x => ValChanged(x)" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_ONE)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_TWO)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_THREE)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_FOUR)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_FIVE)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_SIX)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_SEVEN)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_EIGHT)" Label="RefNo" Disabled="true" />
     </GenColumns>
 </GenGrid>
 

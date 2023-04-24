@@ -174,7 +174,7 @@ public static class PropertyExtensions
 
     public static object GetDefaultValue(this Type type)
     {
-        if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
+        if (type is not null && type.IsValueType && Nullable.GetUnderlyingType(type) == null)
         {
             return Activator.CreateInstance(type);
         }

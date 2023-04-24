@@ -93,7 +93,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public void Initialize()
     {
-        if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+        //if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
 
         if (InputType == InputType.Date)
         {

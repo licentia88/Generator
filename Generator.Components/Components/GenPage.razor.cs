@@ -43,6 +43,8 @@ namespace Generator.Components.Components
 
         public bool IsValid { get; set; }
 
+        public bool ShoulShowDialog { get; set; } = true;
+
 
         [Parameter]
         public List<IGenComponent> Components { get; set; }
@@ -51,8 +53,8 @@ namespace Generator.Components.Components
         public List<IGenComponent> SearchFieldComponents { get; set; }
 
 
-        [Parameter]
-        public EventCallback<IGenView<TModel>> Load { get; set; }
+        //[Parameter]
+        //public EventCallback<IGenView<TModel>> Load { get; set; }
 
         [Parameter]
         public Dictionary<string, object> Parameters { get; set; } = new();
@@ -65,8 +67,8 @@ namespace Generator.Components.Components
             GenGrid.CurrentGenPage = this;
 
 
-            if (Load.HasDelegate)
-                await Load.InvokeAsync(this);
+            //if (Load.HasDelegate)
+            //    await Load.InvokeAsync(this);
 
             RefreshParentGrid = EventCallback.Factory.Create(this, GenGrid.RefreshButtonState);
 

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Generator.Examples.Shared;
-using Generator.Shared.Extensions;
-using GenFu;
+﻿using Generator.Examples.Shared;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.InjectionTest
 {
-	public class InjectionClass
+    public class InjectionClass
 	{
 		[Inject]
 		public Lazy<List<USER>> UserList { get; set; }
@@ -20,7 +16,7 @@ namespace Generator.Example.InjectionTest
 
 		public void FillTable()
 		{
-            UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>());
+            UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>(50));
 
         }
     }

@@ -62,6 +62,30 @@ namespace Generator.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OM_MORE_FIELD_EIGHT")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_FIVE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_FOUR")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_ONE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_SEVEN")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_SIX")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_THREE")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OM_MORE_FIELD_TWO")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("OM_USER_REFNO")
                         .HasColumnType("int");
 

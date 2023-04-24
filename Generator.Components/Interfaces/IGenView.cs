@@ -44,7 +44,9 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
 
     public Dictionary<string,object> Parameters { get; set; }
 
-    public EventCallback<IGenView<TModel>> Load { get; set; }
+    public bool ShoulShowDialog { get; set; }
+
+    //public EventCallback<IGenView<TModel>> Load { get; set; }
 
     public Task OnCommit(TModel model);
 

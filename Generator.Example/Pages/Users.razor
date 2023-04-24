@@ -10,16 +10,17 @@
     <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).OrderBy(x=>x.U_AGE).ToList()"
              TModel="USER"
              Title="Users"
+             Dense="true"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.SmartForm"
+             EditMode="EditMode.Inline"
              EditTrigger="TableEditTrigger.RowClick"
              EnableSearch="false"
              Disabled="IsDisabled"
              SearchText="Search"
              CancelText="Iptal"
+             RowsPerPage="30"
              EnableSorting="false"
              MultiSelection="true"
-             OnBeforeShowDialog="x=>OnBeforeLoad(x)"
              Class="m-2"
              Search="async x=> await Search(x)"
              Create="@( async x=> await CreateAsync(x))"
@@ -64,7 +65,7 @@
 
             <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
 
-            <GenTextField BindingField="@nameof(USER.U_LASTNAME)" TextChanged="OntextChanged"
+            <GenTextField BindingField="@nameof(USER.U_LASTNAME)"  
                           Label="Last Name" />
 
             <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />

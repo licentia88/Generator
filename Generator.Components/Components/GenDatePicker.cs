@@ -81,7 +81,7 @@ namespace Generator.Components.Components
 
         public void Initialize()
         {
-            if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+            //if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
 
             Date = (DateTime?)Model?.GetPropertyValue(BindingField);
         }

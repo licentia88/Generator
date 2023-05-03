@@ -17,6 +17,10 @@ namespace Generator.Shared.Models.ComponentModels
     {
         [ProtoMember(1)]
         public string DFI_NAME { get; set; }
+
+        [ProtoMember(2)]
+        public bool DFI_IS_SEARCH_FIELD { get; set; }
+
     }
 
     [NotMapped]
@@ -33,6 +37,14 @@ namespace Generator.Shared.Models.ComponentModels
     {
         [ProtoMember(1)]
         public string SP_NAME { get; set; }
+    }
+
+    [NotMapped]
+    [ProtoContract]
+    public class GEN_COMPONENT_TYPES
+    {
+        [ProtoMember(1)]
+        public string GCT_NAME { get; set; }
     }
 }
 

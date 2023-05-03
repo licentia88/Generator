@@ -23,9 +23,9 @@ builder.Services.AddScoped<NotificationsView>();
 builder.Services.AddScoped<List<NotificationVM>>();
 
 
-//builder.Services.RegisterGrpcService<IDisplayFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-//builder.Services.RegisterGrpcService<IPagesMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-//builder.Services.RegisterGrpcService<IPagesDService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+builder.Services.RegisterGrpcService<IGRidCrudViewService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+builder.Services.RegisterGrpcService<IPagesMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+builder.Services.RegisterGrpcService<IGridFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 builder.Services.RegisterGrpcService<IDatabaseService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 
 

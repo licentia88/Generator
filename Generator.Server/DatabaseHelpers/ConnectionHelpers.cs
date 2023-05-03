@@ -1,8 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using Microsoft.EntityFrameworkCore;
-using Oracle.ManagedDataAccess.Client;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.DatabaseResolvers
 {

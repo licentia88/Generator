@@ -120,6 +120,11 @@ namespace Generator.Components.Components
         {
             throw new NotImplementedException();
         }
+
+        public void SetSearchValue(string BindingField, object Value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

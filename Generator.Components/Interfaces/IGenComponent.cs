@@ -50,6 +50,8 @@ public interface IGenComponent: IGenCompRenderer
     public void ValidateObject();
 
     public void Initialize();
+
+    public void SetSearchValue(string BindingField, object Value);
     //public Action<object> ValueChangedAction { get; set; }
 
 }

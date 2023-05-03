@@ -10,6 +10,7 @@ using Force.DeepCloner;
 using Generator.Components.Extensions;
 using Mapster;
 using Generator.Components.Args;
+using System.ComponentModel;
 
 namespace Generator.Components.Components;
 
@@ -629,13 +630,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public void AddChildComponent(IGenComponent childComponent)
     {
-        if (Components.Any(x => x is not GenSpacer && x.BindingField == childComponent.BindingField)) return;
+        if (Components.Any(x => x is not GenSpacer && x.BindingField == childComponent.BindingField )) return;
         Components.Add(childComponent);
     }
 
     public void AddSearchFieldComponent(IGenComponent component)
     {
-        if (SearchFieldComponents.Any(x => x is not GenSpacer && x.BindingField == component.BindingField)) return;
+        if (SearchFieldComponents.Any(x => x is not GenSpacer && x.BindingField == component.BindingField )) return;
         component.Model = new();
         SearchFieldComponents.Add(component);
     }

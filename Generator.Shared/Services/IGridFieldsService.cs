@@ -4,7 +4,7 @@ using ProtoBuf.Grpc.Configuration;
 namespace Generator.Shared.Services;
 
 [Service]
-public interface IPagesMService : IGenericServiceBase<PAGES_M>
+public interface IGridFieldsService : IGenericServiceBase<GRID_FIELDS>
 {
 }
 

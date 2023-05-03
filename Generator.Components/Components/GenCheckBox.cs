@@ -88,6 +88,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         else
             ParentGrid?.AddChildComponent(this);
 
+        if (string.IsNullOrEmpty(Class))
+            Class = "mt-3";
+
         return Task.CompletedTask;
     }
 
@@ -148,6 +151,10 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         return this.GetFieldValue(nameof(_value));
     }
 
+    public void SetSearchValue(string BindingField, object Value)
+    {
+        Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
+    }
     //public GenCheckBox GetReference()
     //{
     //    return (GenCheckBox)Reference;

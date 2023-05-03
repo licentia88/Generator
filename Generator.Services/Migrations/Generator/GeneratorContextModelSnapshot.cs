@@ -19,7 +19,7 @@ namespace Generator.Services.Migrations.Generator
                 .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.COMPONENT_BASE", b =>
                 {
@@ -27,7 +27,7 @@ namespace Generator.Services.Migrations.Generator
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CB_ROWID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CB_ROWID"));
 
                     b.Property<string>("CB_CODE")
                         .IsRequired()
@@ -59,7 +59,7 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasKey("CB_ROWID");
 
-                    b.ToTable("COMPONENT_BASE");
+                    b.ToTable("COMPONENT_BASE", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.DISPLAY_FIELDS", b =>
@@ -68,7 +68,7 @@ namespace Generator.Services.Migrations.Generator
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DF_ROWID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DF_ROWID"));
 
                     b.Property<int>("DF_COMPONENT_REFNO")
                         .HasColumnType("int");
@@ -90,7 +90,7 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasIndex("DF_COMPONENT_REFNO");
 
-                    b.ToTable("DISPLAY_FIELDS");
+                    b.ToTable("DISPLAY_FIELDS", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PERMISSIONS", b =>
@@ -99,7 +99,7 @@ namespace Generator.Services.Migrations.Generator
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PER_ROWID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PER_ROWID"));
 
                     b.Property<string>("PER_AUTH_CODE")
                         .HasColumnType("nvarchar(450)");
@@ -124,7 +124,7 @@ namespace Generator.Services.Migrations.Generator
                         .IsUnique()
                         .HasFilter("[PER_AUTH_CODE] IS NOT NULL");
 
-                    b.ToTable("PERMISSIONS");
+                    b.ToTable("PERMISSIONS", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.BUTTONS_BASE", b =>
@@ -136,7 +136,7 @@ namespace Generator.Services.Migrations.Generator
 
                     b.HasIndex("BB_PAGE_REFNO");
 
-                    b.ToTable("BUTTONS_BASE");
+                    b.ToTable("BUTTONS_BASE", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_M", b =>
@@ -155,21 +155,21 @@ namespace Generator.Services.Migrations.Generator
                     b.Property<bool>("PM_UPDATE")
                         .HasColumnType("bit");
 
-                    b.ToTable("PAGES_M");
+                    b.ToTable("PAGES_M", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.GRID_BUTTONS", b =>
                 {
                     b.HasBaseType("Generator.Shared.Models.ComponentModels.BUTTONS_BASE");
 
-                    b.ToTable("GRID_BUTTONS");
+                    b.ToTable("GRID_BUTTONS", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.HEADER_BUTTONS", b =>
                 {
                     b.HasBaseType("Generator.Shared.Models.ComponentModels.BUTTONS_BASE");
 
-                    b.ToTable("HEADER_BUTTONS");
+                    b.ToTable("HEADER_BUTTONS", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.PAGES_D", b =>
@@ -183,7 +183,7 @@ namespace Generator.Services.Migrations.Generator
                         .IsUnique()
                         .HasFilter("[PD_M_REFNO] IS NOT NULL");
 
-                    b.ToTable("PAGES_D");
+                    b.ToTable("PAGES_D", (string)null);
                 });
 
             modelBuilder.Entity("Generator.Shared.Models.ComponentModels.DISPLAY_FIELDS", b =>

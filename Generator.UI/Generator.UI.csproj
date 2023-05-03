@@ -16,6 +16,7 @@
     <None Remove="Pages\GeneratorPages\" />
     <None Remove="Models\" />
     <None Remove="Extensions\" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="6.1.4" />
@@ -38,6 +39,7 @@
     <Folder Include="Pages\GeneratorPages\" />
     <Folder Include="Models\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Pages\GeneratorPages\GridPagesD.razor.cs" />

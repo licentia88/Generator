@@ -1,0 +1,46 @@
+﻿@inherits PagesBase<PAGES_M, GRID_CRUD_VIEW, IGRidCrudViewService>
+
+
+
+<GenGrid TModel="GRID_CRUD_VIEW"
+         DataSource="DataSource"
+         EditMode="EditMode.SmartForm"
+         Load="Load"
+         MaxWidth="MaxWidth.Large"
+         Create="Create"
+         Title="Grid View"
+         EditTrigger="TableEditTrigger.EditButton">
+    <GenColumns>
+
+        @*ROW1*@
+        <GenSpacer xs="12" sm="12" md="12" lg="9" xl="9" xxl="9" />
+
+        <GenComboBox DataSource="TableList" @ref="SourceComboBox"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Source"
+                     BindingField="@nameof(GRID_CRUD_VIEW.CB_SOURCE)"
+                     ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
+                     DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)" />
+
+        @*ROW2*@
+        <GenCheckBox BindingField="@nameof(GRID_CRUD_VIEW.GCV_CREATE)" Label="Create" TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(GRID_CRUD_VIEW.GCV_UPDATE)" Label="Update" TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(GRID_CRUD_VIEW.GCV_DELETE)" Label="Delete" TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+    </GenColumns>
+
+    <GenDetailGrid>
+        <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
+            <MudTabPanel Text="Crud">
+                <GridFieldsGrid ParentModel="context"  />
+            </MudTabPanel>
+        </MudTabs>
+    </GenDetailGrid>
+</GenGrid>

@@ -53,6 +53,10 @@ public class GenValidator<T>
      
     private bool ValidateModelValue(IGenComponent component, T model, string propertyName)
     {
+        var modelHasProperty = typeof(T).GetProperties().Any(x => x.Name.Equals(propertyName));
+
+        if (!typeof(T).HasProperty(propertyName)) return true;
+
         var results = new List<ValidationResult>();
 
         var context = new ValidationContext(model);
@@ -133,6 +137,7 @@ public class GenValidator<T>
 
     private void SetError(IGenComponent component, string errorMessage)
     {
+        if (component is null) return;
         component.Error = true;
 
         component.ErrorText = errorMessage;
@@ -140,6 +145,8 @@ public class GenValidator<T>
 
     public void ResetValidation(IGenComponent component)
     {
+        if (component is null) return;
+
         component.Error = false;
 
         component.ErrorText = string.Empty;

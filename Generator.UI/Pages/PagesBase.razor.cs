@@ -1,7 +1,5 @@
-﻿using System;
-using Generator.Shared.Services;
+﻿using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using MudBlazor;
 
 namespace Generator.UI.Pages
@@ -11,15 +9,17 @@ namespace Generator.UI.Pages
         [Inject]
         public TService Service { get; set; }
 
-        public List<TModel> DataSource { get; set; } = new List<TModel>();
-
-
+        [Inject]
+        public IDatabaseService DatabaseService { get; set; }
+ 
         [Inject]
         public NotificationsView NotificationsView { get; set; }
 
         [Inject] ISnackbar Snackbar { get; set; }
 
-      
+
+        public List<TModel> DataSource { get; set; } = new List<TModel>();
+
         protected override Task OnInitializedAsync()
         {
             NotificationsView.Snackbar = Snackbar;

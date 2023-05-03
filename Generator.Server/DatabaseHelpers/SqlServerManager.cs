@@ -1,15 +1,9 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
-using System.Text;
-using Cysharp.Text;
 using Generator.Server.Extensions;
-using Generator.Shared.Enums;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
 //using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Generator.Server.DatabaseResolvers
 {
@@ -53,7 +47,7 @@ namespace Generator.Server.DatabaseResolvers
 
             string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
 
-            bool IsIdentity = (bool)(isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>());
+            //bool IsIdentity = (bool)(isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>());
 
             var updateStatement = CreateUpdateStatement(TableName, Model, primaryKeyName);
 

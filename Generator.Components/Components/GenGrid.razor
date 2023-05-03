@@ -165,9 +165,13 @@
 
                             Func<IGenComponent, bool> predicate;
 
-                            if (ViewState != ViewState.None)
+                            if (ViewState != ViewState.None && EditMode == EditMode.Inline)
                             {   //edit create vs
                                 predicate = x => x.EditorVisible && x is not GenSpacer;
+                            }
+                            else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
+                            {
+                                predicate = x => x.GridVisible && x is not GenSpacer;
                             }
                             else
                             {

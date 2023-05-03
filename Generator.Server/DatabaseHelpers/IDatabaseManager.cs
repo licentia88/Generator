@@ -1,8 +1,5 @@
-﻿using System.Data.Common;
-using System.Configuration;
-using System.Data;
+﻿using System.Data;
 using Generator.Shared.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Generator.Server.DatabaseResolvers
 {
@@ -21,7 +18,6 @@ namespace Generator.Server.DatabaseResolvers
         public Task<List<IDictionary<string, object>>> GetStoredProcedureFieldMetaDataAsync(string ProcedureName);
 
         public Task<List<IDictionary<string, object>>> GetMethodParameters(string MethodName);
-
     }
 
 

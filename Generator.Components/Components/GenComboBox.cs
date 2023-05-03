@@ -1,6 +1,5 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-using Generator.Components.Validators;
 using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -8,8 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Generator.Components.Components
 {
@@ -87,6 +84,7 @@ namespace Generator.Components.Components
                 ParentGrid?.AddSearchFieldComponent(this);
             else
                 ParentGrid?.AddChildComponent(this);
+
 
             return Task.CompletedTask;
         }
@@ -198,10 +196,12 @@ namespace Generator.Components.Components
         {
             return this.GetFieldValue(nameof(_value));
         }
-        //public GenComboBox GetReference()
-        //{
-        //    return (GenComboBox)Reference;
-        //}
+
+        public void SetSearchValue(string BindingField, object Value)
+        {
+            Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
+        }
+         
     }
 }
 

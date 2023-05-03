@@ -16,7 +16,7 @@ namespace Generator.UI.Pages
         [Inject]
         public List<NotificationVM> Notifications { get; set; }
 
-
+     
         protected override Task OnInitializedAsync()
         {
             Snackbar.Configuration.SnackbarVariant = Variant.Filled;

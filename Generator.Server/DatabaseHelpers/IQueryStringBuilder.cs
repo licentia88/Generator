@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-namespace Generator.Server.DatabaseResolvers
+﻿namespace Generator.Server.DatabaseResolvers
 {
     public interface IQueryStringBuilder
     {

@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-namespace Generator.Server.DatabaseResolvers
+﻿namespace Generator.Server.DatabaseResolvers
 {
     public class SqlQueryBuilder : DatabaseManager, IQueryStringBuilder
     {

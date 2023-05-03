@@ -62,7 +62,6 @@
     <Compile Remove="Models\ComponentModels\DATABASES.cs" />
     <Compile Remove="Models\ComponentModels\GRIDS_D.cs" />
     <Compile Remove="Models\ComponentModels\HEADER_BUTTON.cs" />
-    <Compile Remove="Models\ComponentModels\GRIDS_M.cs" />
     <Compile Remove="Models\ComponentModels\COMPONENT.cs" />
     <Compile Remove="Models\ComponentModels\COMPONENT_BASE.cs" />
     <Compile Remove="Models\ComponentModels\BUTTONS_BASE.cs" />

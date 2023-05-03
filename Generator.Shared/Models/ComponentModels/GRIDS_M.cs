@@ -1,27 +1,65 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ProtoBuf;
 
 namespace Generator.Shared.Models.ComponentModels;
 
 [ProtoContract]
-[ProtoInclude(500,typeof(GRIDS_D))]
-[Table(nameof(GRIDS_M))]
-public class GRIDS_M: COMPONENT
+[ProtoInclude(200, nameof(PAGES_D))]
+[Table(nameof(PAGES_M))]
+public class PAGES_M:COMPONENTS_BASE
 {
-    public GRIDS_M()
+    public PAGES_M()
     {
-        COMP_TYPE = nameof(GRIDS_M);
+        CB_TYPE = nameof(PAGES_M);
     }
- 
+
     [ProtoMember(1)]
-    [ForeignKey(nameof(ComponentModels.GRIDS_D.GD_M_REFNO))]
-    public ICollection<GRIDS_D> GRIDS_D { get; set; } = new HashSet<GRIDS_D>();
+    public int PM_EDIT_MODE { get; set; }
 
     [ProtoMember(2)]
-    [ForeignKey(nameof(ComponentModels.HEADER_BUTTON.HB_GRID_REFNO))]
-    public ICollection<HEADER_BUTTON> HEADER_BUTTON { get; set; } = new HashSet<HEADER_BUTTON>();
+    public int PM_EDIT_TRIGGER { get; set; }
 
     [ProtoMember(3)]
-    [ForeignKey(nameof(ComponentModels.FOOTER_BUTTON.FB_GRID_REFNO))]
-    public ICollection<FOOTER_BUTTON> FOOTER_BUTTON { get; set; } = new HashSet<FOOTER_BUTTON>();
+    public int PM_MAX_WIDTH { get; set; }
+
+    [ProtoMember(4)]
+    public bool PM_DENSE { get; set; }
+
+    [ProtoMember(5)]
+    [Required(ErrorMessage = "*")]
+    public int? PM_ROWS_PER_PAGE { get; set; }
+
+    [ProtoMember(6)]
+    public bool PM_ENABLE_SORTING { get; set; }
+
+    [ProtoMember(7)]
+    public bool PM_ENABLE_FILTERING { get; set; }
+
+    [ProtoMember(8)]
+    public bool PM_STRIPED { get; set; }
+
+    [ProtoMember(9)]
+    [ForeignKey(nameof(ComponentModels.VIEW_BASE.VB_PAGE_REFNO))]
+    public ICollection<VIEW_BASE> VIEW_BASE { get; set; }
+
+    [ProtoMember(10)]
+    [ForeignKey(nameof(ComponentModels.PAGES_D.PD_M_REFNO))]
+    public ICollection<PAGES_D> PAGES_D { get; set; }
 }
+
+[ProtoContract]
+[Table(nameof(PAGES_D))]
+public class PAGES_D: PAGES_M
+{
+    public PAGES_D()
+    {
+        CB_TYPE = nameof(PAGES_D);
+    }
+
+    [ProtoMember(1)]
+    public int PD_M_REFNO { get; set; }
+}
+
+
+

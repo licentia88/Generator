@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+
+	<metadata>
+		<id>AQueryMaker</id>
+	    <version>1.0.3</version>
+		<title>Query Maker</title>
+		<authors>ASIM GUNDUZ</authors>
+		<owners>ASIM GUNDUZ</owners>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/licentia88/Generator/tree/MyBranch/QueryMaker</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>MSSql/Oracle Query CRUD Query Generator and Executor</description>
+		<releaseNotes>Hello World</releaseNotes>
+		<copyright>Copyright 2023</copyright>
+		<tags>Query</tags>
+		<repository type="git" url="https://github.com/licentia88/Generator" />
+		<dependencies>
+			<group targetFramework="net7.0">
+				<dependency id="Microsoft.EntityFrameworkCore" version="6.0.*" />
+			    <dependency id="Microsoft.EntityFrameworkCore.Relational" version="6.0.*" />
+		   		<dependency id="System.Data.SqlClient" version="4.8.*" />
+		 		<dependency id="Oracle.ManagedDataAccess.Core" version="3.21.100" />
+				<dependency id="Mapster" version="7.3.0" />
+			</group>
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="bin\Debug\net7.0\QueryMaker.dll" target="lib\net7.0" />
+	</files>
+</package>

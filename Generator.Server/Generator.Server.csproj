@@ -50,10 +50,10 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />
-    <ProjectReference Include="..\..\QueryMaker\QueryMaker.csproj" />
+    <None Include="..\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\.editorconfig" />
+    <ProjectReference Include="..\QueryMaker\QueryMaker.csproj" />
+    <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />
   </ItemGroup>
 </Project>

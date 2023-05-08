@@ -16,7 +16,7 @@ namespace Generator.Example.InjectionTest
 
 		public void FillTable()
 		{
-            UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>(50));
+            UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>(300));
 
         }
     }

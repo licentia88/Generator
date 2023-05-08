@@ -1,13 +1,12 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Data.Common;
-using System.Text.Json;
-using Generator.Server.DatabaseResolvers;
+﻿using System.Data.Common;
 using Generator.Server.OptionsTemplates;
 using Microsoft.Data.SqlClient;
 //using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Oracle.ManagedDataAccess.Client;
+using QueryMaker.Interfaces;
+using QueryMaker.MSSql;
+using QueryMaker.Oracle;
 
 namespace Generator.Server.Helpers;
 

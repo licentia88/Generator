@@ -1,22 +1,20 @@
 ﻿using System.Data;
 using System.Data.Common;
-using Generator.Server.DatabaseResolvers;
-using Generator.Server.Extensions;
 using Generator.Server.Helpers;
 using Generator.Server.Models.Shema;
 using Generator.Shared.Models;
 using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
-using GenFu;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc;
-using static Generator.Server.GeneratorContext;
+using QueryMaker;
+using QueryMaker.MSSql;
 
 namespace Generator.Server.Services;
 
- 
+
 public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbContext
 {
     protected readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
@@ -78,7 +76,7 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var result = await GeneratorConnection.QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = new SqlServerManager(GeneratorConnection).QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
 
             return new GenObject();
             //return result;

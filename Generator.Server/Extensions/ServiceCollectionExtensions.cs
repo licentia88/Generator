@@ -1,11 +1,9 @@
-﻿using System.Configuration;
-using System.Data.Common;
-using Generator.Server.DatabaseResolvers;
+﻿using System.Data.Common;
 using Generator.Server.Helpers;
 using Generator.Server.OptionsTemplates;
-using Generator.Shared.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using QueryMaker;
 
 namespace Generator.Server.Extensions;
 

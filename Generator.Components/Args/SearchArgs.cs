@@ -18,10 +18,17 @@ public class SearchArgs:EventArgs
     {
         Components = components;
     }
- 
-    public List<WhereStatement> WhereStatements => Components?
-                                                   .Where(x=> x is not GenSpacer)
-                                                    .Select(x => new WhereStatement(x.BindingField, x.Model?.GetPropertyValue(x.BindingField))).ToList();
-     
+
+    public Dictionary<string, object> WhereStatements => Components.Where(x=> x.BindingField is not null).ToDictionary(component => component.BindingField,
+                                                                          component => component.Model.GetPropertyValue(component.BindingField));
+
 }
+
+
+
+//public List<WhereStatement> WhereStatements => Components?
+//                                                   .Where(x=> x is not GenSpacer)
+//                                                    .Select(x => new WhereStatement(x.BindingField, x.Model?.GetPropertyValue(x.BindingField))).ToList();
+     
+
  

@@ -6,6 +6,8 @@ using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
 using Generator.Shared.Extensions;
+using Generator.Shared.Models;
+using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using MudBlazor;
@@ -24,8 +26,20 @@ namespace Generator.Example.Pages
 
         private IGenView<USER> View { get; set; }
 
+        [Inject]
+        public ITestService tser { get; set; }
 
-        
+
+        public async IAsyncEnumerable<RESPONSE_REQUEST> TestData()
+        {
+            foreach (var item in DataSource)
+            {
+                await Task.Delay(10000);
+                Console.WriteLine("************SENDING************");
+
+                yield return new RESPONSE_REQUEST { TableName = item.U_LASTNAME };
+            }
+        }
         protected override async Task OnInitializedAsync()
         {
 
@@ -35,6 +49,15 @@ namespace Generator.Example.Pages
 
             //DataSource = userList.Value;
 
+            var test = tser.Subscribe(TestData());
+
+
+
+            await foreach (RESPONSE_RESULT item in test)
+            {
+                Console.WriteLine("************RECEIVING************");
+            }
+           
         }
 
 
@@ -86,7 +109,7 @@ namespace Generator.Example.Pages
         {
           
             //throw new Exception();
-             var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
+             var result = await UserService.CreateAsync(new Examples.Shared.RESPONSE_REQUEST<USER>(data));
 
 
 
@@ -106,7 +129,7 @@ namespace Generator.Example.Pages
 
         public async ValueTask UpdateAsync(USER data)
         {
-            var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
+            var result = await UserService.UpdateAsync(new Examples.Shared.RESPONSE_REQUEST<USER>(data));
 
             var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
 
@@ -115,7 +138,7 @@ namespace Generator.Example.Pages
 
         public async ValueTask DeleteAsync(USER data)
         {
-            var result = await UserService.DeleteAsync(new RESPONSE_REQUEST<USER>(data));
+            var result = await UserService.DeleteAsync(new Examples.Shared.RESPONSE_REQUEST<USER>(data));
 
             DataSource.Remove(data);
         }

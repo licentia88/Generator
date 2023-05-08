@@ -11,6 +11,7 @@ using Generator.Components.Extensions;
 using Mapster;
 using Generator.Components.Args;
 using System.ComponentModel;
+using Microsoft.JSInterop;
 
 namespace Generator.Components.Components;
 
@@ -18,6 +19,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 {
     [Inject]
     public GenValidator<TModel> GenValidator { get; set; }
+
+    [Inject]
+    public ExampleJsInterop ExampleJsInterop { get; set; }
 
     [Parameter]
     public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
@@ -235,7 +239,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return Task.CompletedTask;
     }
 
-    //private bool _isClicked = false;
 
     protected override  Task OnAfterRenderAsync(bool firstRender)
     {
@@ -260,6 +263,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             return Task.CompletedTask;
         }
 
+ 
         if ((ViewState == ViewState.Create || ViewState == ViewState.Update) && EditMode == EditMode.Inline)
         {
             //if (EditButtonActionList.Any())
@@ -648,12 +652,21 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         _selectedDetailObject = DetailClicked ? context : default;
     }
 
-    public void OnDetailClicked(TModel context)
+   
+    public async Task OnDetailClicked(TModel context)
     {
+        //SelectedItem = context;
         DetailClicked = !DetailClicked;
+        CancelDisabled = DetailClicked;
+ 
         SelectDetailObject(context);
+
+        var style = CancelDisabled ? "none" : "auto";
+
+        await  ExampleJsInterop.ChangeRowStyle(style);
     }
 
+    
 
 
 
@@ -840,7 +853,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     internal MudTr GetCurrentRow()
     {
         return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
+    }
 
+    internal MudTr GetRow(TModel model)
+    {
+        return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(model)).Value;
     }
 
     private Action GetRowButtonAction()
@@ -939,7 +956,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     protected override bool ShouldRender()
     {
-        if (_ShouldRender) return base.ShouldRender();
+        if (_ShouldRender)
+            return base.ShouldRender();
 
         return _ShouldRender;
     }

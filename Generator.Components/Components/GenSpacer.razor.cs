@@ -121,7 +121,7 @@ namespace Generator.Components.Components
             throw new NotImplementedException();
         }
 
-        public void SetSearchValue(string BindingField, object Value)
+        public void SetSearchValue(object Value)
         {
             throw new NotImplementedException();
         }

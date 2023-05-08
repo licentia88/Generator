@@ -1,4 +1,6 @@
-﻿using Generator.Shared.Models;
+﻿using System;
+using System.Globalization;
+using Generator.Shared.Models;
 using ProtoBuf.Grpc;
 using ProtoBuf.Grpc.Configuration;
 
@@ -62,5 +64,8 @@ public interface ITestService
     public Task<RESPONSE_RESULT> DeleteWithCodeTableTestObject(CallContext context = default);
 
     public Task<RESPONSE_RESULT> DeleteWithoutIdentityTestObject(CallContext context = default);
+
+    public IAsyncEnumerable<RESPONSE_RESULT> Subscribe(IAsyncEnumerable<RESPONSE_REQUEST> requests);
+    
 }
 

@@ -5,7 +5,7 @@
 
     if (userList is null) return;
 
-    <MudButton OnClick="TEST">Click</MudButton>
+    @*<MudButton OnClick="TEST">Click</MudButton>*@
 
     <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).OrderBy(x=>x.U_AGE).ToList()"
              TModel="USER"
@@ -20,7 +20,8 @@
              CancelText="Iptal"
              RowsPerPage="30"
              EnableSorting="false"
-             MultiSelection="true"
+             MultiSelection="false"
+             FixedHeader="true"
              Class="m-2"
              Search="async x=> await Search(x)"
              Create="@( async x=> await CreateAsync(x))"
@@ -29,12 +30,12 @@
              Load="@( x=> Load(x))">
         <GenSearchFields>
 
-            <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="true"
+            <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="true"  
                           xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" />
 
             <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-            <GenComboBox DataSource="userList.Value"
+            <GenComboBox DataSource="userList.Value" Dense="true"
                          DisplayField="@nameof(USER.U_NAME)"
                          ValueField="@nameof(USER.U_ROWID)"
                          Clearable="true" BindingField="comboField"
@@ -42,14 +43,14 @@
                          Label="Peopel" Required="true" />
 
 
-            <GenDatePicker Clearable="true"
+            <GenDatePicker Clearable="true" 
                            BindingField="DateField"
                            xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
                            Label="DateExample" Required="true" />
 
             <GenSpacer  xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-           <GenCheckBox  xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+           <GenCheckBox  xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" Dense="true"
                          BindingField="CheckBoxText"
                          Label="Test CheckBOx"
                          LabelPosition="LabelPosition.End"

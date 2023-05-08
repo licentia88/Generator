@@ -45,7 +45,7 @@
                 </MudGrid>
 
                 @{
-                    <MudGrid Class="mt-5">
+                    <MudGrid Class="">
                                     @{
                                         if (GenSearchFields is not null)
                                         {
@@ -78,7 +78,7 @@
                                     @{
                                         if (Search.HasDelegate)
                                         {
-                                            <MudGrid Class="m-2" Justify="Justify.FlexEnd">
+                                            <MudGrid Class="" Justify="Justify.FlexEnd">
                                                 <MudItem Class="mr-15" xs="2" sm="2" md="2" lg="2" xl="2" xxl="2">
                                                     <MudGrid Justify="Justify.FlexEnd">
                                                         <MudItem>
@@ -118,7 +118,8 @@
 
             if (DataSource is not null)
             {
-
+                var _height = Height ?? "50";
+                var _measurement = Height is null ? "vh" : "px";
                 <MudTable T="TModel"
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
@@ -138,8 +139,7 @@
                           Elevation="0"
                           FixedHeader="FixedHeader"
                           FixedFooter="FixedFooter"
-                          Height="Height"
-                          
+                          Height="@(FixedHeader || FixedFooter ?$"{_height}{_measurement}":Height)"
                           @bind-SelectedItem="SelectedItem"
                           SelectedItems="@SelectedItems"
                           Filter="new Func<TModel, bool>(SearchFunction)"
@@ -154,7 +154,7 @@
                           ReadOnly="false"
                           CanCancelEdit="true">
 
-                    <HeaderContent>
+                    <HeaderContent >
                         @{
                             if (HasDetail && EditMode != EditMode.SmartForm)
                             {
@@ -210,23 +210,22 @@
 
 
                         }
-                        <MudTh>
 
-                            @{
-                                if (Create.HasDelegate)
-                                {
-                                    <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
-                                        <MudGrid Class="ml-10" Justify="Justify.FlexEnd">
-                                            <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=> { NewDisabled = true; await OnCreateClick(); NewDisabled = false; }" Disabled="NewDisabled|| Disabled" />
-                                        </MudGrid>
-                                    </div>
-                                }
-                            }
+                        <MudTh></MudTh>
 
-                        </MudTh>
+                        @if (Create.HasDelegate)
+                        {
+                            <MudTh>
+                                <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
+                                    @*<MudGrid Class="ml-10" Justify="Justify.FlexEnd">*@
+                                    <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=> { NewDisabled = true; await OnCreateClick(); NewDisabled = false; }" Disabled="NewDisabled|| Disabled" />
+                                    @*</MudGrid>*@
+                                </div>
+                            </MudTh>
+                        }
                     </HeaderContent>
 
-                    <RowTemplate>
+                    <RowTemplate >
 
                         @{
                             if (HasDetail && EditMode != EditMode.SmartForm)
@@ -238,11 +237,13 @@
                                     expandIcon = Icons.Material.Filled.ExpandLess;
                                 }
 
-                                <MudTd>
+
+                                <MudTd Style="padding:0px!important;" >
                                     <MudIconButton Size="Size.Small"
+                                                   Style="width:100%!important;height:100%!important;border-radius:0px!important;padding:8px!important;"
                                                    Disabled="ExpandDisabled"
                                                    Icon="@expandIcon"
-                                                   OnClick="@(() => OnDetailClicked(context))">
+                                                   OnClick="@(async() => await OnDetailClicked(context))">
                                     </MudIconButton>
                                 </MudTd>
                             }
@@ -268,11 +269,15 @@
 
                             if (Delete.HasDelegate && EditTrigger == TableEditTrigger.RowClick)
                             {
+                                //_ShouldRender = !CancelDisabled;
                                 <MudTd>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(context))" Disabled="Disabled || CancelDisabled" />
+                                    <MudIconButton Size="@Size.Small"
+                                                   Icon="@Icons.Outlined.Delete"
+                                                   Class="pa-0"
+                                                   OnClick="@(() => OnDeleteClicked(context))" Disabled="Disabled || CancelDisabled" />
+
 
                                 </MudTd>
-
                             }
 
 
@@ -281,24 +286,11 @@
                     </RowTemplate>
 
                     
-                    <RowEditingTemplate Context="_context">
+                    
+                    <RowEditingTemplate Context="_context" >
 
+                        
                         @{
-                            //if (Disabled && EditTrigger != TableEditTrigger.EditButton)
-                            //{
-                            //    EditTrigger = TableEditTrigger.EditButton;
-                            //    //OriginalTable.TableContext.TableStateHasChanged();
-                            //    StateHasChanged();
-                            //}
-                            //else
-                            //{
-                            //    if(EditTrigger != OriginalTrigger)
-                            //    {
-                            //        EditTrigger = OriginalTrigger;
-                            //        StateHasChanged();
-                            //    }
-
-                            //}
 
 
                             if (EditMode != EditMode.Inline)
@@ -322,9 +314,9 @@
 
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible && x is not GenSpacer).OrderBy(x => x.Order).ToList())
                             {
-                                if (EditMode != EditMode.Inline || !ShoulShowDialog)
+                                if (EditMode != EditMode.Inline || !ShoulShowDialog || DetailClicked)
                                 {
-                                    
+
                                     <MudTd Style="width: auto !important">
                                         @item.RenderAsGridComponent(_context)
                                     </MudTd>

@@ -25,6 +25,12 @@ public class ExampleJsInterop : IAsyncDisposable
         return await module.InvokeAsync<string>("showPrompt", message);
     }
 
+    public async ValueTask<string> ChangeRowStyle(string pointerEventsValue)
+    {
+        var module = await moduleTask.Value;
+        return await module.InvokeAsync<string>("changeRowStyle", pointerEventsValue);
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (moduleTask.IsValueCreated)

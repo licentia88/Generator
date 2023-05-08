@@ -12,7 +12,7 @@ public class GenObject
     private byte[] Bytes { get; set; }
 
     [ProtoMember(2)]
-    public bool IsList { get; }
+    public bool IsList { get; set; }
 
     public GenObject()
     {

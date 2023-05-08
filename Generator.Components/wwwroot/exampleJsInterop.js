@@ -5,3 +5,16 @@ export function showPrompt(message) {
   return prompt(message, 'Type anything here');
 }
 
+
+ 
+export function changeRowStyle(pointerEventsValue) {
+    var table = document.querySelector(".mud-table-root");
+    var rows = table.getElementsByClassName("mud-table-row");
+    for (var i = 0; i < rows.length; i++) {
+        var columns = rows[i].getElementsByTagName("td");
+        for (var j = 1; j < columns.length - 1; j++) {
+            columns[j].style.pointerEvents = pointerEventsValue;
+        }
+    }
+}
+

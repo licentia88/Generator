@@ -1,13 +1,11 @@
-﻿using Generator.Server.DatabaseResolvers;
-using Generator.Server.Helpers;
+﻿using Generator.Server.Helpers;
 using Generator.Shared.Models;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using Mapster;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using QueryMaker;
 
 namespace Generator.Server.Services;
 
@@ -81,7 +79,7 @@ public class DatabaseServices : IDatabaseService
 
             var query = " SELECT COLUMN_NAME DFI_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @TABLE_NAME ";
 
-            var queryResult = await SqlQueryFactory(connectionName).QueryAsync(query, new WhereStatement("TABLE_NAME", tableName));
+            var queryResult = await SqlQueryFactory(connectionName).QueryAsync(query, ("TABLE_NAME", tableName));
 
             var adaptedData = queryResult.Adapt<List<DISPLAY_FIELD_INFORMATION>>();
 

@@ -113,7 +113,7 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
 
     public EventCallback<SearchArgs> Search { get; set; }
 
-    public void OnDetailClicked(TModel context);
+    public Task OnDetailClicked(TModel context);
 
    
 

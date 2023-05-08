@@ -11,6 +11,7 @@ namespace Generator.Components.Extensions
         public static void RegisterGeneratorComponents(this IServiceCollection Services)
         {
             Services.AddScoped(typeof(GenValidator<>));
+            Services.AddScoped<ExampleJsInterop>();
         }
     }
 }

@@ -197,7 +197,7 @@ namespace Generator.Components.Components
             return this.GetFieldValue(nameof(_value));
         }
 
-        public void SetSearchValue(string BindingField, object Value)
+        public void SetSearchValue(object Value)
         {
             Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
         }

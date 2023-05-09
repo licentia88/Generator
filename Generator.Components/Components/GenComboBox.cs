@@ -1,6 +1,6 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-using Generator.Shared.Extensions;
+//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;

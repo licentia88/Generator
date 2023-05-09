@@ -1,4 +1,5 @@
 using Generator.Components.Args;
+using Generator.Components.Helpers;
 using Generator.Components.Validators;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,6 +11,8 @@ public interface INonGenGrid:INonGenView
     public INonGenPage CurrentGenPage { get; set; }
 
     public IDialogService DialogService { get; set; }
+
+    public string ExcelButtonText { get; set; }
 
     public DialogResult DialogResult { get; set; }
 
@@ -42,6 +45,8 @@ public interface INonGenGrid:INonGenView
     public bool EnableSorting { get; set; }
 
     public bool IsRendered { get; set; }
+
+    public string ExcelFile { get; set; }
 
     public RenderFragment GenColumns { get; set; }
 
@@ -82,6 +87,11 @@ public interface INonGenGrid:INonGenView
 
 public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:new()  
 {
+
+    public GeneratorJs GeneratorJs { get; set; }
+
+    public GenExcel GenExcel { get; set; }
+
     public GenValidator<TModel> GenValidator { get; set; }
 
     public ICollection<TModel> DataSource { get; set; }

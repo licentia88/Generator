@@ -2,7 +2,7 @@
 using System.Reflection;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
-using Generator.Shared.Extensions;
+//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 

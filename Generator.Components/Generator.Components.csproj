@@ -5,6 +5,17 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
      <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+     <!--<EnableDefaultContentItems>true</EnableDefaultContentItems>-->
+     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+     <Version>1.1.6</Version>
+     <Authors>ASIM GUNDUZ</Authors>
+    <Company>ASIM GUNDUZ</Company>
+    <Description>MudBlazor Grid Component</Description>
+    <Copyright>Copyright 2023</Copyright>
+    <PackageProjectUrl>https://github.com/licentia88/Generator.Components</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/licentia88/Generator.Components</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageTags>Blazor MudBlazor GenComponents</PackageTags>
   </PropertyGroup>
 
 
@@ -15,6 +26,9 @@
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="6.1.4" />
     <PackageReference Include="DeepCloner" Version="0.10.4" />
+    <PackageReference Include="ClosedXML" Version="0.101.0" />
+    <PackageReference Include="Mapster" Version="7.3.0" />
+    <PackageReference Include="Mapster.Core" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,9 +55,8 @@
     <Folder Include="Validators\" />
     <Folder Include="Manager\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />
-  </ItemGroup>
+
+
   <ItemGroup>
     <Compile Remove="Renderers\DictionaryRenderer.cs" />
     <Compile Remove="Renderers\RenderManager.cs" />
@@ -54,8 +67,23 @@
     <Compile Remove="Components\GridSpacer.cs" />
     <Compile Remove="Components\GenColumnBase.cs" />
     <Compile Remove="Components\GenGridColumn.cs" />
+ 
   </ItemGroup>
+
+ 
   <ItemGroup>
-    <Content Remove="Components\GenGridColumn.razor" />
+    <Content Update="wwwroot\GeneratorJs.js">
+        <Pack>true</Pack>
+        <PackagePath>content</PackagePath>
+        <IncludeInPackage>true</IncludeInPackage>
+        <CopyToOutput>true</CopyToOutput>
+        <BuildAction>Content</BuildAction>
+        <copyToOutput>true</copyToOutput>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
+   
+   
+  
 </Project>

@@ -1,4 +1,5 @@
-﻿using Generator.Components.Validators;
+﻿using Generator.Components.Helpers;
+using Generator.Components.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Generator.Components.Extensions
@@ -11,7 +12,9 @@ namespace Generator.Components.Extensions
         public static void RegisterGeneratorComponents(this IServiceCollection Services)
         {
             Services.AddScoped(typeof(GenValidator<>));
-            Services.AddScoped<ExampleJsInterop>();
+            Services.AddScoped<GeneratorJs>();
+            Services.AddScoped<GenExcel>();
+            
         }
     }
 }

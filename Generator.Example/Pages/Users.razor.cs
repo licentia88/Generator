@@ -30,16 +30,15 @@ namespace Generator.Example.Pages
         public ITestService tser { get; set; }
 
 
-        public async IAsyncEnumerable<RESPONSE_REQUEST> TestData()
-        {
-            foreach (var item in DataSource)
-            {
-                await Task.Delay(10000);
-                Console.WriteLine("************SENDING************");
-
-                yield return new RESPONSE_REQUEST { TableName = item.U_LASTNAME };
-            }
-        }
+        //public async IAsyncEnumerable<string> TestData()
+        //{
+        //    foreach (var item in DataSource)
+        //    {
+        //        await Task.Delay(0);
+        //        Console.WriteLine($"************SENDING {item.U_LASTNAME}************");
+        //        yield return item.U_LASTNAME;
+        //    }
+        //}
         protected override async Task OnInitializedAsync()
         {
 
@@ -49,14 +48,14 @@ namespace Generator.Example.Pages
 
             //DataSource = userList.Value;
 
-            var test = tser.Subscribe(TestData());
+            //var test = tser.Subscribe(TestData());
 
 
 
-            await foreach (RESPONSE_RESULT item in test)
-            {
-                Console.WriteLine("************RECEIVING************");
-            }
+            //await foreach (string item in test)
+            //{
+            //    Console.WriteLine($"************Serving {item}************ {DateTime.Now}");
+            //}
            
         }
 

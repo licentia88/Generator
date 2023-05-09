@@ -1,5 +1,5 @@
-﻿using Generator.Examples.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Generator.Examples.Shared;
 
 namespace Generator.Example.InjectionTest
 {

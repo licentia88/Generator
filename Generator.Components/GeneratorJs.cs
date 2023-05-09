@@ -9,14 +9,14 @@ namespace Generator.Components;
 // This class can be registered as scoped DI service and then injected into Blazor
 // components for use.
 
-public class ExampleJsInterop : IAsyncDisposable
+public class GeneratorJs : IAsyncDisposable
 {
     private readonly Lazy<Task<IJSObjectReference>> moduleTask;
 
-    public ExampleJsInterop(IJSRuntime jsRuntime)
+    public GeneratorJs(IJSRuntime jsRuntime)
     {
         moduleTask = new (() => jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/Generator.Components/exampleJsInterop.js").AsTask());
+            "import", "./_content/Generator.Components/GeneratorJs.js").AsTask());
     }
 
     public async ValueTask<string> Prompt(string message)
@@ -31,6 +31,14 @@ public class ExampleJsInterop : IAsyncDisposable
         return await module.InvokeAsync<string>("changeRowStyle", pointerEventsValue);
     }
 
+
+    public async ValueTask DownloadExcelFile(string fileName, MemoryStream xlsStream)
+    {
+        var module = await moduleTask.Value;
+
+        await module.InvokeVoidAsync("BlazorDownloadFile", $"{fileName}.xlsx", xlsStream.ToArray());
+
+    }
     public async ValueTask DisposeAsync()
     {
         if (moduleTask.IsValueCreated)

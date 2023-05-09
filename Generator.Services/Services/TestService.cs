@@ -10,6 +10,7 @@ using Generator.Shared.Services;
 using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Mapster;
 using MBrace.FsPickler;
+using Microsoft.AspNetCore.Hosting.Server;
 using ProtoBuf.Grpc;
 
 namespace Generator.Services.Services;
@@ -397,11 +398,14 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
     }
 
-    public async IAsyncEnumerable<RESPONSE_RESULT> Subscribe(IAsyncEnumerable<RESPONSE_REQUEST> requests)
+
+    public async IAsyncEnumerable<string> Subscribe(IAsyncEnumerable<string> requests)
     {
-        await foreach (RESPONSE_REQUEST item in requests)
+        await foreach (string item in requests)
         {
-            yield return new RESPONSE_RESULT(new GenObject { IsList = true});
+            await Task.Delay(3000);
+            Console.WriteLine($"Processing {item} {DateTime.Now}");
+            yield return item;
         }
  
     }

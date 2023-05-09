@@ -1,7 +1,7 @@
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Components.Validators;
-using Generator.Shared.Extensions;
+//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazorFix;
@@ -12,6 +12,7 @@ using Mapster;
 using Generator.Components.Args;
 using System.ComponentModel;
 using Microsoft.JSInterop;
+using Generator.Components.Helpers;
 
 namespace Generator.Components.Components;
 
@@ -21,7 +22,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     public GenValidator<TModel> GenValidator { get; set; }
 
     [Inject]
-    public ExampleJsInterop ExampleJsInterop { get; set; }
+    public GeneratorJs GeneratorJs { get; set; }
+
+    [Inject]
+    public GenExcel GenExcel { get; set; }
+
+    [Parameter]
+    public string ExcelButtonText { get; set; }  
 
     [Parameter]
     public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
@@ -167,6 +174,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     [Parameter]
     public bool EnableSearch { get; set; }
+
+    [Parameter]
+    public string ExcelFile { get; set; }
 
     [Parameter]
     public string SearchPlaceHolderText { get; set; } = "Search";
@@ -663,7 +673,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
         var style = CancelDisabled ? "none" : "auto";
 
-        await  ExampleJsInterop.ChangeRowStyle(style);
+        await  GeneratorJs.ChangeRowStyle(style);
     }
 
     

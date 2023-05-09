@@ -2,7 +2,6 @@
 @inherits MudTable<TModel>
 @implements INonGenGrid
 @implements IGenGrid<TModel>
- 
 
 <CascadingValue Name="@(nameof(ParentGrid))" Value="this">
 
@@ -45,7 +44,7 @@
                 </MudGrid>
 
                 @{
-                    <MudGrid Class="">
+                  <MudGrid Class="">
                                     @{
                                         if (GenSearchFields is not null)
                                         {
@@ -76,26 +75,69 @@
                                         }
                                     }
                                     @{
-                                        if (Search.HasDelegate)
-                                        {
-                                            <MudGrid Class="" Justify="Justify.FlexEnd">
-                                                <MudItem Class="mr-15" xs="2" sm="2" md="2" lg="2" xl="2" xxl="2">
+                                        <MudGrid Class="" Justify="Justify.FlexEnd">
+                                            @{
+                                                <MudItem>
                                                     <MudGrid Justify="Justify.FlexEnd">
-                                                        <MudItem>
-                                                            <MudFab EndIcon="@Icons.Material.Filled.Search"
-                                                                    Color="Color.Info"
-                                                                    Size="Size.Medium"
-                                                                    Label="@SearchText"
-                                                                    @onclick="OnSearchClicked" Disabled="SearchDisabled" />
-                                                        </MudItem>
+                                                        @if (GenHeaderButtons is not null)
+                                                        {
+                                                            @GenHeaderButtons
+
+                                                        }
                                                     </MudGrid>
                                                 </MudItem>
-                                            </MudGrid>
-                                        }
+                                               
+                                                <MudItem>
+                                                    <MudGrid Justify="Justify.FlexEnd">
+                                                        <MudItem>
+                                                            @{
+                                                                if (!string.IsNullOrEmpty(ExcelFile))
+                                                                {
+                                                                    <MudFab EndIcon="@Icons.Custom.FileFormats.FileExcel"
+                                                                            Color="Color.Success"
+                                                                            Size="Size.Small"
+                                                                            DisableElevation="true"
+                                                                            Label="@ExcelButtonText"
+                                                                            @onclick="@(async x=> await GenExcel.Create<TModel>(this,ExcelFile))" />
+                                                                }
+                                                            }
+                                                        </MudItem>
+
+                                                    </MudGrid>
+                                                </MudItem>
+                                                if (Search.HasDelegate)
+                                                {
+                                                    <MudItem Class="mr-7">
+                                                        <MudGrid Justify="Justify.FlexEnd">
+                                                            <MudItem>
+                                                                <MudFab EndIcon="@Icons.Material.Filled.Search"
+                                                                        Color="Color.Info"
+                                                                        Size="Size.Small"
+                                                                        Label="@SearchText"
+                                                                        DisableElevation="true"
+                                                                        @onclick="OnSearchClicked" Disabled="SearchDisabled" />
+                                                            </MudItem>
+
+                                                        </MudGrid>
+                                                    </MudItem>
+                                                }
+
+                                                @*<MudItem xs="1" sm="1" md="1" lg="1" xl="1" xxl="1">
+                                                    <MudGrid Justify="Justify.Center">
+                                                        <MudItem>
+
+                                                        </MudItem>
+
+                                                    </MudGrid>
+                                                </MudItem>*@
+
+
+
+                                            }
+                                        </MudGrid>
                                     }
 
                                 </MudGrid>
-                   
                 }
 
             </CardHeaderContent>
@@ -103,16 +145,7 @@
 
             </CardHeaderActions>
         </MudCardHeader>
-
-        <MudGrid Class="pt-5 pb-5 pr-15" Justify="Justify.FlexEnd">
-            @{
-                if (GenHeaderButtons is not null)
-                {
-                    @GenHeaderButtons
-
-                }
-            }
-        </MudGrid>
+ 
 
         @{
 
@@ -225,7 +258,7 @@
                         }
                     </HeaderContent>
 
-                    <RowTemplate >
+                    <RowTemplate>
 
                         @{
                             if (HasDetail && EditMode != EditMode.SmartForm)
@@ -238,14 +271,16 @@
                                 }
 
 
-                                <MudTd Style="padding:0px!important;" >
+                                var padding = Dense ? "9px" : "17px";
+
+                                <MudTd Style="padding:0px!important;">
                                     <MudIconButton Size="Size.Small"
-                                                   Style="width:100%!important;height:100%!important;border-radius:0px!important;padding:8px!important;"
-                                                   Disabled="ExpandDisabled"
-                                                   Icon="@expandIcon"
-                                                   OnClick="@(async() => await OnDetailClicked(context))">
-                                    </MudIconButton>
+                                                    Style="@($"width:100%!important;height:100%!important;border-radius:0px!important;padding:{padding}!important;")"
+                                                    Disabled="ExpandDisabled"
+                                                    Icon="@expandIcon"
+                                                    OnClick="async () => await OnDetailClicked(context)" />
                                 </MudTd>
+
                             }
 
 

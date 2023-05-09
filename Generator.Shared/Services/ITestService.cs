@@ -65,7 +65,7 @@ public interface ITestService
 
     public Task<RESPONSE_RESULT> DeleteWithoutIdentityTestObject(CallContext context = default);
 
-    public IAsyncEnumerable<RESPONSE_RESULT> Subscribe(IAsyncEnumerable<RESPONSE_REQUEST> requests);
+    public IAsyncEnumerable<string> Subscribe(IAsyncEnumerable<string> requests);
     
 }
 

@@ -7,14 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Extensions\" />
     <None Remove="CsvHelper" />
     <None Remove="FastMember" />
     <None Remove="GenFu" />
     <None Remove="Mapster" />
     <None Remove="Mapster.Core" />
-    <None Remove="Services\" />
-    <None Remove="Seed\" />
     <None Remove="Microsoft.EntityFrameworkCore.Tools" />
     <None Remove="Microsoft.EntityFrameworkCore.SqlServer" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
@@ -24,17 +21,6 @@
     <None Remove="Grpc.AspNetCore.Web" />
     <None Remove="SqlPlace" />
     <None Remove="ZString" />
-    <None Remove="Helpers\" />
-    <None Remove="OptionsTemplates\" />
-    <None Remove="Enums\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Services\" />
-    <Folder Include="Seed\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="OptionsTemplates\" />
-    <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GenFu" Version="1.6.0" />
@@ -55,5 +41,12 @@
   <ItemGroup>
     <ProjectReference Include="..\QueryMaker\QueryMaker.csproj" />
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Services\GridFieldsService.cs" />
+    <Compile Remove="Services\GridCrudViewService.cs" />
+    <Compile Remove="Services\GenericServiceBase.cs" />
+    <Compile Remove="Services\DatabaseServices.cs" />
+    <Compile Remove="Services\ServiceBase.cs" />
   </ItemGroup>
 </Project>

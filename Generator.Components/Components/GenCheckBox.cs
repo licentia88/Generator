@@ -151,6 +151,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         return this.GetFieldValue(nameof(_value));
     }
 
+    public object GetSearchValue()
+    {
+        if (!TriState)
+            return Model.GetPropertyValue(BindingField) ?? false;
+
+        return Model.GetPropertyValue(BindingField) ?? false;
+    }
+
     public void SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;

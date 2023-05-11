@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Data;
 using System.Globalization;
-using Generator.Server.Extensions;
+using Generator.Examples.Shared.Models;
 using Generator.Server.Helpers;
-using Generator.Server.Services;
+using Generator.Services.Helpers;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
+using Generator.Shared.Models.ServiceModels;
 using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
+using GenFu;
 using Mapster;
 using MBrace.FsPickler;
 using Microsoft.AspNetCore.Hosting.Server;
 using ProtoBuf.Grpc;
 
-namespace Generator.Services.Services;
+namespace Generator.Services;
 
 public class TestService : ServiceBase<TestContext>, ITestService, IDisposable 
 {
@@ -146,9 +147,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         return TaskHandler.ExecuteAsync(async () =>
         {
 
-            var newData = await CreateFakeDataAsync(nameof(TEST_TABLE), 1);
+            var newData = A.New<TEST_TABLE>();
 
-            var dictType = newData.First().Adapt<IDictionary<string, object>>();
+            var dictType = newData.Adapt<IDictionary<string, object>>();
 
             var result = await SqlQueryFactory("DefaultConnection").InsertAsync(nameof(TEST_TABLE),dictType);
 
@@ -160,9 +161,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var newData = await CreateFakeDataAsync(nameof(STRING_TABLE), 1);
+            var newData = A.New<STRING_TABLE>();
 
-            var dictType = newData.First().Adapt<IDictionary<string, object>>();
+            var dictType = newData.Adapt<IDictionary<string, object>>();
 
             var result = await SqlQueryFactory("DefaultConnection").InsertAsync((nameof(STRING_TABLE)),dictType);
 
@@ -174,9 +175,9 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var newData = await CreateFakeDataAsync(nameof(COMPUTED_TABLE), 1);
+            var newData = A.New<COMPUTED_TABLE>();
 
-            var dictType = newData.First().Adapt<IDictionary<string, object>>();
+            var dictType = newData.Adapt<IDictionary<string, object>>();
 
             var result = await SqlQueryFactory("DefaultConnection").InsertAsync(nameof(COMPUTED_TABLE),dictType);
 
@@ -376,7 +377,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
 
         var EXISTINGDATA = await sqlManager.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE",null);
 
-        var newWhereStatement = new WhereStatement("TT_ROWID", EXISTINGDATA.First()["TT_ROWID"]);
+        //var newWhereStatement = new WhereStatement("TT_ROWID", EXISTINGDATA.First()["TT_ROWID"]);
 
         //ExampleFunction
 
@@ -390,7 +391,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
 
         var spMetaData = await SqlQueryFactory("DefaultConnection").GetMethodParameters("ExampleStoredProcedure");
-        var newWhereStatement = new WhereStatement("long", 9);
+        //var newWhereStatement = new WhereStatement("long", 9);
 
         var result = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT dbo.ExampleFunction(@long)",  ("long", 9));
 

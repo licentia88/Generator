@@ -7,7 +7,11 @@
 
 <MudLayout>
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton
+                    Icon="@Icons.Material.Filled.Menu"
+                    Color="Color.Inherit"
+                    Edge="Edge.Start"
+                    OnClick="@((e) => DrawerToggle())" />
         My Application
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">

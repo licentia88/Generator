@@ -1,9 +1,11 @@
 ﻿using System;
 using Generator.Examples.Shared;
+using Generator.Examples.Shared.Models;
+using Generator.Shared.Models.ServiceModels;
 using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Grpc;
 
-namespace Generator.Services.Services
+namespace Generator.Services
 {
 	public class UserService:IUserService
 	{
@@ -16,11 +18,11 @@ namespace Generator.Services.Services
 
         public async Task<USER> CreateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
         {
-            Db.USER.Add(request.Data);
+            Db.USER.Add(request.RR_DATA);
 
             await Db.SaveChangesAsync();
 
-            return request.Data;
+            return request.RR_DATA;
         }
 
         public async Task<List<USER>> ReadAsync(CallContext context = default)
@@ -30,20 +32,20 @@ namespace Generator.Services.Services
 
         public async Task<USER> UpdateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
         {
-            Db.USER.Update(request.Data);
+            Db.USER.Update(request.RR_DATA);
 
             await Db.SaveChangesAsync();
 
-            return request.Data;
+            return request.RR_DATA;
         }
 
         public async Task<USER> DeleteAsync(RESPONSE_REQUEST<USER> request, CallContext context = default)
         {
-            Db.USER.Remove(request.Data);
+            Db.USER.Remove(request.RR_DATA);
 
             await Db.SaveChangesAsync();
 
-            return request.Data;
+            return request.RR_DATA;
         }
     }
 }

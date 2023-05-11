@@ -19,7 +19,6 @@
     <None Remove="Helpers\" />
     <None Remove="Mapster" />
     <None Remove="Mapster.Core" />
-    <None Remove="TEST_WILL_DELETE_LATER\" />
     <None Remove="Models\ComponentModels\" />
     <None Remove="Dependency\" />
     <None Remove="protobuf-net.Grpc.ClientFactory" />
@@ -33,17 +32,16 @@
     <None Remove="BinaryPack" />
     <None Remove="FsPickler" />
     <None Remove="FsPickler.Json" />
-    <None Remove="Enums\" />
+    <None Remove="Models\ServiceModels\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Services\" />
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="TEST_WILL_DELETE_LATER\" />
     <Folder Include="Models\ComponentModels\" />
     <Folder Include="Dependency\" />
-    <Folder Include="Enums\" />
+    <Folder Include="Models\ServiceModels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="protobuf-net" Version="3.2.16" />

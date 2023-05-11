@@ -3,7 +3,8 @@ using System.Reflection.Emit;
 
 namespace Generator.Server.Helpers;
 
-public class ClassGenerator
+[Obsolete(message:"Just keep it here in case it's needed")]
+internal class ClassGenerator
 {
     AssemblyName asemblyName;
 

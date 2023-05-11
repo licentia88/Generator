@@ -1,6 +1,5 @@
-﻿using Generator.Examples.Shared;
+﻿using Generator.Examples.Shared.Models;
 using Generator.Shared.Models;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Services

@@ -5,8 +5,10 @@ using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
+using Generator.Examples.Shared.Models;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models;
+using Generator.Shared.Models.ServiceModels;
 using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -46,7 +48,7 @@ namespace Generator.Example.Pages
 
             //DataSource = res;
 
-            //DataSource = userList.Value;
+            //DataSource = userList.Value.Take(1).ToList();
 
             //var test = tser.Subscribe(TestData());
 
@@ -108,7 +110,7 @@ namespace Generator.Example.Pages
         {
           
             //throw new Exception();
-             var result = await UserService.CreateAsync(new Examples.Shared.RESPONSE_REQUEST<USER>(data));
+             var result = await UserService.CreateAsync(new RESPONSE_REQUEST<USER>(data));
 
 
 
@@ -128,7 +130,7 @@ namespace Generator.Example.Pages
 
         public async ValueTask UpdateAsync(USER data)
         {
-            var result = await UserService.UpdateAsync(new Examples.Shared.RESPONSE_REQUEST<USER>(data));
+            var result = await UserService.UpdateAsync(new RESPONSE_REQUEST<USER>(data));
 
             var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
 
@@ -137,7 +139,7 @@ namespace Generator.Example.Pages
 
         public async ValueTask DeleteAsync(USER data)
         {
-            var result = await UserService.DeleteAsync(new Examples.Shared.RESPONSE_REQUEST<USER>(data));
+            var result = await UserService.DeleteAsync(new RESPONSE_REQUEST<USER>(data));
 
             DataSource.Remove(data);
         }

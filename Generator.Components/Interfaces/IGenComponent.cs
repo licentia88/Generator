@@ -52,6 +52,8 @@ public interface IGenComponent: IGenCompRenderer
     public void Initialize();
 
     public void SetSearchValue(object Value);
+
+    public object GetSearchValue();
     //public Action<object> ValueChangedAction { get; set; }
 
 }

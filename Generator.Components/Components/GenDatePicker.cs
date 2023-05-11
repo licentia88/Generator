@@ -169,6 +169,11 @@ namespace Generator.Components.Components
         {
             Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
         }
+
+        public object GetSearchValue()
+        {
+            return Model.GetPropertyValue(BindingField);
+        }
     }
 }
 

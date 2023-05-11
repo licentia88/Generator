@@ -5,7 +5,6 @@ using Generator.Components.Interfaces;
 using Generator.Examples.Shared;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.Pages

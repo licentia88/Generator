@@ -21,7 +21,7 @@ public class SearchArgs:EventArgs
     }
 
     public Dictionary<string, object> WhereStatements => Components.Where(x=> x.BindingField is not null).ToDictionary(component => component.BindingField,
-                                                                          component => component.Model.GetPropertyValue(component.BindingField));
+                                                                          component => component.GetSearchValue());
 
 }
 

@@ -1,5 +1,5 @@
-﻿using Generator.Shared.Services;
-using Generator.Shared.TEST_WILL_DELETE_LATER;
+﻿using Generator.Examples.Shared.Models;
+using Generator.Shared.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.Pages

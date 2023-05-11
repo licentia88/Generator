@@ -7,19 +7,19 @@
 
     @*<MudButton OnClick="TEST">Click</MudButton>*@
 
-    <GenGrid DataSource="@DataSource.Where(x=> x.U_AGE<20).OrderBy(x=>x.U_AGE).ToList()"
+    <GenGrid DataSource="@DataSource.OrderBy(x=>x.U_AGE).ToList()"
              TModel="USER"
              Title="Users"
              Dense="true"
              MaxWidth="MaxWidth.ExtraLarge"
              EditMode="EditMode.Inline"
              EditTrigger="TableEditTrigger.RowClick"
-             EnableSearch="false"
+             EnableSearch="true"
              Disabled="IsDisabled"
              SearchText="Search"
              CancelText="Iptal"
              RowsPerPage="30"
-             EnableSorting="false"
+             EnableSorting="true"
              MultiSelection="false"
              FixedHeader="true"
              Class="m-2"
@@ -32,7 +32,7 @@
              Load="@( x=> Load(x))">
         <GenSearchFields>
 
-            <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="true"  
+            <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="false"  
                           xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" />
 
             <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
@@ -42,13 +42,13 @@
                          ValueField="@nameof(USER.U_ROWID)"
                          Clearable="true" BindingField="comboField"
                          xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
-                         Label="Peopel" Required="true" />
+                         Label="Peopel" Required="false" />
 
 
             <GenDatePicker Clearable="true" 
                            BindingField="DateField"
                            xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
-                           Label="DateExample" Required="true" />
+                           Label="DateExample" Required="false" />
 
             <GenSpacer  xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 

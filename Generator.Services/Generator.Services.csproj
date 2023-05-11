@@ -61,19 +61,29 @@
     <None Remove="MessagePack" />
     <None Remove="SqlPlace" />
     <None Remove="Massive %28copy%29\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
-    <ProjectReference Include="..\Generator.Server\Generator.Server.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
-    <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
+    <None Remove="Dependency\" />
+    <None Remove="Extensions\" />
+    <None Remove="OptionsTemplates\" />
+    <None Remove="Seed\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
+    <Folder Include="Dependency\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="OptionsTemplates\" />
+    <Folder Include="Seed\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\QueryMaker\QueryMaker.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>

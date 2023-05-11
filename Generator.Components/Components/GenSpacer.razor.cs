@@ -125,6 +125,11 @@ namespace Generator.Components.Components
         {
             throw new NotImplementedException();
         }
+
+        public object GetSearchValue()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

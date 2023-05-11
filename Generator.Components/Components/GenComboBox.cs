@@ -4,6 +4,7 @@ using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.VisualBasic;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -201,7 +202,12 @@ namespace Generator.Components.Components
         {
             Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
         }
-         
+
+        public object GetSearchValue()
+        {
+            return Model.GetPropertyValue(BindingField);
+        }
+
     }
 }
 

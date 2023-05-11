@@ -7,7 +7,7 @@
      <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
      <!--<EnableDefaultContentItems>true</EnableDefaultContentItems>-->
      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-     <Version>1.1.6</Version>
+     <Version>1.2.1</Version>
      <Authors>ASIM GUNDUZ</Authors>
     <Company>ASIM GUNDUZ</Company>
     <Description>MudBlazor Grid Component</Description>
@@ -22,6 +22,9 @@
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
+    
+  
+    
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="6.1.4" />
@@ -56,7 +59,7 @@
     <Folder Include="Manager\" />
   </ItemGroup>
 
-
+  
   <ItemGroup>
     <Compile Remove="Renderers\DictionaryRenderer.cs" />
     <Compile Remove="Renderers\RenderManager.cs" />

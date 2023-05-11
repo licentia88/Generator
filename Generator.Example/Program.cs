@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Generator.Example.InjectionTest;
 using Generator.Client;
 using System.Net;
+using Generator.Examples.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

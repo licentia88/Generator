@@ -208,7 +208,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
     }
-
+    public object GetSearchValue()
+    {
+        return Model.GetPropertyValue(BindingField);
+    }
 }
 
 

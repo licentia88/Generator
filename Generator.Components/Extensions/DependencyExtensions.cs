@@ -1,4 +1,5 @@
-﻿using Generator.Components.Helpers;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Generator.Components.Helpers;
 using Generator.Components.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +15,8 @@ namespace Generator.Components.Extensions
             Services.AddScoped(typeof(GenValidator<>));
             Services.AddScoped<GeneratorJs>();
             Services.AddScoped<GenExcel>();
-            
+             
+
         }
     }
 }

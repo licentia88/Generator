@@ -1,13 +1,10 @@
 ﻿using MudBlazor.Services;
 using Generator.Shared.Services;
-using Generator.Shared.Extensions;
 using Generator.Client;
 using System.Net;
 using Generator.Components.Extensions;
 using Generator.UI.Models;
-using System.Collections.ObjectModel;
 using Generator.UI.Pages;
-using MudBlazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,18 +14,16 @@ CryptoService.HashKey = builder.Configuration.GetSection("HashKey").Value;
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
-builder.Services.RegisterGeneratorComponents()
-    ;
+builder.Services.RegisterGeneratorComponents();
 builder.Services.AddScoped<NotificationsView>();
 builder.Services.AddScoped<List<NotificationVM>>();
+builder.Services.RegisterGenServices();
+//builder.Services.RegisterGrpcService<IGRidCrudViewService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+//builder.Services.RegisterGrpcService<IGridMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+//builder.Services.RegisterGrpcService<IGridFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+//builder.Services.RegisterGrpcService<IDatabaseService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 
-
-builder.Services.RegisterGrpcService<IGRidCrudViewService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-builder.Services.RegisterGrpcService<IPagesMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-builder.Services.RegisterGrpcService<IGridFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-builder.Services.RegisterGrpcService<IDatabaseService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-
-
+    
 var app = builder.Build();
 
  // Configure the HTTP request pipeline.

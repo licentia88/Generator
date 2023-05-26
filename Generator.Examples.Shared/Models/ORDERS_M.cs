@@ -1,50 +1,49 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ProtoBuf;
 
 namespace Generator.Examples.Shared.Models;
 
-[ProtoContract]
+[MessagePack.MessagePackObject()]
 public class ORDERS_M
 {
-    [ProtoMember(1)]
+    [MessagePack.Key(0)]
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OM_ROWID { get; set; }
 
-    [ProtoMember(2)]
+    [MessagePack.Key(1)]
     public int OM_USER_REFNO { get; set; }
 
     [Required]
-    [ProtoMember(3)]
+    [MessagePack.Key(2)]
     public string OM_DESCRIPTION { get; set; }
 
-    [ProtoMember(4)]
+    [MessagePack.Key(3)]
     public string OM_MORE_FIELD_ONE { get; set; }
 
-    [ProtoMember(5)]
+    [MessagePack.Key(4)]
     public string OM_MORE_FIELD_TWO { get; set; }
 
-    [ProtoMember(6)]
+    [MessagePack.Key(5)]
     public string OM_MORE_FIELD_THREE { get; set; }
 
 
-    [ProtoMember(7)]
+    [MessagePack.Key(6)]
     public string OM_MORE_FIELD_FOUR { get; set; }
 
-    [ProtoMember(8)]
+    [MessagePack.Key(7)]
     public string OM_MORE_FIELD_FIVE{ get; set; }
 
-    [ProtoMember(9)]
+    [MessagePack.Key(8)]
     public string OM_MORE_FIELD_SIX { get; set; }
 
-    [ProtoMember(10)]
+    [MessagePack.Key(9)]
     public string OM_MORE_FIELD_SEVEN { get; set; }
 
 
-    [ProtoMember(11)]
+    [MessagePack.Key(10)]
     public string OM_MORE_FIELD_EIGHT { get; set; }
 
-
+    [MessagePack.Key(11)]
     [ForeignKey(nameof(Models.ORDERS_D.OD_M_REFNO))]
     public ICollection<ORDERS_D> ORDERS_D { get; set; } = new HashSet<ORDERS_D>();
 }

@@ -237,16 +237,16 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         EditTrigger = TableEditTrigger.EditButton;
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         //Detail Grid den parent gridi refreshleme, neyini?
         //Burada bu koda ihtiyac var mi emin degilim
         if (ParentGrid is not null && ParentGrid.DetailClicked)
             ParentGrid.StateHasChanged();
 
-      
 
-        return Task.CompletedTask;
+        //bu kod searchfieldlerin renderlenmesini engellekem icin eklendi
+        await Task.Delay(1);
     }
 
 

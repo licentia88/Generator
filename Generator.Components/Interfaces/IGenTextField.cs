@@ -8,5 +8,4 @@ public interface IGenTextField : IGenComponent
 
     public void SetValue(object value);
 
-   
-}
+ }

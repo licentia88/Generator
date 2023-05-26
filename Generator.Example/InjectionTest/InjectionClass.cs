@@ -1,25 +1,22 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Generator.Examples.Shared;
 using Generator.Examples.Shared.Models;
 
-namespace Generator.Example.InjectionTest
+namespace Generator.Example.InjectionTest;
+
+public class InjectionClass
 {
-    public class InjectionClass
+	[Inject]
+	public Lazy<List<USER>> UserList { get; set; }
+
+	public InjectionClass(IServiceProvider services)
 	{
-		[Inject]
-		public Lazy<List<USER>> UserList { get; set; }
+		UserList = services.GetService<Lazy<List<USER>>>();
 
-		public InjectionClass(IServiceProvider services)
-		{
-			UserList = services.GetService<Lazy<List<USER>>>();
+	}
 
-        }
+	public void FillTable()
+	{
+		UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>(300));
 
-		public void FillTable()
-		{
-            UserList.Value.AddRange(GenFu.GenFu.ListOf<USER>(300));
-
-        }
-    }
+	}
 }
-

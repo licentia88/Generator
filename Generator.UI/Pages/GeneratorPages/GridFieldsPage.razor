@@ -1,0 +1,207 @@
+﻿ 
+ @inherits PagesBase<CRUD_VIEW, GRID_FIELDS, GridFieldsService, IGridFieldsService> 
+ 
+<GenGrid DataSource="DataSource" 
+          TModel="GRID_FIELDS"
+          MaxWidth="MaxWidth.ExtraLarge"
+          Title="Fields" 
+          EditMode="EditMode.Form" 
+          Search="Read"
+          Create="Create" 
+          Update="Update" 
+          Delete="Delete" 
+          Load="Load" 
+          EditTrigger="TableEditTrigger.EditButton"> 
+ 
+    <GenColumns>
+
+        @*ROW1*@
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_BINDINGFIELD)"  
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                      Label="BindingField" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox @ref="DisplayFieldCombobox"
+                     Label="Fields"
+                     DataSource="DisplayFieldsList"
+                     GridVisible="false"
+                     ValueChanged="DisplayFieldChanged"
+                     BindingField="@nameof(DisplayFieldCombobox)"
+                     ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_LABEL)"
+                      xs="12" sm="12" md="12" lg="4" xl="4" xxl="4"
+                      Label="Label" />
+
+        @*ROW2*@
+        <GenComboBox Label="Control" @ref="ControlTypeComboBox"
+                     DataSource="DataHelpers.GetEnumValues<ComponentTypes>()"
+                     ValueChanged="ControlTypeChanged"
+                     BindingField="@nameof(GRID_FIELDS.GF_CONTROL_TYPE)"
+                     ValueField="@nameof(CODE_ENUM.C_CODE)"
+                     DisplayField="@nameof(CODE_ENUM.C_DESC)"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="1" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox Label="Input Type" @ref="InputTypeComboBox"
+                     DataSource="DataHelpers.GetEnumValues<InputType>()"
+                     EditorVisible="false"
+                     GridVisible="false"
+                     BindingField="@nameof(GRID_FIELDS.GF_INPUT_TYPE)"
+                     ValueField="@nameof(CODE_ENUM.C_CODE)"
+                     DisplayField="@nameof(CODE_ENUM.C_DESC)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_TRUE_TEXT))" @ref="TrueTextCheckBox"
+                      EditorVisible="false"
+                      Label="True Text"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenSpacer xs="12" sm="1" md="1" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FALSE_TEXT))" @ref="FalseTextCheckBox"
+                      EditorVisible="false"
+                      Label="False Text"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+
+        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FORMAT))" @ref="FormatTextField"
+                      EditorVisible="false"
+                      Placeholder="Default: ddMMyyyy"
+                      Label="Format"
+                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+
+        @*ROW3*@
+        <GenComboBox Label="DataSource" @ref="DataSourceComboBox"
+                     DataSource="TableList"
+                     ValueChanged="DataSourceChanged"
+                     EditorVisible="false"
+                     BindingField="@nameof(GRID_FIELDS.GF_DATASOURCE)"
+                     ValueField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)"
+                     DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox Label="Value" @ref="DataSourceValueFieldComboBox"
+                     DataSource="ComboDisplayFieldList"
+                     EditorVisible="false"
+                     ValueChanged="DataSourceValueFieldChanged"
+                     BindingField="@nameof(GRID_FIELDS.GF_VALUEFIELD)"
+                     ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox Label="Display" @ref="DataSourceDisplayFieldComboBox"
+                     DataSource="ComboDisplayFieldList"
+                     EditorVisible="false"
+                     ValueChanged="DataSourceDisplayFieldChanged"
+                     BindingField="@nameof(GRID_FIELDS.GF_DISPLAYFIELD)"
+                     ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_DATASOURCE_QUERY)" @ref="DataSourceQueryTextField"
+                      Lines="5"
+                      Label="DataSource Query"
+                      GridVisible="false"
+                      EditorVisible="false"
+                      xs="12" sm="12" md="12" lg="12" xl="12" xxl="12" />
+
+
+        @*ROW3*@
+        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_USE_AS_SEARCHFIELD)"
+                     @ref="IsSearchFieldCheckBox"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                     EditorEnabled="false"
+                     TrueText="Yes" FalseText="No"
+                     Label="Search" />
+
+
+        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_REQUIRED)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+
+                     Label="Required" />
+
+        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_GRID_VISIBLE)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+                     GridVisible="false"
+                     Label="Grid Visible" />
+
+        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_EDITOR_ENABLED)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+                     GridVisible="false"
+                     Label="Enabled" />
+
+
+        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_EDITOR_VISIBLE)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+                     GridVisible="false"
+                     Label="Editor Visible" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+
+        @*ROW4*@
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_XS)"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1"
+                      InputType="InputType.Number"
+                      GridVisible="false"
+                      Label="Xs View" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_SM)"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1"
+                      InputType="InputType.Number"
+                      GridVisible="false"
+                      Label="Sm View" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_MD)"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1"
+                      InputType="InputType.Number"
+                      GridVisible="false"
+                      Label="Md View" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_LG)"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1"
+                      InputType="InputType.Number"
+                      GridVisible="false"
+                      Label="Lg View" />
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_XLG)"
+                      xs="12" sm="12" md="12" lg="1" xl="1" xxl="1"
+                      InputType="InputType.Number"
+                      GridVisible="false"
+                      Label="XLg View" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_XXLG)"
+                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                      InputType="InputType.Number"
+                      GridVisible="false"
+                      Label="XXLg View" />
+
+    </GenColumns> 
+ </GenGrid>

@@ -1,6 +1,4 @@
-﻿using Generator.Components.Components;
-using Generator.Components.Extensions;
-using Generator.Components.Interfaces;
+﻿using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
 //using Generator.Shared.Models;
 

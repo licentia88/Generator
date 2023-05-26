@@ -2,7 +2,6 @@
 using Generator.Services.OptionsTemplates;
 using Microsoft.Data.SqlClient;
 //using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Oracle.ManagedDataAccess.Client;
 using QueryMaker.Interfaces;
 using QueryMaker.MSSql;

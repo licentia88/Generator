@@ -1,10 +1,10 @@
 ﻿using Generator.Shared.Models.ComponentModels;
-using ProtoBuf.Grpc.Configuration;
+using Generator.Shared.Services.Base;
 
 namespace Generator.Shared.Services;
 
-[Service]
-public interface IGRidCrudViewService : IGenericServiceBase<GRID_CRUD_VIEW>
+
+public interface IGRidCrudViewService : IGenericService<IGRidCrudViewService, CRUD_VIEW>
 {
 }
 

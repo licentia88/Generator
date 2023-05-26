@@ -1,9 +1,6 @@
 ﻿using System.Data.Common;
-using Generator.Server.Helpers;
 using Generator.Services.Helpers;
 using Generator.Services.OptionsTemplates;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using QueryMaker;
 
 namespace Generator.Services.Extensions;

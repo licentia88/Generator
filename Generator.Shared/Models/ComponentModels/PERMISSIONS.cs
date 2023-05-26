@@ -1,16 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ProtoBuf;
+﻿using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
-[ProtoContract]
+[MessagePackObject]
 public class PERMISSIONS
 {
-    [ProtoMember(1)]
-    [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key(0)]
+    [Annotation.Key,Shema.DatabaseGenerated(Shema.DatabaseGeneratedOption.Identity)]
     public int PER_ROWID { get; set; }
 
-    [ProtoMember(2)]
+    [Key(1)]
     public int PER_COMPONENT_REFNO { get; set; }
 }

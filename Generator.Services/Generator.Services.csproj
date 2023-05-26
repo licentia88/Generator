@@ -65,6 +65,7 @@
     <None Remove="Extensions\" />
     <None Remove="OptionsTemplates\" />
     <None Remove="Seed\" />
+    <None Remove="Services\Base\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -74,6 +75,7 @@
     <Folder Include="OptionsTemplates\" />
     <Folder Include="Seed\" />
     <Folder Include="Services\" />
+    <Folder Include="Services\Base\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">
@@ -85,5 +87,10 @@
     <ProjectReference Include="..\QueryMaker\QueryMaker.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Services\DatabaseServices.cs" />
+    <Compile Remove="Services\GridCrudViewService.cs" />
+    <Compile Remove="Services\GridFieldsService.cs" />
   </ItemGroup>
 </Project>

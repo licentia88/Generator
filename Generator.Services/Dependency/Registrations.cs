@@ -1,8 +1,5 @@
-using System.Collections.ObjectModel;
 using System.IO.Compression;
 using Generator.Services.Seed;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc.Server;
 
 namespace Generator.Services.Dependency;
@@ -15,13 +12,7 @@ public static class Registrations
         RegisterMisc(Services);
     }
 
-    public static void RegisterGeneratorServices(this WebApplication app)
-    {
-        //app.MapGrpcService<PagesMService>().EnableGrpcWeb();
-        app.MapGrpcService<GridCrudViewService>().EnableGrpcWeb();
-        app.MapGrpcService<GridFieldsService>().EnableGrpcWeb();
-        app.MapGrpcService<DatabaseServices>().EnableGrpcWeb();
-    }
+     
 
     private static void RegisterGrpc(this IServiceCollection Services)
     {

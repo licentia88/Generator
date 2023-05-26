@@ -7,21 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="protobuf-net.Grpc" Version="1.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.52.0" />
-    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.1.1" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.52.0" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Services\" />
     <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MagicOnion.Shared" Version="5.1.6" />
   </ItemGroup>
 </Project>

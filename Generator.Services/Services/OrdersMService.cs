@@ -1,5 +1,4 @@
-﻿using System;
-using Generator.Examples.Shared;
+﻿using Generator.Examples.Shared;
 using Generator.Examples.Shared.Models;
 using Generator.Shared.Models.ServiceModels;
 using Microsoft.EntityFrameworkCore;

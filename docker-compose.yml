@@ -6,3 +6,10 @@ services:
     build:
       context: .
       dockerfile: Generator.Service/Dockerfile
+
+  generator.server:
+    image: ${DOCKER_REGISTRY-}generator
+    build:
+      context: .
+      dockerfile: Generator.Server/Dockerfile
+

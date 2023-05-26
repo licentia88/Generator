@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Generator.Server.Helpers;
+namespace Generator.Shared.Helpers;
 
 [Obsolete(message:"Just keep it here in case it's needed")]
 internal class ClassGenerator

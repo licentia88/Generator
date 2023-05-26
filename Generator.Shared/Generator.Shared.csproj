@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <LangVersion>default</LangVersion>
 
   </PropertyGroup>
 
@@ -33,29 +34,33 @@
     <None Remove="FsPickler" />
     <None Remove="FsPickler.Json" />
     <None Remove="Models\ServiceModels\" />
+    <None Remove="Services\Base\" />
+    <None Remove="Models\ComponentModels\Abstracts\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Services\" />
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Models\ComponentModels\" />
     <Folder Include="Dependency\" />
     <Folder Include="Models\ServiceModels\" />
+    <Folder Include="Services\Base\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.2.16" />
-    <PackageReference Include="protobuf-net.Grpc" Version="1.1.1" />
-    <PackageReference Include="AvroConvert" Version="3.3.4" />
+    <PackageReference Include="AvroConvert" Version="3.3.5" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Mapster.Core" Version="1.2.0" />
-    <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.1.1" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.52.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.52.0" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.53.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
     <PackageReference Include="FsPickler" Version="5.3.2" />
     <PackageReference Include="FsPickler.Json" Version="5.3.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.4" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.5.108">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
     
+    <PackageReference Include="MagicOnion.Shared" Version="5.1.6" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Models\ComponentModels\FOOTER_BUTTON.cs" />
@@ -65,11 +70,9 @@
     <Compile Remove="Models\ComponentModels\COMPONENT.cs" />
     <Compile Remove="Models\ComponentModels\COMPONENT_BASE.cs" />
     <Compile Remove="Models\ComponentModels\BUTTONS_BASE.cs" />
-    <Compile Remove="Models\ComponentModels\PAGES_D.cs" />
     <Compile Remove="Models\ComponentModels\CRUD_BUTTONS.cs" />
     <Compile Remove="Models\ComponentModels\GRID_BUTTONS.cs" />
     <Compile Remove="Models\ComponentModels\HEADER_BUTTONS.cs" />
     <Compile Remove="Models\ComponentModels\DISPLAY_FIELDS.cs" />
-    <Compile Remove="Models\ComponentModels\PAGES_M.cs" />
   </ItemGroup>
 </Project>

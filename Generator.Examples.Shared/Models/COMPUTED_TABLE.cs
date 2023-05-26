@@ -1,13 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using MessagePack;
 
 namespace Generator.Examples.Shared.Models;
 
+[MessagePackObject()]
 public class COMPUTED_TABLE
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Key(0)]
+    [System.ComponentModel.DataAnnotations.Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int CT_ROWID { get; set; }
 
+    [Key(1)]
     public string CT_DESC { get; set; }
 }
 

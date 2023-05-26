@@ -1,4 +1,6 @@
 ﻿@using Generator.Examples.Shared
+@using Generator.Examples.Shared.Services
+@using Generator.Client.ExampeServices
 
 
 
@@ -36,14 +38,15 @@
     public USER Parent { get; set; }
 
     [Inject]
-    public IOrdersMService OrdersMService { get; set; }
+    public OrdersMService OrdersMService { get; set; }
 
 
     GenTextField descTextField;
 
     protected override  async Task OnInitializedAsync()
     {
-        DataSource  =await OrdersMService.ReadAsync(new(Parent.U_ROWID));
+        // DataSource  =await OrdersMService.Read(new(Parent.U_ROWID));
+        DataSource  =await OrdersMService.FindByParent(Parent.U_ROWID);
 
         //DataSource = result;
     }
@@ -66,14 +69,14 @@
        
         data.OM_USER_REFNO = Parent.U_ROWID;
 
-        var result = await OrdersMService.CreateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
+        var result = await OrdersMService.Create(data); 
 
         DataSource.Add(result);
     }
 
     public async ValueTask UpdateAsync(ORDERS_M data)
     {
-        var result = await OrdersMService.UpdateAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
+        var result = await OrdersMService.Update(data); 
 
         DataSource.Replace(data, result);
 
@@ -81,7 +84,7 @@
 
     public async ValueTask DeleteAsync(ORDERS_M data)
     {
-        var result = await OrdersMService.DeleteAsync(new RESPONSE_REQUEST<ORDERS_M>(data));
+        var result = await OrdersMService.Delete(data); 
 
         DataSource.Remove(data);
 

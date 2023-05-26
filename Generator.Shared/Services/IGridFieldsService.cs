@@ -1,10 +1,9 @@
 ﻿using Generator.Shared.Models.ComponentModels;
-using ProtoBuf.Grpc.Configuration;
+using Generator.Shared.Services.Base;
 
 namespace Generator.Shared.Services;
 
-[Service]
-public interface IGridFieldsService : IGenericServiceBase<GRID_FIELDS>
+public interface IGridFieldsService : IGenericService<IGridFieldsService,GRID_FIELDS>
 {
 }
 

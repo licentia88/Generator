@@ -1,51 +1,65 @@
 ﻿using System.Data;
+using System.Data.Common;
 using QueryMaker.Interfaces;
 
 namespace QueryMaker;
 
 public class SqlQueryFactory : IDatabaseManager
 {
-    IDatabaseManager Manager;
+    private readonly IDatabaseManager _manager;
+
+    public DbConnection Connection => _manager.Connection;
 
     public SqlQueryFactory(IDatabaseManager manager)
     {
-        Manager = manager;
+        _manager = manager;
     }
 
-    public Task<IDictionary<string, object>> InsertAsync(string TableName, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
+    public Task<IDictionary<string, object>> InsertAsync(string tableName, IDictionary<string, object> model, CommandBehavior commandBehavior = CommandBehavior.Default)
     {
-        return Manager.InsertAsync(TableName, Model, CommandBehavior);
+        return _manager.InsertAsync(tableName, model, commandBehavior);
     }
 
-    public Task<IDictionary<string, object>> DeleteAsync(string TableName, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
+    public Task<IDictionary<string, object>> DeleteAsync(string tableName, IDictionary<string, object> model, CommandBehavior commandBehavior = CommandBehavior.Default)
     {
-        return Manager.DeleteAsync(TableName, Model, CommandBehavior);
+        return _manager.DeleteAsync(tableName, model, commandBehavior);
     }
 
-    public Task<IDictionary<string, object>> UpdateAsync(string TableName, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
+    public Task<IDictionary<string, object>> UpdateAsync(string tableName, IDictionary<string, object> model, CommandBehavior commandBehavior = CommandBehavior.Default)
     {
-        return Manager.UpdateAsync(TableName, Model, CommandBehavior);
+        return _manager.UpdateAsync(tableName, model, commandBehavior);
     }
 
-    public Task<List<IDictionary<string, object>>> QueryAsync(string Query, params (string Key, object Value)[] WhereStatementParameters)
+    public Task<List<IDictionary<string, object>>> QueryAsync(string query, params (string Key, object Value)[] whereStatementParameters)
     {
-        return Manager.QueryAsync(Query, WhereStatementParameters);
+        return _manager.QueryAsync(query, whereStatementParameters);
     }
 
-    public Task<List<IDictionary<string, object>>> QueryAsync(string Query, CommandBehavior CommandBehavior, CommandType CommandType, params (string Key, object Value)[] WhereStatementParameters)
+    public Task<List<IDictionary<string, object>>> QueryAsync(string query, CommandBehavior commandBehavior, CommandType commandType, params (string Key, object Value)[] whereStatementParameters)
     {
-        return Manager.QueryAsync(Query, CommandBehavior, CommandType, WhereStatementParameters);
+        return _manager.QueryAsync(query, commandBehavior, commandType, whereStatementParameters);
+    }
+    public Task<List<IDictionary<string, object>>> QueryAsync(string query, params KeyValuePair<string, object>[] whereStatementParameters)
+    {
+        return _manager.QueryAsync(query, whereStatementParameters);
     }
 
-    public Task<List<IDictionary<string, object>>> GetStoredProcedureFieldMetaDataAsync(string ProcedureName)
+    public Task<List<IDictionary<string, object>>> QueryAsync(string query, CommandBehavior commandBehavior, CommandType commandType, params KeyValuePair<string, object>[] whereStatementParameters)
     {
-        return Manager.GetStoredProcedureFieldMetaDataAsync(ProcedureName);
+        return _manager.QueryAsync(query, commandBehavior, commandType, whereStatementParameters);
     }
 
-    public Task<List<IDictionary<string, object>>> GetMethodParameters(string MethodName)
+    public Task<List<IDictionary<string, object>>> GetStoredProcedureFieldMetaDataAsync(string procedureName)
     {
-        return Manager.GetMethodParameters(MethodName);
+        return _manager.GetStoredProcedureFieldMetaDataAsync(procedureName);
     }
+
+    public Task<List<IDictionary<string, object>>> GetMethodParameters(string methodName)
+    {
+        return _manager.GetMethodParameters(methodName);
+    }
+
+    
 }
 
 

@@ -1,14 +1,12 @@
 ﻿using Generator.Shared.Services;
 using MudBlazor.Services;
-using Generator.Shared.Extensions;
 using Generator.Examples.Shared;
 using Generator.Components.Extensions;
-using System;
-using System.Collections.Generic;
 using Generator.Example.InjectionTest;
 using Generator.Client;
 using System.Net;
 using Generator.Examples.Shared.Models;
+using Generator.Examples.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +20,11 @@ builder.Services.AddMudServices();
 builder.Services.RegisterGeneratorComponents();
 builder.Services.AddSingleton<Lazy<List<USER>>>();
 builder.Services.AddSingleton<InjectionClass>();
-
+builder.Services.RegisterExampleServices();
 
  
 
-builder.Services.RegisterGrpcService<ITestService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+// builder.Services.RegisterGrpcService<ITestService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 builder.Services.RegisterGrpcService<IUserService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 builder.Services.RegisterGrpcService<IOrdersMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 builder.Services.RegisterGrpcService<IOrdersDService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);

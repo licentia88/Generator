@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Generator.Shared.Extensions;
+﻿namespace Generator.Shared.Extensions;
 
 public static class ObjectExtensions
 {

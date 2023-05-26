@@ -3,8 +3,6 @@ using Generator.Components.Components;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
-using Microsoft.AspNetCore.Components;
-using MudBlazor;
 
 namespace Generator.Components.Helpers;
 

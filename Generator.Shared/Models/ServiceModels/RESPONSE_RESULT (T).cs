@@ -1,11 +1,11 @@
-﻿using ProtoBuf;
-
+﻿using MessagePack;
+ 
 namespace Generator.Shared.Models.ServiceModels;
 
-[ProtoContract]
+[MessagePackObject]
 public class RESPONSE_RESULT<TModel>
 {
-    [ProtoMember(1)]
+    [Key(0)]
     public TModel Data { get; set; }
 
     public RESPONSE_RESULT()

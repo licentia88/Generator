@@ -1,19 +1,12 @@
 ﻿using Generator.Examples.Shared.Models;
 using Generator.Shared.Models.ServiceModels;
-using ProtoBuf.Grpc;
-using ProtoBuf.Grpc.Configuration;
+using Generator.Shared.Services.Base;
+using MagicOnion;
 
-namespace Generator.Examples.Shared;
+namespace Generator.Examples.Shared.Services;
 
-[Service]
-public interface IOrdersMService
+public interface IOrdersMService:IGenericService<IOrdersMService,ORDERS_M>
 {
-    public Task<ORDERS_M> CreateAsync(RESPONSE_REQUEST<ORDERS_M> request,CallContext context = default);
-
-    public Task<List<ORDERS_M>> ReadAsync(RESPONSE_REQUEST<int> request ,CallContext context = default);
-
-    public Task<ORDERS_M> UpdateAsync(RESPONSE_REQUEST<ORDERS_M> request,CallContext context = default);
-
-    public Task<ORDERS_M> DeleteAsync(RESPONSE_REQUEST<ORDERS_M> request,CallContext context = default);
+    
 
 }

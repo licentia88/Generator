@@ -1,9 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Generator.Services.Seed;
+﻿namespace Generator.Services.Seed;
 
 public class SeedData
 {

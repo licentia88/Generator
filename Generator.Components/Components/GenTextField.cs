@@ -17,8 +17,23 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [CascadingParameter(Name = nameof(ParentGrid))]
     public INonGenGrid ParentGrid { get; set; }
 
+    private object _model;
+
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-    public object Model { get; set; }
+    public object Model
+    {
+        get => _model;
+        set
+        {
+            _model = value;
+
+            if(value is null)
+            {
+
+            }
+             
+        }
+    }
 
  
     [Parameter]
@@ -62,6 +77,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public int xxl { get; set; } = 12;
 
+ 
 
     public Type DataType { get; set; }
 
@@ -135,7 +151,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public void SetValue(object value)
     {
         Model?.SetPropertyValue(BindingField, value);
-     }
+        ParentGrid.StateHasChanged();
+        ParentGrid.CurrentGenPage?.StateHasChanged();
+    }
 
     public void OnClearClicked(MouseEventArgs arg)
     {
@@ -170,14 +188,22 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) =>  builder =>
     {
+        RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
+    };
+
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params KeyValuePair<string, object>[] valuePairs)=>  builder =>
+    {
         if(Model is null || Model.GetType().Name == "Object")
             Model = model;
 
         SetCallBackEvents();
 
         var loValue = Model.GetPropertyValue(BindingField);
-
-        builder.RenderComponent(this,ignoreLabels, (nameof(Value), loValue), (nameof(Disabled), !EditorEnabled));
+        var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
+      
+        additionalParams.Add((nameof(Value), loValue));
+        
+        builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
@@ -207,6 +233,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public void SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
+        ParentGrid.StateHasChanged();
+
     }
     public object GetSearchValue()
     {

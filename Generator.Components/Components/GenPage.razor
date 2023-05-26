@@ -33,13 +33,18 @@
                                                  xl="component.xl"
                                                  xxl="component.xxl">
                                             @{
-                                                if (component.EditorVisible)
-                                                {
-                                                    @component.RenderAsComponent(SelectedItem)
-                                                }
+                                                @* @component.RenderAsComponent(SelectedItem,false,  *@
+                                                @*     new("Disabled",!component.EditorEnabled), *@
+                                                @*     new("",component.EditorVisible)) *@
+                                    if (component.EditorVisible)
+                                    {
+                                        @component.RenderAsComponent(SelectedItem)
+                                    }
+                                               
                                             }
                                         </MudItem>
                                     }
+
                                 }
                             </MudGrid>
                         </div>
@@ -47,9 +52,8 @@
 
                         if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
                         {
-                            @*<div class="pt-5 pb-5" style="overflow-x:scroll!important">*@
-                            <div style=" overflow-y: scroll!important; ">
-                                <div style="overflow-x:hidden; overflow-y:hidden;">
+                             @*<div style=" overflow-y: scroll!important; ">*@
+                                @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
                                     <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
                                         <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
                                             <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
@@ -58,8 +62,8 @@
                                         </CascadingValue>
                                     </CascadingValue>
 
-                                </div>
-                            </div>
+                                @*</div>
+                            </div>*@
 
                         }
                     }

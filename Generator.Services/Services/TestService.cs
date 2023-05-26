@@ -1,17 +1,10 @@
-﻿using System;
-using System.Data;
-using System.Globalization;
-using Generator.Examples.Shared.Models;
-using Generator.Server.Helpers;
+﻿using Generator.Examples.Shared.Models;
 using Generator.Services.Helpers;
 using Generator.Shared.Extensions;
-using Generator.Shared.Models;
 using Generator.Shared.Models.ServiceModels;
-using Generator.Shared.Services;
 using GenFu;
 using Mapster;
 using MBrace.FsPickler;
-using Microsoft.AspNetCore.Hosting.Server;
 using ProtoBuf.Grpc;
 
 namespace Generator.Services;
@@ -85,7 +78,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
         return TaskHandler.ExecuteAsync(async () =>
         {
            
-            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}", new KeyValuePair<string, object>());
 
             return new GenObject(result);
         });
@@ -95,7 +88,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT 1 FROM {nameof(TEST_TABLE)}");
+            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT 1 FROM {nameof(TEST_TABLE)}",new KeyValuePair<string, object>());
 
             var genObj = new GenObject();
 
@@ -136,7 +129,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}", new KeyValuePair<string, object>());
 
             return new GenObject(result.AdaptToDictionary());
         });
@@ -196,7 +189,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
+            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM STRING_TABLE", new KeyValuePair<string, object>());
 
             var test = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(STRING_TABLE), EXISTINGDATA.FirstOrDefault());
 
@@ -210,7 +203,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM STRING_TABLE");
+            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM STRING_TABLE", new KeyValuePair<string, object>());
 
             var result = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(STRING_TABLE),EXISTINGDATA.First());
 
@@ -222,7 +215,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
+            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM TEST_TABLE", new KeyValuePair<string, object>());
 
             var test = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(TEST_TABLE), EXISTINGDATA.FirstOrDefault());
 
@@ -236,7 +229,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM TEST_TABLE");
+            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM TEST_TABLE", new KeyValuePair<string, object>());
 
             var result = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(TEST_TABLE), EXISTINGDATA.First());
 
@@ -248,7 +241,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
+            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE", new KeyValuePair<string, object>());
 
             var test = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(COMPUTED_TABLE), EXISTINGDATA.FirstOrDefault());
 
@@ -262,7 +255,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE");
+            var EXISTINGDATA = await SqlQueryFactory("DefaultConnection").QueryAsync("SELECT TOP 1 * FROM COMPUTED_TABLE", new KeyValuePair<string, object>());
 
             var result = await SqlQueryFactory("DefaultConnection").UpdateAsync(nameof(COMPUTED_TABLE), EXISTINGDATA.First());
 
@@ -274,7 +267,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}", new KeyValuePair<string, object>());
 
             var r1= await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(TEST_TABLE), quey.First());
             var result = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(TEST_TABLE), quey.First());
@@ -287,7 +280,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
+            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}", new KeyValuePair<string, object>());
 
             var r1 = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(STRING_TABLE), quey.First());
 
@@ -301,7 +294,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
+            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}", new KeyValuePair<string, object>());
 
 
             var result = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(COMPUTED_TABLE), quey.First());
@@ -314,7 +307,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}", new KeyValuePair<string, object>());
 
             var r1 = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(TEST_TABLE), quey.First());
 
@@ -326,7 +319,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
+            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}", new KeyValuePair<string, object>());
 
             var r1 = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(STRING_TABLE), quey.First());
 
@@ -339,7 +332,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}");
+            var quey = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(COMPUTED_TABLE)}", new KeyValuePair<string, object>());
 
             var r1 = await SqlQueryFactory("DefaultConnection").DeleteAsync(nameof(COMPUTED_TABLE), quey.First());
 
@@ -351,7 +344,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}");
+            var result = await SqlQueryFactory("DefaultConnection").QueryAsync($"SELECT * FROM {nameof(STRING_TABLE)}", new KeyValuePair<string, object>());
 
             return new GenObject(result);
         });
@@ -375,7 +368,7 @@ public class TestService : ServiceBase<TestContext>, ITestService, IDisposable
     {
         var sqlManager = SqlQueryFactory("DefaultConnection");
 
-        var EXISTINGDATA = await sqlManager.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE",null);
+        var EXISTINGDATA = await sqlManager.QueryAsync("SELECT TOP 1 * FROM TEST_TABLE", new KeyValuePair<string, object>());
 
         //var newWhereStatement = new WhereStatement("TT_ROWID", EXISTINGDATA.First()["TT_ROWID"]);
 

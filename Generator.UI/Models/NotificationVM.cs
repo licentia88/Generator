@@ -1,5 +1,4 @@
-﻿using System;
-using MudBlazor;
+﻿using MudBlazor;
 
 namespace Generator.UI.Models;
 

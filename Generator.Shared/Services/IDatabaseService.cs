@@ -1,25 +1,27 @@
-﻿using Generator.Shared.Models;
-using Generator.Shared.Models.ComponentModels;
+﻿using Generator.Shared.Models.ComponentModels;
+using Generator.Shared.Models.ComponentModels.NonDB;
 using Generator.Shared.Models.ServiceModels;
-using ProtoBuf.Grpc;
-using ProtoBuf.Grpc.Configuration;
+using Generator.Shared.Services.Base;
+using MagicOnion;
+
 
 namespace Generator.Shared.Services;
 
-[Service]
-public interface IDatabaseService
+public interface IDatabaseService:IGenericService<IDatabaseService,DATABASE_INFORMATION>
 {
-    public Task<RESPONSE_RESULT<List<DATABASE_INFORMATION>>> GetDatabaseList(CallContext context = default);
+    public UnaryResult<RESPONSE_RESULT<List<DATABASE_INFORMATION>>> GetDatabaseList();
 
-    public Task<RESPONSE_RESULT<List<TABLE_INFORMATION>>> GetTableListForConnection(RESPONSE_REQUEST<string> connectionNameRequest, CallContext context = default);
+    public UnaryResult<RESPONSE_RESULT<List<TABLE_INFORMATION>>> GetTableListForConnection(string connectionName);
 
-    public Task<RESPONSE_RESULT<List<STORED_PROCEDURES>>> GetStoredProcedures(RESPONSE_REQUEST<string> connectionNameRequest, CallContext context = default);
+    public UnaryResult<RESPONSE_RESULT<List<STORED_PROCEDURES>>> GetStoredProcedures(string connectionName);
 
-    public Task<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetTableFields(RESPONSE_REQUEST<(string connectionName, string TableName)> data , CallContext context = default);
+    public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetTableFields(string connectionName, string TableName );
 
-    public Task<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetStoredProcedureFields(RESPONSE_REQUEST<(string connectionName, string StoredProcedure)> data, CallContext context = default);
+    public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetFieldsUsingQuery(string connectionName, string Query);
 
+    public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetStoredProcedureFieldsAsync(string connectionName, string StoredProcedure);
+
+     
 }
-
 
 

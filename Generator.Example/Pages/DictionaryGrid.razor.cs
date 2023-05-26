@@ -1,21 +1,19 @@
-﻿namespace Generator.Example.Pages
+﻿namespace Generator.Example.Pages;
+
+public partial class DictionaryGrid
 {
-    public partial class DictionaryGrid
+    private List<object> DataSource { get; }
+
+    public DictionaryGrid()
     {
-        private List<object> DataSource { get; }
+        DataSource = new List<object>();
+    }
 
-        public DictionaryGrid()
-        {
-            DataSource = new List<object>();
-        }
-
-        protected override Task OnInitializedAsync()
-        {
+    protected override Task OnInitializedAsync()
+    {
             
 
-            StateHasChanged();
-            return Task.CompletedTask;
-        }
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }
-

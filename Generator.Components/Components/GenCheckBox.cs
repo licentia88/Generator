@@ -112,24 +112,37 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         Model?.SetPropertyValue(BindingField, value);
 
         Checked = value;
+
+        ParentGrid.StateHasChanged();
+        ParentGrid.CurrentGenPage?.StateHasChanged();
     }
 
     private void SetCallBackEvents()
     {
         if (!CheckedChanged.HasDelegate)
-            CheckedChanged = EventCallback.Factory.Create<bool>(this, x => SetValue(x));
+            CheckedChanged = EventCallback.Factory.Create<bool>(this, SetValue);
     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     {
+        RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
+    };
+
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
+        params KeyValuePair<string, object>[] valuePairs) => (builder) =>
+    {
         if (Model is null || Model.GetType().Name == "Object")
             Model = model;
-
+ 
         SetCallBackEvents();
 
-        var val = (Model.GetPropertyValue(BindingField))??false;
+        var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
-        builder.RenderComponent(this, ignoreLabels, (nameof(Checked), val), (nameof(Disabled), !EditorEnabled));
+        var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
+        additionalParams.Add((nameof(Checked), val));
+        
+        builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
+        
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
@@ -148,7 +161,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public object GetValue()
     {
-        return this.GetFieldValue(nameof(_value));
+        return Model.GetPropertyValue(BindingField);
+        //return this.GetFieldValue(nameof(_value));
     }
 
     public object GetSearchValue()
@@ -162,6 +176,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     public void SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
+        ParentGrid.StateHasChanged();
     }
     //public GenCheckBox GetReference()
     //{

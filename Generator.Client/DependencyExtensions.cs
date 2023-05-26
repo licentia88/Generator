@@ -7,20 +7,34 @@ using ProtoBuf.Grpc.ClientFactory;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using Generator.Client.ExampeServices;
+using Generator.Shared.Services.Base;
 using Generator.Shared.Services;
 
 namespace Generator.Client;
 
 public static class DependencyExtensions
 {
-
-    private static SslClientAuthenticationOptions? GetSslClientAuthenticationOptions(X509Certificate2 certificate2)
+    public static void RegisterGenServices(this IServiceCollection Services)
     {
-        if (certificate2 is null) return default;
-
+        Services.AddSingleton<DatabaseService>();
+        Services.AddSingleton<GRidCrudViewService>();
+        Services.AddSingleton<GridFieldsService>();
+        Services.AddSingleton<GridMService>();
+        
+    }
+    public static void RegisterExampleServices(this IServiceCollection Services)
+    {
+        Services.AddSingleton<UserService>();
+        Services.AddSingleton<OrdersMService>();
+        Services.AddSingleton<OrdersDService>();
+        
+    }
+    private static SslClientAuthenticationOptions GetSslClientAuthenticationOptions(X509Certificate2 certificate2)
+    {
         return new SslClientAuthenticationOptions
         {
-            RemoteCertificateValidationCallback = (sender, cert, chain, errors) =>
+            RemoteCertificateValidationCallback = (sender, cert, _, _) =>
             {
                 X509Chain x509Chain = new X509Chain();
                 x509Chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
@@ -33,7 +47,7 @@ public static class DependencyExtensions
 
     public static void RegisterGrpcService<TService>(this IServiceCollection Services, string EndPoint, string CertificatePath, Version Version) where TService : class
     {
-        X509Certificate2? certificate = null;
+        X509Certificate2 certificate = null;
 
         if(!string.IsNullOrEmpty(CertificatePath))
             certificate = X509Certificate2.CreateFromPemFile(CertificatePath, Path.ChangeExtension(CertificatePath, "key"));
@@ -78,7 +92,7 @@ public static class DependencyExtensions
 
     }
 
-    public static async void LoadData<TService,TModel>(IServiceCollection Services) where TService : IGenericServiceBase<TModel> where TModel : new()
+    public static async void LoadData<TService,TModel>(IServiceCollection Services) where TService : IGenericService<TService,TModel> where TModel : new()
     {
         Services.AddSingleton<Lazy<List<TModel>>>();
 
@@ -88,9 +102,9 @@ public static class DependencyExtensions
 
         var getSingletonList = provider.GetService<Lazy<List<TModel>>>();
 
-        var result = await service.ReadAsync();
+        var result = await service.ReadAll();
 
-        getSingletonList.Value.AddRange(result.Data);
+        getSingletonList.Value.AddRange(result);
     }
     
 }

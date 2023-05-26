@@ -1,6 +1,4 @@
-﻿using Generator.Components.Args;
-using Generator.Components.Enums;
-using Microsoft.AspNetCore.Components;
+﻿using Generator.Components.Enums;
 
 namespace Generator.Components.Interfaces;
 

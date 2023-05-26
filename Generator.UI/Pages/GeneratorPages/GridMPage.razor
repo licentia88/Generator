@@ -1,0 +1,130 @@
+﻿@page "/GridMPage"
+
+
+@inherits PagesBase<GRID_M, GridMService, IGridMService>
+
+@{
+
+    if (DatabaseList is null) return;
+}
+
+<GenGrid TModel="GRID_M"
+         Title="Pages"
+         Class="m-2"
+         Load="Load"
+         Create="Create"
+         Search="Read"
+         DataSource="@DataSource"
+         MaxWidth="MaxWidth.ExtraExtraLarge"
+         EditTrigger="TableEditTrigger.EditButton"
+         EditMode="EditMode.SmartForm">
+
+    <GenColumns>
+
+        @*ROW1*@
+        <GenSpacer xs="12" sm="12" md="12" lg="9" xl="9" xxl="9" />
+
+        <GenComboBox DataSource="DatabaseList" @ref="DatabaseComboBox"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Database"
+                     ValueChanged="DatabaseChanged"
+                     BindingField="@nameof(GRID_M.CB_DATABASE)"
+                     ValueField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))"
+                     DisplayField="@nameof(DATABASE_INFORMATION.DI_DATABASE_NAME)" />
+
+        @*ROW2*@
+        <GenTextField BindingField="@(nameof(GRID_M.CB_IDENTIFIER))"
+                      Label="Identifier"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
+                      Label="Page Title"
+                      xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
+
+        @*ROW3*@
+        <GenComboBox DataSource="DataHelpers.GetEnumValues<EditMode>()"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Edit Mode"
+                     BindingField="@nameof(GRID_M.GB_EDIT_MODE)"
+                     ValueField="@(nameof(CODE_ENUM.C_CODE))"
+                     DisplayField="@nameof(CODE_ENUM.C_DESC)" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox DataSource="DataHelpers.GetEnumValues<TableEditTrigger>()"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Edit Trigger"
+                     BindingField="@nameof(GRID_M.GB_EDIT_TRIGGER)"
+                     ValueField="@(nameof(CODE_ENUM.C_CODE))"
+                     DisplayField="@nameof(CODE_ENUM.C_DESC)" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox DataSource="DataHelpers.GetEnumValues<MaxWidth>()"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Page Size"
+                     BindingField="@nameof(GRID_M.GB_MAX_WIDTH)"
+                     ValueField="@(nameof(CODE_ENUM.C_CODE))"
+                     DisplayField="@nameof(CODE_ENUM.C_DESC)" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        @*ROW4*@
+
+
+        <GenCheckBox BindingField="@(nameof(GRID_M.GB_ENABLE_SORTING))"
+                     Label="Sorting"
+                     TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+
+        <GenCheckBox BindingField="@(nameof(GRID_M.GB_ENABLE_FILTERING))"
+                     Label="Filtering"
+                     TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@(nameof(GRID_M.GB_STRIPED))"
+                     Label="Striped"
+                     TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@(nameof(GRID_M.GB_DENSE))"
+                     Label="Dense"
+                     TrueText="Yes" FalseText="No"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+        @*ROW5*@
+        <GenTextField BindingField="@(nameof(GRID_M.GB_ROWS_PER_PAGE))"
+                      Label="Rows Per Page"
+                      Placeholder="10"
+                      InputType="InputType.Number"
+                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="10" xl="10" xxl="10" />
+        @*ROW6*@
+
+        <GenTextField BindingField="@nameof(GRID_M.CB_QUERY_OR_METHOD)" Class="mt-5"
+                      Label="Query"
+                      Lines="7"
+                      Variant="Variant.Outlined"
+                      Placeholder=@($"Sample Query:\nSELECT U_NAME, U_AGE FROM USERS \nWHERE U_NAME LIKE '%@U_NAME%' \nAND U_AGE = @U_AGE")
+                      xs="12" sm="12" md="12" lg="12" xl="12" xxl="12" />
+
+    </GenColumns>
+    <GenDetailGrid>
+        <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
+            <MudTabPanel Text="Crud">
+                <CrudViewPage ParentModel="context" />
+            </MudTabPanel>
+        </MudTabs>
+    </GenDetailGrid>
+</GenGrid>

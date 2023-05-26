@@ -36,7 +36,7 @@ public static class CollectionExtensions
         }
         catch (Exception ex)
         {
-
+            // ignored
         }
     }
 

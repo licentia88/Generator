@@ -1,5 +1,4 @@
 ﻿using Generator.Components.Components;
-using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Interfaces;

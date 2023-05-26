@@ -1,5 +1,4 @@
 ﻿using Generator.Examples.Shared.Models;
-using Generator.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Services

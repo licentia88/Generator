@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using ProtoBuf;
+using MessagePack;
 
-namespace Generator.Shared.Models.ComponentModels
+namespace Generator.Shared.Models.ComponentModels;
+
+[NotMapped]
+[MessagePackObject]
+// ReSharper disable once InconsistentNaming
+public class TABLE_INFORMATION
 {
-    [NotMapped]
-    [ProtoContract]
-    public class TABLE_INFORMATION
-    {
-        [ProtoMember(1)]
-        public string TI_TABLE_NAME { get; set; }
-    }
+    [Key(0)]
+    public string TI_TABLE_NAME { get; set; }
 }
-

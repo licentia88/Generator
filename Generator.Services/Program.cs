@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Cryptography.X509Certificates;
 
 using Generator.Services;
 using Generator.Services.Dependency;
@@ -58,7 +56,7 @@ app.UseGrpcWeb();
 await app.Services.CreateAsyncScope().ServiceProvider.GetService<SeedData>().FillComponentsAsync();
 // Configure the HTTP request pipeline.
 
-app.RegisterGeneratorServices();
+//app.RegisterGeneratorServices();
 app.MapGrpcService<TestService>().EnableGrpcWeb();
 app.MapGrpcService<UserService>().EnableGrpcWeb();
 app.MapGrpcService<OrdersMService>().EnableGrpcWeb();

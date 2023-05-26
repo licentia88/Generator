@@ -1,12 +1,8 @@
-﻿using System.Data;
-using System.Data.Common;
+﻿using System.Data.Common;
 using Generator.Examples.Shared.Models;
 using Generator.Services.Helpers;
 using Generator.Shared.Models.ServiceModels;
-using Generator.Shared.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc;
 using QueryMaker;
 using QueryMaker.MSSql;
@@ -75,7 +71,7 @@ public abstract class ServiceBase<TContext> : IServiceBase where TContext : DbCo
     {
         return TaskHandler.ExecuteAsync(async () =>
         {
-            var result = new SqlServerManager(GeneratorConnection).QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}");
+            var result = new SqlServerManager(GeneratorConnection).QueryAsync($"SELECT * FROM {nameof(TEST_TABLE)}", new KeyValuePair<string, object>());
 
             return new GenObject();
             //return result;

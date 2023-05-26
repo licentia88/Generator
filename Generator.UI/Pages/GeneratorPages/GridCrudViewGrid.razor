@@ -1,15 +1,15 @@
-﻿@inherits PagesBase<PAGES_M, GRID_CRUD_VIEW, IGRidCrudViewService>
+﻿@inherits PagesBase<GRID_M, CRUD_VIEW, GRidCrudViewService>
 
+ 
 
-
-<GenGrid TModel="GRID_CRUD_VIEW"
-         DataSource="DataSource"
-         EditMode="EditMode.SmartForm"
+<GenGrid DataSource="@(DataSource)"
+         TModel="CRUD_VIEW"
+         EditMode="EditMode.Form"
+         Title="Test"
+         EditTrigger="TableEditTrigger.EditButton"
+         Class="m-2"
          Load="Load"
-         MaxWidth="MaxWidth.Large"
-         Create="Create"
-         Title="Grid View"
-         EditTrigger="TableEditTrigger.EditButton">
+         Create="@( async x=> await Create(x))">
     <GenColumns>
 
         @*ROW1*@
@@ -18,29 +18,29 @@
         <GenComboBox DataSource="TableList" @ref="SourceComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Source"
-                     BindingField="@nameof(GRID_CRUD_VIEW.CB_SOURCE)"
+                     BindingField="@nameof(CRUD_VIEW.VBM_SOURCE)"
                      ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
                      DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)" />
 
         @*ROW2*@
-        <GenCheckBox BindingField="@nameof(GRID_CRUD_VIEW.GCV_CREATE)" Label="Create" TrueText="Yes" FalseText="No"
+        <GenCheckBox BindingField="@nameof(CRUD_VIEW.CV_CREATE)" Label="Create" TrueText="Yes" FalseText="No"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenCheckBox BindingField="@nameof(GRID_CRUD_VIEW.GCV_UPDATE)" Label="Update" TrueText="Yes" FalseText="No"
+        <GenCheckBox BindingField="@nameof(CRUD_VIEW.CV_UPDATE)" Label="Update" TrueText="Yes" FalseText="No"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenCheckBox BindingField="@nameof(GRID_CRUD_VIEW.GCV_DELETE)" Label="Delete" TrueText="Yes" FalseText="No"
+        <GenCheckBox BindingField="@nameof(CRUD_VIEW.CV_DELETE)" Label="Delete" TrueText="Yes" FalseText="No"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
     </GenColumns>
 
-    <GenDetailGrid>
-        <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
-            <MudTabPanel Text="Crud">
-                <GridFieldsGrid ParentModel="context"  />
-            </MudTabPanel>
-        </MudTabs>
-    </GenDetailGrid>
+    @*<GenDetailGrid>
+            <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
+                <MudTabPanel Text="Crud">
+                    <GridFieldsGrid ParentModel="context"  />
+                </MudTabPanel>
+            </MudTabs>
+        </GenDetailGrid>*@
 </GenGrid>

@@ -1,10 +1,9 @@
-﻿using Generator.Components.Components;
-using Generator.Components.Validators;
-
-namespace Generator.Components.Interfaces;
+﻿namespace Generator.Components.Interfaces;
 
 public interface IGenComponent: IGenCompRenderer
 {
+
+
     public object GetValue();
 
     public bool IsSearchField { get; set; }

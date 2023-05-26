@@ -1,19 +1,13 @@
-﻿using Generator.Examples.Shared.Models;
-using Generator.Shared.Models.ServiceModels;
-using ProtoBuf.Grpc;
-using ProtoBuf.Grpc.Configuration;
+﻿using System.Reflection.Metadata;
+using Generator.Examples.Shared.Models;
+using Generator.Shared.Services.Base;
 
-namespace Generator.Examples.Shared;
+namespace Generator.Examples.Shared.Services;
 
-[Service]
-public interface IUserService
+ 
+
+public interface IUserService:IGenericService<IUserService,USER>
 {
-    public Task<USER> CreateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default);
-
-    public Task<List<USER>> ReadAsync(CallContext context = default);
-
-    public Task<USER> UpdateAsync(RESPONSE_REQUEST<USER> request, CallContext context = default);
-
-    public Task<USER> DeleteAsync(RESPONSE_REQUEST<USER> request, CallContext context = default);
+    
 
 }

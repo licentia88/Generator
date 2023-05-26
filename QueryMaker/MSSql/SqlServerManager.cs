@@ -23,14 +23,14 @@ public class SqlServerManager : SqlQueryBuilder, IDatabaseManager
 
         var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, CommandBehavior, CommandType.Text, whereStatement);
 
-        string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
+        var primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
 
-        bool IsIdentity = isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>();
+        var isIdentity = isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>();
 
-        if (IsIdentity)
+        if (isIdentity && primaryKeyName != null)
             Model.Remove(primaryKeyName);
-
-        var insertStatement = CreateInsertStatement(TableName, Model, primaryKeyName, IsIdentity);
+        
+        var insertStatement = CreateInsertStatement(TableName, Model, primaryKeyName, isIdentity);
 
         var insertResult = await QueryAsync(insertStatement, Model.GetAsWhereStatement());
 
@@ -45,7 +45,7 @@ public class SqlServerManager : SqlQueryBuilder, IDatabaseManager
 
         var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, CommandBehavior, CommandType.Text, whereStatement);
 
-        string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
+        var primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
 
         //bool IsIdentity = (bool)(isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>());
 
@@ -67,7 +67,7 @@ public class SqlServerManager : SqlQueryBuilder, IDatabaseManager
 
         var isAutoIncrementResult = await QueryAsync(isAutoInrementQuery, CommandBehavior, CommandType.Text, whereStatement);
 
-        string primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
+        var primaryKeyName = isAutoIncrementResult.First()["PrimaryKeyName"].ToString();
 
         //bool IsIdentity = (bool)(isAutoIncrementResult.First()["IS_IDENTITY"].CastTo<bool>());
 
@@ -97,7 +97,34 @@ public class SqlServerManager : SqlQueryBuilder, IDatabaseManager
 
         var result = await ExecuteCommandAsync(command, CommandBehavior);
 
-        await command.Connection.CloseAsync();
+        if (command.Connection != null) 
+            await command.Connection.CloseAsync();
+
+        return result;
+    }
+
+    public Task<List<IDictionary<string, object>>> QueryAsync(string Query, params KeyValuePair<string, object>[] WhereStatementParameters)
+    {
+        return QueryAsync(Query, CommandBehavior.Default, CommandType.Text, WhereStatementParameters);
+
+    }
+
+    public async Task<List<IDictionary<string, object>>> QueryAsync(string Query, CommandBehavior CommandBehavior, CommandType CommandType, params KeyValuePair<string, object>[] WhereStatementParameters)
+    {
+        var command = Connection.CreateCommand();
+
+        await command.OpenAsync();
+
+        command.CommandText = Query;
+
+        command.CommandType = CommandType;
+
+        AddWhereStatementParameters(command, WhereStatementParameters);
+
+        var result = await ExecuteCommandAsync(command, CommandBehavior);
+
+        if (command.Connection != null) 
+            await command.Connection.CloseAsync();
 
         return result;
     }
@@ -112,12 +139,11 @@ public class SqlServerManager : SqlQueryBuilder, IDatabaseManager
         command.CommandText = metadataQuery;
 
         command.CommandType = CommandType.Text;
-
-        //AddWhereStatementParameters(command, new WhereStatement(nameof(ProcedureName), ProcedureName));
-
+        
         var result = await ExecuteCommandAsync(command, CommandBehavior.Default);
 
-        await command.Connection.CloseAsync();
+        if (command.Connection != null) 
+            await command.Connection.CloseAsync();
 
         return result;
     }
@@ -138,10 +164,13 @@ public class SqlServerManager : SqlQueryBuilder, IDatabaseManager
 
         var result = await ExecuteCommandAsync(command, CommandBehavior.Default);
 
-        await command.Connection.CloseAsync();
+        if (command.Connection != null)
+            await command.Connection.CloseAsync();
 
         return result;
     }
+
+   
 }
 
 

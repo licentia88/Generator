@@ -1,27 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using ProtoBuf;
+﻿ 
+ using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations.Schema;
+ using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Examples.Shared.Models;
 
-[ProtoContract]
+[MessagePack.MessagePackObject()]
 public class ORDERS_D
 {
-    [ProtoMember(1)]
+    [MessagePack.Key(0)]
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OD_ROWID { get; set; }
 
-    [ProtoMember(2)]
+    [MessagePack.Key(1)]
     public int OD_M_REFNO { get; set; }
 
-    [ProtoMember(3)]
+    [MessagePack.Key(2)]
     public string OD_NAME { get; set; }
 
-    [ProtoMember(4)]
+    [MessagePack.Key(3)]
     public int OD_QUANTITY { get; set; }
 
-    [ProtoMember(5)]
+    [MessagePack.Key(4)]
     [Precision(19,2)]
     public decimal OD_PRICE { get; set; }
 }

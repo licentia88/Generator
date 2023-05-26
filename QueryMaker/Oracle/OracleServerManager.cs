@@ -48,6 +48,16 @@ public class OracleServerManager : OracleQueryBuilder, IDatabaseManager
         throw new NotImplementedException();
     }
 
+    public Task<List<IDictionary<string, object>>> QueryAsync(string Query, params KeyValuePair<string, object>[] WhereStatementParameters)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<IDictionary<string, object>>> QueryAsync(string Query, CommandBehavior CommandBehavior, CommandType CommandType, params KeyValuePair<string, object>[] WhereStatementParameters)
+    {
+        throw new NotImplementedException();
+    }
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public Task<IDictionary<string, object>> UpdateAsync(string TableName, IDictionary<string, object> Model, CommandBehavior CommandBehavior = CommandBehavior.Default)
     {

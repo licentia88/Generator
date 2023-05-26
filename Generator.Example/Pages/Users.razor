@@ -1,6 +1,4 @@
 ﻿@page "/Users"
-@using Generator.Examples.Shared
-@using Components.Validators
 @{
 
     if (userList is null) return;
@@ -12,7 +10,7 @@
              Title="Users"
              Dense="true"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.Inline"
+             EditMode="EditMode.SmartForm"
              EditTrigger="TableEditTrigger.RowClick"
              EnableSearch="true"
              Disabled="IsDisabled"
@@ -32,7 +30,8 @@
              Load="@( x=> Load(x))">
         <GenSearchFields>
 
-            <GenTextField Clearable="true" BindingField="TexFld" Label="Name" Required="false"  
+            <GenTextField Clearable="true" BindingField="TexFld" Label="Name"
+                          Required="false"  
                           xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" />
 
             <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
@@ -52,8 +51,10 @@
 
             <GenSpacer  xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-           <GenCheckBox  xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" Dense="true"
+           <GenCheckBox  xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+                         Dense="true"
                          BindingField="CheckBoxText"
+                         @ref="CheckBoxText"
                          Label="Test CheckBOx"
                          LabelPosition="LabelPosition.End"
                          TrueText="Evet"
@@ -71,9 +72,10 @@
             <GenTextField BindingField="@nameof(USER.U_LASTNAME)"  
                           Label="Last Name" />
 
-            <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />
+            <GenTextField BindingField="@nameof(USER.U_AGE)"  />
 
-            <GenCheckBox BindingField="@nameof(USER.U_IS_MARRIED)" Label="Evli mi" TrueText="Evet" FalseText="Hayir" />
+            <GenCheckBox BindingField="@nameof(USER.U_IS_MARRIED)" 
+                         Label="Evli mi" TrueText="Evet" FalseText="Hayir" CheckedChanged="OnCheckChanged" />
 
             <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
                            DateChanged="x=> OnDateChanged(x)"

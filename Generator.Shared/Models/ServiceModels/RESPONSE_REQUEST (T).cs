@@ -1,11 +1,11 @@
-﻿using ProtoBuf;
+﻿using MessagePack;
 
 namespace Generator.Shared.Models.ServiceModels;
 
-[ProtoContract]
+[MessagePackObject]
 public class RESPONSE_REQUEST<TModel>
 {
-    [ProtoMember(1)]
+    [Key(0)]
     public TModel RR_DATA { get; set; }
 
     public RESPONSE_REQUEST()

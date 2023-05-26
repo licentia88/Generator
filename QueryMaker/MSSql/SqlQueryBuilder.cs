@@ -1,5 +1,4 @@
-﻿using System.Data;
-using QueryMaker.Interfaces;
+﻿using QueryMaker.Interfaces;
 
 namespace QueryMaker.MSSql;
 

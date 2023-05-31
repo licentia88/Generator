@@ -1,6 +1,7 @@
 ﻿using System;
 using Generator.Client;
 using Generator.Components.Args;
+using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
 using Generator.Shared.Services.Base;
@@ -25,6 +26,8 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
 
     [Inject] ISnackbar Snackbar { get; set; }
 
+    [Inject]
+    public AuthService AuthService { get; set; }
 
     public List<TModel> DataSource { get; set; } = new List<TModel>();
 
@@ -35,46 +38,46 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
         return base.OnInitializedAsync();
     }
 
-    public virtual async Task Create(TModel model)
+    public virtual async Task Create(GenArgs<TModel> model)
     {
         var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-        var result = await service.Create(model);
+        var result = await service.Create(model.Data);
 
         var primaryKey = model.GetPrimaryKey();
 
         model.SetPropertyValue(primaryKey, result.GetPropertyValue(primaryKey));
 
-        model = result;
+        model.Data = result;
  
         DataSource.Add(result);
     }
 
     public virtual async Task Read(SearchArgs args)
     {
-        var service = ((IGenericService<TService, TModel>)Service);
+        var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
         var result = await service.ReadAll();
 
         DataSource.AddRange(result);
     }
 
-    public virtual async Task Update(TModel model)
+    public virtual async Task Update(GenArgs<TModel> model)
     {
-        var service = ((IGenericService<TService, TModel>)Service);
+        var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-        var result = await service.Update(model);
+        var result = await service.Update(model.Data);
 
         //Datasource da mevcut Datayi replace yap
     }
 
-    public virtual async Task Delete(TModel model)
+    public virtual async Task Delete(GenArgs<TModel> model)
     {
-        var service = ((IGenericService<TService, TModel>)Service);
+        var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-        var result = await service.Delete(model);
+        var result = await service.Delete(model.Data);
 
-        DataSource.Remove(model);
+        DataSource.Remove(model.Data);
     }
 
     public abstract Task Load(IGenView<TModel> View);

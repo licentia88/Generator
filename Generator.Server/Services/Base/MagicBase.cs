@@ -4,7 +4,11 @@ using Generator.Shared.Services.Base;
 using MagicOnion;
 using MagicOnion.Server;
 using Microsoft.EntityFrameworkCore;
-using QueryMaker;
+using AQueryMaker;
+using Generator.Shared.Models.ComponentModels;
+using Generator.Server.Services.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 
 namespace Generator.Server.Services.Base;
 
@@ -14,6 +18,7 @@ public class MagicBase<TService, TModel> : MagicBase<TService, TModel, Generator
 {
     public MagicBase(IServiceProvider provider) : base(provider)
     {
+      
     }
 }
 
@@ -22,14 +27,23 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     where TModel : class, new()
     where TContext:DbContext
 {
+
     protected TContext Db;
+
     private readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
+
+    public MemoryContext MemoryDatabase { get; set; }
+
+    [Inject]
+    public FastJwtTokenService FastJwtTokenService { get; set; }
 
     protected SqlQueryFactory SqlQueryFactory(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
 
     public MagicBase(IServiceProvider provider)
     {
+        MemoryDatabase = provider.GetService<MemoryContext>();
         Db = provider.GetService<TContext>();
+        FastJwtTokenService = provider.GetService<FastJwtTokenService>();
         ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
     }
 
@@ -40,7 +54,7 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// <returns>A unary result containing the created model.</returns>
     public async UnaryResult<TModel> Create(TModel model)
     {
-        Db.Set<TModel>().Add(model);
+         Db.Set<TModel>().Add(model);
         await Db.SaveChangesAsync();
         return model;
     }
@@ -52,7 +66,7 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// <returns>A unary result containing a list of models.</returns>
     public async UnaryResult<List<TModel>> Read(TModel request)
     {
-        return await Db.Set<TModel>().FromSql($"SELECT * FROM {typeof(TModel).Name}").ToListAsync();
+        return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name}").ToListAsync();
     }
 
     public async UnaryResult<List<TModel>> FindByParent(int parentId)
@@ -84,12 +98,24 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
         return model;
     }
 
+
     /// <summary>
     /// Retrieves all models.
     /// </summary>
     /// <returns>A unary result containing a list of all models.</returns>
+    //
     public async UnaryResult<List<TModel>> ReadAll()
     {
-        return await Db.Set<TModel>().ToListAsync();
+        try
+        { 
+
+            return await Db.Set<TModel>().ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
     }
+
+    
 }

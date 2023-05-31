@@ -64,7 +64,6 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     public virtual TService WithHost(string host)
     {
         return Client.WithHost(host);
-
     }
 
     /// <summary>
@@ -76,6 +75,7 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     {
         return Client.WithOptions(option);
 
+ 
     }
 
     /// <summary>
@@ -130,6 +130,16 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     public UnaryResult<List<TModel>> ReadAll()
     {
         return Client.ReadAll();
+    }
+
+    public TService SetToken(byte[] token)
+    {
+        var cop = new CallOptions().WithHeaders(new Metadata
+                {
+                    { "auth-token-bin", token}
+                });
+
+        return Client.WithOptions(cop);
     }
 }
 

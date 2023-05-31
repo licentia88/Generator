@@ -46,6 +46,7 @@
     <None Remove="Commands\" />
     <None Remove="Validators\" />
     <None Remove="Manager\" />
+    <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Args\" />
@@ -57,6 +58,7 @@
     <Folder Include="Commands\" />
     <Folder Include="Validators\" />
     <Folder Include="Manager\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
   

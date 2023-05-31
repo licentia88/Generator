@@ -3,9 +3,9 @@ using Generator.Server.OptionsTemplates;
 using Microsoft.Data.SqlClient;
 //using Microsoft.Data.SqlClient;
 using Oracle.ManagedDataAccess.Client;
-using QueryMaker.Interfaces;
-using QueryMaker.MSSql;
-using QueryMaker.Oracle;
+using AQueryMaker.Interfaces;
+using AQueryMaker.MSSql;
+using AQueryMaker.Oracle;
 
 namespace Generator.Server.Helpers;
 public static class ConnectionHelper

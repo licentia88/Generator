@@ -98,8 +98,8 @@ public partial class Users
         //Console.WriteLine(view.ViewState.ToString());
         View = view;
 
-        if (view.SelectedItem.U_AGE == 0)
-            view.ShoulShowDialog = false;
+        //if (view.SelectedItem.U_AGE == 0)
+        //    view.ShoulShowDialog = false;
 
         U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
 
@@ -113,17 +113,17 @@ public partial class Users
         Console.WriteLine();
     }
 
-    public async ValueTask CreateAsync(USER data)
+    public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<USER> data)
     {
           
         //throw new Exception();
-        var result = await UserService.Create(data);
+        var result = await UserService.Create(data.Data);
 
 
 
         ////REQUIRED 
-        data.U_ROWID = result.U_ROWID;
-        data = result;
+        data.Data.U_ROWID = result.U_ROWID;
+        data.Data = result;
 
  
         DataSource.Add(result);
@@ -135,19 +135,21 @@ public partial class Users
         IsDisabled = !IsDisabled;
     }
 
-    public async ValueTask UpdateAsync(USER data)
+    public async ValueTask UpdateAsync(GenArgs<USER> data)
     {
-        var result = await UserService.Update(data);
+        throw new Exception();
+        var result = await UserService.Update(data.Data);
 
-        var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.U_ROWID);
+        var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.Data.U_ROWID);
 
-        DataSource.Replace(existing, data);
+
+        DataSource.Replace(existing, data.Data);
     }
 
-    public async ValueTask DeleteAsync(USER data)
+    public async ValueTask DeleteAsync(GenArgs<USER> data)
     {
-        var result = await UserService.Delete(data);
+        var result = await UserService.Delete(data.Data);
 
-        DataSource.Remove(data);
+        DataSource.Remove(data.Data);
     }
 }

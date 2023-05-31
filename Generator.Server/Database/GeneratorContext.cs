@@ -3,7 +3,6 @@ using Generator.Shared.Models.ComponentModels.Abstracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Database;
-
 public class GeneratorContext : DbContext
 {
 

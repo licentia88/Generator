@@ -1,8 +1,31 @@
-﻿using Generator.Components.Interfaces;
+﻿using DocumentFormat.OpenXml.EMMA;
+using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
 //using Generator.Shared.Models;
 
 namespace Generator.Components.Args;
+
+public class GenArgs : EventArgs
+{
+    public object Data { get; set; }
+    public int Index { get; set; }
+
+    public GenArgs(object data, int index)
+    {
+        Data = data;
+        Index = index;
+    }
+}
+
+public class GenArgs<TModel> : GenArgs
+{
+    public new TModel Data { get; set; }
+
+    public GenArgs(TModel data, int index):base(data,index)
+    {
+    }
+}
+
 
 public class SearchArgs:EventArgs
 {

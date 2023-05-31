@@ -1,4 +1,6 @@
 ﻿@page "/"
+@*@inject AuthenticationStateProvider AuthState
+@attribute [Authorize]*@
 
 <PageTitle>Index</PageTitle>
 
@@ -8,6 +10,15 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
+
+@code{
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    var state = await AuthState.GetAuthenticationStateAsync();
+    //    await base.OnInitializedAsync();
+    //}
+}
 
 @*<DynamicComponent Type="@(GetTypeOfObject(4123))" Parameters="@parameters"></DynamicComponent>*@
 
@@ -62,4 +73,3 @@ Welcome to your new app.
 
 }
 
- 

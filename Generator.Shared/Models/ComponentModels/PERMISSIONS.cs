@@ -2,6 +2,7 @@
 
 namespace Generator.Shared.Models.ComponentModels;
 
+
 [MessagePackObject]
 public class PERMISSIONS
 {

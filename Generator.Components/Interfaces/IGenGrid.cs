@@ -1,4 +1,5 @@
 using Generator.Components.Args;
+using Generator.Components.Enums;
 using Generator.Components.Helpers;
 using Generator.Components.Validators;
 using Microsoft.AspNetCore.Components;
@@ -98,13 +99,13 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
 
     public RenderFragment<TModel> GenDetailGrid { get; set; }
 
-    public EventCallback<TModel> Create { get; set; }
+    public EventCallback<GenArgs<TModel>> Create { get; set; }
 
-    public EventCallback<TModel> Update { get; set; }
+    public EventCallback<GenArgs<TModel>> Update { get; set; }
 
-    public EventCallback<TModel> Delete { get; set; }
+    public EventCallback<GenArgs<TModel>> Delete { get; set; }
 
-    public EventCallback<TModel> Cancel { get; set; }
+    public EventCallback<GenArgs<TModel>> Cancel { get; set; }
 
     public EventCallback<TModel> OnBeforeSubmit { get; set; }
 
@@ -116,7 +117,7 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
 
     public EventCallback<IGenView<TModel>> Load { get; set; }
 
-
+ 
     //public EventCallback<IGenGrid<TModel>> OnBeforeShowDialog { get; set; }
 
     public EventCallback Close { get; set; }

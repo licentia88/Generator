@@ -31,6 +31,7 @@
     <PackageReference Include="MudBlazor" Version="6.1.4" />
     <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
     <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.1.1" />
+    <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">

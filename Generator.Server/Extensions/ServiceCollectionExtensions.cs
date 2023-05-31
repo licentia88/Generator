@@ -1,7 +1,11 @@
 ﻿using System.Data.Common;
 using Generator.Server.Helpers;
 using Generator.Server.OptionsTemplates;
-using QueryMaker;
+using AQueryDisassembler;
+using AQueryMaker;
+using Generator.Server.Services.Authentication;
+using LitJWT;
+using LitJWT.Algorithms;
 
 namespace Generator.Server.Extensions;
 
@@ -30,7 +34,6 @@ public static class ServiceCollectionExtensions
     }
 
 
-
     private static void AddConnectionFactories(this IServiceCollection services, List<Connections> connections)
     {
         services.AddSingleton<IDictionary<string, Func<SqlQueryFactory>>>(provider =>
@@ -51,4 +54,15 @@ public static class ServiceCollectionExtensions
         //});
     }
 
+
+    //public static void RegisterFastJwt()
+    //{
+    //    var key = HS256Algorithm.GenerateRandomRecommendedKey();
+
+    //    var encoder = new JwtEncoder(new HS256Algorithm(key));
+    //    var decoder = new JwtDecoder(encoder.SignAlgorithm);
+
+    //    FastJwtTokenService.Encoder = encoder;
+    //    FastJwtTokenService.Decoder = decoder;
+    //}
 }

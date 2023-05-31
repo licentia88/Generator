@@ -57,4 +57,6 @@ public interface IGenericService<TService, TModel> : IService<TService>, IClient
     /// <param name="model">The model to delete.</param>
     /// <returns>A unary result containing the deleted model.</returns>
     UnaryResult<TModel> Delete(TModel model);
+
+
 }

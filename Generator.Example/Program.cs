@@ -7,6 +7,7 @@ using Generator.Client;
 using System.Net;
 using Generator.Examples.Shared.Models;
 using Generator.Examples.Shared.Services;
+using Generator.Client.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +26,9 @@ builder.Services.RegisterExampleServices();
  
 
 // builder.Services.RegisterGrpcService<ITestService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-builder.Services.RegisterGrpcService<IUserService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-builder.Services.RegisterGrpcService<IOrdersMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
-builder.Services.RegisterGrpcService<IOrdersDService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+//builder.Services.RegisterGrpcService<IUserService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+//builder.Services.RegisterGrpcService<IOrdersMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
+//builder.Services.RegisterGrpcService<IOrdersDService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 
 
 

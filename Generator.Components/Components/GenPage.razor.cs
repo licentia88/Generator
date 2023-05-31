@@ -123,7 +123,8 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
         if (IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
         {
-            await GenGrid.OnCommit(SelectedItem, viewState);
+            GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
+            //await GenGrid.OnCommit(SelectedItem, viewState);
 
             ViewState = ViewState.None;
 

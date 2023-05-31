@@ -64,29 +64,29 @@
     {
         descTextField.SetValue(str);
     }
-    public async ValueTask CreateAsync(ORDERS_M data)
+    public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
        
-        data.OM_USER_REFNO = Parent.U_ROWID;
+        data.Data.OM_USER_REFNO = Parent.U_ROWID;
 
-        var result = await OrdersMService.Create(data); 
+        var result = await OrdersMService.Create(data.Data); 
 
         DataSource.Add(result);
     }
 
-    public async ValueTask UpdateAsync(ORDERS_M data)
+    public async ValueTask UpdateAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-        var result = await OrdersMService.Update(data); 
+        var result = await OrdersMService.Update(data.Data); 
 
-        DataSource.Replace(data, result);
+        DataSource.Replace(data.Data, result);
 
     }
 
-    public async ValueTask DeleteAsync(ORDERS_M data)
+    public async ValueTask DeleteAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-        var result = await OrdersMService.Delete(data); 
+        var result = await OrdersMService.Delete(data.Data); 
 
-        DataSource.Remove(data);
+        DataSource.Remove(data.Data);
 
     }
     }

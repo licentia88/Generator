@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
 </Project>

@@ -49,5 +49,6 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
     public Task OnCommit(TModel model);
 
     public Task OnCommit(TModel model, ViewState viewState);
+
 }
 

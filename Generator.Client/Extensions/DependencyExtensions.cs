@@ -11,7 +11,7 @@ using Generator.Client.ExampeServices;
 using Generator.Shared.Services.Base;
 using Generator.Shared.Services;
 
-namespace Generator.Client;
+namespace Generator.Client.Extensions;
 
 public static class DependencyExtensions
 {
@@ -21,7 +21,7 @@ public static class DependencyExtensions
         Services.AddSingleton<GRidCrudViewService>();
         Services.AddSingleton<GridFieldsService>();
         Services.AddSingleton<GridMService>();
-        
+        Services.AddSingleton<AuthService>();
     }
     public static void RegisterExampleServices(this IServiceCollection Services)
     {

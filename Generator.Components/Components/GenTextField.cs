@@ -17,23 +17,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [CascadingParameter(Name = nameof(ParentGrid))]
     public INonGenGrid ParentGrid { get; set; }
 
-    private object _model;
-
+ 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-    public object Model
-    {
-        get => _model;
-        set
-        {
-            _model = value;
-
-            if(value is null)
-            {
-
-            }
-             
-        }
-    }
+    public object Model { get; set; }
+    
 
  
     [Parameter]

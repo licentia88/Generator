@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
@@ -37,6 +38,8 @@ public partial class GridFieldsPage
 
     private string CurrentDatabase;
 
+    private string SourceDatabase;
+
     private List<IGenComponent> HiddenFields;
 
     
@@ -68,6 +71,7 @@ public partial class GridFieldsPage
         TableList = View.Parameters.GetFromDict(nameof(TableList)).CastTo<List<TABLE_INFORMATION>>();
 
         CurrentDatabase = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_DATABASE)).ToString();
+        //SourceDatabase = View.Parameters.GetFromDict(nameof(CRUD_VIEW.VBM_SOURCE)).ToString();
 
         DisplayFieldCombobox.BindingField = nameof(GRID_FIELDS.GF_BINDINGFIELD);
 
@@ -193,12 +197,28 @@ public partial class GridFieldsPage
 	private async Task GetQuerySelectFields(IGenView<GRID_FIELDS> View)
 	{
 		var activeDatabase = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_DATABASE))?.ToString();
+        var sourceDatabase = View.Parameters.GetFromDict(nameof(CRUD_VIEW.VBM_SOURCE))?.ToString();
 
         var currentQueryOrMethod = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_QUERY_OR_METHOD))?.ToString();
 
         var responseResult = await DatabaseService.GetFieldsUsingQuery(activeDatabase, currentQueryOrMethod);
 
-		DisplayFieldsList.AddRange(responseResult.Data);
+
+        DisplayFieldsList.AddRange(responseResult.Data);
+
+        if (!string.IsNullOrEmpty(sourceDatabase))
+        {
+            var sourceFields = await DatabaseService.GetTableFields(activeDatabase, sourceDatabase);
+
+            foreach (var sourceField in sourceFields.Data)
+            {
+                var existing = DisplayFieldsList.FirstOrDefault(x => x.DFI_NAME == sourceField.DFI_NAME);
+
+                if (existing is null)
+                    DisplayFieldsList.Add(sourceField);
+            }
+        }
+        
 
 		DisplayFieldCombobox.DataSource = DisplayFieldsList;
     }

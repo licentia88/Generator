@@ -27,20 +27,7 @@ public partial class GridMPage
  
 	protected override async Task OnInitializedAsync()
 	{
-
-		var result = await AuthService.Login(666, 1);
- 
-        try
-		{
-             var r1 = await Service.SetToken(result.Data.Token).ReadAll();
-        }
-		catch (RpcException ex)
-		{
-
-		}
-
         DateTime startTime = DateTime.UtcNow;
-
 
 		DatabaseList = (await DatabaseService.GetDatabaseList()).Data;
  

@@ -54,7 +54,7 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// <returns>A unary result containing the created model.</returns>
     public async UnaryResult<TModel> Create(TModel model)
     {
-         Db.Set<TModel>().Add(model);
+        Db.Set<TModel>().Add(model);
         await Db.SaveChangesAsync();
         return model;
     }

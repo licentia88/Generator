@@ -20,10 +20,13 @@ public partial class CrudViewPage
     private GenCheckBox UpdateCheckBox;
     private GenCheckBox DeleteCheckBox;
 
-     
+
+    private IGenView<CRUD_VIEW> genView;
 
     public override async Task Load(IGenView<CRUD_VIEW> view)
     {
+        genView = view;
+
         if (string.IsNullOrEmpty(ParentModel.CB_DATABASE))
             NotificationsView.Notifications.Add(new NotificationVM("Select Database First", MudBlazor.Severity.Warning));
 
@@ -55,6 +58,10 @@ public partial class CrudViewPage
 
         view.Parameters.AddOrReplace(nameof(ParentModel.CB_QUERY_OR_METHOD), ParentModel.CB_QUERY_OR_METHOD);
         view.Parameters.AddOrReplace(nameof(ParentModel.CB_DATABASE), ParentModel.CB_DATABASE);
+
+        if (!string.IsNullOrEmpty(view.SelectedItem.VBM_SOURCE))
+            view.Parameters.AddOrReplace(nameof(CRUD_VIEW.VBM_SOURCE), view.SelectedItem.VBM_SOURCE);
+
         view.Parameters.AddOrReplace(nameof(ParentModel.CB_COMMAND_TYPE), ParentModel.CB_COMMAND_TYPE);
         view.Parameters.AddOrReplace(nameof(TableList), TableList);
     }
@@ -67,7 +74,10 @@ public partial class CrudViewPage
         UpdateCheckBox.EditorEnabled = true;
         DeleteCheckBox.EditorEnabled = true;
 
+
         SourceComboBox.SetValue(model);
+
+        genView.Parameters.AddOrReplace(nameof(CRUD_VIEW.VBM_SOURCE), genView.SelectedItem.VBM_SOURCE);
 
     }
 
@@ -79,9 +89,13 @@ public partial class CrudViewPage
         UpdateCheckBox.EditorEnabled = false;
         DeleteCheckBox.EditorEnabled = false;
 
+        genView.Parameters.Remove(nameof(CRUD_VIEW.VBM_SOURCE));
+
         CreateCheckBox.SetValue(false);
         UpdateCheckBox.SetValue(false);
         DeleteCheckBox.SetValue(false);
+
+
     }
 
     public void MyInitialize()

@@ -10,6 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 using Generator.Client.ExampeServices;
 using Generator.Shared.Services.Base;
 using Generator.Shared.Services;
+using Generator.Shared.Models.ComponentModels;
 
 namespace Generator.Client.Extensions;
 
@@ -22,7 +23,15 @@ public static class DependencyExtensions
         Services.AddSingleton<GridFieldsService>();
         Services.AddSingleton<GridMService>();
         Services.AddSingleton<AuthService>();
+        Services.AddSingleton<UserAuthorizationsService>();
+        Services.AddSingleton<UsersService>();
+        Services.AddSingleton<PermissionsService>();
+        Services.AddSingleton<RolesService>();
+        Services.AddSingleton<RolesDetailsService>();
+
     }
+ 
+    
     public static void RegisterExampleServices(this IServiceCollection Services)
     {
         Services.AddSingleton<UserService>();

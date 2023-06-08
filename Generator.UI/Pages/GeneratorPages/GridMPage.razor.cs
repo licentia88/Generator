@@ -1,14 +1,10 @@
-﻿using System;
-using System.Data;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml.InkML;
+﻿using System.Data;
 using Generator.Client;
-using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ComponentModels.NonDB;
-using Grpc.Core;
+using Microsoft.AspNetCore.Components;
 
 namespace Generator.UI.Pages.GeneratorPages;
 
@@ -29,9 +25,15 @@ public partial class GridMPage
 	{
         DateTime startTime = DateTime.UtcNow;
 
-		DatabaseList = (await DatabaseService.GetDatabaseList()).Data;
+		var token = await AuthService.Request(8, "licentia");
+
+
+		var test = await Service.SetToken(token).ReadAll();
+
+        DatabaseList = (await DatabaseService.GetDatabaseList()).Data;
  
         TimeSpan executionTime = DateTime.UtcNow - startTime;
+
         double seconds = executionTime.TotalSeconds;
         double milliseconds = executionTime.TotalMilliseconds;
 

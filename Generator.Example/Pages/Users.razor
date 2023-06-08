@@ -25,8 +25,8 @@
              ExcelButtonText="Test"
              Search="async x=> await Search(x)"
              Create="@( async x=> await CreateAsync(x))"
-             Update="@( async x=> await UpdateAsync(x))"
-             Delete="@( async x=> await DeleteAsync(x))"
+            
+             Cancel="Cancel"
              Load="@( x=> Load(x))">
         <GenSearchFields>
 
@@ -65,7 +65,7 @@
         <GenColumns>
             <GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Ref No" />
 
-            <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" />
+            <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" Required="true"/>
 
             <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
 

@@ -1,0 +1,31 @@
+﻿@inherits PagesBase<ROLES,ROLES_DETAILS, RolesDetailsService, IRolesDetailsService>
+
+
+
+<GenGrid TModel="ROLES_DETAILS"
+         Class="m-2"
+         Load="Load"
+         Create="Create"
+         Search="Read"
+         Cancel="Cancel"
+         DataSource="@DataSource"
+         MaxWidth="MaxWidth.ExtraExtraLarge"
+         EditTrigger="TableEditTrigger.EditButton"
+         EditMode="EditMode.SmartForm">
+
+    
+    <GenColumns>
+ 
+        <GenComboBox BindingField="@nameof(ROLES_DETAILS.RD_PERMISSION_REFNO)"
+                     Label="Permission"
+                     DataSource="@PermissionsList"
+                     ValueField="@(nameof(PERMISSIONS.AUTH_ROWID))"
+                     DisplayField="@nameof(PERMISSIONS.PER_DESCRIPTION)"
+                     xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
+
+     
+
+    </GenColumns>
+</GenGrid>

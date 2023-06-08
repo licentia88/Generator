@@ -34,7 +34,10 @@ public class GenExcel
         {
             foreach (var field in displayableFields)
             {
-                ws.Cell(row + 1, col).Value = item.GetPropertyValue(field.BindingField).ToString();
+                var value = item.GetPropertyValue(field.BindingField)?.ToString() ?? string.Empty;
+
+                ws.Cell(row + 1, col).Value = value;
+
                 col++;
             }
           

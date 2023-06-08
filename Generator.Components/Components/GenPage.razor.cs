@@ -123,8 +123,8 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
         if (IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
         {
-            GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
-            //await GenGrid.OnCommit(SelectedItem, viewState);
+            //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
+            await GenGrid.OnCommit(SelectedItem, viewState);
 
             ViewState = ViewState.None;
 
@@ -201,7 +201,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
         if (ViewState != ViewState.None)
         {
             MudDialog.Close();
-            GenGrid.OriginalTable.RowEditCancel.Invoke(SelectedItem);
+            GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
         }
 
  

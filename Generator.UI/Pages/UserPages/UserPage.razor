@@ -1,0 +1,50 @@
+﻿@page "/Users"
+
+
+@inherits PagesBase<USERS, UsersService, IUsersService>
+
+ 
+
+<GenGrid TModel="USERS"
+         Title="Users"
+         Class="m-2"
+         Load="Load"
+         Create="Create"
+         Search="Read"
+         Cancel="Cancel"
+         DataSource="@DataSource"
+         MaxWidth="MaxWidth.ExtraExtraLarge"
+         EditTrigger="TableEditTrigger.EditButton"
+         EditMode="EditMode.SmartForm">
+
+    <GenSearchFields>
+        <GenTextField BindingField="@nameof(USERS.U_USERNAME)"
+                      Label="Username"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" /> 
+    </GenSearchFields>
+    <GenColumns>
+
+        <GenTextField BindingField="@nameof(USERS.U_ROWID)"
+                      Label="RefNo"
+                      EditorEnabled="false"
+                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(USERS.U_USERNAME)"
+                      Label="Username"
+                      EditorEnabled="false"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="6" xl="6" xxl="6" />
+
+
+    </GenColumns>
+    <GenDetailGrid>
+        <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
+            <MudTabPanel Text="Crud">
+                @*<CrudViewPage ParentModel="context" />*@
+            </MudTabPanel>
+        </MudTabs>
+    </GenDetailGrid>
+</GenGrid>

@@ -5,24 +5,23 @@ using Generator.Components.Interfaces;
 
 namespace Generator.Components.Args;
 
-public class GenArgs : EventArgs
+ 
+
+public class GenArgs<TModel> : EventArgs  
 {
-    public object Data { get; set; }
+    public TModel Model { get; set; }
+
+    public TModel OldModel { get; set; }
+
     public int Index { get; set; }
 
-    public GenArgs(object data, int index)
+    public GenArgs(TModel model,TModel oldModel, int index) 
     {
-        Data = data;
+        Model = model;
+
+        OldModel = oldModel;
+
         Index = index;
-    }
-}
-
-public class GenArgs<TModel> : GenArgs
-{
-    public new TModel Data { get; set; }
-
-    public GenArgs(TModel data, int index):base(data,index)
-    {
     }
 }
 

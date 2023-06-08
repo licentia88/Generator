@@ -26,12 +26,14 @@
     <None Remove="Extensions\" />
     <None Remove="Pages\Base\" />
     <None Remove="Enums\" />
+    <None Remove="Pages\UserPages\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="6.1.4" />
     <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
     <PackageReference Include="protobuf-net.Grpc.ClientFactory" Version="1.1.1" />
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
+    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
@@ -50,6 +52,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="Pages\Base\" />
     <Folder Include="Enums\" />
+    <Folder Include="Pages\UserPages\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Pages\GeneratorPages\GridPagesD.razor.cs" />

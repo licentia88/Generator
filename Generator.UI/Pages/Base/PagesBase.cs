@@ -42,13 +42,13 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
     {
         var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-        var result = await service.Create(model.Data);
+        var result = await service.Create(model.Model);
 
         var primaryKey = model.GetPrimaryKey();
 
         model.SetPropertyValue(primaryKey, result.GetPropertyValue(primaryKey));
 
-        model.Data = result;
+        model.Model = result;
  
         DataSource.Add(result);
     }
@@ -62,25 +62,33 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
         DataSource.AddRange(result);
     }
 
-    public virtual async Task Update(GenArgs<TModel> model)
+    public virtual async Task Update(GenArgs<TModel> args)
     {
         var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-        var result = await service.Update(model.Data);
+        var result = await service.Update(args.Model);
 
         //Datasource da mevcut Datayi replace yap
     }
 
-    public virtual async Task Delete(GenArgs<TModel> model)
+    public virtual async Task Delete(GenArgs<TModel> args)
     {
         var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-        var result = await service.Delete(model.Data);
+        var result = await service.Delete(args.Model);
 
-        DataSource.Remove(model.Data);
+        DataSource.Remove(args.Model);
     }
 
-    public abstract Task Load(IGenView<TModel> View);
+    public virtual void Cancel(GenArgs<TModel> args)
+    {
+        DataSource[args.Index] = args.OldModel;
+    }
+
+    public virtual Task Load(IGenView<TModel> View)
+    {
+        return Task.CompletedTask;
+    }
 
 
  }

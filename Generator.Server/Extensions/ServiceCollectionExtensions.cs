@@ -1,15 +1,15 @@
 ﻿using System.Data.Common;
 using Generator.Server.Helpers;
 using Generator.Server.OptionsTemplates;
-using AQueryDisassembler;
 using AQueryMaker;
-using Generator.Server.Services.Authentication;
-using LitJWT;
-using LitJWT.Algorithms;
+using Generator.Shared.Models.ComponentModels;
+using Generator.Server.Seed;
+using Microsoft.EntityFrameworkCore;
+using Generator.Server.Database;
 
 namespace Generator.Server.Extensions;
 
-
+ 
 public static class ServiceCollectionExtensions
 {
     public static  IServiceCollection RegisterGenServer(this IServiceCollection services)
@@ -28,11 +28,20 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection RegisterModels(this IServiceCollection services)
+    {
+        services.AddScoped<SeedData>();
+        services.AddSingleton<List<PERMISSIONS>>();
+
+        return services;
+    }
+
     public static string GetConnection(this IConfiguration configuration, string Name)
     {
         return configuration.GetSection("ConnectionStrings").Get<List<Connections>>().FirstOrDefault(x => x.Name.Equals(Name))?.ConnectionString;
     }
 
+ 
 
     private static void AddConnectionFactories(this IServiceCollection services, List<Connections> connections)
     {
@@ -47,6 +56,8 @@ public static class ServiceCollectionExtensions
             return connectionFactories;
         });
 
+
+      
         //services.AddSingleton<IDictionary<string, Func<SqlQueryFactory>>>(_ =>
         //{
         //    return connections.ToDictionary<Connections, string, Func<SqlQueryFactory>>(connectionSetting => connectionSetting.Name,

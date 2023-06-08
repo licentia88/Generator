@@ -115,15 +115,16 @@ public partial class Users
 
     public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<USER> data)
     {
-          
+        DataSource.Add(data.Model);
+        return;
         //throw new Exception();
-        var result = await UserService.Create(data.Data);
+        var result = await UserService.Create(data.Model);
 
 
 
         ////REQUIRED 
-        data.Data.U_ROWID = result.U_ROWID;
-        data.Data = result;
+        data.Model.U_ROWID = result.U_ROWID;
+        data.Model = result;
 
  
         DataSource.Add(result);
@@ -138,18 +139,24 @@ public partial class Users
     public async ValueTask UpdateAsync(GenArgs<USER> data)
     {
         throw new Exception();
-        var result = await UserService.Update(data.Data);
+        var result = await UserService.Update(data.Model);
 
-        var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.Data.U_ROWID);
+        var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.Model.U_ROWID);
 
 
-        DataSource.Replace(existing, data.Data);
+        DataSource.Replace(existing, data.Model);
     }
 
     public async ValueTask DeleteAsync(GenArgs<USER> data)
     {
-        var result = await UserService.Delete(data.Data);
+        var result = await UserService.Delete(data.Model);
 
-        DataSource.Remove(data.Data);
+        DataSource.Remove(data.Model);
+    }
+
+    public  Task Cancel(GenArgs<USER> data)
+    {
+        DataSource[data.Index] = data.OldModel;
+        return Task.CompletedTask;
     }
 }

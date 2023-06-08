@@ -3,6 +3,8 @@ using Generator.Server;
 using Generator.Server.Database;
 using Generator.Server.Extensions;
 using Generator.Server.FIlters;
+using Generator.Server.Jwt;
+using Generator.Server.Seed;
 using Generator.Server.Services.Authentication;
 using Grpc.Net.Client;
 using LitJWT;
@@ -19,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
  
 builder.Services.AddGrpc();
 
- 
+builder.Services.RegisterModels();
 builder.Services.AddMagicOnion(x => x.IsReturnExceptionStackTraceInErrorDetail = true );
 
 builder.Services.AddDbContext<TestContext>(options =>
@@ -31,11 +33,12 @@ builder.Services.AddDbContext<GeneratorContext>(options =>
 
 builder.Services.AddDbContext<MemoryContext>(options =>
      options.UseInMemoryDatabase(nameof(MemoryContext)));
+
 builder.Services.RegisterGenServer();
 
 //builder.Services.AddSingleton<IMagicOnionFilterFactory<MagicAuthAttribute>, MagicAuthMiddleware>();
 
-builder.Services.AddSingleton<FastJwtTokenService>(x =>
+builder.Services.AddSingleton(x =>
 {
     var key = HS256Algorithm.GenerateRandomRecommendedKey();
 
@@ -55,10 +58,14 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+using var scope =  app.Services.CreateAsyncScope();
+var sd = scope.ServiceProvider.GetService<SeedData>();
+sd.Seed();
+
 app.UseRouting();
 
-app.MapMagicOnionHttpGateway("_", app.Services.GetService<MagicOnion.Server.MagicOnionServiceDefinition>().MethodHandlers, GrpcChannel.ForAddress("http://localhost:5002")); // Use HTTP instead of HTTPS
-app.MapMagicOnionSwagger("swagger", app.Services.GetService<MagicOnion.Server.MagicOnionServiceDefinition>().MethodHandlers, "/_/");
+app.MapMagicOnionHttpGateway("_", app.Services.GetService<MagicOnionServiceDefinition>().MethodHandlers, GrpcChannel.ForAddress("http://localhost:5002")); // Use HTTP instead of HTTPS
+app.MapMagicOnionSwagger("swagger", app.Services.GetService<MagicOnionServiceDefinition>().MethodHandlers, "/_/");
 
 app.MapMagicOnionService();
 

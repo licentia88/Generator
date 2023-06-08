@@ -7,7 +7,6 @@ using MagicOnion;
 
 namespace Generator.Shared.Services;
 
-
 public interface IDatabaseService:IGenericService<IDatabaseService,DATABASE_INFORMATION>
 {
     public UnaryResult<RESPONSE_RESULT<List<DATABASE_INFORMATION>>> GetDatabaseList();

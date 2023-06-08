@@ -7,6 +7,8 @@ using Generator.UI.Models;
 using Generator.UI.Pages;
 using Auth0.AspNetCore.Authentication;
 using Generator.Client.Extensions;
+using Generator.UI.Extensions;
+using Generator.Shared.Models.ComponentModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +29,7 @@ builder.Services.RegisterGeneratorComponents();
 builder.Services.AddScoped<NotificationsView>();
 builder.Services.AddScoped<List<NotificationVM>>();
 builder.Services.RegisterGenServices();
-
+builder.Services.RegisterStaticData();
 //builder.Services.RegisterGrpcService<IGRidCrudViewService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 //builder.Services.RegisterGrpcService<IGridMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 //builder.Services.RegisterGrpcService<IGridFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
@@ -35,6 +37,8 @@ builder.Services.RegisterGenServices();
 
     
 var app = builder.Build();
+
+await app.Services.FillAsync<PERMISSIONS>("GeneratorContext");
 
  // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

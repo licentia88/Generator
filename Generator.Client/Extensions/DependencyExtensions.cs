@@ -28,7 +28,7 @@ public static class DependencyExtensions
         Services.AddSingleton<PermissionsService>();
         Services.AddSingleton<RolesService>();
         Services.AddSingleton<RolesDetailsService>();
-
+        Services.AddSingleton<SeedService>();
     }
  
     

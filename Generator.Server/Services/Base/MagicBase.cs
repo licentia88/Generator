@@ -35,7 +35,7 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     [Inject]
     public FastJwtTokenService FastJwtTokenService { get; set; }
 
-    protected SqlQueryFactory SqlQueryFactory(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
+    protected SqlQueryFactory GetDatabase(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
  
 
     public MagicBase(IServiceProvider provider)

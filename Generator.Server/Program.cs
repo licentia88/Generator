@@ -28,7 +28,7 @@ builder.Services.AddDbContext<TestContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnection("DefaultConnection")));
 
 builder.Services.AddDbContext<GeneratorContext>(options =>
-     options.UseSqlServer(builder.Configuration.GetConnection("GeneratorConnection"),
+     options.UseSqlServer(builder.Configuration.GetConnection(nameof(GeneratorContext)),
     b => b.MigrationsAssembly("Generator.Server")));
 
 builder.Services.AddDbContext<MemoryContext>(options =>

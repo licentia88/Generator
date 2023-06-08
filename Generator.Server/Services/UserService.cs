@@ -10,4 +10,6 @@ public class UserService : MagicBase<IUserService, USER,TestContext>, IUserServi
     public UserService(IServiceProvider provider) : base(provider)
     {
     }
+
+    
 }

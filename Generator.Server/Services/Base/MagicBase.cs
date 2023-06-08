@@ -1,20 +1,17 @@
 ﻿using Generator.Server.Database;
-using Generator.Server.Helpers;
 using Generator.Shared.Services.Base;
 using MagicOnion;
 using MagicOnion.Server;
 using Microsoft.EntityFrameworkCore;
 using AQueryMaker;
-using Generator.Shared.Models.ComponentModels;
-using Generator.Server.Services.Authentication;
-using Microsoft.AspNetCore.Authorization;
+using Generator.Server.Jwt;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Server.Services.Base;
 
 public class MagicBase<TService, TModel> : MagicBase<TService, TModel, GeneratorContext>
      where TService : IGenericService<TService, TModel>, IService<TService>
-    where TModel : class, new()
+    where TModel : class
 {
     public MagicBase(IServiceProvider provider) : base(provider)
     {
@@ -24,24 +21,26 @@ public class MagicBase<TService, TModel> : MagicBase<TService, TModel, Generator
 
 public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGenericService<TService, TModel>
     where TService : IGenericService<TService, TModel>, IService<TService> 
-    where TModel : class, new()
+    where TModel : class
     where TContext:DbContext
 {
 
     protected TContext Db;
 
+
     private readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
 
-    public MemoryContext MemoryDatabase { get; set; }
+    // public MemoryContext MemoryDatabase { get; set; }
 
     [Inject]
     public FastJwtTokenService FastJwtTokenService { get; set; }
 
     protected SqlQueryFactory SqlQueryFactory(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
+ 
 
     public MagicBase(IServiceProvider provider)
     {
-        MemoryDatabase = provider.GetService<MemoryContext>();
+        // MemoryDatabase = provider.GetService<MemoryContext>();
         Db = provider.GetService<TContext>();
         FastJwtTokenService = provider.GetService<FastJwtTokenService>();
         ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
@@ -52,7 +51,7 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// </summary>
     /// <param name="model">The model to create.</param>
     /// <returns>A unary result containing the created model.</returns>
-    public async UnaryResult<TModel> Create(TModel model)
+    public virtual async UnaryResult<TModel> Create(TModel model)
     {
         Db.Set<TModel>().Add(model);
         await Db.SaveChangesAsync();
@@ -104,18 +103,11 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// </summary>
     /// <returns>A unary result containing a list of all models.</returns>
     //
-    public async UnaryResult<List<TModel>> ReadAll()
+    public virtual async UnaryResult<List<TModel>> ReadAll()
     {
-        try
-        { 
+        return await Db.Set<TModel>().ToListAsync();
 
-            return await Db.Set<TModel>().ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception();
-        }
     }
 
-    
+
 }

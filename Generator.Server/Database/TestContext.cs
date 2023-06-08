@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Database;
+ 
+
 public class TestContext : DbContext
 {
     public TestContext(DbContextOptions<TestContext> options) : base(options)

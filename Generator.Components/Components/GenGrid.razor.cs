@@ -136,7 +136,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter]
     public EventCallback<GenArgs<TModel>> Update { get; set; }
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public EventCallback<GenArgs<TModel>> Cancel { get; set; }
 
     [Parameter]
@@ -286,7 +286,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             {
                 //row bossa once itemi tekrar ekle
                 DataSource.Insert(0, SelectedItem);
-                OriginalTable.Items = DataSource.ToList();
+                //OriginalTable.Items = DataSource.ToList();
                 StateHasChanged();
 
                 if (ViewState != ViewState.Create)
@@ -392,7 +392,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     private async Task Commit()
     {
-        var isValid = ValidateModel();
+        var isValid = ValidateModel(true);
 
         if (!isValid)
         {
@@ -447,26 +447,23 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             {
                 case ViewState.Create when Create.HasDelegate:
 
-                    await Create.InvokeAsync(new GenArgs<TModel>(model, this.index));
-
                     DataSource.Remove(SelectedItem);
 
-                     //if (EditMode == EditMode.Inline)
-                    //{
-                    //    DataSource.RemoveAt(0);
-                    //}
+                    await Create.InvokeAsync(new GenArgs<TModel>(model,OriginalEditItem, this.index));
+
+ 
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
-                    await Update.InvokeAsync(new GenArgs<TModel>(model,this.index));
+                    await Update.InvokeAsync(new GenArgs<TModel>(model, OriginalEditItem, this.index));
                     break;
 
                 case ViewState.Delete when Delete.HasDelegate:
-                    await Delete.InvokeAsync(new GenArgs<TModel>(model, this.index));
+                    await Delete.InvokeAsync(new GenArgs<TModel>(model, OriginalEditItem, this.index));
                     break;
 
                 case ViewState.None when Cancel.HasDelegate:
-                    await Cancel.InvokeAsync(new GenArgs<TModel>(model, this.index));
+                    await Cancel.InvokeAsync(new GenArgs<TModel>(model, OriginalEditItem, this.index));
                     break;
 
                 default:
@@ -517,12 +514,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         }
 
  
-        _ShouldRender = true;
+        //_ShouldRender = true;
 
         if (Close.HasDelegate)
             await Close.InvokeAsync(this);
 
         ForceRenderAll();
+        //Components.Clear();
         StateHasChanged();
     }
 
@@ -560,10 +558,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (OnBeforeCancel.HasDelegate)
             await OnBeforeCancel.InvokeAsync(element);
 
+
         if (ViewState == ViewState.Create)
+        {
             DataSource.Remove(element);
+        }
         else
-            DataSource.Replace(index, OriginalEditItem);
+            await Cancel.InvokeAsync(new GenArgs<TModel>(element, OriginalEditItem, index));
+
+
+
+
 
 
         ViewState = ViewState.None;
@@ -573,12 +578,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         //RefreshButtonState sonunda statehaschanged var
         RefreshButtonState();
 
+
         if (OnAfterCancel.HasDelegate)
             await OnAfterCancel.InvokeAsync(OriginalEditItem);
 
         if (Close.HasDelegate)
             await Close.InvokeAsync();
-
 
          ForceRenderAll();
 
@@ -896,9 +901,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         RefreshButtonState(true);
     }
 
-    internal void RefreshButtonState(bool changeState)
+    private void RefreshButtonState(bool changeState)
     {
-        MudTr row = GetCurrentRow();
+        var row = GetCurrentRow();
 
         if (row is not null)
         {
@@ -914,7 +919,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
 
             row.SetFieldValue("hasBeenCanceled", true);
-            row.SetFieldValue("hasBeenCommitted", true);
+            row.SetFieldValue("hasBeenCommitted", false);
             row.SetFieldValue("hasBeenClickedFirstTime", false);
         }
 

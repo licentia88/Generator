@@ -11,5 +11,4 @@ public class GridCrudViewService : MagicBase<IGRidCrudViewService,CRUD_VIEW>, IG
     {
     }
 
-    
 }

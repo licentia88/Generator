@@ -10,6 +10,7 @@
          EditTrigger="TableEditTrigger.EditButton"
          Class="m-2"
          Load="OnLoad"
+         Cancel="x=>  DataSource[x.Index] = x.OldModel"
          Create="@( async x=> await CreateAsync(x))"
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">
@@ -67,26 +68,26 @@
     public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
        
-        data.Data.OM_USER_REFNO = Parent.U_ROWID;
+        data.Model.OM_USER_REFNO = Parent.U_ROWID;
 
-        var result = await OrdersMService.Create(data.Data); 
+        var result = await OrdersMService.Create(data.Model); 
 
         DataSource.Add(result);
     }
 
     public async ValueTask UpdateAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-        var result = await OrdersMService.Update(data.Data); 
+        var result = await OrdersMService.Update(data.Model); 
 
-        DataSource.Replace(data.Data, result);
+        DataSource.Replace(data.Model, result);
 
     }
 
     public async ValueTask DeleteAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-        var result = await OrdersMService.Delete(data.Data); 
+        var result = await OrdersMService.Delete(data.Model); 
 
-        DataSource.Remove(data.Data);
+        DataSource.Remove(data.Model);
 
     }
     }

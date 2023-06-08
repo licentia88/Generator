@@ -1,15 +1,32 @@
-﻿using MessagePack;
+﻿ using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Shared.Models.ComponentModels.Abstracts;
+using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
 
 [MessagePackObject]
-public class PERMISSIONS
+[Table(nameof(PERMISSIONS))]
+public class PERMISSIONS: AUTH_BASE
 {
-    [Key(0)]
-    [Annotation.Key,Shema.DatabaseGenerated(Shema.DatabaseGeneratedOption.Identity)]
-    public int PER_ROWID { get; set; }
+    public PERMISSIONS()
+    {
+        AUTH_TYPE = nameof(PERMISSIONS);
+    }
 
-    [Key(1)]
+    [Key(3)]
+    public string PER_DESCRIPTION { get; set; }
+
+    [Key(4)]
+    [Annotation.Required(ErrorMessage = "*")]
     public int PER_COMPONENT_REFNO { get; set; }
 }
+
+
+
+
+
+
+
+
+

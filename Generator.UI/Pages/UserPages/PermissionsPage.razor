@@ -1,0 +1,61 @@
+﻿@page "/Permissions"
+
+
+@inherits PagesBase<PERMISSIONS, PermissionsService, IPermissionsService>
+
+
+
+<GenGrid TModel="PERMISSIONS"
+         Title="Permissions"
+         Class="m-2"
+         Load="Load"
+         Create="Create"
+         Search="Read"
+         Cancel="Cancel"
+         DataSource="@DataSource"
+         MaxWidth="MaxWidth.ExtraExtraLarge"
+         EditTrigger="TableEditTrigger.EditButton"
+         EditMode="EditMode.SmartForm">
+
+    <GenSearchFields>
+        <GenComboBox  BindingField="@nameof(PERMISSIONS.AUTH_TYPE)"
+                      Label="Auth Type"
+                      DataSource="@AuthTypes"
+                      ValueField="@(nameof(CODE_TABLE.C_CODE))"
+                      DisplayField="@nameof(CODE_TABLE.C_DESC)"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+    </GenSearchFields>
+    <GenColumns>
+
+        <GenTextField BindingField="@nameof(PERMISSIONS.AUTH_ROWID)"
+                      Label="Auth Code"
+                      EditorEnabled="false"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenComboBox BindingField="@nameof(PERMISSIONS.AUTH_TYPE)"
+                     Label="Auth Type"
+                     DataSource="@AuthTypes"
+                     ValueField="@(nameof(CODE_TABLE.C_CODE))"
+                     DisplayField="@nameof(CODE_TABLE.C_DESC)"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenTextField BindingField="@nameof(PERMISSIONS.PER_COMPONENT_REFNO)"
+                      Label="Component"
+                      EditorEnabled="false"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+
+        <GenTextField BindingField="@nameof(PERMISSIONS.PER_DESCRIPTION)"
+                      Label="Description"
+                      EditorEnabled="false"
+                      Lines="4"
+                      xs="12" sm="12" md="12" lg="12" xl="12" xxl="12" />
+
+    </GenColumns>
+</GenGrid>

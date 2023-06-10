@@ -1,42 +1,56 @@
-﻿using Generator.Server.Database;
+﻿using AQueryMaker;
+using Generator.Server.Database;
+using Generator.Server.Helpers;
+using Generator.Server.Jwt;
 using Generator.Shared.Services.Base;
 using MagicOnion;
 using MagicOnion.Server;
-using Microsoft.EntityFrameworkCore;
-using AQueryMaker;
-using Generator.Server.Jwt;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Services.Base;
 
+/// <summary>
+/// Base class for magic operations that involve a generic service and model.
+/// </summary>
+/// <typeparam name="TService">The type of the service.</typeparam>
+/// <typeparam name="TModel">The type of the model.</typeparam>
 public class MagicBase<TService, TModel> : MagicBase<TService, TModel, GeneratorContext>
-     where TService : IGenericService<TService, TModel>, IService<TService>
-    where TModel : class
+    where TService : IGenericService<TService, TModel>, IService<TService>
+    where TModel : class 
 {
     public MagicBase(IServiceProvider provider) : base(provider)
     {
-      
+
     }
 }
 
-public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGenericService<TService, TModel>
-    where TService : IGenericService<TService, TModel>, IService<TService> 
+/// <summary>
+/// Base class for magic operations that involve a generic service, model, and database context.
+/// </summary>
+/// <typeparam name="TService">The type of the service.</typeparam>
+/// <typeparam name="TModel">The type of the model.</typeparam>
+/// <typeparam name="TContext">The type of the database context.</typeparam>
+public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGenericService<TService, TModel>
+    where TService : IGenericService<TService, TModel>, IService<TService>
     where TModel : class
-    where TContext:DbContext
+    where TContext : DbContext
 {
-
     protected TContext Db;
-
-
     private readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
 
-    // public MemoryContext MemoryDatabase { get; set; }
-
+    /// <summary>
+    /// Gets or sets the instance of FastJwtTokenService.
+    /// </summary>
     [Inject]
     public FastJwtTokenService FastJwtTokenService { get; set; }
 
+    /// <summary>
+    /// Retrieves the database connection based on the specified connection name.
+    /// </summary>
+    /// <param name="connectionName">The name of the connection.</param>
+    /// <returns>An instance of SqlQueryFactory.</returns>
     protected SqlQueryFactory GetDatabase(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
- 
 
     public MagicBase(IServiceProvider provider)
     {
@@ -51,11 +65,14 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// </summary>
     /// <param name="model">The model to create.</param>
     /// <returns>A unary result containing the created model.</returns>
-    public virtual async UnaryResult<TModel> Create(TModel model)
+    public virtual UnaryResult<TModel> Create(TModel model)
     {
-        Db.Set<TModel>().Add(model);
-        await Db.SaveChangesAsync();
-        return model;
+        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            Db.Set<TModel>().Add(model);
+            await Db.SaveChangesAsync();
+            return model;
+        });
     }
 
     /// <summary>
@@ -63,14 +80,26 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// </summary>
     /// <param name="request">The request object.</param>
     /// <returns>A unary result containing a list of models.</returns>
-    public async UnaryResult<List<TModel>> Read(TModel request)
+    public virtual UnaryResult<List<TModel>> Read(TModel request)
     {
-        return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name}").ToListAsync();
+        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name}").ToListAsync();
+        });
     }
 
-    public async UnaryResult<List<TModel>> FindByParent(int parentId)
+    /// <summary>
+    /// Finds a list of entities of type TModel that are associated with a parent entity based on a foreign key.
+    /// </summary>
+    /// <param name="parentId">The identifier of the parent entity.</param>
+    /// <param name="foreignKey">The foreign key used to associate the entities with the parent entity.</param>
+    /// <returns>A <see cref="UnaryResult{List{TModel}}"/> representing the result of the operation, containing a list of entities.</returns>
+    public virtual UnaryResult<List<TModel>> FindByParent(string parentId, string foreignKey)
     {
-        return new List<TModel>();
+        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name} AND {foreignKey} = '{parentId}' ").ToListAsync();
+        });
     }
 
     /// <summary>
@@ -78,11 +107,14 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// </summary>
     /// <param name="model">The model to update.</param>
     /// <returns>A unary result containing the updated model.</returns>
-    public async UnaryResult<TModel> Update(TModel model)
+    public virtual UnaryResult<TModel> Update(TModel model)
     {
-        Db.Set<TModel>().Update(model);
-        await Db.SaveChangesAsync();
-        return model;
+        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            Db.Set<TModel>().Update(model);
+            await Db.SaveChangesAsync();
+            return model;
+        });
     }
 
     /// <summary>
@@ -90,24 +122,25 @@ public class MagicBase<TService, TModel,TContext> : ServiceBase<TService>, IGene
     /// </summary>
     /// <param name="model">The model to delete.</param>
     /// <returns>A unary result containing the deleted model.</returns>
-    public async UnaryResult<TModel> Delete(TModel model)
+    public virtual UnaryResult<TModel> Delete(TModel model)
     {
-        Db.Set<TModel>().Remove(model);
-        await Db.SaveChangesAsync();
-        return model;
+        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            Db.Set<TModel>().Remove(model);
+            await Db.SaveChangesAsync();
+            return model;
+        });
     }
-
 
     /// <summary>
     /// Retrieves all models.
     /// </summary>
     /// <returns>A unary result containing a list of all models.</returns>
-    //
-    public virtual async UnaryResult<List<TModel>> ReadAll()
+    public virtual UnaryResult<List<TModel>> ReadAll()
     {
-        return await Db.Set<TModel>().ToListAsync();
-
+        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            return await Db.Set<TModel>().ToListAsync();
+        });
     }
-
-
 }

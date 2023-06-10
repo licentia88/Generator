@@ -20,6 +20,11 @@ public class PERMISSIONS: AUTH_BASE
     [Key(4)]
     [Annotation.Required(ErrorMessage = "*")]
     public int PER_COMPONENT_REFNO { get; set; }
+
+    public override bool IsAuthorized(int roleId)
+    {
+        return AUTH_ROWID == roleId;
+    }
 }
 
 

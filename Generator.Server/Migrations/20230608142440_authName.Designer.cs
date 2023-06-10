@@ -4,6 +4,7 @@ using Generator.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Generator.Server.Migrations
 {
     [DbContext(typeof(GeneratorContext))]
-    partial class GeneratorContextModelSnapshot : ModelSnapshot
+    [Migration("20230608142440_authName")]
+    partial class authName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,28 +55,21 @@ namespace Generator.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CB_DATABASE")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_IDENTIFIER")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_QUERY_OR_METHOD")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_TITLE")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_TYPE")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CB_ROWID");
-
-                    b.HasIndex("CB_IDENTIFIER")
-                        .IsUnique()
-                        .HasFilter("[CB_IDENTIFIER] IS NOT NULL");
 
                     b.ToTable("COMPONENTS_BASE");
                 });

@@ -20,19 +20,13 @@ public class FastJwtTokenService
         return token;
     }
 
-    internal bool DecodeToken(byte[] token, int[] roles, ServiceContext context)
+    internal bool DecodeToken(byte[] token, int[] roles)
     {
         var result = Decoder.TryDecode(token, x => Utf8Json.JsonSerializer.Deserialize<(int userId,List<int> Roles)>(x.ToArray()), out var TokenResult);
 
         if (result != DecodeResult.Success)
             throw new ReturnStatusException(StatusCode.Cancelled, result.ToString());
-
-        //var rolesMatch = !roles.Any() || TokenResult.Roles.Any(x => roles.Contains(x));
-
-        //if (!rolesMatch) throw new ReturnStatusException(StatusCode.Unauthenticated, "Bu İşlemi Yapmaya yetkiniz yok.");
-
-        //context.Items[nameof(MyToken)] = TokenResult;
-
+ 
         return true;
     }
 }

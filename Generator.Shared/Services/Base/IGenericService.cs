@@ -35,9 +35,13 @@ public interface IGenericService<TService, TModel> : IService<TService>, IClient
     /// Retrieves a list of models based on the parent primaryKey request.
     /// </summary>
     /// <param name="parentId"></param>
+    /// <param name="ForeignKey"></param>
     /// <returns>A unary result containing a list of models.</returns>
-    UnaryResult<List<TModel>> FindByParent(int parentId);
-    
+    UnaryResult<List<TModel>> FindByParent(string parentId, string ForeignKey);
+
+
+  
+
     /// <summary>
     /// Retrieves all models.
     /// </summary>

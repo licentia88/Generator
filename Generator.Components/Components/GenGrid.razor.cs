@@ -136,7 +136,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter]
     public EventCallback<GenArgs<TModel>> Update { get; set; }
 
-    [Parameter, EditorRequired]
+    [Parameter]
     public EventCallback<GenArgs<TModel>> Cancel { get; set; }
 
     [Parameter]
@@ -564,7 +564,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             DataSource.Remove(element);
         }
         else
+        {
+            if (!Cancel.HasDelegate)
+                throw new Exception("Cancel does not have a delegate");
+
             await Cancel.InvokeAsync(new GenArgs<TModel>(element, OriginalEditItem, index));
+
+        }
 
 
 
@@ -776,8 +782,30 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         GenValidator.ResetValidation(component);
     }
 
+ 
+
+    /// <summary>
+    /// Creates a new instance of the data model using the provided components.
+    /// If the data model is a concrete class with a parameterless constructor,
+    /// the constructor will be invoked to create the instance. Otherwise, a
+    /// dictionary-based creation will be used.
+    /// </summary>
+    /// <typeparam name="TModel">The type of the data model.</typeparam>
+    /// <returns>A new instance of the data model.</returns>
     private TModel CreateNewDataModel()
     {
+        
+
+
+        // Check if TModel is a concrete class and has a parameterless constructor
+        if (typeof(TModel).IsClass && !typeof(TModel).IsAbstract && !typeof(TModel).IsInterface)
+        {
+            var constructor = typeof(TModel).GetConstructor(Type.EmptyTypes);
+            if (constructor != null)
+                return new TModel();
+        }
+
+
         var newData = Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
         TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel)).AddDestinationTransform(DestinationTransform.EmptyCollectionIfNull);
@@ -785,6 +813,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         return newData.Adapt<TModel>();
 
     }
+
+
+    //private TModel CreateNewDataModel()
+    //{
+    //    var newData = Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
+
+    //    TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel)).AddDestinationTransform(DestinationTransform.EmptyCollectionIfNull);
+
+    //    return newData.Adapt<TModel>();
+
+    //}
 
     public async Task OnSearchClicked()
     {

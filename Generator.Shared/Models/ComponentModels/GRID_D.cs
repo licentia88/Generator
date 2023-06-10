@@ -8,6 +8,11 @@ namespace Generator.Shared.Models.ComponentModels;
 [Shema.Table(nameof(GRID_D))]
 public class GRID_D: GRID_M, IGridRef
 {
+    public GRID_D()
+    {
+        CB_TYPE = nameof(GRID_D);
+    }
+
     [Key(17)]
     public int GD_M_REFNO { get; set; }
 }

@@ -133,10 +133,19 @@ internal static class PropertyExtensions
         return type.GetMethod(methodName) != null;
     }
 
-    public static bool HasProperty<T>(this T obj, string propertyName)
+    public static bool HasProperty<T>(this T obj, string propertyName) where T : Type
     {
-        return typeof(T).GetProperty(propertyName) != null;
+        var test = obj.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy).ToList();
+
+        PropertyInfo property = obj.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+        return property != null;
     }
+
+
+    //public static bool HasProperty<T>(this T obj, string propertyName)
+    //{
+    //    return typeof(T).GetProperty(propertyName) != null;
+    //}
 
     public static bool HasProperty(this object objectToCheck, string propertyName)
     {

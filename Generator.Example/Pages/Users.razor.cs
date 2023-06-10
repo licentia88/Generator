@@ -16,8 +16,8 @@ public partial class Users
     [Inject]
     public UserService UserService { get; set; }
 
-    [Inject]
-    public Lazy<List<USER>> userList { get; set; }
+    //[Inject]
+    //public Lazy<List<USER>> userList { get; set; }
 
     public List<USER> DataSource { get; set; } = new();
 

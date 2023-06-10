@@ -15,6 +15,11 @@ public interface IGridRef
 [Shema.Table(nameof(GRID_M))]
 public class GRID_M : GRID_BASE, IGridRef
 {
+    public GRID_M()
+    {
+        CB_TYPE = nameof(GRID_M);
+    }
+
     [Key(16)]
     [Shema.ForeignKey(nameof(ComponentModels.GRID_D.GD_M_REFNO))]
     public ICollection<GRID_D> GRID_D { get; set; }

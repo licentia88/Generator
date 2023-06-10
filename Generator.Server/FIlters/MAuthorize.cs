@@ -15,7 +15,7 @@ public class MAuthorizeAttribute : Attribute, IMagicOnionFilterFactory<IMagicOni
     public IServiceProvider _serviceProvider { get; set; }
 
     [Inject]
-    public List<PERMISSIONS> Permissions { get; set; }
+    public List<USER_AUTHORIZATIONS> UserAuthorizationsList { get; set; }
 
     public MAuthorizeAttribute(params int[] Roles)
     {
@@ -27,7 +27,7 @@ public class MAuthorizeAttribute : Attribute, IMagicOnionFilterFactory<IMagicOni
     {
         _serviceProvider = serviceProvider;
 
-        Permissions = serviceProvider.GetService<List<PERMISSIONS>>();
+        UserAuthorizationsList = serviceProvider.GetService<List<USER_AUTHORIZATIONS>>();
 
             //serviceProvider.GetRequiredService<IRoleService>().GetRoles();
 
@@ -46,7 +46,7 @@ public class MAuthorizeAttribute : Attribute, IMagicOnionFilterFactory<IMagicOni
                 throw new ReturnStatusException(StatusCode.PermissionDenied, "Security Token not found");
 
 
-            var tokenResult = fastJwtTokenService.DecodeToken(token.ValueBytes, _Roles, context);
+            var tokenResult = fastJwtTokenService.DecodeToken(token.ValueBytes, _Roles);
 
              //AuthCheck("TEST");
 
@@ -57,11 +57,5 @@ public class MAuthorizeAttribute : Attribute, IMagicOnionFilterFactory<IMagicOni
         await next(context);
     }
 
-    private bool AuthCheck(int requiredPermission)
-    {
-        var result =  Permissions.FirstOrDefault(x => x.AUTH_ROWID == requiredPermission);
-
-        return result is not null ? true: throw new ReturnStatusException(StatusCode.PermissionDenied, "Not Authorized");
-
-    }
+     
 }

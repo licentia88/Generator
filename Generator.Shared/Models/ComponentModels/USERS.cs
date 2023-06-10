@@ -1,4 +1,6 @@
-﻿using MessagePack;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
@@ -13,6 +15,7 @@ public class USERS
     public string U_USERNAME { get; set; }
 
     [Key(2)]
+    [ForeignKey(nameof(ComponentModels.USER_AUTHORIZATIONS.UA_USER_REFNO))]
     public ICollection<USER_AUTHORIZATIONS> USER_AUTHORIZATIONS { get; set; } = new HashSet<USER_AUTHORIZATIONS>();
 }
 

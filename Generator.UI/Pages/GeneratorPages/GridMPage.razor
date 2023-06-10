@@ -14,6 +14,9 @@
          Load="Load"
          Create="Create"
          Search="Read"
+         Update="Update"
+         Delete="Delete"
+         Cancel="Cancel"
          DataSource="@DataSource"
          MaxWidth="MaxWidth.ExtraExtraLarge"
          EditTrigger="TableEditTrigger.EditButton"
@@ -22,7 +25,7 @@
     <GenColumns>
 
         @*ROW1*@
-        <GenSpacer xs="12" sm="12" md="12" lg="9" xl="9" xxl="9" />
+        <GenSpacer xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
 
         <GenComboBox DataSource="DatabaseList" @ref="DatabaseComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
@@ -32,16 +35,24 @@
                      ValueField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))"
                      DisplayField="@nameof(DATABASE_INFORMATION.DI_DATABASE_NAME)" />
 
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
         @*ROW2*@
-        <GenTextField BindingField="@(nameof(GRID_M.CB_IDENTIFIER))"
-                      Label="Identifier"
+
+        <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
+                      Label="Page Title"
+                      xs="12" sm="12" md="12" lg="7" xl="7" xxl="7" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+
+        <GenTextField BindingField="@(nameof(GRID_M.GB_ROWS_PER_PAGE))"
+                      Label="Rows Per Page"
+                      Placeholder="10"
+                      InputType="InputType.Number"
                       xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
-                      Label="Page Title"
-                      xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
 
         @*ROW3*@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<EditMode>()"
@@ -103,11 +114,13 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
         @*ROW5*@
-        <GenTextField BindingField="@(nameof(GRID_M.GB_ROWS_PER_PAGE))"
-                      Label="Rows Per Page"
-                      Placeholder="10"
-                      InputType="InputType.Number"
-                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
+
+        <GenTextField BindingField="@(nameof(GRID_M.CB_IDENTIFIER))"
+                      Label="Identifier"
+                      EditorVisible="false"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+
 
         <GenSpacer xs="12" sm="12" md="12" lg="10" xl="10" xxl="10" />
         @*ROW6*@
@@ -124,6 +137,10 @@
         <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
             <MudTabPanel Text="Crud">
                 <CrudViewPage ParentModel="context" />
+            </MudTabPanel>
+
+            <MudTabPanel Text="Permissions">
+                <PermissionsPage ParentModel="context" />
             </MudTabPanel>
         </MudTabs>
     </GenDetailGrid>

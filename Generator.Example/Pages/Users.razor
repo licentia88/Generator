@@ -1,7 +1,7 @@
 ﻿@page "/Users"
 @{
 
-    if (userList is null) return;
+//if (userList is null) return;
 
     @*<MudButton OnClick="TEST">Click</MudButton>*@
 
@@ -36,12 +36,12 @@
 
             <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-            <GenComboBox DataSource="userList.Value" Dense="true"
+            @*<GenComboBox DataSource="userList.Value" Dense="true"
                          DisplayField="@nameof(USER.U_NAME)"
                          ValueField="@nameof(USER.U_ROWID)"
                          Clearable="true" BindingField="comboField"
                          xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
-                         Label="Peopel" Required="false" />
+                         Label="Peopel" Required="false" />*@
 
 
             <GenDatePicker Clearable="true" 

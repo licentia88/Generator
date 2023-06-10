@@ -159,14 +159,11 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
                 SetValue(null);
                 ParentGrid.ValidateSearchFields(BindingField);
             });
-
-           
-
+            
             OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ParentGrid.ValidateSearchFields(BindingField));
         }
         else
-        {
-            
+        {  
             OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
 
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);

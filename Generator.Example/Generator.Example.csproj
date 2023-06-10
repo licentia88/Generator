@@ -13,7 +13,56 @@
     <None Remove="Grpc.Net.Client" />
     <None Remove="Grpc.Net.Client.Web" />
     <None Remove="Humanizer.Core" />
-    <None Remove="InjectionTest\" />
+    <None Remove="Examine\MyIndex\_q.cfe" />
+    <None Remove="Examine\MyIndex\_p.cfe" />
+    <None Remove="Examine\MyIndex\_r.cfe" />
+    <None Remove="Examine\MyIndex\_s.cfe" />
+    <None Remove="Examine\MyIndex\_w.cfe" />
+    <None Remove="Examine\MyIndex\_v.cfe" />
+    <None Remove="Examine\MyIndex\_t.cfe" />
+    <None Remove="Examine\MyIndex\segments_v" />
+    <None Remove="Examine\MyIndex\_u.cfe" />
+    <None Remove="Examine\MyIndex\_o.cfs" />
+    <None Remove="Examine\MyIndex\_k.fdt" />
+    <None Remove="Examine\MyIndex\_q.si" />
+    <None Remove="Examine\MyIndex\_n.cfs" />
+    <None Remove="Examine\MyIndex\_l.cfs" />
+    <None Remove="Examine\MyIndex\_u.si" />
+    <None Remove="Examine\MyIndex\_m.si" />
+    <None Remove="Examine\MyIndex\_m.cfs" />
+    <None Remove="Examine\MyIndex\_k.nvm" />
+    <None Remove="Examine\MyIndex\_k.nvd" />
+    <None Remove="Examine\MyIndex\_t.si" />
+    <None Remove="Examine\MyIndex\_l.si" />
+    <None Remove="Examine\MyIndex\_p.si" />
+    <None Remove="Examine\MyIndex\_q.cfs" />
+    <None Remove="Examine\MyIndex\_w.si" />
+    <None Remove="Examine\MyIndex\_o.si" />
+    <None Remove="Examine\MyIndex\_k_Lucene41_0.doc" />
+    <None Remove="Examine\MyIndex\_p.cfs" />
+    <None Remove="Examine\MyIndex\_r.cfs" />
+    <None Remove="Examine\MyIndex\_s.si" />
+    <None Remove="Examine\MyIndex\_k.si" />
+    <None Remove="Examine\MyIndex\_s.cfs" />
+    <None Remove="Examine\MyIndex\_w.cfs" />
+    <None Remove="Examine\MyIndex\_k_Lucene41_0.tip" />
+    <None Remove="Examine\MyIndex\_k_Lucene41_0.pos" />
+    <None Remove="Examine\MyIndex\_r.si" />
+    <None Remove="Examine\MyIndex\_v.cfs" />
+    <None Remove="Examine\MyIndex\_t.cfs" />
+    <None Remove="Examine\MyIndex\_v.si" />
+    <None Remove="Examine\MyIndex\_n.si" />
+    <None Remove="Examine\MyIndex\_k_Lucene41_0.tim" />
+    <None Remove="Examine\MyIndex\_u.cfs" />
+    <None Remove="Examine\MyIndex\_o.cfe" />
+    <None Remove="Examine\MyIndex\write.lock" />
+    <None Remove="Examine\MyIndex\_k_1.del" />
+    <None Remove="Examine\MyIndex\_n.cfe" />
+    <None Remove="Examine\MyIndex\_l.cfe" />
+    <None Remove="Examine\MyIndex\_m.cfe" />
+    <None Remove="Examine\MyIndex\segments.gen" />
+    <None Remove="Examine\MyIndex\_k.fdx" />
+    <None Remove="Examine\MyIndex\_k.fnm" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="6.1.4" />
@@ -21,9 +70,6 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     <PackageReference Include="GenFu" Version="1.6.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="InjectionTest\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">

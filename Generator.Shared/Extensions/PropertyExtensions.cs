@@ -15,7 +15,7 @@ public static class PropertyExtensions
             return ((IDictionary<string, object>)obj)[propertyName] ?? null;
 
         return obj.GetType()
-            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
             ?.GetValue(obj);
             
             
@@ -31,7 +31,7 @@ public static class PropertyExtensions
         }
 
         var property = obj.GetType()
-            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance|BindingFlags.FlattenHierarchy);
 
         property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
 

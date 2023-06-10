@@ -4,6 +4,7 @@ using Generator.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Generator.Server.Migrations
 {
     [DbContext(typeof(GeneratorContext))]
-    partial class GeneratorContextModelSnapshot : ModelSnapshot
+    [Migration("20230610203032_ReqFieldsFix1")]
+    partial class ReqFieldsFix1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

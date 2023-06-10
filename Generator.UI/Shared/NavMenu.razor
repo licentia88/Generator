@@ -1,8 +1,15 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="/GridMPage" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Pages">Pages</MudNavLink>
-    <MudNavLink Href="/Users" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">Pages</MudNavLink>
-    <MudNavLink Href="/Permissions" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Lock">Permissions</MudNavLink>
-    <MudNavLink Href="/Roles" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Groups">User Roles</MudNavLink>
+
+    <MudNavLink Href="/Users" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Person">Users</MudNavLink>
+
+    <MudNavGroup Title="UI Generator" Expanded="true">
+        <MudNavLink Href="/GridMPage" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Pages">Page</MudNavLink>
+    </MudNavGroup>
+
+    <MudNavGroup Title="Authorization" Expanded="false">
+        <MudNavLink Href="/Permissions" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Lock">Permissions</MudNavLink>
+        <MudNavLink Href="/Roles" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Groups">Roles</MudNavLink>
+    </MudNavGroup>
 
 </MudNavMenu>

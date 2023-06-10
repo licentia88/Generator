@@ -3,6 +3,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Generator.Client;
 
@@ -98,9 +99,11 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
         return Client.Read(request);
     }
 
-    public UnaryResult<List<TModel>> FindByParent(int parentId)
+  
+
+    public UnaryResult<List<TModel>> FindByParent(string parentId, string ForeignKey)
     {
-        return Client.FindByParent(parentId);
+        return Client.FindByParent(parentId,ForeignKey);
     }
 
     /// <summary>
@@ -141,5 +144,7 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
 
         return Client.WithOptions(cop);
     }
+
+  
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using Generator.Shared.Models.ComponentModels;
 using Generator.UI.Models;
 using Humanizer;
@@ -18,6 +19,16 @@ namespace Generator.UI.Pages.UserPages
 			};
 
         }
-	}
+
+        protected override async Task OnInitializedAsync()
+        {
+			if(ParentModel is not null)
+            {
+                DataSource = await	Service.FindByComponent(ParentModel.CB_ROWID);
+			}
+
+            await base.OnInitializedAsync();
+        }
+    }
 }
 

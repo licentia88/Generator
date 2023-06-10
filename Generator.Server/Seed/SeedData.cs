@@ -15,7 +15,7 @@ public class SeedData
 
  
     [Inject]
-    public List<PERMISSIONS> Permissions { get; set; }
+    public List<USER_AUTHORIZATIONS> UserAuthorizationsList { get; set; }
 
     public SeedData(IServiceProvider provider)
 	{
@@ -25,12 +25,11 @@ public class SeedData
 
      }
 
-    public async void Seed()
+    public void Seed()
     {
-        var permissionList = await GenDb.PERMISSIONS.AsNoTracking().ToListAsync();
+        var userAuthorizationsList = GenDb.USER_AUTHORIZATIONS.Include(x => x.AUTH_BASE).ToList();
 
-        Permissions = permissionList;
-        Console.WriteLine();
+        UserAuthorizationsList = userAuthorizationsList;
     }
 }
 

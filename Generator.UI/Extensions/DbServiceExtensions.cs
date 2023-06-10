@@ -15,7 +15,7 @@ public static class DbServiceExtensions
     public static async Task FillAsync<TModel>(this IServiceProvider provider,string Database, params KeyValuePair<string, object>[] Where)
 	{
         ///Wait for server to run
-        await Task.Delay(3000);
+        await Task.Delay(10000);
         using var scope = provider.CreateAsyncScope();
 
         var tableToFill = scope.ServiceProvider.GetService<List<TModel>>();

@@ -10,7 +10,7 @@ public static class ModelExtensions
     {
         var type = typeof(TModel);
 
-        var primaryKeyProperty = type.GetProperties()
+        var primaryKeyProperty = type.GetProperties(BindingFlags.Instance|BindingFlags.Public|BindingFlags.FlattenHierarchy)
             .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
 
         if (primaryKeyProperty == null) throw new InvalidOperationException("Primary key not found for the model.");

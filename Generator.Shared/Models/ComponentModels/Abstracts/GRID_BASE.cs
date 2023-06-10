@@ -8,6 +8,7 @@ namespace Generator.Shared.Models.ComponentModels.Abstracts;
 public abstract class GRID_BASE:COMPONENTS_BASE
 {
     [Key(8)]
+    [Annotation.Required(ErrorMessage ="*")]
     public int GB_EDIT_MODE { get; set; }
 
     [Key(9)]

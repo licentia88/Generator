@@ -47,7 +47,7 @@
     protected override  async Task OnInitializedAsync()
     {
         // DataSource  =await OrdersMService.Read(new(Parent.U_ROWID));
-        DataSource  =await OrdersMService.FindByParent(Parent.U_ROWID);
+        DataSource  =await OrdersMService.FindByParent(Parent.U_ROWID.ToString(), nameof(ORDERS_M.OM_USER_REFNO));
 
         //DataSource = result;
     }
@@ -67,17 +67,17 @@
     }
     public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-       
+
         data.Model.OM_USER_REFNO = Parent.U_ROWID;
 
-        var result = await OrdersMService.Create(data.Model); 
+        var result = await OrdersMService.Create(data.Model);
 
         DataSource.Add(result);
     }
 
     public async ValueTask UpdateAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-        var result = await OrdersMService.Update(data.Model); 
+        var result = await OrdersMService.Update(data.Model);
 
         DataSource.Replace(data.Model, result);
 
@@ -85,7 +85,7 @@
 
     public async ValueTask DeleteAsync(Generator.Components.Args.GenArgs<ORDERS_M> data)
     {
-        var result = await OrdersMService.Delete(data.Model); 
+        var result = await OrdersMService.Delete(data.Model);
 
         DataSource.Remove(data.Model);
 

@@ -16,4 +16,9 @@ public abstract class AUTH_BASE
     [Key(1)]
     public string AUTH_TYPE { get; set; }
 
+    [Key(2)]
+    public string AUTH_NAME { get; set; }
+
+    public abstract bool IsAuthorized(int roleId);
+    
 }

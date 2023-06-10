@@ -1,0 +1,32 @@
+﻿@inherits PagesBase<USERS, USER_AUTHORIZATIONS,UserAuthorizationsService, IUserAuthorizationsService>
+
+
+
+<GenGrid TModel="USER_AUTHORIZATIONS"
+         Class="m-2"
+         Load="Load"
+         Create="Create"
+         Search="Read"
+         Cancel="Cancel"
+         DataSource="@DataSource"
+         MaxWidth="MaxWidth.Medium"
+         EditTrigger="TableEditTrigger.EditButton"
+         EditMode="EditMode.SmartForm">
+    <GenColumns>
+
+
+        <GenComboBox BindingField="@nameof(USER_AUTHORIZATIONS.UA_AUTH_CODE)"
+                     Label="Rol"
+                     DataSource="@PermissionsList"
+                     ValueField="@(nameof(PERMISSIONS.AUTH_ROWID))"
+                     DisplayField="@nameof(PERMISSIONS.AUTH_NAME)"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+
+
+    </GenColumns>
+
+     
+</GenGrid>

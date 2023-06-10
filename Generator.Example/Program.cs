@@ -2,7 +2,6 @@
 using MudBlazor.Services;
 using Generator.Examples.Shared;
 using Generator.Components.Extensions;
-using Generator.Example.InjectionTest;
 using Generator.Client;
 using System.Net;
 using Generator.Examples.Shared.Models;
@@ -20,7 +19,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 builder.Services.RegisterGeneratorComponents();
 builder.Services.AddSingleton<Lazy<List<USER>>>();
-builder.Services.AddSingleton<InjectionClass>();
+//builder.Services.AddSingleton<InjectionClass>();
 builder.Services.RegisterExampleServices();
 
  
@@ -34,8 +33,7 @@ builder.Services.RegisterExampleServices();
 
 var app = builder.Build();
 
-var serv = app.Services.GetService<InjectionClass>();
-serv.FillTable();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

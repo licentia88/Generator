@@ -7,6 +7,7 @@ using Generator.Shared.Extensions;
 using Generator.Shared.Services.Base;
 using Generator.UI.Extensions;
 using Generator.UI.Models;
+using Grpc.Core;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -31,14 +32,32 @@ public abstract class MyBaseClass : ComponentBase
         return base.OnInitializedAsync();
     }
 
-    public async Task<T> ExecuteAsync<T>(Func<Task<T>> task)
+    public async Task ExecuteAsync<T>(Func<Task<T>> task)
     {
-        return await task().ConfigureAwait(false);
+        try
+        {
+            await task().ConfigureAwait(false);
+        }
+        catch (RpcException ex)
+        {
+            NotificationsView.Notifications.Add(new(ex.Status.Detail, Severity.Error));
+
+            NotificationsView.Fire();
+        }
     }
 
-    public T Execute<T>(Func<T> task)
+    public void Execute<T>(Func<T> task)
     {
-        return task();
+        try
+        {
+            task();
+        }
+        catch (RpcException ex)
+        {
+            NotificationsView.Notifications.Add(new(ex.Status.Detail, Severity.Error));
+
+            NotificationsView.Fire();
+        }
     }
 
 }

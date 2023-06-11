@@ -23,7 +23,7 @@ public class SeedData
 
         GenDb = provider.GetService<GeneratorContext>();
 
-     }
+    }
 
     public void Seed()
     {

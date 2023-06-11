@@ -782,7 +782,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         GenValidator.ResetValidation(component);
     }
 
- 
+
 
     /// <summary>
     /// Creates a new instance of the data model using the provided components.
@@ -794,25 +794,27 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     /// <returns>A new instance of the data model.</returns>
     private TModel CreateNewDataModel()
     {
-        
-
-
         // Check if TModel is a concrete class and has a parameterless constructor
         if (typeof(TModel).IsClass && !typeof(TModel).IsAbstract && !typeof(TModel).IsInterface)
         {
             var constructor = typeof(TModel).GetConstructor(Type.EmptyTypes);
+
+            // If a parameterless constructor exists, create a new instance using it
             if (constructor != null)
                 return new TModel();
         }
 
-
+        // Create a dictionary of default values from the Components collection
         var newData = Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
 
-        TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel)).AddDestinationTransform(DestinationTransform.EmptyCollectionIfNull);
+        // Configure TypeAdapter to transform newData dictionary to TModel
+        TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel))
+            .AddDestinationTransform(DestinationTransform.EmptyCollectionIfNull);
 
+        // Adapt and return the newData dictionary as TModel instance
         return newData.Adapt<TModel>();
-
     }
+
 
 
     //private TModel CreateNewDataModel()

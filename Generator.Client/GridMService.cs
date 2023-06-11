@@ -5,5 +5,8 @@ namespace Generator.Client;
 
 public class GridMService : ServiceBase<IGridMService, GRID_M>, IGridMService
 {
-
+    public GridMService()
+    {
+         
+    }
 }

@@ -36,26 +36,39 @@ public class MAuthorizeAttribute : Attribute, IMagicOnionFilterFactory<IMagicOni
 
     public async ValueTask Invoke(ServiceContext context, Func<ServiceContext, ValueTask> next)
     {
-        using (var scope = _serviceProvider.CreateScope())
+        var isAllowed = context.MethodInfo.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(AllowAttribute));
+
+        if (isAllowed != null)
         {
-            var fastJwtTokenService = scope.ServiceProvider.GetRequiredService<FastJwtTokenService>();
-
-            var token = context.CallContext.RequestHeaders.FirstOrDefault(x => x.Key == "auth-token-bin");
-
-            if (token is null)
-                throw new ReturnStatusException(StatusCode.PermissionDenied, "Security Token not found");
-
-
-            var tokenResult = fastJwtTokenService.DecodeToken(token.ValueBytes, _Roles);
-
-             //AuthCheck("TEST");
-
-            //var tokenResult = fastJwtTokenService.DecodeToken(token.ValueBytes, attribute.Roles, context);
-
+            await next(context);
+            return;
         }
+
+        var tokenResult = ProcessToken(context);
 
         await next(context);
     }
 
-     
+    private  bool ProcessToken(ServiceContext context)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var fastJwtTokenService = scope.ServiceProvider.GetRequiredService<FastJwtTokenService>();
+
+        var tokenHeader = context.CallContext.RequestHeaders.FirstOrDefault(x => x.Key == "auth-token-bin");
+
+        if (tokenHeader is null)
+            throw new ReturnStatusException(StatusCode.PermissionDenied, "Security Token not found");
+
+
+        return fastJwtTokenService.DecodeToken(tokenHeader.ValueBytes, _Roles);
+    }
+
+}
+
+public class AllowAttribute : MagicOnionFilterAttribute
+{
+    public override async ValueTask Invoke(ServiceContext context, Func<ServiceContext, ValueTask> next)
+    {
+        await next(context);
+    }
 }

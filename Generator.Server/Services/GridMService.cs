@@ -6,10 +6,11 @@ using Generator.Server.Services.Base;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using MagicOnion;
+using MagicOnion.Server;
 
 namespace Generator.Server.Services;
 
-//[MAuthorize(1)]
+[MAuthorize(1)]
 public class GridMService : MagicBase<IGridMService, GRID_M>, IGridMService
 {
     public GridMService(IServiceProvider provider) : base(provider)
@@ -17,6 +18,7 @@ public class GridMService : MagicBase<IGridMService, GRID_M>, IGridMService
         
     }
 
+    [Allow]
     public override UnaryResult<GRID_M> Create(GRID_M model)
     {
         model.PERMISSIONS.Add(new PERMISSIONS

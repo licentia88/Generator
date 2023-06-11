@@ -43,8 +43,8 @@ public abstract class COMPONENTS_BASE:Annotation.IValidatableObject
     {
         var validationResultList = new List<Annotation.ValidationResult>();
 
-        if (string.IsNullOrEmpty(CB_IDENTIFIER))
-            validationResultList.Add(new System.ComponentModel.DataAnnotations.ValidationResult("*"));
+        //if (string.IsNullOrEmpty(CB_IDENTIFIER))
+        //    validationResultList.Add(new System.ComponentModel.DataAnnotations.ValidationResult("*"));
 
         return validationResultList;
     }

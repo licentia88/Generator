@@ -20,7 +20,7 @@ builder.Services.AddMudServices();
 builder.Services.RegisterGeneratorComponents();
 builder.Services.AddSingleton<Lazy<List<USER>>>();
 //builder.Services.AddSingleton<InjectionClass>();
-builder.Services.RegisterExampleServices();
+// builder.Services.RegisterExampleServices();
 
  
 

@@ -11,20 +11,21 @@
          Load="Load"
          Create="Create"
          Search="Read"
+         Update="Update"
          Cancel="Cancel"
          DataSource="@DataSource"
          MaxWidth="MaxWidth.ExtraExtraLarge"
          EditTrigger="TableEditTrigger.EditButton"
          EditMode="EditMode.SmartForm">
 
-    <GenSearchFields>
+    @*<GenSearchFields>
         <GenComboBox BindingField="@nameof(ROLES.AUTH_TYPE)"
                      Label="Auth Type"
                      DataSource="@AuthTypes"
                      ValueField="@(nameof(CODE_TABLE.C_CODE))"
                      DisplayField="@nameof(CODE_TABLE.C_DESC)"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
-    </GenSearchFields>
+    </GenSearchFields>*@
     <GenColumns>
 
         <GenTextField BindingField="@nameof(ROLES.AUTH_ROWID)"
@@ -34,12 +35,20 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenComboBox BindingField="@nameof(ROLES.AUTH_TYPE)"
-                     Label="Auth Type"
-                     DataSource="@AuthTypes"
-                     ValueField="@(nameof(CODE_TABLE.C_CODE))"
-                     DisplayField="@nameof(CODE_TABLE.C_DESC)"
-                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+        <GenTextField BindingField="@nameof(ROLES.AUTH_NAME)"
+                      Label="Role Name"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="5" xl="5" xxl="5" />
+
+   
+
+        @*<GenComboBox BindingField="@nameof(ROLES.AUTH_TYPE)"
+        Label="Auth Type"
+        DataSource="@AuthTypes"
+        ValueField="@(nameof(CODE_TABLE.C_CODE))"
+        DisplayField="@nameof(CODE_TABLE.C_DESC)"
+        xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />*@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 

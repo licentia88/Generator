@@ -1,22 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using MessagePack;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using MemoryPack;
 
 namespace Generator.Shared.Models.ComponentModels.Abstracts;
 
-[MessagePackObject]
+[MemoryPackable]
 [Table(nameof(AUTH_BASE))]
-[Union(1, typeof(ROLES))]
-[Union(2, typeof(PERMISSIONS))]
-public abstract class AUTH_BASE
+[MemoryPackUnion(3, typeof(ROLES))]
+[MemoryPackUnion(4, typeof(PERMISSIONS))]
+public abstract partial class AUTH_BASE
 {
-    [Key(0)]
-    [Annotation.Key,Shema.DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int AUTH_ROWID { get; set; }
 
-    [Key(1)]
     public string AUTH_TYPE { get; set; }
 
-    [Key(2)]
     public string AUTH_NAME { get; set; }
 
     public abstract bool IsAuthorized(int roleId);

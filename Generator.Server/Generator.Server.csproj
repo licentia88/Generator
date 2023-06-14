@@ -30,6 +30,7 @@
     <PackageReference Include="LitJWT" Version="2.0.2" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.6" />
+    <PackageReference Include="MagicOnion.Serialization.MemoryPack" Version="5.1.8-preview" />
   </ItemGroup>
 
  
@@ -55,6 +56,7 @@
     <Folder Include="OptionsTemplates\" />
     <Folder Include="FIlters\" />
     <Folder Include="Seed\" />
+    <Folder Include="Services\Authentication\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />

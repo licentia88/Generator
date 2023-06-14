@@ -5,11 +5,12 @@ using Generator.Server.Extensions;
 using Generator.Server.FIlters;
 using Generator.Server.Jwt;
 using Generator.Server.Seed;
-using Generator.Server.Services.Authentication;
+//using Generator.Server.Services.Authentication;
 using Grpc.Net.Client;
 using LitJWT;
 using LitJWT.Algorithms;
 using MagicOnion;
+using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
 using MagicOnion.Server.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,7 +23,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 
 builder.Services.RegisterModels();
-builder.Services.AddMagicOnion(x => x.IsReturnExceptionStackTraceInErrorDetail = true );
+
+builder.Services.AddMagicOnion(x => {
+    x.IsReturnExceptionStackTraceInErrorDetail = true;
+    x.MessageSerializer = MemoryPackMagicOnionSerializerProvider.Instance;
+ } );
+
 
 builder.Services.AddDbContext<TestContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnection("DefaultConnection")));
@@ -58,7 +64,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-using var scope =  app.Services.CreateAsyncScope();
+using var scope = app.Services.CreateAsyncScope();
 var sd = scope.ServiceProvider.GetService<SeedData>();
 sd.Seed();
 

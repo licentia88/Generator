@@ -3,6 +3,8 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
+using MagicOnion.Serialization;
+using MagicOnion.Serialization.MemoryPack;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Generator.Client;
@@ -22,8 +24,10 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     /// <param name="client">The client instance for the service.</param>
     protected ServiceBase()
     {
+        //MagicOnionSerializerProvider.Default = MemoryPackMagicOnionSerializerProvider.Instance;
+ 
         var channel = GrpcChannel.ForAddress("http://localhost:5002");
-        Client = MagicOnionClient.Create<TService>(channel);
+        Client = MagicOnionClient.Create<TService>(channel,MemoryPackMagicOnionSerializerProvider.Instance);
     }
 
     /// <summary>

@@ -1,9 +1,13 @@
-﻿using AQueryMaker;
+﻿using System.Threading.Channels;
+using AQueryMaker;
 using Generator.Server.Database;
 using Generator.Server.Helpers;
 using Generator.Server.Jwt;
 using Generator.Shared.Services.Base;
 using MagicOnion;
+using MagicOnion.Client;
+using MagicOnion.Serialization;
+using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +59,8 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     public MagicBase(IServiceProvider provider)
     {
         // MemoryDatabase = provider.GetService<MemoryContext>();
+        MagicOnionSerializerProvider.Default = MemoryPackMagicOnionSerializerProvider.Instance;
+
         Db = provider.GetService<TContext>();
         FastJwtTokenService = provider.GetService<FastJwtTokenService>();
         ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
@@ -98,7 +104,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     {
         return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
-            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name} AND {foreignKey} = '{parentId}' ").ToListAsync();
+            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name} WHERE {foreignKey} = '{parentId}' ").ToListAsync();
         });
     }
 

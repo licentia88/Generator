@@ -9,6 +9,8 @@ using Auth0.AspNetCore.Authentication;
 using Generator.Client.Extensions;
 using Generator.UI.Extensions;
 using Generator.Shared.Models.ComponentModels;
+using Generator.Client;
+using Generator.Shared.Models.ComponentModels.Abstracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +30,9 @@ builder.Services.AddMudServices();
 builder.Services.RegisterGeneratorComponents();
 builder.Services.AddScoped<NotificationsView>();
 builder.Services.AddScoped<List<NotificationVM>>();
-builder.Services.RegisterGenServices();
+builder.Services.AddMagicServices();
 builder.Services.RegisterStaticData();
+
 //builder.Services.RegisterGrpcService<IGRidCrudViewService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 //builder.Services.RegisterGrpcService<IGridMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 //builder.Services.RegisterGrpcService<IGridFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
@@ -38,9 +41,12 @@ builder.Services.RegisterStaticData();
     
 var app = builder.Build();
 
-await app.Services.FillAsync<PERMISSIONS>("GeneratorContext");
+//await app.Services.FillAsync<PERMISSIONS, PermissionsService,IPermissionsService>();
+await app.Services.FillAsync<COMPONENTS_BASE, ComponentsBaseService, IComponentsBaseService>();
+await app.Services.FillAsync<PERMISSIONS, PermissionsService, IPermissionsService>();
 
- // Configure the HTTP request pipeline.
+
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");

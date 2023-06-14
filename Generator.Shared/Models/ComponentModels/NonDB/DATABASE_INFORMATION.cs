@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using MemoryPack;
 using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels.NonDB;
 
 [NotMapped]
-[MessagePackObject]
-public class DATABASE_INFORMATION
+[MemoryPackable]
+public  partial class DATABASE_INFORMATION
 {
-    [Key(0)]
     public string DI_DATABASE_NAME { get; set; }
 }

@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Shared.Models.ComponentModels.NonDB;
+using MemoryPack;
 using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
 [NotMapped]
-[MessagePackObject]
+[MemoryPackable]
 // ReSharper disable once InconsistentNaming
-public class TABLE_INFORMATION
+public partial class TABLE_INFORMATION 
 {
-    [Key(0)]
     public string TI_TABLE_NAME { get; set; }
 }

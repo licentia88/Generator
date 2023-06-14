@@ -11,13 +11,18 @@ using Generator.Client.ExampeServices;
 using Generator.Shared.Services.Base;
 using Generator.Shared.Services;
 using Generator.Shared.Models.ComponentModels;
+using MagicOnion;
+using System.Reflection;
 
 namespace Generator.Client.Extensions;
 
 public static class DependencyExtensions
 {
-    public static void RegisterGenServices(this IServiceCollection Services)
+
+
+    public static void AddMagicServices(this IServiceCollection Services)
     {
+        Services.AddSingleton<ComponentsBaseService>();
         Services.AddSingleton<DatabaseService>();
         Services.AddSingleton<GRidCrudViewService>();
         Services.AddSingleton<GridFieldsService>();
@@ -30,8 +35,8 @@ public static class DependencyExtensions
         Services.AddSingleton<RolesDetailsService>();
         Services.AddSingleton<SeedService>();
     }
- 
-    
+
+
     public static void RegisterExampleServices(this IServiceCollection Services)
     {
         Services.AddSingleton<UserService>();

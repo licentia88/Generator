@@ -1,68 +1,22 @@
 ﻿using System;
+using DocumentFormat.OpenXml.EMMA;
 using Generator.Client;
 using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
+using Generator.Shared.Models.ComponentModels;
+using Generator.Shared.Services;
 using Generator.Shared.Services.Base;
 using Generator.UI.Extensions;
 using Generator.UI.Models;
-using Grpc.Core;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.UI.Pages.Base;
 
-public abstract class MyBaseClass : ComponentBase
-{
-    [Inject]
-    public IDialogService DialogService { get; set; }
-
-    [Inject]
-    ISnackbar Snackbar { get; set; }
-
-    [Inject]
-    public NotificationsView NotificationsView { get; set; }
-
-
-    protected override Task OnInitializedAsync()
-    {
-        NotificationsView.Snackbar = Snackbar;
-        NotificationsView.Notifications = new();
-        return base.OnInitializedAsync();
-    }
-
-    public async Task ExecuteAsync<T>(Func<Task<T>> task)
-    {
-        try
-        {
-            await task().ConfigureAwait(false);
-        }
-        catch (RpcException ex)
-        {
-            NotificationsView.Notifications.Add(new(ex.Status.Detail, Severity.Error));
-
-            NotificationsView.Fire();
-        }
-    }
-
-    public void Execute<T>(Func<T> task)
-    {
-        try
-        {
-            task();
-        }
-        catch (RpcException ex)
-        {
-            NotificationsView.Notifications.Add(new(ex.Status.Detail, Severity.Error));
-
-            NotificationsView.Fire();
-        }
-    }
-
-}
 public abstract class PagesBase<TModel, TService, TServiceInterface> : MyBaseClass where TModel : new()
-where TService : IClientService
+where TService : ServiceBase<TServiceInterface, TModel>
 where TServiceInterface : IGenericService<TServiceInterface, TModel>
 {
     [Inject]
@@ -79,11 +33,10 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
 
     public virtual async Task Create(GenArgs<TModel> args)
     {
+        
         await ExecuteAsync(async () =>
         {
-            var service = ((IGenericService<TServiceInterface, TModel>)Service);
-
-            var result = await service.Create(args.Model);
+            var result = await Service.Create(args.Model);
 
             var primaryKey = args.Model.GetPrimaryKey();
 
@@ -101,9 +54,7 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
     {
         await ExecuteAsync(async () =>
         {
-            var service = ((IGenericService<TServiceInterface, TModel>)Service);
-
-            var result = await service.ReadAll();
+            var result = await Service.ReadAll();
 
             DataSource.AddRange(result);
 
@@ -115,9 +66,7 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
     {
         await ExecuteAsync(async () =>
         {
-            var service = ((IGenericService<TServiceInterface, TModel>)Service);
-
-            var result = await service.Update(args.Model);
+            var result = await Service.Update(args.Model);
 
             return result;
         });
@@ -136,9 +85,8 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
 
         await ExecuteAsync(async () =>
         {
-            var service = ((IGenericService<TServiceInterface, TModel>)Service);
 
-            var result = await service.Delete(args.Model);
+            var result = await Service.Delete(args.Model);
 
             DataSource.Remove(args.Model);
 
@@ -161,7 +109,7 @@ where TServiceInterface : IGenericService<TServiceInterface, TModel>
 }
 
 public abstract class PagesBase<TModel, TChild, TService, TServiceInterface> : PagesBase<TChild, TService, TServiceInterface>
-    where TService : IClientService
+    where TService : ServiceBase<TServiceInterface, TChild>
     where TModel : new() where TChild : new()
     where TServiceInterface : IGenericService<TServiceInterface, TChild>
 {
@@ -169,18 +117,28 @@ public abstract class PagesBase<TModel, TChild, TService, TServiceInterface> : P
     public TModel ParentModel { get; set; }
 
 
-    public virtual async Task ReadByParent(SearchArgs args)
+
+    public override Task Create(GenArgs<TChild> args)
+    {
+        var pk = ParentModel.GetPrimaryKey();
+
+        var fk = ModelExtensions.GetForeignKey<TModel, TChild>();
+
+        args.Model.SetPropertyValue(fk, ParentModel.GetPropertyValue(pk));
+
+        return base.Create(args);
+    }
+
+    public virtual async Task ReadByParent()
     {
         await ExecuteAsync(async () =>
         {
             var pk = ParentModel.GetPrimaryKey();
 
             var fk = ModelExtensions.GetForeignKey<TModel, TChild>();
+            var result = await Service.FindByParent(ParentModel.GetPropertyValue(pk).ToString(), fk);
 
-            var service = ((IGenericService<TService, TModel>)Service);
-
-            var result = await service.FindByParent(ParentModel.GetPropertyValue(pk).CastTo<string>(), fk);
-
+            DataSource = result;
             return result;
         });
       

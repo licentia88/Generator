@@ -23,8 +23,7 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
 
     public UnaryResult<RESPONSE_RESULT<List<DATABASE_INFORMATION>>> GetDatabaseList()
     {
-        Console.WriteLine(nameof(Db));
-        return TaskHandler.Execute(() =>
+         return TaskHandler.Execute(() =>
         {
             var configuration = ConnectionHelper.GetConfiguration();
 

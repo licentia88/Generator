@@ -20,7 +20,7 @@
          DataSource="@DataSource"
          MaxWidth="MaxWidth.ExtraExtraLarge"
          EditTrigger="TableEditTrigger.EditButton"
-         EditMode="EditMode.SmartForm">
+         EditMode="EditMode.Form">
 
     <GenColumns>
 
@@ -30,6 +30,7 @@
         <GenComboBox DataSource="DatabaseList" @ref="DatabaseComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Database"
+                     Order="0"
                      ValueChanged="DatabaseChanged"
                      BindingField="@nameof(GRID_M.CB_DATABASE)"
                      ValueField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))"
@@ -40,6 +41,7 @@
 
         <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
                       Label="Page Title"
+                      Order="1"
                       xs="12" sm="12" md="12" lg="7" xl="7" xxl="7" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
@@ -48,6 +50,7 @@
         <GenTextField BindingField="@(nameof(GRID_M.GB_ROWS_PER_PAGE))"
                       Label="Rows Per Page"
                       Placeholder="10"
+                      GridVisible="false"
                       InputType="InputType.Number"
                       xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
 
@@ -58,6 +61,7 @@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<EditMode>()"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Edit Mode"
+                     Order="3"
                      BindingField="@nameof(GRID_M.GB_EDIT_MODE)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -67,6 +71,7 @@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<TableEditTrigger>()"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Edit Trigger"
+                     Order="4"
                      BindingField="@nameof(GRID_M.GB_EDIT_TRIGGER)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -76,6 +81,7 @@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<MaxWidth>()"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Page Size"
+                     Order="5"
                      BindingField="@nameof(GRID_M.GB_MAX_WIDTH)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -88,6 +94,7 @@
         <GenCheckBox BindingField="@(nameof(GRID_M.GB_ENABLE_SORTING))"
                      Label="Sorting"
                      TrueText="Yes" FalseText="No"
+                     GridVisible="false"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
@@ -96,6 +103,7 @@
         <GenCheckBox BindingField="@(nameof(GRID_M.GB_ENABLE_FILTERING))"
                      Label="Filtering"
                      TrueText="Yes" FalseText="No"
+                     GridVisible="false"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
@@ -103,12 +111,14 @@
         <GenCheckBox BindingField="@(nameof(GRID_M.GB_STRIPED))"
                      Label="Striped"
                      TrueText="Yes" FalseText="No"
+                     GridVisible="false"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
         <GenCheckBox BindingField="@(nameof(GRID_M.GB_DENSE))"
                      Label="Dense"
+                     GridVisible="false"
                      TrueText="Yes" FalseText="No"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
 
@@ -117,6 +127,7 @@
 
         <GenTextField BindingField="@(nameof(GRID_M.CB_IDENTIFIER))"
                       Label="Identifier"
+                      Order="2"
                       EditorVisible="false"
                       xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
 
@@ -127,6 +138,7 @@
 
         <GenTextField BindingField="@nameof(GRID_M.CB_QUERY_OR_METHOD)" Class="mt-5"
                       Label="Query"
+                      Order="6"
                       Lines="7"
                       Variant="Variant.Outlined"
                       Placeholder=@($"Sample Query:\nSELECT U_NAME, U_AGE FROM USERS \nWHERE U_NAME LIKE '%@U_NAME%' \nAND U_AGE = @U_AGE")

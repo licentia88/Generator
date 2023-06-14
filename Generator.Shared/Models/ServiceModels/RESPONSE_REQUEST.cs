@@ -1,20 +1,22 @@
-﻿using MessagePack;
+﻿using MemoryPack;
+using MessagePack;
 
 namespace Generator.Shared.Models.ServiceModels;
 
-[MessagePackObject]
-public class RESPONSE_REQUEST<TModel>
+[MemoryPackable]
+public partial class RESPONSE_REQUEST<TModel>
 {
-    [Key(0)]
-    public TModel RR_DATA { get; set; }
+    //[Key(0)]
+    public TModel Data { get; set; }
 
     public RESPONSE_REQUEST()
     {
 
     }
 
-    public RESPONSE_REQUEST(TModel model)
+    [MemoryPackConstructor]
+    public RESPONSE_REQUEST(TModel data)
     {
-        RR_DATA = model;
+        Data = data;
     }
 }

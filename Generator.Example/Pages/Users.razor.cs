@@ -23,7 +23,7 @@ public partial class Users
 
     private IGenView<USER> View { get; set; }
 
-    private GenCheckBox? isMarriedCheckBox;
+    private GenCheckBox isMarriedCheckBox;
     // [Inject]
     // public ITestService tser { get; set; }
 
@@ -48,8 +48,6 @@ public partial class Users
         //DataSource = userList.Value.Take(1).ToList();
 
         //var test = tser.Subscribe(TestData());
-
-
 
         //await foreach (string item in test)
         //{

@@ -8,17 +8,17 @@ namespace Generator.UI.Pages.UserPages
 {
 	public partial class PermissionsPage
 	{
-		public List<CODE_TABLE> AuthTypes { get; set; }
+		//public List<CODE_TABLE> AuthTypes { get; set; }
 
-		public PermissionsPage()
-		{
-			AuthTypes = new List<CODE_TABLE>
-			{
-				new CODE_TABLE{ C_CODE = nameof(ROLES), C_DESC = nameof(ROLES).Humanize()},
-				new CODE_TABLE{ C_CODE = nameof(PERMISSIONS), C_DESC = nameof(PERMISSIONS).Humanize()}
-			};
+		//public PermissionsPage()
+		//{
+		//	AuthTypes = new List<CODE_TABLE>
+		//	{
+		//		new CODE_TABLE{ C_CODE = nameof(ROLES), C_DESC = nameof(ROLES).Humanize()},
+		//		new CODE_TABLE{ C_CODE = nameof(PERMISSIONS), C_DESC = nameof(PERMISSIONS).Humanize()}
+		//	};
 
-        }
+  //      }
 
         protected override async Task OnInitializedAsync()
         {

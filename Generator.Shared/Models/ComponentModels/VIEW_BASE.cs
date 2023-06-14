@@ -1,11 +1,12 @@
 ﻿using Generator.Shared.Models.ComponentModels.Abstracts;
+using MemoryPack;
 using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
-[MessagePackObject]
+[MemoryPackable]
 // ReSharper disable once InconsistentNaming
-public class SIDE_BUTTON_VIEW : VIEW_BASE_M
+public partial class SIDE_BUTTON_VIEW : VIEW_BASE_M
 {
     public SIDE_BUTTON_VIEW()
     {

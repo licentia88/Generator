@@ -4,9 +4,12 @@ using Generator.Server.Helpers;
 using Generator.Server.Migrations;
 using Generator.Server.Services.Base;
 using Generator.Shared.Models.ComponentModels;
+using Generator.Shared.Models.ComponentModels.Abstracts;
 using Generator.Shared.Services;
 using MagicOnion;
 using MagicOnion.Server;
+using MemoryPack;
+using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Services;
 
@@ -32,5 +35,20 @@ public class GridMService : MagicBase<IGridMService, GRID_M>, IGridMService
 
         return base.Create(model);
     }
+
+    [Allow]
+    public override async UnaryResult<List<GRID_M>> ReadAll()
+    {
+ 
+        return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            return await Db.Set<GRID_M>().Include(x=> x.PERMISSIONS).ToListAsync();
+        });
+
+        //return base.ReadAll();
+    }
+
+
+
 }
 

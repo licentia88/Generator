@@ -9,7 +9,7 @@ public class CRUD_VIEW : VIEW_BASE_M
 {
     public CRUD_VIEW()
     {
-        VBM_TYPE = nameof(GRID_FIELDS);
+        VBM_TYPE = nameof(CRUD_VIEW);
         VBM_TITLE = "CRUD";
     }
 

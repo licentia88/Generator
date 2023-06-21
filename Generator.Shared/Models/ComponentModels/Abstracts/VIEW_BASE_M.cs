@@ -11,7 +11,6 @@ namespace Generator.Shared.Models.ComponentModels.Abstracts;
 [Index(nameof(VBM_PAGE_REFNO), nameof(VBM_TYPE),nameof(VBM_TITLE), IsUnique =true)]
 public abstract partial class VIEW_BASE_M
 {
-
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int VBM_ROWID { get; set; }
 

@@ -1,6 +1,5 @@
 ﻿@page "/"
-@*@inject AuthenticationStateProvider AuthState
-@attribute [Authorize]*@
+ 
 
 <PageTitle>Index</PageTitle>
 
@@ -9,67 +8,4 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
-
-
-@code{
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    var state = await AuthState.GetAuthenticationStateAsync();
-    //    await base.OnInitializedAsync();
-    //}
-}
-
-@*<DynamicComponent Type="@(GetTypeOfObject(4123))" Parameters="@parameters"></DynamicComponent>*@
-
-@*@CreateFragment();*@
-@**@
-
-@code{
-
-    //RenderFragment CreateFragment() => builder =>
-    //{
-
-    //    builder.OpenComponent(0, GetTypeOfObject(4123));
-    //    builder.AddAttribute(1, "Value", 123);
-    //    builder.CloseComponent();
-    //};
-
-    //private IDictionary<string, object> parameters = new Dictionary<string, object>();
-
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    var itemValue = 123456;
-
-
-
-    //    var json = await Generator.Shared.Helpers.JsonHelpers.ReadAppSettingsAsync();
-
-    //    var db = new Database
-    //    {
-    //        DatabaseIdentifier = "TEST",
-    //        ConnectionString = "testConnection"
-    //    };
-
-    //    var newJson = await Generator.Shared.Helpers.JsonHelpers.AddDatabase(db);
-    //    //object o = Activator.CreateInstance(makeme);
-
-
-    //    parameters.Add("Value", itemValue);
-    //    await base.OnInitializedAsync();
-    //}
-
-    //public Type GetTypeOfObject(object obj)
-    //{
-    //    var d1 = typeof(GenericComp<>);
-    //    Type[] typeArgs = { obj.GetType() };
-    //    var makeme = d1.MakeGenericType(typeArgs);
-
-    //    return makeme;
-    //}
-
-
-
-}
-
+ 

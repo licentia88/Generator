@@ -13,6 +13,8 @@ using Generator.Shared.Services;
 using Generator.Shared.Models.ComponentModels;
 using MagicOnion;
 using System.Reflection;
+using Generator.Client;
+using Generator.Client.Hubs.Base;
 
 namespace Generator.Client.Extensions;
 
@@ -22,11 +24,13 @@ public static class DependencyExtensions
 
     public static void AddMagicServices(this IServiceCollection Services)
     {
-        Services.AddSingleton<ComponentsBaseService>();
+        Services.AddSingleton(typeof(List<>));
+        //Services.AddSingleton<ComponentsBaseService>();
         Services.AddSingleton<DatabaseService>();
         Services.AddSingleton<GRidCrudViewService>();
         Services.AddSingleton<GridFieldsService>();
         Services.AddSingleton<GridMService>();
+        Services.AddSingleton<GridDService>();
         Services.AddSingleton<AuthService>();
         Services.AddSingleton<UserAuthorizationsService>();
         Services.AddSingleton<UsersService>();
@@ -34,6 +38,12 @@ public static class DependencyExtensions
         Services.AddSingleton<RolesService>();
         Services.AddSingleton<RolesDetailsService>();
         Services.AddSingleton<SeedService>();
+
+        Services.AddSingleton<PermissionHub>();
+        Services.AddSingleton<ComponentsHub>();
+        Services.AddSingleton<GridMHub>();
+
+ 
     }
 
 

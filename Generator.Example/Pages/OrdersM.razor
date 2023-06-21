@@ -10,6 +10,7 @@
          EditTrigger="TableEditTrigger.EditButton"
          Class="m-2"
          Load="OnLoad"
+         IsIndividual="true"
          Cancel="x=>  DataSource[x.Index] = x.OldModel"
          Create="@( async x=> await CreateAsync(x))"
          Update="@( async x=> await UpdateAsync(x))"

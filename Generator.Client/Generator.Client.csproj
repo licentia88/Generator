@@ -21,8 +21,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Extensions\" />
+    <None Remove="Services\" />
+    <None Remove="Hubs\" />
+    <None Remove="Hubs\Base\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Services\" />
+    <Folder Include="Hubs\" />
+    <Folder Include="Hubs\Base\" />
   </ItemGroup>
 </Project>

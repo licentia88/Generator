@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Generator.Client;
+using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Models.ComponentModels;
@@ -20,13 +21,20 @@ public partial class GridMPage
 
 	private GenTextField QueryComboBox;
 
- 
+	[Inject]
+	public List<GRID_M> GridList { get; set; }
+
+	[Inject]
+	public PermissionHub PermissionHub { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
+
+		DataSource = GridList;
+
         DateTime startTime = DateTime.UtcNow;
 
 		var token = await AuthService.Request(8, "licentia");
-
 
 		var test = await Service.SetToken(token).ReadAll();
 
@@ -49,7 +57,18 @@ public partial class GridMPage
 		return Task.CompletedTask;
 	}
 
-    
+    public override async Task Create(GenArgs<GRID_M> args)
+    {
+        await base.Create(args);
+
+        await PermissionHub.client.CollectionChanged();
+    }
+    public override async Task Delete(GenArgs<GRID_M> args)
+    {
+        await base.Delete(args);
+
+	    await PermissionHub.client.CollectionChanged();
+    }
 
     public override Task Load(IGenView<GRID_M> View)
     {

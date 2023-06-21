@@ -14,8 +14,11 @@ public static class DbServiceExtensions
     public static void RegisterStaticData(this IServiceCollection collection)
     {
         collection.AddSingleton<List<GRID_M>>();
+        collection.AddSingleton<List<GRID_D>>();
         collection.AddSingleton<List<PERMISSIONS>>();
         collection.AddSingleton<List<COMPONENTS_BASE>>();
+        collection.AddSingleton<List<ROLES>>();
+
     }
 
 
@@ -44,7 +47,7 @@ public static class DbServiceExtensions
 
     public static async Task FillAsync<TModel, TService, TIService>(this IServiceProvider provider) where TService : IGenericService<TIService, TModel>
     {
-        await Task.Delay(5000);
+   
         ///Wait for server to run
         using var scope = provider.CreateAsyncScope();
 

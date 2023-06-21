@@ -324,10 +324,8 @@
                     
                     <RowEditingTemplate Context="_context" >
 
-                        
                         @{
-
-
+ 
                             if (EditMode != EditMode.Inline)
                             {
                                 var currentRow = OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem));

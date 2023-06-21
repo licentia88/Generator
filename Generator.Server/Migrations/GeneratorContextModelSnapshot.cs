@@ -90,7 +90,7 @@ namespace Generator.Server.Migrations
                     b.Property<int>("RD_M_REFNO")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RD_PERMISSION_REFNO")
+                    b.Property<int>("RD_PERMISSION_REFNO")
                         .HasColumnType("int");
 
                     b.HasKey("RD_ROWID");
@@ -217,7 +217,9 @@ namespace Generator.Server.Migrations
 
                     b.HasOne("Generator.Shared.Models.ComponentModels.PERMISSIONS", "PERMISSIONS")
                         .WithMany()
-                        .HasForeignKey("RD_PERMISSION_REFNO");
+                        .HasForeignKey("RD_PERMISSION_REFNO")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("PERMISSIONS");
                 });

@@ -12,7 +12,7 @@ public partial class ROLES_DETAILS
 
     public int RD_M_REFNO { get; set; }
 
-    public int? RD_PERMISSION_REFNO { get; set; }
+    public int RD_PERMISSION_REFNO { get; set; }
 
     [ForeignKey(nameof(RD_PERMISSION_REFNO))]
     public PERMISSIONS PERMISSIONS { get; set; }

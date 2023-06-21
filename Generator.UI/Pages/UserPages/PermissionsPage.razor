@@ -9,20 +9,11 @@
          Title="Permissions"
          Class="m-2"
          Disabled="true"
-         DataSource="@DataSource"
-         Search="Read"
+         DataSource="@DataSource.Where(whereClause).ToList()"
          MaxWidth="MaxWidth.ExtraExtraLarge"
          EditTrigger="TableEditTrigger.EditButton"
          EditMode="EditMode.SmartForm">
 
-    @*<GenSearchFields>
-        <GenComboBox  BindingField="@nameof(PERMISSIONS.AUTH_TYPE)"
-                      Label="Auth Type"
-                      DataSource="@AuthTypes"
-                      ValueField="@(nameof(CODE_TABLE.C_CODE))"
-                      DisplayField="@nameof(CODE_TABLE.C_DESC)"
-                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
-    </GenSearchFields>*@
     <GenColumns>
 
         <GenTextField BindingField="@nameof(PERMISSIONS.AUTH_ROWID)"
@@ -38,28 +29,7 @@
                       xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
-
-        @*<GenTextField BindingField="@nameof(PERMISSIONS.AUTH_TYPE)"
-                      Label="Auth Type"
-                      EditorEnabled="false"
-                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />*@
-
-        @*<GenComboBox BindingField="@nameof(PERMISSIONS.AUTH_TYPE)"
-        Label="Auth Type"
-        DataSource="@AuthTypes"
-        ValueField="@(nameof(CODE_TABLE.C_CODE))"
-        DisplayField="@nameof(CODE_TABLE.C_DESC)"
-        xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />*@
-
-
-
-        @*<GenTextField BindingField="@nameof(PERMISSIONS.PER_COMPONENT_REFNO)"
-                      Label="Component"
-                      EditorEnabled="false"
-                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
-
-        <GenSpacer xs="12" sm="12" md="12" lg="9" xl="9" xxl="9" />*@
-
+       
 
         <GenTextField BindingField="@nameof(PERMISSIONS.Description)"
                       Label="Description"

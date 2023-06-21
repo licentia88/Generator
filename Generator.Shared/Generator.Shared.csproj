@@ -36,6 +36,7 @@
     <None Remove="Models\ServiceModels\" />
     <None Remove="Services\Base\" />
     <None Remove="Models\ComponentModels\Abstracts\" />
+    <None Remove="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -44,6 +45,7 @@
     <Folder Include="Dependency\" />
     <Folder Include="Models\ServiceModels\" />
     <Folder Include="Services\Base\" />
+    <Folder Include="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AvroConvert" Version="3.3.5" />

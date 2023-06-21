@@ -5,7 +5,7 @@ using MemoryPack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
-[MemoryPackable]
+[MemoryPackable()]
 [Table(nameof(GRID_D))]
 public partial class GRID_D: GRID_M, IGridRef
 {

@@ -15,6 +15,7 @@ public partial class RolesDetailsPage
 
     protected override async Task OnInitializedAsync()
     {
+
         await  ReadByParent();
         await base.OnInitializedAsync();
     }

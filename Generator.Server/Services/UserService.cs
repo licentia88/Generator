@@ -2,6 +2,7 @@ using Generator.Examples.Shared.Models;
 using Generator.Examples.Shared.Services;
 using Generator.Server.Database;
 using Generator.Server.Services.Base;
+using MagicOnion;
 
 namespace Generator.Server.Services;
 
@@ -11,5 +12,5 @@ public class UserService : MagicBase<IUserService, USER,TestContext>, IUserServi
     {
     }
 
-    
+     
 }

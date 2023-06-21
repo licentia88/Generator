@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MemoryPack;
 
 namespace Generator.Examples.Shared.Models;
 
 [Serializable]
-[MessagePack.MessagePackObject()]
-public class TEST_TABLE
+[MemoryPackable]
+public partial class TEST_TABLE
 {
 	[MessagePack.Key(0)]
 	[Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]

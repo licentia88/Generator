@@ -53,6 +53,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     [Parameter]
     public bool EnableSorting { get; set; } = false;
 
+    [Parameter]
+    public bool IsIndividual { get; set; }
+
     [Inject]
     public IDialogService DialogService { get; set; }
 
@@ -607,8 +610,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             (nameof(GenPage<TModel>.SearchFieldComponents), SearchFieldComponents),
             (nameof(GenPage<TModel>.Components), Components),
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
-            //(nameof(GenPage<TModel>.Load), Load),
-              (nameof(GenPage<TModel>.Parameters), Parameters),
+            (nameof(GenPage<TModel>.IsIndividual), IsIndividual),
+            (nameof(GenPage<TModel>.Parameters), Parameters),
             //(nameof(GenPage<TModel>.OnRender), OnRender),
             (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),

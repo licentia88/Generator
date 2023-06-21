@@ -5,6 +5,8 @@ namespace Generator.Components.Interfaces;
 
 public interface INonGenView
 {
+    public bool IsIndividual { get; set; }
+
     public string Title { get; set; }
 
     public ViewState ViewState { get; set; }

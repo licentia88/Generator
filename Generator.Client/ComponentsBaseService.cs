@@ -3,14 +3,14 @@ using Generator.Shared.Services;
 
 namespace Generator.Client;
 
-public class ComponentsBaseService : ServiceBase<IComponentsBaseService, COMPONENTS_BASE>, IComponentsBaseService
-{
-    public ComponentsBaseService()
-    {
+//public class ComponentsBaseService : ServiceBase<IComponentsBaseService, COMPONENTS_BASE>, IComponentsBaseService
+//{
+//    public ComponentsBaseService()
+//    {
 
-    }
+//    }
 
-}
+//}
 
 
 

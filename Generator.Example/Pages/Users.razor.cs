@@ -6,6 +6,7 @@ using Generator.Examples.Shared;
 using Generator.Examples.Shared.Models;
 using Generator.Examples.Shared.Services;
 using Generator.Shared.Extensions;
+using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ServiceModels;
 using Microsoft.AspNetCore.Components;
 
@@ -16,6 +17,13 @@ public partial class Users
     [Inject]
     public UserService UserService { get; set; }
 
+    [Inject]
+    public OrdersMService OrdersM { get; set; }
+
+    private List<PERMISSIONS> pERMISSIONs { get; set; } = new List<PERMISSIONS>
+    {
+        new PERMISSIONS{ AUTH_NAME ="Test", AUTH_ROWID =1}
+    };
     //[Inject]
     //public Lazy<List<USER>> userList { get; set; }
 
@@ -40,7 +48,7 @@ public partial class Users
     //}
     protected override async Task OnInitializedAsync()
     {
-        //var res = isMarriedCheckBox?.GetValue().CastTo<bool>() ?? true; ;
+         //var res = isMarriedCheckBox?.GetValue().CastTo<bool>() ?? true; ;
         DataSource =  await UserService.ReadAll();
 
         //DataSource = res;
@@ -63,7 +71,7 @@ public partial class Users
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
-            CheckBoxText.SetSearchValue(true);
+            CheckBoxText?.SetSearchValue(true);
 
         base.OnAfterRender(firstRender);
     }
@@ -113,13 +121,10 @@ public partial class Users
 
     public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<USER> data)
     {
-        DataSource.Add(data.Model);
-        return;
+     
         //throw new Exception();
         var result = await UserService.Create(data.Model);
-
-
-
+ 
         ////REQUIRED 
         data.Model.U_ROWID = result.U_ROWID;
         data.Model = result;
@@ -145,7 +150,7 @@ public partial class Users
         DataSource.Replace(existing, data.Model);
     }
 
-    public async ValueTask DeleteAsync(GenArgs<USER> data)
+    public async Task DeleteAsync(GenArgs<USER> data)
     {
         var result = await UserService.Delete(data.Model);
 

@@ -9,13 +9,10 @@
 
     <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
         <EditForm Model="@SelectedItem" OnValidSubmit="OnCommit" OnInvalidSubmit="onInvalidSubmit">
-
             <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))">
                 <DialogContent>
-
                     @{
                         <DataAnnotationsValidator />
-
                     }
                 <MudContainer Class="m-0 p-2" Style="max-height: 80vh; overflow-y: scroll; max-width:100%!important">
                     @{
@@ -26,21 +23,18 @@
                                     foreach (var component in Components)
                                     {
                                         <MudItem Class="mt-4"
-                                                 xs="component.xs"
-                                                 sm="component.sm"
-                                                 md="component.md"
-                                                 lg="component.lg"
-                                                 xl="component.xl"
-                                                 xxl="component.xxl">
+                                                    xs="component.xs"
+                                                    sm="component.sm"
+                                                    md="component.md"
+                                                    lg="component.lg"
+                                                    xl="component.xl"
+                                                    xxl="component.xxl">
                                             @{
-                                                @* @component.RenderAsComponent(SelectedItem,false,  *@
-                                                @*     new("Disabled",!component.EditorEnabled), *@
-                                                @*     new("",component.EditorVisible)) *@
-                                    if (component.EditorVisible)
-                                    {
-                                        @component.RenderAsComponent(SelectedItem)
-                                    }
-                                               
+                                                if (component.EditorVisible)
+                                                {
+                                                    @component.RenderAsComponent(SelectedItem)
+                                                }
+
                                             }
                                         </MudItem>
                                     }

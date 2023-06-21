@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterModels(this IServiceCollection services)
     {
         services.AddScoped<SeedData>();
-        services.AddSingleton<List<PERMISSIONS>>();
+        services.AddScoped(typeof(List<>));
 
         return services;
     }

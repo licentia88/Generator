@@ -1,16 +1,16 @@
 ﻿@page "/Users"
 @{
 
-//if (userList is null) return;
+if (DataSource.Count ==0) return;
 
     @*<MudButton OnClick="TEST">Click</MudButton>*@
 
-    <GenGrid DataSource="@DataSource.OrderBy(x=>x.U_AGE).ToList()"
+    <GenGrid DataSource="@DataSource"
              TModel="USER"
              Title="Users"
              Dense="true"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.Inline"
+             EditMode="EditMode.Form"
              EditTrigger="TableEditTrigger.RowClick"
              EnableSearch="true"
              Disabled="IsDisabled"
@@ -25,33 +25,40 @@
              ExcelButtonText="Test"
              Search="async x=> await Search(x)"
              Create="@( async x=> await CreateAsync(x))"
-            
+             Delete="DeleteAsync"
              Cancel="Cancel"
              Load="@( x=> Load(x))">
         <GenSearchFields>
 
             <GenTextField Clearable="true" BindingField="TexFld" Label="Name"
-                          Required="false"  
+                          Required="false"
                           xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" />
 
             <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-            @*<GenComboBox DataSource="userList.Value" Dense="true"
+            <GenComboBox DataSource="DataSource" Dense="true"
                          DisplayField="@nameof(USER.U_NAME)"
                          ValueField="@nameof(USER.U_ROWID)"
                          Clearable="true" BindingField="comboField"
                          xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
-                         Label="Peopel" Required="false" />*@
+                         Label="Peopel" Required="false" />
+
+            <GenComboBox DataSource="pERMISSIONs" Dense="true" 
+                         DisplayField="@nameof(PERMISSIONS.AUTH_NAME)"
+                         ValueField="@nameof(PERMISSIONS.AUTH_ROWID)"
+                         Clearable="true" BindingField="comboField2"
+                         xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+                         Label="Permissions" Required="false" />
 
 
-            <GenDatePicker Clearable="true" 
+            <GenDatePicker Clearable="true"
                            BindingField="DateField"
                            xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
                            Label="DateExample" Required="false" />
 
-            <GenSpacer  xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
+            <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-           <GenCheckBox  xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+            <GenCheckBox xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
                          Dense="true"
                          BindingField="CheckBoxText"
                          @ref="CheckBoxText"
@@ -75,7 +82,7 @@
             <GenTextField BindingField="@nameof(USER.U_AGE)"  />
 
             <GenCheckBox BindingField="@nameof(USER.U_IS_MARRIED)" 
-                         Label="Evli mi" TrueText="Evet" FalseText="Hayir" CheckedChanged="OnCheckChanged" />
+                         Label="Evli mi" TrueText="Evet" FalseText="Hayir"   />
 
             <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
                            DateChanged="x=> OnDateChanged(x)"

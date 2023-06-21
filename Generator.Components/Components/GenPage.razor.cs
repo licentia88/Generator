@@ -41,6 +41,8 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
     public bool ShoulShowDialog { get; set; } = true;
 
+    [Parameter]
+    public bool IsIndividual { get; set; }
 
     [Parameter]
     public List<IGenComponent> Components { get; set; }
@@ -116,6 +118,15 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     public  async Task OnCommit(TModel model, ViewState viewState)
     {
         if (!ValidateAsync()) return;
+
+        if (IsIndividual)
+        {
+            await GenGrid.OnCommit(SelectedItem, viewState);
+
+            ViewState = ViewState.None;
+
+            CloseIfAllowed();
+        }
 
         //Parent Save
         if (GenGrid.ParentGrid?.ViewState == ViewState.Create)

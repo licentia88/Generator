@@ -2,22 +2,20 @@
 using Generator.Shared.Models.ComponentModels;
 using Generator.UI.Models;
 using Humanizer;
+using Microsoft.AspNetCore.Components;
 
-namespace Generator.UI.Pages.UserPages
+namespace Generator.UI.Pages.UserPages;
+
+
+public partial class RolesPage
 {
-	public partial class RolesPage
-	{
-        public List<CODE_TABLE> AuthTypes { get; set; }
+    [Inject]
+    public List<ROLES> RolesList { get; set; }
 
-        public RolesPage()
-        {
-            AuthTypes = new List<CODE_TABLE>
-            {
-                new CODE_TABLE{ C_CODE = nameof(ROLES), C_DESC = nameof(ROLES).Humanize()},
-                new CODE_TABLE{ C_CODE = nameof(PERMISSIONS), C_DESC = nameof(PERMISSIONS).Humanize()}
-            };
-
-        }
+    protected override Task OnInitializedAsync()
+    {
+        DataSource = RolesList;
+        return base.OnInitializedAsync();
     }
 }
 

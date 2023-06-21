@@ -136,7 +136,14 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     /// <returns>A unary result containing a list of all models.</returns>
     public UnaryResult<List<TModel>> ReadAll()
     {
-        return Client.ReadAll();
+        try
+        {
+            return Client.ReadAll();
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     public TService SetToken(byte[] token)

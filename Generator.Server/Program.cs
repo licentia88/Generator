@@ -1,34 +1,31 @@
-﻿using System.Text;
-using Generator.Server;
-using Generator.Server.Database;
+﻿using Generator.Server.Database;
 using Generator.Server.Extensions;
-using Generator.Server.FIlters;
 using Generator.Server.Jwt;
 using Generator.Server.Seed;
 //using Generator.Server.Services.Authentication;
 using Grpc.Net.Client;
 using LitJWT;
 using LitJWT.Algorithms;
-using MagicOnion;
 using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
-using MagicOnion.Server.Filters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using MessagePipe;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
  
 builder.Services.AddGrpc();
 
 builder.Services.RegisterModels();
-
+//MagicOnionOptions.EnableCurrentContext
 builder.Services.AddMagicOnion(x => {
     x.IsReturnExceptionStackTraceInErrorDetail = true;
+    //x.EnableCurrentContext = true;
     x.MessageSerializer = MemoryPackMagicOnionSerializerProvider.Instance;
  } );
 
+builder.Services.AddMessagePipe();
+ 
+ 
 
 builder.Services.AddDbContext<TestContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnection("DefaultConnection")));
@@ -41,7 +38,6 @@ builder.Services.AddDbContext<MemoryContext>(options =>
      options.UseInMemoryDatabase(nameof(MemoryContext)));
 
 builder.Services.RegisterGenServer();
-
 //builder.Services.AddSingleton<IMagicOnionFilterFactory<MagicAuthAttribute>, MagicAuthMiddleware>();
 
 builder.Services.AddSingleton(x =>

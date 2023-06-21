@@ -1,4 +1,5 @@
-﻿using System.Threading.Channels;
+﻿using System.Numerics;
+using System.Threading.Channels;
 using AQueryMaker;
 using Generator.Server.Database;
 using Generator.Server.Helpers;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Services.Base;
-
 /// <summary>
 /// Base class for magic operations that involve a generic service and model.
 /// </summary>

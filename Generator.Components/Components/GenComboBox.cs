@@ -81,13 +81,16 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     protected override Task OnInitializedAsync()
     {
+        AddComponents();
+        return Task.CompletedTask;
+    }
+
+    private void AddComponents()
+    {
         if (IsSearchField)
             ParentGrid?.AddSearchFieldComponent(this);
         else
             ParentGrid?.AddChildComponent(this);
-
-
-        return Task.CompletedTask;
     }
 
     public void Initialize()
@@ -101,6 +104,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
         if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
+        
+        AddComponents();
     }
 
 

@@ -79,19 +79,24 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
 
+        AddComponents();
     }
 
     protected override  Task OnInitializedAsync()
     {
         Initialize();
 
+        AddComponents();
+        
+        return Task.CompletedTask;
+    }
+
+    private void AddComponents()
+    {
         if (IsSearchField)
             ParentGrid?.AddSearchFieldComponent(this);
         else
             ParentGrid?.AddChildComponent(this);
-
-
-        return Task.CompletedTask;
     }
 
     public void Initialize()

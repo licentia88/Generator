@@ -81,12 +81,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [CascadingParameter(Name = nameof(IsSearchField))]
     public bool IsSearchField { get; set; }
 
-    protected override Task OnInitializedAsync()
+     protected override Task OnInitializedAsync()
     {
-        if (IsSearchField)
-             ParentGrid?.AddSearchFieldComponent(this);
-        else
-            ParentGrid?.AddChildComponent(this);
+        AddComponents();
 
         if (string.IsNullOrEmpty(Class))
             Class = "mt-3";
@@ -94,7 +91,15 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         return Task.CompletedTask;
     }
 
-    public void Initialize()
+     private void AddComponents()
+     {
+         if (IsSearchField)
+             ParentGrid?.AddSearchFieldComponent(this);
+         else
+             ParentGrid?.AddChildComponent(this);
+     }
+
+     public void Initialize()
     {
         if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
  
@@ -105,6 +110,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
 
+        AddComponents();
     }
 
     public void SetValue(bool value)

@@ -91,6 +91,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
 
+        AddComponents();
     }
 
     public void SetValue(DateTime? date)
@@ -106,14 +107,19 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     {
         if (!Error)
         {
-            if (!IsSearchField)
-                ParentGrid.ValidateValue(BindingField);
-            else
-                ParentGrid.ValidateSearchFields(BindingField);                  
+            AddComponents();
         }
             
 
         base.OnClosed();
+    }
+
+    private void AddComponents()
+    {
+        if (!IsSearchField)
+            ParentGrid.ValidateValue(BindingField);
+        else
+            ParentGrid.ValidateSearchFields(BindingField);
     }
 
     private void SetCallBackEvents()

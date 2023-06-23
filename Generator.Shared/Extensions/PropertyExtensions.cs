@@ -107,10 +107,10 @@ public static class PropertyExtensions
         return  newDict;
     }
 
-    public static ObservableCollection<T> ToObservable<T>(this IEnumerable<T> enumerableList)
-    {
-        return enumerableList != null ? new ObservableCollection<T>(enumerableList) : new();
-    }
+    //public static ObservableCollection<T> ToObservable<T>(this IEnumerable<T> enumerableList)
+    //{
+    //    return enumerableList != null ? new ObservableCollection<T>(enumerableList) : new();
+    //}
 
     private static bool IsNullable<T>(this T obj)
     {

@@ -71,10 +71,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     protected override Task OnInitializedAsync()
     {
         Initialize();
-        if (IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
-        else
-            ParentGrid?.AddChildComponent(this);
+        AddComponents();
 
         return Task.CompletedTask;
     }
@@ -107,7 +104,10 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     {
         if (!Error)
         {
-            AddComponents();
+            if (!IsSearchField)
+                ParentGrid.ValidateValue(BindingField);
+            else
+                ParentGrid.ValidateSearchFields(BindingField);
         }
             
 
@@ -116,10 +116,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     private void AddComponents()
     {
-        if (!IsSearchField)
-            ParentGrid.ValidateValue(BindingField);
+        if (IsSearchField)
+            ParentGrid?.AddSearchFieldComponent(this);
         else
-            ParentGrid.ValidateSearchFields(BindingField);
+            ParentGrid?.AddChildComponent(this);
+
+       
     }
 
     private void SetCallBackEvents()

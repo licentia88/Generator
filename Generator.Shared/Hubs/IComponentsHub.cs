@@ -3,12 +3,10 @@ using MagicOnion;
 
 namespace Generator.Shared.Hubs;
 
-public interface IComponentsHub : IStreamingHub<IComponentsHub, IComponentsReceiver>
+public interface IComponentsHub : IHubBase<IComponentsHub, IComponentsReceiver,COMPONENTS_BASE>
 {
-    Task Subscribe();
 }
 
-public interface IComponentsReceiver
+public interface IComponentsReceiver:IHubReceiverBase<COMPONENTS_BASE>
 {
-    void OnSubscribe(List<COMPONENTS_BASE> collection);
 }

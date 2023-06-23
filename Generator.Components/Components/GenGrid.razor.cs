@@ -257,7 +257,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     protected override  Task OnAfterRenderAsync(bool firstRender)
     {
-
         if (!ShoulShowDialog)
         {
             if (_ShouldRender)
@@ -330,22 +329,37 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
                 }
                 else
                 {
+                    //editingRow.Context.Table.OnPreviewEditClick.InvokeAsync(SelectedItem);
+
                     editingRow.OnRowClicked(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
                     CancelDisabled = true;
                 }
 
             }
+         
 
 
-            //Bu Gerekli yoksa surekli OnAfterRenderAsync methoduna duser.
+                //Bu Gerekli yoksa surekli OnAfterRenderAsync methoduna duser.
 
-            StateHasChanged();
+                StateHasChanged();
 
             editingRow.IsEditing = true;
 
             ForceRenderOnce = false;
             //}
         }
+        //else if ((ViewState == ViewState.Create || ViewState == ViewState.Update) && EditTrigger == TableEditTrigger.RowClick)
+        //{
+        //    if(ViewState == ViewState.Create && !Create.HasDelegate)
+        //    {
+        //        OnCancelClick(SelectedItem);
+        //    }
+
+        //    if (ViewState == ViewState.Update && !Create.HasDelegate)
+        //    {
+        //        OnCancelClick(SelectedItem);
+        //    }
+        //}
 
         return Task.CompletedTask;
 
@@ -434,9 +448,6 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public async Task OnCommit(TModel model, ViewState viewState)
     {
-
-       
-
         try
         {
             GridIsBusy = true;
@@ -561,24 +572,15 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (OnBeforeCancel.HasDelegate)
             await OnBeforeCancel.InvokeAsync(element);
 
-
         if (ViewState == ViewState.Create)
         {
             DataSource.Remove(element);
         }
         else
         {
-            if (!Cancel.HasDelegate)
-                throw new Exception("Cancel does not have a delegate");
-
-            await Cancel.InvokeAsync(new GenArgs<TModel>(element, OriginalEditItem, index));
-
+            if (Cancel.HasDelegate)
+                await Cancel.InvokeAsync(new GenArgs<TModel>(element, OriginalEditItem, index));
         }
-
-
-
-
-
 
         ViewState = ViewState.None;
 
@@ -605,18 +607,20 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     }
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
     {
+ 
         var paramList = new List<(string, object)>
         {
             (nameof(GenPage<TModel>.SearchFieldComponents), SearchFieldComponents),
             (nameof(GenPage<TModel>.Components), Components),
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
+             (nameof(GenPage<TModel>.OriginalEditItem), OriginalEditItem),
             (nameof(GenPage<TModel>.IsIndividual), IsIndividual),
             (nameof(GenPage<TModel>.Parameters), Parameters),
-            //(nameof(GenPage<TModel>.OnRender), OnRender),
             (nameof(GenPage<TModel>.Title), Title),
             (nameof(GenPage<TModel>.ViewState), ViewState),
             (nameof(GenPage<TModel>.GenGrid), this)
         };
+
 
         return await ShowDialogAsync<TPage>(paramList.ToArray());
     }

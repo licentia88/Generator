@@ -5,30 +5,13 @@ using MagicOnion;
 
 namespace Generator.Shared.Hubs;
 
-public interface IPermissionsHub : IStreamingHub<IPermissionsHub, IPermissionReceiver>
+public interface IPermissionsHub : IHubBase<IPermissionsHub,IPermissionReceiver,PERMISSIONS>
 {
-    Task Subscribe();
-
-    Task OnCreate(PERMISSIONS model);
-
-    Task OnRemove(PERMISSIONS model);
-
-    Task OnUpdate(PERMISSIONS model);
-
-    Task CollectionChanged();
-
+    
 }
 
-public interface IPermissionReceiver  
+public interface IPermissionReceiver:IHubReceiverBase<PERMISSIONS>  
 {
-    void OnSubscribe(List<PERMISSIONS> collection);
-
-    void OnCreate(PERMISSIONS model);
-
-    void OnRemove(PERMISSIONS model);
-
-    void OnUpdate(PERMISSIONS model);
-
-    void OnCollectionChanged(List<PERMISSIONS> collection);
+   
 }
 

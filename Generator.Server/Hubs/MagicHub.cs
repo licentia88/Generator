@@ -1,11 +1,13 @@
-﻿using System.Text.RegularExpressions;
-using AQueryMaker;
+﻿using AQueryMaker;
 using Generator.Server.Database;
 using Generator.Server.Helpers;
 using Generator.Server.Jwt;
+using Generator.Shared.Enums;
 using Generator.Shared.Hubs;
+using Generator.Shared.Models.ServiceModels;
 using MagicOnion;
 using MagicOnion.Server.Hubs;
+using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,9 +29,14 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
     where TContext : DbContext
     where TModel : class
 {
-    IGroup Room;
+    protected IGroup Room;
 
-    public List<TModel> Collection { get; set; }
+
+    //IInMemoryStorage<List<TModel>> storage;
+
+    protected List<TModel> Collection { get; set; }
+
+    protected ISubscriber<Operation,TModel> Subscriber { get; set; }
 
     protected TContext Db;
 
@@ -53,7 +60,9 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
         FastJwtTokenService = provider.GetService<FastJwtTokenService>();
         ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
         Collection = provider.GetService<List<TModel>>();
+        Subscriber = provider.GetService<ISubscriber<Operation,TModel>>();
     }
+
     public async Task ConnectAsync()
     {
         Room = await Group.AddAsync(typeof(TModel).Name);
@@ -74,7 +83,7 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
         });
     }
 
-    public async Task DeleteAsync(TModel model)
+    public virtual async Task DeleteAsync(TModel model)
     {
         await TaskHandler.ExecuteAsync(async () =>
         {
@@ -88,19 +97,31 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
         });
     }
 
-    public async Task ReadAsync()
+    public virtual async Task<RESPONSE_RESULT<List<TModel>>> ReadAsync()
     {
-        await TaskHandler.ExecuteAsync(async () =>
+        return await TaskHandler.ExecuteAsync(async () =>
         {
             var result = await Db.Set<TModel>().AsNoTracking().ToListAsync();
 
             Collection.AddRange(result);
 
             Broadcast(Room).OnRead(result);
+
+            return Collection;
         });
     }
 
-    public async Task UpdateAsync(TModel model)
+    public async Task StreamReadAsync(int batchSize)
+    {
+        await foreach (var data in FetchStreamAsync(batchSize))
+        {
+            Collection.AddRange(data);
+
+            Broadcast(Room).OnStreamRead(data);
+        }
+    }
+
+    public virtual async Task UpdateAsync(TModel model)
     {
         await TaskHandler.ExecuteAsync(async () =>
         {
@@ -115,6 +136,42 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
             Broadcast(Room).OnUpdate(model);
         });
     }
+
+    public virtual async Task CollectionChanged()
+    {
+        var newCollection = await Db.Set<TModel>().AsNoTracking().ToListAsync();
+
+        Collection.Clear();
+        Collection.AddRange(newCollection);
+
+        Broadcast(Room).OnCollectionChanged(Collection);
+    }
+
+
+   
+
+
+    private async IAsyncEnumerable<List<TModel>> FetchStreamAsync(int batchSize = 2)
+    {
+        var count = await Db.Set<TModel>().CountAsync().ConfigureAwait(false);
+        var batches = (int)Math.Ceiling((double)count / batchSize);
+
+        for (var i = 0; i < batches; i++)
+        {
+            var skip = i * batchSize;
+            var take = Math.Min(batchSize, count - skip);
+            var entities = await FetchStream(Db, skip, take).ConfigureAwait(false);
+            yield return entities;
+        }
+
+    }
+
+  
+
+    private static Func<TContext, int, int, Task<List<TModel>>> FetchStream =
+        EF.CompileAsyncQuery(
+            (TContext context, int skip, int take) =>
+                context.Set<TModel>().AsNoTracking().Skip(skip).Take(take).ToList());
 }
 
 

@@ -12,6 +12,8 @@ using Generator.Shared.Models.ComponentModels;
 using Generator.Client;
 using Generator.Shared.Models.ComponentModels.Abstracts;
 using Generator.Client.Hubs.Base;
+using Generator.UI.Startup;
+using MessagePipe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,8 @@ builder.Services.AddScoped<NotificationsView>();
 builder.Services.AddScoped<List<NotificationVM>>();
 builder.Services.AddMagicServices();
 builder.Services.RegisterStaticData();
-
+builder.Services.AddSingleton<HubInitializer>();
+builder.Services.AddMessagePipe();
 //builder.Services.RegisterGrpcService<IGRidCrudViewService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 //builder.Services.RegisterGrpcService<IGridMService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
 //builder.Services.RegisterGrpcService<IGridFieldsService>("https://localhost:7178", "/Users/asimgunduz/server.crt", HttpVersion.Version11);
@@ -44,10 +47,9 @@ var app = builder.Build();
 
 await Task.Delay(5000);
 
-await app.Services.GetRequiredService<GridMHub>().ConnectAsync();
-await app.Services.GetRequiredService<ComponentsHub>().SubscribeAsync();
-await app.Services.GetRequiredService<PermissionHub>().SubscribeAsync();
-await app.Services.FillAsync<GRID_M, GridMService, IGridMService>();
+await app.Services.GetRequiredService<HubInitializer>().ReadFromHubs();
+
+//await app.Services.FillAsync<GRID_M, GridMService, IGridMService>();
 await app.Services.FillAsync<GRID_D, GridDService, IGridDService>();
 
 //await app.Services.FillAsync<PERMISSIONS, PermissionsService, IPermissionsService>();

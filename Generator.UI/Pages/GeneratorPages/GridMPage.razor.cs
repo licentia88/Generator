@@ -61,13 +61,10 @@ public partial class GridMPage
     {
         await base.Create(args);
 
-        await PermissionHub.client.CollectionChanged();
     }
     public override async Task Delete(GenArgs<GRID_M> args)
     {
         await base.Delete(args);
-
-	    await PermissionHub.client.CollectionChanged();
     }
 
     public override Task Load(IGenView<GRID_M> View)

@@ -24,6 +24,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     [Parameter]
     public EditMode EditMode { get; set; }
 
+    [Parameter]
     public TModel OriginalEditItem { get; set; }
 
     //[Parameter]
@@ -212,7 +213,9 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
         if (ViewState != ViewState.None)
         {
             MudDialog.Close();
-            //GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
+
+            //Cancel eventini tetikler
+            GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
         }
 
  

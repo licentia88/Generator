@@ -1,15 +1,14 @@
-﻿using System.Numerics;
-using System.Threading.Channels;
-using AQueryMaker;
+﻿using AQueryMaker;
 using Generator.Server.Database;
 using Generator.Server.Helpers;
 using Generator.Server.Jwt;
+using Generator.Shared.Enums;
 using Generator.Shared.Services.Base;
 using MagicOnion;
-using MagicOnion.Client;
 using MagicOnion.Serialization;
 using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
+using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +26,8 @@ public class MagicBase<TService, TModel> : MagicBase<TService, TModel, Generator
     {
 
     }
+
+    
 }
 
 /// <summary>
@@ -40,7 +41,10 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     where TModel : class
     where TContext : DbContext
 {
+    //public IPublisher<Operation, TModel> Publisher { get; set; }
+
     protected TContext Db;
+
     private readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
 
     /// <summary>
@@ -71,9 +75,9 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     /// </summary>
     /// <param name="model">The model to create.</param>
     /// <returns>A unary result containing the created model.</returns>
-    public virtual UnaryResult<TModel> Create(TModel model)
+    public virtual async UnaryResult<TModel> Create(TModel model)
     {
-        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
             Db.Set<TModel>().Add(model);
             await Db.SaveChangesAsync();
@@ -81,18 +85,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
         });
     }
 
-    /// <summary>
-    /// Retrieves a list of models based on the specified request.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>A unary result containing a list of models.</returns>
-    public virtual UnaryResult<List<TModel>> Read(TModel request)
-    {
-        return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
-        {
-            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name}").ToListAsync();
-        });
-    }
+     
 
     /// <summary>
     /// Finds a list of entities of type TModel that are associated with a parent entity based on a foreign key.
@@ -149,4 +142,38 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
             return await Db.Set<TModel>().ToListAsync();
         });
     }
+
+    public async Task<ServerStreamingResult<List<TModel>>> StreamReadAll(int batchSize)
+    {
+        var stream = GetServerStreamingContext<List<TModel>>();
+
+        await foreach (var data in FetchStreamAsync(batchSize))
+            await stream.WriteAsync(data);
+
+        return stream.Result();
+    }
+
+    private async IAsyncEnumerable<List<TModel>> FetchStreamAsync(int batchSize = 10)
+    {
+        var count = await Db.Set<TModel>().AsNoTracking().CountAsync().ConfigureAwait(false);
+        var batches = (int)Math.Ceiling((double)count / batchSize);
+
+        for (var i = 0; i < batches; i++)
+        {
+            var skip = i * batchSize;
+            var take = Math.Min(batchSize, count - skip);
+            var entities = await Db.Set<TModel>().AsNoTracking().Skip(skip).Take(take).ToListAsync().ConfigureAwait(false);
+            yield return entities;
+        }
+
+     }
+
+  
+
+    private static Func<TContext, int, int, Task<List<TModel>>> FetchStream =
+        EF.CompileAsyncQuery(
+            (TContext context, int skip, int take) =>
+                context.Set<TModel>().AsNoTracking().Skip(skip).Take(take).ToList());
+
+ 
 }

@@ -24,8 +24,6 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     /// <param name="client">The client instance for the service.</param>
     protected ServiceBase()
     {
-        //MagicOnionSerializerProvider.Default = MemoryPackMagicOnionSerializerProvider.Instance;
- 
         var channel = GrpcChannel.ForAddress("http://localhost:5002");
         Client = MagicOnionClient.Create<TService>(channel,MemoryPackMagicOnionSerializerProvider.Instance);
     }
@@ -38,7 +36,6 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     public virtual TService WithCancellationToken(CancellationToken cancellationToken)
     {
         return Client.WithCancellationToken(cancellationToken);
-
     }
 
     /// <summary>
@@ -79,8 +76,6 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     public virtual TService WithOptions(CallOptions option)
     {
         return Client.WithOptions(option);
-
- 
     }
 
     /// <summary>
@@ -93,17 +88,7 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
         return Client.Create(model);
     }
 
-    /// <summary>
-    /// Retrieves a list of models based on the specified request.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>A unary result containing a list of models.</returns>
-    public UnaryResult<List<TModel>> Read(TModel request)
-    {
-        return Client.Read(request);
-    }
-
-  
+   
 
     public UnaryResult<List<TModel>> FindByParent(string parentId, string ForeignKey)
     {
@@ -136,14 +121,12 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
     /// <returns>A unary result containing a list of all models.</returns>
     public UnaryResult<List<TModel>> ReadAll()
     {
-        try
-        {
-            return Client.ReadAll();
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        return Client.ReadAll();
+    }
+
+    public Task<ServerStreamingResult<List<TModel>>> StreamReadAll(int batchSize)
+    {
+        return Client.StreamReadAll(batchSize);
     }
 
     public TService SetToken(byte[] token)
@@ -156,6 +139,6 @@ public abstract class ServiceBase<TService, TModel> : IGenericService<TService, 
         return Client.WithOptions(cop);
     }
 
-  
+    
 }
 

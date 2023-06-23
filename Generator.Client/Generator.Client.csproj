@@ -14,6 +14,7 @@
     <PackageReference Include="MagicOnion.Client" Version="5.1.6" />
     <PackageReference Include="MagicOnion.Serialization.MemoryPack" Version="5.1.8-preview" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="MessagePipe" Version="1.7.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />

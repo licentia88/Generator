@@ -3,7 +3,9 @@
 
 @inherits PagesBase<GRID_M,PERMISSIONS, PermissionsService, IPermissionsService>
 
- 
+@{
+    if (whereClause is null) return;
+}
 
 <GenGrid TModel="PERMISSIONS"
          Title="Permissions"
@@ -24,7 +26,7 @@
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
         <GenTextField BindingField="@nameof(PERMISSIONS.AUTH_NAME)"
-                      Label="Role Name"
+                      Label="Permission"
                       EditorEnabled="false"
                       xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
 

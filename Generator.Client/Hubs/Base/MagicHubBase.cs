@@ -1,9 +1,10 @@
 ﻿using MagicOnion.Client;
-using MagicOnion;
 using Grpc.Net.Client;
 using MagicOnion.Serialization.MemoryPack;
 using Generator.Shared.Hubs;
 using Microsoft.Extensions.DependencyInjection;
+using MessagePipe;
+using Generator.Shared.Enums;
 
 namespace Generator.Client.Hubs.Base;
 
@@ -13,17 +14,20 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 {
     protected THub Client;
 
-    public List<TModel> Collection { get; set; }
-
     TReceiver Receiver;
 
-    public IServiceProvider Provider { get; }
+    private IPublisher<Operation,TModel> ModelPublisher { get; set; }
+
+    private IPublisher<Operation,List<TModel>> ListPublisher { get; set; }
+
+    public List<TModel> Collection { get; set; }
 
     public MagicHubBase(IServiceProvider provider)
     {
-        Provider = provider;
         Receiver = this as TReceiver;
         Collection = provider.GetService<List<TModel>>();
+        ModelPublisher = provider.GetService<IPublisher<Operation,TModel>>();
+        ListPublisher = provider.GetService<IPublisher<Operation,List<TModel>>>();
     }
 
     public virtual async Task ConnectAsync()
@@ -38,12 +42,24 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
     public virtual void OnCreate(TModel model)
     {
         Collection.Add(model);
+
+        ModelPublisher.Publish(Operation.Create, model);
     }
 
     public virtual void OnRead(List<TModel> collection)
     {
         Collection.AddRange(collection);
+
+        ListPublisher.Publish(Operation.Read,Collection);
     }
+
+    public void OnStreamRead(List<TModel> collection)
+    {
+        Collection.AddRange(collection);
+
+        ListPublisher.Publish(Operation.Stream,collection);
+    }
+
 
     public virtual void OnUpdate(TModel model)
     {
@@ -53,9 +69,40 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
     public virtual void OnDelete(TModel model)
     {
         Collection.Remove(model);
+
+        ModelPublisher.Publish(Operation.Delete, model);
     }
 
-    
+    public void OnCollectionChanged(List<TModel> collection)
+    {
+        Collection.Clear();
+        Collection.AddRange(collection);
+
+        ListPublisher.Publish(Operation.Read, Collection);
+        
+    }
+
+    public Task CreateAsync(TModel model)
+    {
+        return Client.CreateAsync(model);
+    }
+
+    public Task ReadAsync()
+    {
+        return Client.ReadAsync();
+    }
+
+    public Task UpdateAsync(TModel model)
+    {
+        return Client.UpdateAsync(model);
+    }
+
+    public Task DeleteAsync(TModel model)
+    {
+        return Client.DeleteAsync(model);
+    }
+
+  
 }
 
 

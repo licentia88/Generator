@@ -14,7 +14,7 @@ public class GridMHub : MagicHubBase<IGridMHub, IGridMReceiver, GRID_M>, IGridMR
     {
         await base.ConnectAsync();
 
-        await Client.ReadAsync();
+        //await Client.ReadAsync();
     }
 }
 

@@ -1,7 +1,10 @@
-﻿using Generator.Server.Exceptions;
+﻿using System.Threading.Tasks.Sources;
+using Generator.Server.Exceptions;
+using Generator.Shared.Enums;
 using Generator.Shared.Models.ServiceModels;
 using Grpc.Core;
 using MagicOnion;
+using MessagePipe;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Helpers;
@@ -89,6 +92,7 @@ public static class TaskHandler
         }
     }
 
+
     /// <summary>
     /// Executes an action.
     /// </summary>
@@ -125,6 +129,25 @@ public static class TaskHandler
     {
         return exceptionHandler.HandleException(ex);
     }
+
+    //public static async Task<UnaryResult<T>> OnComplete<T>(this UnaryResult<T> result, Action<Task> action)
+    //{
+    //    await result;
+    //    action.Invoke(Task.CompletedTask);
+    //    return result;
+    //}
+
+
+    public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Action action)
+    {
+        var data = await result;
+        action.Invoke();
+
+        return data;
+    }
+
+    
+
 }
 
 

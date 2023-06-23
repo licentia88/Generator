@@ -24,12 +24,7 @@ public interface IGenericService<TService, TModel> : IService<TService>, IClient
     /// <returns>A unary result containing the created model.</returns>
     UnaryResult<TModel> Create(TModel model);
 
-    /// <summary>
-    /// Retrieves a list of models based on the specified request.
-    /// </summary>
-    /// <param name="request">The request object.</param>
-    /// <returns>A unary result containing a list of models.</returns>
-    UnaryResult<List<TModel>> Read(TModel request);
+  
 
     /// <summary>
     /// Retrieves a list of models based on the parent primaryKey request.
@@ -40,13 +35,19 @@ public interface IGenericService<TService, TModel> : IService<TService>, IClient
     UnaryResult<List<TModel>> FindByParent(string parentId, string ForeignKey);
 
 
-  
+
 
     /// <summary>
     /// Retrieves all models.
     /// </summary>
     /// <returns>A unary result containing a list of all models.</returns>
     UnaryResult<List<TModel>> ReadAll();
+
+    /// <summary>
+    /// Retrieves all with batches.
+    /// </summary>
+    /// <returns>A unary result containing a list of all models.</returns>
+    Task<ServerStreamingResult<List<TModel>>> StreamReadAll(int batchSize);
 
     /// <summary>
     /// Updates the specified model.

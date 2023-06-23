@@ -139,10 +139,9 @@ public partial class Users
         IsDisabled = !IsDisabled;
     }
 
-    public async ValueTask UpdateAsync(GenArgs<USER> data)
+    public async Task UpdateAsync(GenArgs<USER> data)
     {
-        throw new Exception();
-        var result = await UserService.Update(data.Model);
+         var result = await UserService.Update(data.Model);
 
         var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.Model.U_ROWID);
 

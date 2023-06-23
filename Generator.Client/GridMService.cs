@@ -10,7 +10,6 @@ public class GridMService : ServiceBase<IGridMService, GRID_M>, IGridMService
     {
 
     }
-
 }
 
 

@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
+using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
@@ -7,7 +9,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Generator.Components.Components;
 
-public partial class GenSpacer:IGenSpacer
+public partial class GenSpacer :ComponentBase, IGenSpacer
 {
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public string BindingField { get; set; }
@@ -27,7 +29,7 @@ public partial class GenSpacer:IGenSpacer
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public bool GridVisible { get; set; } = true;
-      
+
     [Parameter, EditorRequired]
     public int xs { get; set; }
 
@@ -46,7 +48,7 @@ public partial class GenSpacer:IGenSpacer
     [Parameter, EditorRequired]
     public int xxl { get; set; }
 
-       
+
 
     [CascadingParameter(Name = nameof(ParentGrid))]
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -81,17 +83,27 @@ public partial class GenSpacer:IGenSpacer
     public bool IsSearchField { get; set; }
 
 
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        base.BuildRenderTree(builder);
+
+        AddComponents();
+    }
     protected override Task OnInitializedAsync()
     {
-        if (IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
-        else
-            ParentGrid?.AddChildComponent(this);
+        AddComponents();
 
 
         return Task.CompletedTask;
     }
 
+    private void AddComponents()
+    {
+        if (IsSearchField)
+            ParentGrid?.AddSearchFieldComponent(this);
+        else
+            ParentGrid?.AddChildComponent(this);
+    }
     public void Initialize()
     {
 
@@ -105,18 +117,20 @@ public partial class GenSpacer:IGenSpacer
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     {
+        //RenderAsComponent(model, ignoreLabels,null).Invoke(builder);
+
 
     };
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
         params KeyValuePair<string, object>[] valuePairs) => (builder) =>
-    {
-        //throw new NotImplementedException();
-    };
+        {
+            //builder.RenderComponent(this, ignoreLabels);
+        };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
     {
-
+        //RenderExtensions.RenderGrid(builder, "");
     };
 
     public void ValidateObject()
@@ -138,5 +152,5 @@ public partial class GenSpacer:IGenSpacer
         throw new NotImplementedException();
     }
 
-    
+
 }

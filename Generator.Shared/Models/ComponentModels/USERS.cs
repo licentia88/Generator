@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Equals;
 using MemoryPack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
+[Equatable]
 [MemoryPackable]
 public partial class USERS
 {
@@ -15,6 +16,8 @@ public partial class USERS
 
     [ForeignKey(nameof(ComponentModels.USER_AUTHORIZATIONS.UA_USER_REFNO))]
     public ICollection<USER_AUTHORIZATIONS> USER_AUTHORIZATIONS { get; set; } = new HashSet<USER_AUTHORIZATIONS>();
+    
+    
 }
 
 

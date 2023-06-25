@@ -42,9 +42,8 @@ public partial class GridFieldsPage
 
     private List<IGenComponent> HiddenFields;
 
-    
 
-	public override async Task Load(IGenView<GRID_FIELDS> View)
+    protected override async Task Load(IGenView<GRID_FIELDS> View)
 	{
         CurrentModel = View.SelectedItem;
 

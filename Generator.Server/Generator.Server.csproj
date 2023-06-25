@@ -67,7 +67,6 @@
     <Folder Include="Services\Authentication\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Exceptions\Strategies\" />
-    <Folder Include="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />

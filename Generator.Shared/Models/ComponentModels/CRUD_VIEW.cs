@@ -1,11 +1,15 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Equals;
 using Generator.Shared.Models.ComponentModels.Abstracts;
+using MemoryPack;
 using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
-[MessagePackObject]
-// ReSharper disable once InconsistentNaming
-public class CRUD_VIEW : VIEW_BASE_M
+[Equatable]
+[MemoryPackable]
+[Table(nameof(CRUD_VIEW))]
+public partial class CRUD_VIEW : VIEW_BASE_M
 {
     public CRUD_VIEW()
     {
@@ -13,13 +17,10 @@ public class CRUD_VIEW : VIEW_BASE_M
         VBM_TITLE = "CRUD";
     }
 
-    [Key(6)]
     public bool CV_CREATE { get; set; }
 
-    [Key(7)]
     public bool CV_UPDATE { get; set; }
 
-    [Key(8)]
     public bool CV_DELETE { get; set; }
 
 }

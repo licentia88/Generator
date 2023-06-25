@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Equals;
 using MemoryPack;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Shared.Models.ComponentModels.Abstracts;
 
+[Equatable]
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(HEADER_BUTTON_VIEW))]
 [MemoryPackUnion(1, typeof(SIDE_BUTTON_VIEW))]

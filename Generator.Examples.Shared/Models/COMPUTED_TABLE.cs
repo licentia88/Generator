@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using MemoryPack;
-using MessagePack;
 
 namespace Generator.Examples.Shared.Models;
 

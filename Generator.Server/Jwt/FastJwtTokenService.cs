@@ -1,7 +1,6 @@
 using Grpc.Core;
 using LitJWT;
 using MagicOnion;
-using MagicOnion.Server;
 
 namespace Generator.Server.Jwt;
 

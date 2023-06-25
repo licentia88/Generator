@@ -1,17 +1,13 @@
 ﻿using MudBlazor.Services;
 using Generator.Shared.Services;
 //using Generator.Client;
-using System.Net;
 using Generator.Components.Extensions;
 using Generator.UI.Models;
 using Generator.UI.Pages;
-using Auth0.AspNetCore.Authentication;
 using Generator.Client.Extensions;
+using Generator.Client.Services;
 using Generator.UI.Extensions;
 using Generator.Shared.Models.ComponentModels;
-using Generator.Client;
-using Generator.Shared.Models.ComponentModels.Abstracts;
-using Generator.Client.Hubs.Base;
 using Generator.UI.Startup;
 using MessagePipe;
 
@@ -34,6 +30,7 @@ builder.Services.RegisterGeneratorComponents();
 builder.Services.AddScoped<NotificationsView>();
 builder.Services.AddScoped<List<NotificationVM>>();
 builder.Services.AddMagicServices();
+builder.Services.AddMagicHubs();
 builder.Services.RegisterStaticData();
 builder.Services.AddSingleton<HubInitializer>();
 builder.Services.AddMessagePipe();
@@ -47,13 +44,16 @@ var app = builder.Build();
 
 await Task.Delay(5000);
 
-await app.Services.GetRequiredService<HubInitializer>().ReadFromHubs();
+var hubService = app.Services.GetRequiredService<HubInitializer>();
+
+await hubService.ConnectAsync();
+await hubService.ReadAsync();
 
 //await app.Services.FillAsync<GRID_M, GridMService, IGridMService>();
-await app.Services.FillAsync<GRID_D, GridDService, IGridDService>();
+await app.Services.FillAsync<GRID_D, IGridDService>();
 
 //await app.Services.FillAsync<PERMISSIONS, PermissionsService, IPermissionsService>();
-await app.Services.FillAsync<ROLES, RolesService, IRolesService>();
+await app.Services.FillAsync<ROLES, IRolesService>();
 
 
 // Configure the HTTP request pipeline.

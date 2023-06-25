@@ -15,6 +15,7 @@
     <PackageReference Include="MagicOnion.Serialization.MemoryPack" Version="5.1.8-preview" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
     <PackageReference Include="MessagePipe" Version="1.7.4" />
+    <PackageReference Include="AutoRegisterInject" Version="1.2.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />
@@ -28,8 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="Services\" />
-    <Folder Include="Hubs\" />
     <Folder Include="Hubs\Base\" />
   </ItemGroup>
 </Project>

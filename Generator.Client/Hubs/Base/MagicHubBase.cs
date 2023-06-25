@@ -1,46 +1,49 @@
 ﻿using MagicOnion.Client;
 using Grpc.Net.Client;
 using MagicOnion.Serialization.MemoryPack;
-using Generator.Shared.Hubs;
 using Microsoft.Extensions.DependencyInjection;
 using MessagePipe;
 using Generator.Shared.Enums;
+using Generator.Shared.Hubs.Base;
+using Generator.Shared.Models.ServiceModels;
+using System.Reflection;
+using Grpc.Core;
 
 namespace Generator.Client.Hubs.Base;
 
 public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<TModel>
-    where THub : IHubBase<THub,TReceiver,TModel>//, IStreamingHub<THub, TReceiver>
+    where THub : IHubBase<THub, TReceiver,TModel> 
     where TReceiver : class, IHubReceiverBase<TModel>
 {
     protected THub Client;
-
-    TReceiver Receiver;
 
     private IPublisher<Operation,TModel> ModelPublisher { get; set; }
 
     private IPublisher<Operation,List<TModel>> ListPublisher { get; set; }
 
-    public List<TModel> Collection { get; set; }
+    private List<TModel> Collection { get; set; }
 
     public MagicHubBase(IServiceProvider provider)
     {
-        Receiver = this as TReceiver;
         Collection = provider.GetService<List<TModel>>();
         ModelPublisher = provider.GetService<IPublisher<Operation,TModel>>();
         ListPublisher = provider.GetService<IPublisher<Operation,List<TModel>>>();
     }
 
+
+
     public virtual async Task ConnectAsync()
     {
         var channel = GrpcChannel.ForAddress("http://localhost:5002");
 
-        Client = await StreamingHubClient.ConnectAsync<THub, TReceiver>(channel, Receiver, null, default, MemoryPackMagicOnionSerializerProvider.Instance);
+        Client = await StreamingHubClient.ConnectAsync<THub, TReceiver>(channel, this as TReceiver, null, SenderOption, MemoryPackMagicOnionSerializerProvider.Instance);
 
         await Client.ConnectAsync();
      }
 
     public virtual void OnCreate(TModel model)
     {
+        var aass = Assembly.GetEntryAssembly();
         Collection.Add(model);
 
         ModelPublisher.Publish(Operation.Create, model);
@@ -48,6 +51,8 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 
     public virtual void OnRead(List<TModel> collection)
     {
+        var aass = Assembly.GetEntryAssembly();
+
         Collection.AddRange(collection);
 
         ListPublisher.Publish(Operation.Read,Collection);
@@ -55,7 +60,8 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 
     public void OnStreamRead(List<TModel> collection)
     {
-        Collection.AddRange(collection);
+        var aass = Assembly.GetEntryAssembly();
+                Collection.AddRange(collection);
 
         ListPublisher.Publish(Operation.Stream,collection);
     }
@@ -63,7 +69,11 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 
     public virtual void OnUpdate(TModel model)
     {
-        //Collection.
+        var index = Collection.IndexOf(model);
+
+        Collection[index] = model;
+
+        ModelPublisher.Publish(Operation.Update, model);
     }
 
     public virtual void OnDelete(TModel model)
@@ -82,27 +92,39 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
         
     }
 
-    public Task CreateAsync(TModel model)
+
+    public async Task StreamReadAsync()
     {
-        return Client.CreateAsync(model);
+         Collection.Clear();
+         await Client.StreamReadAsync(1);
     }
 
-    public Task ReadAsync()
+
+    public async Task<RESPONSE_RESULT<TModel>> CreateAsync(TModel model)
+    {
+        return await Client.CreateAsync(model);
+    }
+
+    public Task<RESPONSE_RESULT<List<TModel>>> ReadAsync()
     {
         return Client.ReadAsync();
     }
 
-    public Task UpdateAsync(TModel model)
+    public Task<RESPONSE_RESULT<TModel>> UpdateAsync(TModel model)
     {
         return Client.UpdateAsync(model);
     }
 
-    public Task DeleteAsync(TModel model)
+    public Task<RESPONSE_RESULT<TModel>> DeleteAsync(TModel model)
     {
         return Client.DeleteAsync(model);
     }
 
-  
+    private CallOptions SenderOption => new CallOptions().WithHeaders(new Metadata
+        {
+             { "client", Assembly.GetEntryAssembly().GetName().Name}
+         });
+
 }
 
 

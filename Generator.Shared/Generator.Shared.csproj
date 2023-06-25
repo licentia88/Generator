@@ -43,10 +43,8 @@
     <Folder Include="Models\" />
     <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Dependency\" />
     <Folder Include="Models\ServiceModels\" />
     <Folder Include="Services\Base\" />
-    <Folder Include="Hubs\" />
     <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +63,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Generator.Equals" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Models\ComponentModels\FOOTER_BUTTON.cs" />

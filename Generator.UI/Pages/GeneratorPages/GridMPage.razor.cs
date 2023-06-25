@@ -1,10 +1,11 @@
 ﻿using System.Data;
-using Generator.Client;
+using Generator.Client.Hubs;
 using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ComponentModels.NonDB;
+using MessagePipe;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.UI.Pages.GeneratorPages;
@@ -25,20 +26,27 @@ public partial class GridMPage
 	public List<GRID_M> GridList { get; set; }
 
 	[Inject]
-	public PermissionHub PermissionHub { get; set; }
+	public ISubscriber<Guid,PERMISSIONS> Subs { get; set; }
 
-	protected override async Task OnInitializedAsync()
+    [Parameter]
+    public Guid ID { get; set; }
+
+    protected override async Task OnInitializedAsync()
 	{
 
+		Subs.Subscribe(ID, x =>
+		{
+			Console.WriteLine(x.AUTH_NAME);
+		});
 		DataSource = GridList;
-
+ 
         DateTime startTime = DateTime.UtcNow;
 
 		var token = await AuthService.Request(8, "licentia");
 
-		var test = await Service.SetToken(token).ReadAll();
+		//var test = await Service.SetToken(token).ReadAll();
 
-        DatabaseList = (await DatabaseService.GetDatabaseList()).Data;
+		DatabaseList = (await DatabaseService.GetDatabaseList()).Data;
  
         TimeSpan executionTime = DateTime.UtcNow - startTime;
 
@@ -56,18 +64,13 @@ public partial class GridMPage
 
 		return Task.CompletedTask;
 	}
-
-    public override async Task Create(GenArgs<GRID_M> args)
-    {
-        await base.Create(args);
-
-    }
-    public override async Task Delete(GenArgs<GRID_M> args)
+ 
+	protected override async Task Delete(GenArgs<GRID_M> args)
     {
         await base.Delete(args);
     }
 
-    public override Task Load(IGenView<GRID_M> View)
+	protected override Task Load(IGenView<GRID_M> View)
     {
         View.SelectedItem.CB_COMMAND_TYPE = (int)CommandType.Text;
         return Task.CompletedTask;

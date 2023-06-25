@@ -1,4 +1,4 @@
-﻿@inherits PagesBase<ROLES,ROLES_DETAILS, RolesDetailsService, IRolesDetailsService>
+﻿@inherits ServicePageBase<ROLES,ROLES_DETAILS, IRolesDetailsService>
 
 
 
@@ -17,7 +17,7 @@
                      Label="Permission"
                      DataSource="@PermissionsList"
                      ValueField="@(nameof(PERMISSIONS.AUTH_ROWID))"
-                     DisplayField="@nameof(PERMISSIONS.Description)"
+                     DisplayField="@nameof(PERMISSIONS.PER_DESCRIPTION)"
                      xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />

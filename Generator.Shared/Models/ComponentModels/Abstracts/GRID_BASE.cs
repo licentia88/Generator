@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MemoryPack;
-using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels.Abstracts;
 

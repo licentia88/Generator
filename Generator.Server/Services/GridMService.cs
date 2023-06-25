@@ -1,4 +1,6 @@
-﻿using Generator.Server.FIlters;
+﻿using System.Diagnostics;
+using Generator.Server.Extensions;
+using Generator.Server.FIlters;
 using Generator.Server.Helpers;
 using Generator.Server.Services.Base;
 using Generator.Shared.Enums;
@@ -13,71 +15,72 @@ namespace Generator.Server.Services;
 //[MAuthorize(1)]
 public class GridMService : MagicBase<IGridMService, GRID_M>, IGridMService
 {
-    public IPublisher<Operation,PERMISSIONS> PermissionPublisher { get; set; }
+    public IPublisher<string, (Operation,PERMISSIONS)> PermissionPublisher { get; set; }
 
     public GridMService(IServiceProvider provider) : base(provider)
     {
-        PermissionPublisher = provider.GetService<IPublisher<Operation,PERMISSIONS>>();
+        PermissionPublisher = provider.GetService<IPublisher<string,(Operation,PERMISSIONS)>>();
     }
 
     [Allow]
     public override async UnaryResult<GRID_M> Create(GRID_M model)
     {
-        var newPermission = new PERMISSIONS
-        {
-            AUTH_NAME = model.CB_TITLE,
-            PER_DESCRIPTION = $"Read Permissions"
-
-        };
-
-        model.PERMISSIONS.Add(newPermission);
-
-        model.CB_IDENTIFIER = RandomStringGenerator.GenerateRandomString();
-
-        return await base.Create(model).OnComplete(() =>
-        {
-            PermissionPublisher.Publish(Operation.Create, newPermission);
-        });
-
-
-    }
-
-    [Allow]
-    public override async UnaryResult<List<GRID_M>> ReadAll()
-    {
-
         return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
-            return await Db.Set<GRID_M>().Include(x => x.PERMISSIONS).AsNoTracking().ToListAsync();
-        });
+            var newPermission = new PERMISSIONS().SetPermissionInfo(model.CB_TITLE, Operation.Read);
+            
+            model.PERMISSIONS.Add(newPermission);
 
-        //return base.ReadAll();
-    }
+            await  Db.GRID_M.AddAsync(model);
 
-    public override  async UnaryResult<GRID_M> Update(GRID_M model)
-    {
-        return await base.Update(model).OnComplete(() =>
+            await  Db.SaveChangesAsync();
+
+            return model;
+
+        }).OnComplete(x =>
         {
-             foreach (var permission in model.PERMISSIONS)
-            {
-                PermissionPublisher.Publish(Operation.Update,permission);
-            }
-           
+            Debug.WriteLine($"Client: {Context.CallContext.Peer}");
+
+            PermissionPublisher.Publish(Context.GetClientName(), (Operation.Create, x.PERMISSIONS.First()));
         });
+ 
+    }
+ 
+    public override async UnaryResult<GRID_M> Update(GRID_M model)
+    {
+        return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>
+        {
+            var existingPermission = await Db.PERMISSIONS.FirstAsync(x => x.PER_COMPONENT_REFNO == model.CB_ROWID);
+            existingPermission.SetPermissionInfo(model.CB_TITLE, Operation.Read);
+
+            Db.Update(model);
+            await Db.SaveChangesAsync();
+
+            return model;
+
+        }).OnComplete(x =>
+        {
+            PermissionPublisher.Publish(Context.GetClientName(), (Operation.Update, x.PERMISSIONS.First()));
+
+        });
+         
     }
     public override  async UnaryResult<GRID_M> Delete(GRID_M model)
     {
-        return await base.Delete(model).OnComplete(() =>
+        var existingPermission = await Db.PERMISSIONS.AsNoTracking().FirstAsync(x => x.PER_COMPONENT_REFNO == model.CB_ROWID);
+
+        return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
-            foreach (var permission in model.PERMISSIONS)
-            {
-                PermissionPublisher.Publish(Operation.Delete, permission);
-            }
-        });
+            Db.GRID_M.Remove(model);
 
-        
+            await Db.SaveChangesAsync();
+ 
+            return model;
+        }).OnComplete((x, existingPermission) =>
+        {
+            PermissionPublisher.Publish(Context.GetClientName(), (Operation.Delete, existingPermission));
+        }, existingPermission);
+
     }
-
-
 }
 

@@ -25,8 +25,6 @@ public class GridDService : MagicBase<IGridDService, GRID_D>, IGridDService
 
         });
 
-        model.CB_IDENTIFIER = RandomStringGenerator.GenerateRandomString();
-
         return base.Create(model);
     }
 

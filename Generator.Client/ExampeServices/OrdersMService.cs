@@ -1,3 +1,4 @@
+using Generator.Client.Services.Base;
 using Generator.Examples.Shared.Models;
 using Generator.Examples.Shared.Services;
 

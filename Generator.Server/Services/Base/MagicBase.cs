@@ -1,14 +1,13 @@
-﻿using AQueryMaker;
+﻿using System.Runtime.CompilerServices;
+using AQueryMaker;
 using Generator.Server.Database;
 using Generator.Server.Helpers;
 using Generator.Server.Jwt;
-using Generator.Shared.Enums;
 using Generator.Shared.Services.Base;
 using MagicOnion;
 using MagicOnion.Serialization;
 using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
-using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -97,7 +96,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     {
         return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
-            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name} WHERE {foreignKey} = '{parentId}' ").ToListAsync();
+            return await Db.Set<TModel>().FromSqlRaw($"SELECT * FROM {typeof(TModel).Name} WHERE {foreignKey} = '{parentId}' ").AsNoTracking().ToListAsync();
         });
     }
 
@@ -139,7 +138,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     {
         return TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
-            return await Db.Set<TModel>().ToListAsync();
+            return await Db.Set<TModel>().AsNoTracking().ToListAsync();
         });
     }
 
@@ -152,6 +151,8 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
 
         return stream.Result();
     }
+
+   
 
     private async IAsyncEnumerable<List<TModel>> FetchStreamAsync(int batchSize = 10)
     {
@@ -168,12 +169,11 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
 
      }
 
-  
-
-    private static Func<TContext, int, int, Task<List<TModel>>> FetchStream =
-        EF.CompileAsyncQuery(
-            (TContext context, int skip, int take) =>
-                context.Set<TModel>().AsNoTracking().Skip(skip).Take(take).ToList());
+    // [Obsolete(message:"This method is meant to be used from the client side, do not call")]
+    //public TService SetToken(byte[] token)
+    //{
+    //    throw new NotImplementedException();
+    //}
+}
 
  
-}

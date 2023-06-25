@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Generator.Client;
+﻿using Generator.Client.Services;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ComponentModels.Abstracts;
+using Generator.Shared.Services;
 using Generator.Shared.Services.Base;
-using Grpc.Core;
-using MagicOnion;
 using Mapster;
 
 namespace Generator.UI.Extensions;
@@ -45,15 +43,15 @@ public static class DbServiceExtensions
     //}
 
 
-    public static async Task FillAsync<TModel, TService, TIService>(this IServiceProvider provider) where TService : IGenericService<TIService, TModel>
+    public static async Task FillAsync<TModel, TIService>(this IServiceProvider provider)
+        where TIService : IGenericService<TIService, TModel>
     {
-   
-        ///Wait for server to run
-        using var scope = provider.CreateAsyncScope();
+        //Wait for server to run
+        await using var scope = provider.CreateAsyncScope();
 
         var tableToFill = scope.ServiceProvider.GetService<List<TModel>>();
 
-        var service = scope.ServiceProvider.GetService<TService>();
+        var service = scope.ServiceProvider.GetService<TIService>();
 
         var result = await service.ReadAll();
 
@@ -65,9 +63,9 @@ public static class DbServiceExtensions
 
     public static async Task FillAsync<TModel>(this IServiceProvider provider,string Database, params KeyValuePair<string, object>[] Where)
 	{
-        ///Wait for server to run
+        //Wait for server to run
         await Task.Delay(10000);
-        using var scope = provider.CreateAsyncScope();
+        await using var scope = provider.CreateAsyncScope();
 
         var tableToFill = scope.ServiceProvider.GetService<List<TModel>>();
 

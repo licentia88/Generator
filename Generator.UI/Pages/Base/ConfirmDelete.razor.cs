@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.UI.Pages.Base;

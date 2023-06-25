@@ -5,6 +5,7 @@ using MagicOnion;
 using MagicOnion.Server;
 using MagicOnion.Server.Filters;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Generator.Server.FIlters;
 
@@ -63,12 +64,4 @@ public class MAuthorizeAttribute : Attribute, IMagicOnionFilterFactory<IMagicOni
         return fastJwtTokenService.DecodeToken(tokenHeader.ValueBytes, _Roles);
     }
 
-}
-
-public class AllowAttribute : MagicOnionFilterAttribute
-{
-    public override async ValueTask Invoke(ServiceContext context, Func<ServiceContext, ValueTask> next)
-    {
-        await next(context);
-    }
 }

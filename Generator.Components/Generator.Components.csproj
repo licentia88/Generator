@@ -58,8 +58,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Extensions\" />
     <Folder Include="Validators\" />
-    <Folder Include="Manager\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
   

@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Equals;
 using Generator.Shared.Models.ComponentModels.Abstracts;
 using MemoryPack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
+[Equatable]
 [MemoryPackable]
 [Table(nameof(ROLES))]
 public partial class ROLES : AUTH_BASE

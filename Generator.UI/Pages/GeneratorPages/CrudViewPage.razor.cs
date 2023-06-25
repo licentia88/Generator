@@ -23,7 +23,7 @@ public partial class CrudViewPage
 
     private IGenView<CRUD_VIEW> genView;
 
-    public override async Task Load(IGenView<CRUD_VIEW> view)
+    protected override async Task Load(IGenView<CRUD_VIEW> view)
     {
         genView = view;
 

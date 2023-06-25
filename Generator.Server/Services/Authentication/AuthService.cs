@@ -3,7 +3,6 @@ using Generator.Server.Services.Base;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Services;
 using MagicOnion;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Generator.Server.Services.Authentication;
 

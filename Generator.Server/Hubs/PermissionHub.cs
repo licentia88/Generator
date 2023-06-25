@@ -1,42 +1,43 @@
-﻿using Generator.Server.Helpers;
-using Generator.Shared.Enums;
+﻿using Generator.Server.FIlters;
+using Generator.Server.Helpers;
+using Generator.Server.Hubs.Base;
 using Generator.Shared.Hubs;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ServiceModels;
-using MessagePipe;
 using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Hubs;
 
-public class PermissionHub : MagicHubBase<IPermissionsHub, IPermissionReceiver, PERMISSIONS>, IPermissionsHub
+ public class PermissionHub : MagicHubBase<IPermissionsHub, IPermissionReceiver, PERMISSIONS>, IPermissionsHub
 {
     public PermissionHub(IServiceProvider provider) : base(provider)
     {
-        Subscriber.Subscribe(Operation.Create, (PERMISSIONS obj) =>
-        {
-            Collection.Add(obj);
-            Broadcast(Room).OnCreate(obj);
-        });
 
-        Subscriber.Subscribe(Operation.Update, (PERMISSIONS obj) =>
-        {
-            var result = Collection.Find(x => x.AUTH_ROWID == obj.AUTH_ROWID);
+        //Subscriber.sub(PipeData, (PERMISSIONS obj) =>
+        //{
+        //    Console.WriteLine();
+        //});
+        //Subscriber.Subscribe(Operation.Create, model =>
+        //{
+        //    Collection.Add(model);
+        //    Broadcast(Room).OnCreate(model);
+        //});
 
-            var index = Collection.IndexOf(result);
+        //Subscriber.Subscribe(Operation.Update, model =>
+        //{
+        //    var index = Collection.IndexOf(model);
 
-            Collection[index] = obj;
+        //    Collection[index] = model;
 
-            Broadcast(Room).OnCollectionChanged(Collection);
-        });
+        //    Broadcast(Room).OnUpdate(model);
+        //});
 
-        Subscriber.Subscribe(Operation.Delete, (PERMISSIONS obj) =>
-        {
-            var result = Collection.Find(x => x.AUTH_ROWID == obj.AUTH_ROWID);
+        //Subscriber.Subscribe(Operation.Delete, model =>
+        //{
+        //    Collection.Remove(model);
 
-            Collection.Remove(result);
-
-            Broadcast(Room).OnCollectionChanged(Collection);
-        });
+        //    Broadcast(Room).OnDelete(model);
+        //});
     }
 
     public override async Task<RESPONSE_RESULT<List<PERMISSIONS>>> ReadAsync()
@@ -52,5 +53,3 @@ public class PermissionHub : MagicHubBase<IPermissionsHub, IPermissionReceiver, 
         
     }
 }
- 
-

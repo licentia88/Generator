@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Equals;
 using MemoryPack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
+[Equatable]
 [MemoryPackable]
 public partial class ROLES_DETAILS
 {

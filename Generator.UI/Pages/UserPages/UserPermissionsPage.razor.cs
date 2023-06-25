@@ -1,5 +1,6 @@
 ﻿using System;
 using Generator.Client;
+using Generator.Client.Services;
 using Generator.Shared.Models.ComponentModels;
 using Microsoft.AspNetCore.Components;
 

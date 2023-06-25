@@ -1,19 +1,21 @@
 ﻿using Generator.Client.ExampeServices;
+using Generator.Client.Hubs;
 using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
-using Generator.Examples.Shared;
 using Generator.Examples.Shared.Models;
-using Generator.Examples.Shared.Services;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models.ComponentModels;
-using Generator.Shared.Models.ServiceModels;
 using Microsoft.AspNetCore.Components;
 
 namespace Generator.Example.Pages;
 
 public partial class Users
 {
+    [Inject]
+    public PermissionHub PermissionHub { get; set; }
+
+
     [Inject]
     public UserService UserService { get; set; }
 

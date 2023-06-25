@@ -1,7 +1,4 @@
-﻿using Generator.Components.Components;
-using Generator.Shared.Models.ComponentModels;
-using Generator.Shared.Models.ComponentModels.NonDB;
-using Generator.UI.Models;
+﻿using Generator.UI.Models;
 
 namespace Generator.UI.Helpers;
 

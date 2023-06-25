@@ -1,12 +1,4 @@
-﻿using System.Data.Common;
-using System.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Oracle.ManagedDataAccess.Client;
-using QueryMaker.Interfaces;
-using QueryMaker.MSSql;
-using QueryMaker.Oracle;
-
-namespace QueryMaker.Helpers;
+﻿namespace QueryMaker.Helpers;
 
 public class ConnectionHelpers
 {

@@ -6,6 +6,7 @@ using Generator.Server.Seed;
 using Grpc.Net.Client;
 using LitJWT;
 using LitJWT.Algorithms;
+using MagicOnion;
 using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
 using MessagePipe;
@@ -21,11 +22,10 @@ builder.Services.AddMagicOnion(x => {
     x.IsReturnExceptionStackTraceInErrorDetail = true;
     //x.EnableCurrentContext = true;
     x.MessageSerializer = MemoryPackMagicOnionSerializerProvider.Instance;
- } );
+} );
 
 builder.Services.AddMessagePipe();
- 
- 
+
 
 builder.Services.AddDbContext<TestContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnection("DefaultConnection")));

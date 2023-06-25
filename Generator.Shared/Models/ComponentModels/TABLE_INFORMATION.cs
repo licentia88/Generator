@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Generator.Shared.Models.ComponentModels.NonDB;
+using Generator.Equals;
 using MemoryPack;
-using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
+[Equatable]
 [NotMapped]
 [MemoryPackable]
 // ReSharper disable once InconsistentNaming

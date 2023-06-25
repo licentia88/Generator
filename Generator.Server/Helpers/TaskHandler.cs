@@ -1,11 +1,7 @@
-﻿using System.Threading.Tasks.Sources;
-using Generator.Server.Exceptions;
-using Generator.Shared.Enums;
+﻿using Generator.Server.Exceptions;
 using Generator.Shared.Models.ServiceModels;
 using Grpc.Core;
 using MagicOnion;
-using MessagePipe;
-using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Helpers;
 
@@ -14,7 +10,7 @@ namespace Generator.Server.Helpers;
 /// </summary>
 public static class TaskHandler
 {
-    private static DbExceptionHandler exceptionHandler = new DbExceptionHandler();
+    private static readonly DbExceptionHandler ExceptionHandler = new();
 
     /// <summary>
     /// Executes an asynchronous task and wraps the result in a <see cref="RESPONSE_RESULT{T}"/> object.
@@ -127,7 +123,7 @@ public static class TaskHandler
 
     private static string HandleException(Exception ex)
     {
-        return exceptionHandler.HandleException(ex);
+        return ExceptionHandler.HandleException(ex);
     }
 
     //public static async Task<UnaryResult<T>> OnComplete<T>(this UnaryResult<T> result, Action<Task> action)
@@ -138,15 +134,41 @@ public static class TaskHandler
     //}
 
 
+    public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Func<T, Task> action)
+    {
+        var data = await result;
+
+        await action.Invoke(data);
+
+        return data;
+    }
+
+    public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Action<T> action)
+    {
+        var data = await result;
+
+        action.Invoke(data);
+
+        return data;
+    }
+
+    public static async Task<T> OnComplete<T, TArg>(this UnaryResult<T> result, Action<T, TArg> action, TArg arg)
+    {
+        var data = await result;
+        action.Invoke(data, arg);
+        return data;
+    }
+
     public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Action action)
     {
         var data = await result;
+
         action.Invoke();
 
         return data;
     }
 
-    
+
 
 }
 

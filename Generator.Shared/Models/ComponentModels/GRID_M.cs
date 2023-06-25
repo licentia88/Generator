@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Formats.Asn1;
+using Generator.Equals;
+using Generator.Shared.Helpers;
 using Generator.Shared.Models.ComponentModels.Abstracts;
 using MemoryPack;
-using MessagePack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
@@ -14,6 +14,7 @@ public partial interface IGridRef
     public ICollection<GRID_D> GRID_D { get; set; }
 }
 
+[Equatable]
 [MemoryPackable]
 [Table(nameof(GRID_M))]
 public partial class GRID_M : GRID_BASE, IGridRef
@@ -21,6 +22,7 @@ public partial class GRID_M : GRID_BASE, IGridRef
     public GRID_M()
     {
         CB_TYPE = nameof(GRID_M);
+        CB_IDENTIFIER = RandomStringGenerator.GenerateRandomString('G');
     }
 
     [ForeignKey(nameof(ComponentModels.GRID_D.GD_M_REFNO))]

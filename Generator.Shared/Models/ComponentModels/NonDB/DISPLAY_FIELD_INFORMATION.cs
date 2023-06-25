@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using MemoryPack;
-using MessagePack;
+
 namespace Generator.Shared.Models.ComponentModels.NonDB;
 
 [NotMapped]

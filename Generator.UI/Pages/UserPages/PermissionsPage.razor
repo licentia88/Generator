@@ -1,7 +1,7 @@
 ﻿@page "/Permissions"
 
 
-@inherits PagesBase<GRID_M,PERMISSIONS, PermissionsService, IPermissionsService>
+@inherits ServicePageBase<GRID_M,PERMISSIONS, IPermissionsService>
 
 @{
     if (whereClause is null) return;
@@ -33,7 +33,7 @@
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
        
 
-        <GenTextField BindingField="@nameof(PERMISSIONS.Description)"
+        <GenTextField BindingField="@nameof(PERMISSIONS.PER_DESCRIPTION)"
                       Label="Description"
                       EditorEnabled="false"
                       Lines="4"

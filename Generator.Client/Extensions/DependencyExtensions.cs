@@ -9,12 +9,8 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using Generator.Client.ExampeServices;
 using Generator.Shared.Services.Base;
-using Generator.Shared.Services;
-using Generator.Shared.Models.ComponentModels;
-using MagicOnion;
-using System.Reflection;
-using Generator.Client;
-using Generator.Client.Hubs.Base;
+using Generator.Client.Hubs;
+using AutoRegisterInject..AutoRegisterInject;
 
 namespace Generator.Client.Extensions;
 
@@ -24,26 +20,18 @@ public static class DependencyExtensions
 
     public static void AddMagicServices(this IServiceCollection Services)
     {
+        Services.AutoRegisterFromGeneratorClient();
+        Services.BuildServiceProvider();
         Services.AddSingleton(typeof(List<>));
-        //Services.AddSingleton<ComponentsBaseService>();
-        Services.AddSingleton<DatabaseService>();
-        Services.AddSingleton<GRidCrudViewService>();
-        Services.AddSingleton<GridFieldsService>();
-        Services.AddSingleton<GridMService>();
-        Services.AddSingleton<GridDService>();
-        Services.AddSingleton<AuthService>();
-        Services.AddSingleton<UserAuthorizationsService>();
-        Services.AddSingleton<UsersService>();
-        Services.AddSingleton<PermissionsService>();
-        Services.AddSingleton<RolesService>();
-        Services.AddSingleton<RolesDetailsService>();
-        Services.AddSingleton<SeedService>();
+        
+    }
 
+    public static void AddMagicHubs(this IServiceCollection Services)
+    {
         Services.AddSingleton<PermissionHub>();
-        Services.AddSingleton<ComponentsHub>();
         Services.AddSingleton<GridMHub>();
-
- 
+        Services.AddSingleton<RolesHub>();
+        Services.AddSingleton<UsersHub>();
     }
 
 

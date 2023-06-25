@@ -2,20 +2,21 @@
 
 namespace Generator.Shared.Services.Base;
 
-/// <summary>
-/// This interface is for Composition purpose
-/// </summary>
-public interface IClientService
-{
-    
-}
+///// <summary>
+///// This interface is for Composition purpose
+///// </summary>
+//public interface IClientService<TService>
+//{
+
+//    TService SetToken(byte[] token);
+//}
 
 /// <summary>
 /// Represents a generic service with CRUD operations.
 /// </summary>
 /// <typeparam name="TService">The type of service.</typeparam>
 /// <typeparam name="TModel">The type of model.</typeparam>
-public interface IGenericService<TService, TModel> : IService<TService>, IClientService
+public interface IGenericService<TService, TModel> : IService<TService> 
 {
     /// <summary>
     /// Creates a new instance of the specified model.
@@ -64,4 +65,5 @@ public interface IGenericService<TService, TModel> : IService<TService>, IClient
     UnaryResult<TModel> Delete(TModel model);
 
 
+    //TService SetToken(byte[] token);
 }

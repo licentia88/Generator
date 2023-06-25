@@ -1,5 +1,4 @@
-﻿using System;
-namespace Generator.UI.Enums
+﻿namespace Generator.UI.Enums
 {
 	public enum ComponentTypes
 	{

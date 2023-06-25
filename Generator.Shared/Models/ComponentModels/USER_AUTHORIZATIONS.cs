@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Generator.Equals;
 using Generator.Shared.Models.ComponentModels.Abstracts;
 using MemoryPack;
 
 namespace Generator.Shared.Models.ComponentModels;
 
+[Equatable]
 [MemoryPackable]
 public partial class USER_AUTHORIZATIONS
 {

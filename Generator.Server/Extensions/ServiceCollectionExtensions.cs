@@ -2,12 +2,20 @@
 using Generator.Server.Helpers;
 using Generator.Server.OptionsTemplates;
 using AQueryMaker;
-using Generator.Shared.Models.ComponentModels;
 using Generator.Server.Seed;
-using Microsoft.EntityFrameworkCore;
-using Generator.Server.Database;
+using MagicOnion.Server.Hubs;
+using Grpc.Core;
+using MagicOnion.Server;
 
 namespace Generator.Server.Extensions;
+
+public static class HubExtensions {
+
+    public static string GetClientName(this ServiceContext context) {
+        return context.CallContext.RequestHeaders.FirstOrDefault(x => x.Key == "client").Value;
+    }
+}
+
 
  
 public static class ServiceCollectionExtensions

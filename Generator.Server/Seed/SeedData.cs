@@ -1,5 +1,4 @@
-﻿using System;
-using Generator.Server.Database;
+﻿using Generator.Server.Database;
 using Generator.Shared.Models.ComponentModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;

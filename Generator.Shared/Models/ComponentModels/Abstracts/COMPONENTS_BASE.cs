@@ -1,10 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Formats.Asn1;
 using MemoryPack;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Generator.Shared.Models.ComponentModels.Abstracts;
 

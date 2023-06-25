@@ -1,12 +1,9 @@
 ﻿using Generator.Shared.Services;
 using MudBlazor.Services;
-using Generator.Examples.Shared;
 using Generator.Components.Extensions;
-using Generator.Client;
-using System.Net;
 using Generator.Examples.Shared.Models;
-using Generator.Examples.Shared.Services;
 using Generator.Client.Extensions;
+using Generator.Client.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +16,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 builder.Services.RegisterGeneratorComponents();
 builder.Services.AddSingleton<Lazy<List<USER>>>();
+builder.Services.AddMagicHubs();
 //builder.Services.AddSingleton<InjectionClass>();
  builder.Services.RegisterExampleServices();
 
@@ -32,7 +30,10 @@ builder.Services.AddSingleton<Lazy<List<USER>>>();
 
 
 var app = builder.Build();
+await Task.Delay(5000);
 
+
+await app.Services.GetRequiredService<PermissionHub>().ConnectAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

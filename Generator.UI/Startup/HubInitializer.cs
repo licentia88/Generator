@@ -1,6 +1,4 @@
-﻿using System;
-using Generator.Client;
-using Generator.Client.Hubs.Base;
+﻿using Generator.Client.Hubs;
 
 namespace Generator.UI.Startup;
 
@@ -8,31 +6,29 @@ public class HubInitializer
 {
     public IServiceProvider Provider { get; }
 
-    public GridMHub GridMHub { get;  }
+    private GridMHub GridMHub { get;  }
 
-    public ComponentsHub ComponentsHub { get;  }
-
-    public PermissionHub PermissionHub { get;  }
+    private PermissionHub PermissionHub { get;  }
 
     public HubInitializer(IServiceProvider provider)
 	{
         Provider = provider;
 
         GridMHub = provider.GetRequiredService<GridMHub>();
-        ComponentsHub = provider.GetRequiredService<ComponentsHub>();
         PermissionHub = provider.GetRequiredService<PermissionHub>();
        
     }
 
-    public async Task ReadFromHubs()
+    public async Task ReadAsync()
+    {
+        await GridMHub.ReadAsync();
+        await PermissionHub.ReadAsync();
+    }
+
+    public async Task ConnectAsync()
     {
         await GridMHub.ConnectAsync();
-        await ComponentsHub.ConnectAsync();
         await PermissionHub.ConnectAsync();
-
-        await GridMHub.ReadAsync();
-        await ComponentsHub.ReadAsync();
-        await PermissionHub.ReadAsync();
     }
 }
 

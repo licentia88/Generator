@@ -48,21 +48,24 @@ public class GridMService : MagicBase<IGridMService, GRID_M>, IGridMService
  
     public override async UnaryResult<GRID_M> Update(GRID_M model)
     {
+        var existingPermission = await Db.PERMISSIONS.AsNoTracking().FirstAsync(x => x.PER_COMPONENT_REFNO == model.CB_ROWID);
+        existingPermission.SetPermissionInfo(model.CB_TITLE, Operation.Read);
+
         return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>
         {
-            var existingPermission = await Db.PERMISSIONS.FirstAsync(x => x.PER_COMPONENT_REFNO == model.CB_ROWID);
-            existingPermission.SetPermissionInfo(model.CB_TITLE, Operation.Read);
 
-            Db.Update(model);
+            Db.PERMISSIONS.Update(existingPermission);
+            Db.GRID_M.Update(model);
             await Db.SaveChangesAsync();
 
             return model;
 
-        }).OnComplete(x =>
+        }).OnComplete((x,y) =>
         {
-            PermissionPublisher.Publish(Context.GetClientName(), (Operation.Update, x.PERMISSIONS.First()));
+            PermissionPublisher.Publish(Context.GetClientName(), (Operation.Update, y));
 
-        });
+            
+        }, existingPermission);
          
     }
     public override  async UnaryResult<GRID_M> Delete(GRID_M model)

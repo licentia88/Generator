@@ -13,7 +13,7 @@ namespace Generator.UI.Pages.UserPages
 
         protected override async Task OnInitializedAsync()
         {
-            await PermissionHub.StreamReadAsync();
+            await PermissionHub.ReadAsync();
 
             if (ParentModel is not null)
                 whereClause = x => x.PER_COMPONENT_REFNO == ParentModel.CB_ROWID;

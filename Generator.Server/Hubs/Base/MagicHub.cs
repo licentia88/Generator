@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using AQueryMaker;
+﻿using AQueryMaker;
 using Generator.Server.Database;
 using Generator.Server.Extensions;
-using Generator.Server.FIlters;
 using Generator.Server.Helpers;
 using Generator.Server.Jwt;
 using Generator.Shared.Enums;
@@ -63,18 +61,37 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
         FastJwtTokenService = provider.GetService<FastJwtTokenService>();
         ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
         Subscriber = provider.GetService<ISubscriber<string, (Operation, TModel)>>();
-
-       }
+        //Collection = provider.GetService<List<TModel>>();
+    }
 
     public async Task ConnectAsync()
     {
         Collection = new List<TModel>();
         (Room, Storage) = await Group.AddAsync(typeof(TModel).Name, Collection);
 
-        var disposable = Subscriber.Subscribe(Context.GetClientName(), ((Operation operation, TModel model) data) => {
+        var disposable = Subscriber.Subscribe(Context.GetClientName(), ((Operation operation, TModel model) data) =>
+        {
 
-            Collection.Add(data.model);
-            Broadcast(Room).OnCreate(data.model);
+            if (data.operation == Operation.Create)
+            {
+                Collection.Add(data.model);
+                Broadcast(Room).OnCreate(data.model);
+            }
+
+            if (data.operation == Operation.Update)
+            {
+                var index = Collection.IndexOf(data.model);
+
+                Collection[index] = data.model;
+                Broadcast(Room).OnUpdate(data.model);
+            }
+
+            if (data.operation == Operation.Delete)
+            {
+                Collection.Remove(data.model);
+                Broadcast(Room).OnDelete(data.model);
+            }
+
 
         });
         
@@ -116,7 +133,13 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
     {
         return await TaskHandler.ExecuteAsync(async () =>
         {
+           
             var data = await Db.Set<TModel>().AsNoTracking().ToListAsync();
+
+            Collection.AddRange(data);
+            Broadcast(Room).OnRead(Collection);
+
+            return Collection;
 
             var uniqueData = data.Except(Collection).ToList();
 
@@ -133,6 +156,7 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
         await foreach (var data in FetchStreamAsync(batchSize))
         {
             var uniqueData = data.Except(Collection).ToList();
+            if (uniqueData.Count == 0) continue;
 
             Broadcast(Room).OnStreamRead(uniqueData);
 

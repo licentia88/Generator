@@ -21,7 +21,7 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 
     private IPublisher<Operation,List<TModel>> ListPublisher { get; set; }
 
-    private List<TModel> Collection { get; set; }
+    public List<TModel> Collection { get; set; }
 
     public MagicHubBase(IServiceProvider provider)
     {
@@ -41,33 +41,29 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
         await Client.ConnectAsync();
      }
 
-    public virtual void OnCreate(TModel model)
+    void IHubReceiverBase<TModel>.OnCreate(TModel model)
     {
-        var aass = Assembly.GetEntryAssembly();
         Collection.Add(model);
 
         ModelPublisher.Publish(Operation.Create, model);
     }
 
-    public virtual void OnRead(List<TModel> collection)
+    void IHubReceiverBase<TModel>.OnRead(List<TModel> collection)
     {
-        var aass = Assembly.GetEntryAssembly();
-
         Collection.AddRange(collection);
 
         ListPublisher.Publish(Operation.Read,Collection);
     }
 
-    public void OnStreamRead(List<TModel> collection)
+    void IHubReceiverBase<TModel>.OnStreamRead(List<TModel> collection)
     {
-        var aass = Assembly.GetEntryAssembly();
-                Collection.AddRange(collection);
+        Collection.AddRange(collection);
 
         ListPublisher.Publish(Operation.Stream,collection);
     }
 
 
-    public virtual void OnUpdate(TModel model)
+    void IHubReceiverBase<TModel>.OnUpdate(TModel model)
     {
         var index = Collection.IndexOf(model);
 
@@ -76,14 +72,14 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
         ModelPublisher.Publish(Operation.Update, model);
     }
 
-    public virtual void OnDelete(TModel model)
+    void IHubReceiverBase<TModel>.OnDelete(TModel model)
     {
         Collection.Remove(model);
 
         ModelPublisher.Publish(Operation.Delete, model);
     }
 
-    public void OnCollectionChanged(List<TModel> collection)
+    void IHubReceiverBase<TModel>.OnCollectionChanged(List<TModel> collection)
     {
         Collection.Clear();
         Collection.AddRange(collection);
@@ -95,7 +91,6 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 
     public async Task StreamReadAsync()
     {
-         Collection.Clear();
          await Client.StreamReadAsync(1);
     }
 

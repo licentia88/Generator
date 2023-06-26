@@ -10,7 +10,6 @@ using System.Security.Cryptography.X509Certificates;
 using Generator.Client.ExampeServices;
 using Generator.Shared.Services.Base;
 using Generator.Client.Hubs;
-using AutoRegisterInject..AutoRegisterInject;
 
 namespace Generator.Client.Extensions;
 

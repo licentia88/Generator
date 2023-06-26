@@ -4,7 +4,7 @@ using Generator.Shared.Models.ComponentModels;
 
 namespace Generator.Client.Hubs;
 
-public class RolesHub : MagicHubBase<IRolesHub, IRolesReceiver, ROLES>, IRolesReceiver
+public class RolesHub : MagicHubClientBase<IRolesHub, IRolesReceiver, ROLES>, IRolesReceiver
 {
     public RolesHub(IServiceProvider provider) : base(provider)
     {

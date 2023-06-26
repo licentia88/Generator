@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Hubs;
 
- public class PermissionHub : MagicHubBase<IPermissionsHub, IPermissionReceiver, PERMISSIONS>, IPermissionsHub
+ public class PermissionHub : MagicHubServerBase<IPermissionsHub, IPermissionReceiver, PERMISSIONS>, IPermissionsHub
 {
     public PermissionHub(IServiceProvider provider) : base(provider)
     {

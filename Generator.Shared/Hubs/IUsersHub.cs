@@ -3,10 +3,10 @@ using Generator.Shared.Models.ComponentModels;
 
 namespace Generator.Shared.Hubs;
 
-public interface IUsersHub : IHubBase<IUsersHub, IUsersReceiver, USERS>
+public interface IUsersHub : IMagicHub<IUsersHub, IUsersReceiver, USERS>
 {
 }
 
-public interface IUsersReceiver : IHubReceiverBase<USERS>
+public interface IUsersReceiver : IMagicReceiver<USERS>
 {
 }

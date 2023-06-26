@@ -57,7 +57,7 @@
     <PackageReference Include="FsPickler.Json" Version="5.3.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.6" />
     
-    <PackageReference Include="MagicOnion.Shared" Version="5.1.6" />
+    <PackageReference Include="MagicOnion.Shared" Version="5.1.8" />
     <PackageReference Include="MemoryPack" Version="1.9.16" />
     <PackageReference Include="MemoryPack.Generator" Version="1.9.16">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

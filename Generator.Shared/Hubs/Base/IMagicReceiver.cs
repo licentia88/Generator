@@ -3,7 +3,7 @@
 namespace Generator.Shared.Hubs.Base;
 
 
-public interface IHubReceiverBase<TModel>
+public interface IMagicReceiver<TModel>
 {
     void OnCreate(TModel model);
 

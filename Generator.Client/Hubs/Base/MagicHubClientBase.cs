@@ -11,9 +11,9 @@ using Grpc.Core;
 
 namespace Generator.Client.Hubs.Base;
 
-public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<TModel>
-    where THub : IHubBase<THub, TReceiver,TModel> 
-    where TReceiver : class, IHubReceiverBase<TModel>
+public abstract class MagicHubClientBase<THub, TReceiver, TModel> : IMagicReceiver<TModel>
+    where THub : IMagicHub<THub, TReceiver,TModel> 
+    where TReceiver : class, IMagicReceiver<TModel>
 {
     protected THub Client;
 
@@ -23,7 +23,7 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
 
     public List<TModel> Collection { get; set; }
 
-    public MagicHubBase(IServiceProvider provider)
+    public MagicHubClientBase(IServiceProvider provider)
     {
         Collection = provider.GetService<List<TModel>>();
         ModelPublisher = provider.GetService<IPublisher<Operation,TModel>>();
@@ -41,21 +41,21 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
         await Client.ConnectAsync();
      }
 
-    void IHubReceiverBase<TModel>.OnCreate(TModel model)
+    void IMagicReceiver<TModel>.OnCreate(TModel model)
     {
         Collection.Add(model);
 
         ModelPublisher.Publish(Operation.Create, model);
     }
 
-    void IHubReceiverBase<TModel>.OnRead(List<TModel> collection)
+    void IMagicReceiver<TModel>.OnRead(List<TModel> collection)
     {
         Collection.AddRange(collection);
 
         ListPublisher.Publish(Operation.Read,Collection);
     }
 
-    void IHubReceiverBase<TModel>.OnStreamRead(List<TModel> collection)
+    void IMagicReceiver<TModel>.OnStreamRead(List<TModel> collection)
     {
         Collection.AddRange(collection);
 
@@ -63,7 +63,7 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
     }
 
 
-    void IHubReceiverBase<TModel>.OnUpdate(TModel model)
+    void IMagicReceiver<TModel>.OnUpdate(TModel model)
     {
         var index = Collection.IndexOf(model);
 
@@ -72,14 +72,14 @@ public abstract class MagicHubBase<THub, TReceiver, TModel> : IHubReceiverBase<T
         ModelPublisher.Publish(Operation.Update, model);
     }
 
-    void IHubReceiverBase<TModel>.OnDelete(TModel model)
+    void IMagicReceiver<TModel>.OnDelete(TModel model)
     {
         Collection.Remove(model);
 
         ModelPublisher.Publish(Operation.Delete, model);
     }
 
-    void IHubReceiverBase<TModel>.OnCollectionChanged(List<TModel> collection)
+    void IMagicReceiver<TModel>.OnCollectionChanged(List<TModel> collection)
     {
         Collection.Clear();
         Collection.AddRange(collection);

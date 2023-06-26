@@ -4,7 +4,7 @@ using Generator.Shared.Models.ComponentModels;
 
 namespace Generator.Client.Hubs;
 
-public class GridMHub : MagicHubBase<IGridMHub, IGridMReceiver, GRID_M>, IGridMReceiver
+public class GridMHub : MagicHubClientBase<IGridMHub, IGridMReceiver, GRID_M>, IGridMReceiver
 {
     public GridMHub(IServiceProvider provider) : base(provider)
     {

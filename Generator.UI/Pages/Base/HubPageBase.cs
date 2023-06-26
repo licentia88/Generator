@@ -15,8 +15,8 @@ namespace Generator.UI.Pages.Base;
 
 public abstract class HubPageBase<THub, THubReceiver,TModel> : PageBaseClass
 where TModel:new()
-where THub : IHubBase<THub, THubReceiver,TModel>
-where THubReceiver: class, IHubReceiverBase<TModel> 
+where THub : IMagicHub<THub, THubReceiver,TModel>
+where THubReceiver: class, IMagicReceiver<TModel> 
 {
     [Inject]
     protected THub Service { get; set; }

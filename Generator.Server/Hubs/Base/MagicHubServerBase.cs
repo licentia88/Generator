@@ -15,19 +15,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Hubs.Base;
 
-public class MagicHubBase<THub, TReceiver, TModel> : MagicHubBase<THub, TReceiver, TModel, GeneratorContext>//, IHubBase<THub, TReceiver, TModel>
+public class MagicHubServerBase<THub, TReceiver, TModel> : MagicHubServerBase<THub, TReceiver, TModel, GeneratorContext>//, IHubBase<THub, TReceiver, TModel>
     where THub : IStreamingHub<THub, TReceiver>
-    where TReceiver : IHubReceiverBase<TModel>
+    where TReceiver : IMagicReceiver<TModel>
     where TModel:class, new()
 {
-    public MagicHubBase(IServiceProvider provider) : base(provider)
+    public MagicHubServerBase(IServiceProvider provider) : base(provider)
     {
     }
 }
 
-public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<THub, TReceiver>, IHubBase<THub, TReceiver, TModel>
+public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<THub, TReceiver>, IMagicHub<THub, TReceiver, TModel>
     where THub : IStreamingHub<THub, TReceiver>
-    where TReceiver : IHubReceiverBase<TModel>
+    where TReceiver : IMagicReceiver<TModel>
     where TContext : DbContext
     where TModel : class, new()
 {
@@ -55,7 +55,7 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
     /// <param name="connectionName">The name of the connection.</param>
     /// <returns>An instance of SqlQueryFactory.</returns>
     protected SqlQueryFactory GetDatabase(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
-    public MagicHubBase(IServiceProvider provider)
+    public MagicHubServerBase(IServiceProvider provider)
     {
         Db = provider.GetService<TContext>();
         FastJwtTokenService = provider.GetService<FastJwtTokenService>();
@@ -136,16 +136,12 @@ public class MagicHubBase<THub, TReceiver, TModel, TContext> : StreamingHubBase<
            
             var data = await Db.Set<TModel>().AsNoTracking().ToListAsync();
 
-            Collection.AddRange(data);
-            Broadcast(Room).OnRead(Collection);
-
-            return Collection;
-
             var uniqueData = data.Except(Collection).ToList();
+            if (uniqueData.Count == 0) {
+                Broadcast(Room).OnRead(uniqueData);
 
-            Broadcast(Room).OnRead(uniqueData);
-
-            Collection.AddRange(uniqueData);
+                Collection.AddRange(uniqueData);
+            }
 
             return Collection;
         });

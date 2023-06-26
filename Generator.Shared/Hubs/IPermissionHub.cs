@@ -3,12 +3,12 @@ using Generator.Shared.Models.ComponentModels;
 
 namespace Generator.Shared.Hubs;
 
-public interface IPermissionsHub : IHubBase<IPermissionsHub,IPermissionReceiver,PERMISSIONS>
+public interface IPermissionsHub : IMagicHub<IPermissionsHub,IPermissionReceiver,PERMISSIONS>
 {
     
 }
 
-public interface IPermissionReceiver:IHubReceiverBase<PERMISSIONS>  
+public interface IPermissionReceiver:IMagicReceiver<PERMISSIONS>  
 {
    
 }

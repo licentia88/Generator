@@ -9,7 +9,7 @@ using MessagePipe;
 
 namespace Generator.Server.Hubs;
 
-public class GridMHub : MagicHubBase<IGridMHub, IGridMReceiver, GRID_M>, IGridMHub
+public class GridMHub : MagicHubServerBase<IGridMHub, IGridMReceiver, GRID_M>, IGridMHub
 {
      public IPublisher<Operation,PERMISSIONS> PermissionPublisher { get; set; }
 

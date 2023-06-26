@@ -3,7 +3,7 @@ using MagicOnion;
 
 namespace Generator.Shared.Hubs.Base;
 
-public interface IHubBase<THub, TReceiver, TModel>: IStreamingHub<THub, TReceiver>
+public interface IMagicHub<THub, TReceiver, TModel>: IStreamingHub<THub, TReceiver>
 {
     Task ConnectAsync();
 

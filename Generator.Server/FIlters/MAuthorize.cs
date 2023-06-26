@@ -5,7 +5,6 @@ using MagicOnion;
 using MagicOnion.Server;
 using MagicOnion.Server.Filters;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Generator.Server.FIlters;
 

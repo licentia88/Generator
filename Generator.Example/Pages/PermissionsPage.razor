@@ -1,0 +1,19 @@
+﻿@page "/Permissions"
+
+
+<GenGrid DataSource="PermissionHub.Collection" EditMode="EditMode.Form" Title="Permissions Test View">
+
+    <GenColumns>
+        <GenTextField BindingField="@(nameof(PERMISSIONS.AUTH_NAME))" />
+        <GenTextField BindingField="@(nameof(PERMISSIONS.AUTH_TYPE))" />
+    </GenColumns>
+
+</GenGrid>
+
+
+
+@code{
+
+    [Inject]
+    public PermissionHub PermissionHub { get; set; }
+}

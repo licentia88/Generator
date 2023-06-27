@@ -461,11 +461,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             {
                 case ViewState.Create when Create.HasDelegate:
 
-                    DataSource.Remove(SelectedItem);
+                    //DataSource.Remove(SelectedItem);
 
                     await Create.InvokeAsync(new GenArgs<TModel>(model,OriginalEditItem, this.index));
 
- 
+                    DataSource.Remove(SelectedItem);
+
                     break;
 
                 case ViewState.Update when Update.HasDelegate:

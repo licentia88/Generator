@@ -35,7 +35,7 @@ public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHu
 
     public List<TModel> Collection { get; set; }
 
-    protected IInMemoryStorage<List<TModel>> Storage;
+    //protected IInMemoryStorage<List<TModel>> Storage;
 
     protected ISubscriber<string,(Operation operation, TModel model)> Subscriber { get; }
 
@@ -67,11 +67,13 @@ public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHu
     public async Task ConnectAsync()
     {
         Collection = new List<TModel>();
-        (Room, Storage) = await Group.AddAsync(typeof(TModel).Name, Collection);
+
+        (Room) = await Group.AddAsync(typeof(TModel).Name);
+        //(Room, Storage) = await Group.AddAsync(typeof(TModel).Name, Collection);
+
 
         var disposable = Subscriber.Subscribe(Context.GetClientName(), ((Operation operation, TModel model) data) =>
         {
-
             if (data.operation == Operation.Create)
             {
                 Collection.Add(data.model);
@@ -129,6 +131,7 @@ public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHu
         });
     }
 
+
     public virtual async Task<RESPONSE_RESULT<List<TModel>>> ReadAsync()
     {
         return await TaskHandler.ExecuteAsync(async () =>
@@ -137,8 +140,9 @@ public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHu
             var data = await Db.Set<TModel>().AsNoTracking().ToListAsync();
 
             var uniqueData = data.Except(Collection).ToList();
-            if (uniqueData.Count == 0) {
-                Broadcast(Room).OnRead(uniqueData);
+
+            if (uniqueData.Count != 0) {
+                BroadcastToSelf(Room).OnRead(uniqueData);
 
                 Collection.AddRange(uniqueData);
             }
@@ -173,8 +177,6 @@ public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHu
             var existingItem = Collection.FirstOrDefault(x => x.Equals(existing));
 
             Collection.Replace(existing, model);
-            //burada biseyler yap
-            //Collection.Add(model);
 
             Broadcast(Room).OnUpdate(model);
 

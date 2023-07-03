@@ -1,7 +1,6 @@
 using Generator.Components.Enums;
 using Generator.Components.Interfaces;
 using Generator.Components.Validators;
-//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MudBlazorFix;
@@ -10,8 +9,6 @@ using Force.DeepCloner;
 using Generator.Components.Extensions;
 using Mapster;
 using Generator.Components.Args;
-using System.ComponentModel;
-using Microsoft.JSInterop;
 using Generator.Components.Helpers;
 
 namespace Generator.Components.Components;
@@ -465,7 +462,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
                     await Create.InvokeAsync(new GenArgs<TModel>(model,OriginalEditItem, this.index));
 
-                    DataSource.Remove(SelectedItem);
+                    if (EditMode == EditMode.Inline)
+                        DataSource.Remove(SelectedItem);
 
                     break;
 
@@ -534,7 +532,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (Close.HasDelegate)
             await Close.InvokeAsync(this);
 
-        ForceRenderAll();
+        //ForceRenderAll();
+        (this as INonGenGrid).ForceRenderAll();
+
         //Components.Clear();
         StateHasChanged();
     }
@@ -597,10 +597,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         if (Close.HasDelegate)
             await Close.InvokeAsync();
 
-         ForceRenderAll();
+         //ForceRenderAll();
+
+        (this as INonGenGrid).ForceRenderAll();
 
     }
-    private void ForceRenderAll()
+     void INonGenGrid.ForceRenderAll()
     {
         IsFirstRender = true;
         IsRendered = false;
@@ -668,8 +670,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     }
 
     public void AddChildComponent(IGenComponent childComponent)
-    {
+    {  
         if (Components.Any(x => x is not GenSpacer && x.BindingField == childComponent.BindingField )) return;
+
+        if (childComponent.Order == 0) {
+            childComponent.Order = Components.Count == 0 ? 1 : Components.Max(x => x.Order) + 1;
+        }
+
         Components.Add(childComponent);
     }
 

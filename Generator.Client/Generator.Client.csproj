@@ -26,9 +26,11 @@
     <None Remove="Services\" />
     <None Remove="Hubs\" />
     <None Remove="Hubs\Base\" />
+    <None Remove="Filters\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="Hubs\Base\" />
+    <Folder Include="Filters\" />
   </ItemGroup>
 </Project>

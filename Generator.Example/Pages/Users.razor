@@ -10,8 +10,8 @@ if (DataSource.Count ==0) return;
              Title="Users"
              Dense="true"
              MaxWidth="MaxWidth.ExtraLarge"
-             EditMode="EditMode.SmartForm"
-             EditTrigger="TableEditTrigger.RowClick"
+             EditMode="EditMode.Form"
+             EditTrigger="TableEditTrigger.EditButton"
              EnableSearch="true"
              Disabled="IsDisabled"
              SearchText="Search"
@@ -85,7 +85,7 @@ if (DataSource.Count ==0) return;
             <GenCheckBox BindingField="@nameof(USER.U_IS_MARRIED)" 
                          Label="Evli mi" TrueText="Evet" FalseText="Hayir"   />
 
-            <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)"
+            <GenDatePicker BindingField="@nameof(USER.U_REGISTER_DATE)" @ref="U_REGISTER_DATE"
                            DateChanged="x=> OnDateChanged(x)"
                            TransformOrigin="Origin.BottomLeft"
                            Clearable="true" Label=" Reg. Date" />

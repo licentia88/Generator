@@ -6,7 +6,7 @@
 
 <GenGrid DataSource="@(DataSource)"
          TModel="ORDERS_M"
-         EditMode="EditMode.Inline"
+         EditMode="EditMode.Form"
          EditTrigger="TableEditTrigger.EditButton"
          Class="m-2"
          Load="OnLoad"
@@ -18,7 +18,10 @@
     <GenColumns>
         <GenTextField BindingField="@nameof(ORDERS_M.OM_ROWID)" Label="RefNo" Disabled="true" />
         <GenTextField BindingField="@nameof(ORDERS_M.OM_DESCRIPTION)" Label="Description" ValueChanged="x => ValChanged(x)" />
-        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_ONE)" Label="RefNo" Disabled="true" />
+        <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_ONE)"
+                      ValueChanged="OnTextChange"
+                      Label="RefNo"
+                      Disabled="true" />
         <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_TWO)" Label="RefNo" Disabled="true" />
         <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_THREE)" Label="RefNo" Disabled="true" />
         <GenTextField BindingField="@nameof(ORDERS_M.OM_MORE_FIELD_FOUR)" Label="RefNo" Disabled="true" />
@@ -52,7 +55,9 @@
 
         //DataSource = result;
     }
-
+    public void OnTextChange(object x) {
+        descTextField.SetValue(x.ToString());
+    }
     public void OnLoad(IGenView<ORDERS_M> page)
     {
         descTextField = page.GetComponent<GenTextField>(nameof(ORDERS_M.OM_DESCRIPTION));

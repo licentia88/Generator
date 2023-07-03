@@ -22,7 +22,7 @@ public class GridMService : MagicBase<IGridMService, GRID_M>, IGridMService
         PermissionPublisher = provider.GetService<IPublisher<string,(Operation,PERMISSIONS)>>();
     }
 
-    [Allow]
+    //[Allow]
     public override async UnaryResult<GRID_M> Create(GRID_M model)
     {
         return await TaskHandler.ExecuteAsyncWithoutResponse(async () =>

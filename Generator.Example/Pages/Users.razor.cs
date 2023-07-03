@@ -111,7 +111,7 @@ public partial class Users
 
         U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
 
-        U_REGISTER_DATE = view.GetComponent<GenDatePicker>(nameof(USER.U_REGISTER_DATE));
+        //U_REGISTER_DATE = view.GetComponent<GenDatePicker>(nameof(USER.U_REGISTER_DATE));
     }
 
     public async ValueTask Search(SearchArgs components)

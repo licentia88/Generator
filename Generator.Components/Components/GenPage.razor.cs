@@ -127,6 +127,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
             ViewState = ViewState.None;
 
             CloseIfAllowed();
+            return;
         }
 
         //Parent Save
@@ -218,7 +219,13 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
             GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
         }
 
- 
+
+         (GenGrid as INonGenGrid).ForceRenderAll();
+
+        //SelectedItem = default;
+        //GenGrid.SelectedItem = default;
+        //Components.ForEach(x => x.Model = null);
+
         RefreshParentGrid.InvokeAsync();
         GenGrid.ResetValidation();
         MudDialog.Dispose();

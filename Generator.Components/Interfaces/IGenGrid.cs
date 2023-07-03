@@ -82,7 +82,7 @@ public interface INonGenGrid:INonGenView
 
     public bool HasErrors();
 
-
+    internal void ForceRenderAll();
 }
 
 public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:new()  

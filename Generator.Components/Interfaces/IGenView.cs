@@ -22,14 +22,18 @@ public interface INonGenView
 
     public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
 
-    public bool IsTopLevel { get; set; }
+    bool IsTopLevel { get; set; }
 
-    public void StateHasChanged();
+    void StateHasChanged();
 
+    Task OnCommit();
 
-    public Task OnCommit();
+    Task OnCommitAndWait();
 
-    public Task OnCommitAndWait();
+    public bool HasErrors();
+
+    public INonGenGrid ParentGrid { get; set; }
+
 
 }
 
@@ -39,7 +43,7 @@ public interface INonGenView
 /// <typeparam name="TModel"></typeparam>
 public interface IGenView<TModel> : INonGenView where TModel:new()
 {
-    public TModel OriginalEditItem { get; set; }
+    TModel OriginalEditItem { get; set; }
 
     public TModel SelectedItem { get;  set; }
 
@@ -49,9 +53,9 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
 
     public EventCallback<IGenView<TModel>> Load { get; set; }
 
-    public Task OnCommit(TModel model);
+    Task OnCommit(TModel model);
 
-    public Task OnCommit(TModel model, ViewState viewState);
+    Task OnCommit(TModel model, ViewState viewState);
 
 }
 

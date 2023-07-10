@@ -35,7 +35,11 @@ public abstract partial class COMPONENTS_BASE
     [ForeignKey(nameof(ComponentModels.PERMISSIONS.PER_COMPONENT_REFNO))]
     public ICollection<PERMISSIONS> PERMISSIONS { get; set; } = new HashSet<PERMISSIONS>();
 
-    
+
+    [ForeignKey(nameof(ComponentModels.GRID_FIELDS.GF_COMPONENT_REFNO))]
+    public ICollection<GRID_FIELDS> GRID_FIELDS { get; set; } = new HashSet<GRID_FIELDS>();
+
+
     //public IEnumerable<Annotation.ValidationResult> Validate(Annotation.ValidationContext validationContext)
     //{
     //    var validationResultList = new List<Annotation.ValidationResult>();

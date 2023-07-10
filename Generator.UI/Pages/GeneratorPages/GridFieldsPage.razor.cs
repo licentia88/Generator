@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Extensions;
@@ -9,25 +8,19 @@ using Generator.Shared.Models.ComponentModels.NonDB;
 using Generator.UI.Enums;
 using Generator.UI.Extensions;
 using Generator.UI.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Generator.UI.Pages.GeneratorPages;
 
 public partial class GridFieldsPage
 {
-    private GRID_FIELDS CurrentModel;
-
+ 
 	private List<DISPLAY_FIELD_INFORMATION> DisplayFieldsList { get; set; } = new();
     private List<DISPLAY_FIELD_INFORMATION> ComboDisplayFieldList { get; set; } = new();
-
-    //[Parameter]
     public List<TABLE_INFORMATION> TableList { get; set; } = new();
 
-	
 	private GenComboBox DisplayFieldCombobox;
 	private GenCheckBox IsSearchFieldCheckBox;
     private GenComboBox ControlTypeComboBox;
-
     private GenComboBox InputTypeComboBox;
     private GenComboBox DataSourceComboBox;
     private GenComboBox DataSourceValueFieldComboBox;
@@ -41,21 +34,31 @@ public partial class GridFieldsPage
 
     private string SourceDatabase;
 
-    private List<IGenComponent> HiddenFields;
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await ReadByParent();
+
+        if (ParentModel.CB_COMMAND_TYPE == 1)
+            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetFieldsUsingQuery(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
+
+        if(ParentModel.CB_COMMAND_TYPE == 4)
+            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetStoredProcedureFieldsAsync(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
 
 
-    protected override async Task Load(IGenView<GRID_FIELDS> View)
+    }
+
+    protected override async Task Load(IGenView<GRID_FIELDS> view)
 	{
-        CurrentModel = View.SelectedItem;
+        await base.Load(view);
 
-        HiddenFields = new List<IGenComponent>
+        if (view.ParentGrid.ValidateModel())
         {
-                InputTypeComboBox, DataSourceComboBox,
-                DataSourceValueFieldComboBox,
-                DataSourceDisplayFieldComboBox,
-                TrueTextCheckBox, FalseTextCheckBox,
-                FormatTextField, DataSourceQueryTextField
-        };
+            view.ShoulShowDialog = false;
+            return;
+        }
 
         if (View.ViewState == Components.Enums.ViewState.Create)
 		{
@@ -67,6 +70,9 @@ public partial class GridFieldsPage
             View.SelectedItem.GF_XXLG = 12;
         }
 
+        
+
+        //if(page.Components.hase)
 
         TableList = View.Parameters.GetFromDict(nameof(TableList)).CastTo<List<TABLE_INFORMATION>>();
 
@@ -99,7 +105,7 @@ public partial class GridFieldsPage
 
         DataSourceDisplayFieldComboBox.SetValue(obj);
 
-        BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
+        //BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
     }
 
     private void DataSourceValueFieldChanged(object obj)
@@ -108,7 +114,7 @@ public partial class GridFieldsPage
 
         DataSourceValueFieldComboBox.SetValue(obj);
 
-        BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
+        //BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
     }
 
     private async Task DataSourceChanged(object model)
@@ -129,7 +135,7 @@ public partial class GridFieldsPage
         DataSourceQueryTextField.SetValue($"SELECT * FROM {data.TI_TABLE_NAME}");
         DataSourceComboBox.SetValue(model);
 
-        BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
+        //BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
     }
 
 
@@ -146,7 +152,7 @@ public partial class GridFieldsPage
 
             DataSourceComboBox.DataSource = TableList;
 
-            ClearExcept(DataSourceComboBox, DataSourceValueFieldComboBox, DataSourceDisplayFieldComboBox, DataSourceQueryTextField);
+            //ClearExcept(DataSourceComboBox, DataSourceValueFieldComboBox, DataSourceDisplayFieldComboBox, DataSourceQueryTextField);
 
         }
         else if (controlType.C_CODE == (int)ComponentTypes.CheckBox)
@@ -154,18 +160,18 @@ public partial class GridFieldsPage
 			TrueTextCheckBox.EditorVisible = true;
 			FalseTextCheckBox.EditorVisible = true;
 
-            ClearExcept(TrueTextCheckBox, FalseTextCheckBox);
+            //ClearExcept(TrueTextCheckBox, FalseTextCheckBox);
 		}
         else if (controlType.C_CODE == (int)ComponentTypes.DatePicker)
         {
             //formatte
             FormatTextField.EditorVisible = true;
-            ClearExcept(FormatTextField);
+            //ClearExcept(FormatTextField);
         }
         else if (controlType.C_CODE == (int)ComponentTypes.TextField)
         {
 			InputTypeComboBox.EditorVisible = true;
-            ClearExcept(InputTypeComboBox);
+            //ClearExcept(InputTypeComboBox);
         }
 		else
 		{
@@ -175,24 +181,24 @@ public partial class GridFieldsPage
             InputTypeComboBox.EditorVisible = false;
             //Clear All
 
-            ClearExcept();
+            //ClearExcept();
         }
 
 
 		ControlTypeComboBox.SetValue(obj);
     }
 
-	private void ClearExcept(params IGenComponent[] genComponents)
-	{
-        var fieldsToClear = HiddenFields.Where(x => !genComponents.Contains(x)).ToList();
+	//private void ClearExcept(params IGenComponent[] genComponents)
+	//{
+ //       var fieldsToClear = HiddenFields.Where(x => !genComponents.Contains(x)).ToList();
 
-        foreach (var field in fieldsToClear)
-        {
-            field.Model?.SetPropertyValue(field.BindingField, null);
-            field.EditorVisible = false;
-        }
+ //       foreach (var field in fieldsToClear)
+ //       {
+ //           field.Model?.SetPropertyValue(field.BindingField, null);
+ //           field.EditorVisible = false;
+ //       }
 
-    }
+ //   }
 	
 	private async Task GetQuerySelectFields(IGenView<GRID_FIELDS> View)
 	{
@@ -259,6 +265,11 @@ public partial class GridFieldsPage
     private void BuildDbQuery(string tableName, string valueField, string displayField)
     {
         DataSourceQueryTextField.SetValue($"SELECT {valueField??string.Empty}, {displayField??string.Empty} FROM {tableName??string.Empty}");
+    }
+
+    private void CheckRules()
+    {
+
     }
 }
 

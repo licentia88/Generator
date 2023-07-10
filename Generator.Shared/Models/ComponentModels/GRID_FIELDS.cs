@@ -13,7 +13,7 @@ public partial class GRID_FIELDS
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int GF_ROWID { get; set; }
 
-    public int GF_VIEW_REFNO { get; set; }
+    public int GF_COMPONENT_REFNO { get; set; }
 
     public string GF_CONTROL_TYPE { get; set; }
 

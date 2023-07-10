@@ -10,21 +10,20 @@ namespace Generator.Shared.Models.ComponentModels.Abstracts;
 [MemoryPackable]
 [MemoryPackUnion(0, typeof(HEADER_BUTTON_VIEW))]
 [MemoryPackUnion(1, typeof(SIDE_BUTTON_VIEW))]
-[Index(nameof(VBM_GRID_REFNO), nameof(VBM_TYPE),nameof(VBM_TITLE), IsUnique =true)]
-public abstract partial class VIEW_BASE_M
+[MemoryPackUnion(2, typeof(GRID_VIEW))]
+[Index(nameof(VB_GRID_REFNO), nameof(VB_TYPE),nameof(VBM_TITLE), IsUnique =true)]
+public abstract partial class VIEW_BASE
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int VBM_ROWID { get; set; }
+    public int VB_ROWID { get; set; }
 
     [Required]
-    public string VBM_TYPE { get; set; }
+    public string VB_TYPE { get; set; }
 
-    public int VBM_GRID_REFNO { get; set; }
+    public int VB_GRID_REFNO { get; set; }
 
     public string VBM_TITLE { get; set; }
 
-    //public string VBM_SOURCE { get; set; }
-
-    [ForeignKey(nameof(ComponentModels.GRID_FIELDS.GF_VIEW_REFNO))]
+    [ForeignKey(nameof(ComponentModels.GRID_FIELDS.GF_COMPONENT_REFNO))]
     public ICollection<GRID_FIELDS> GRID_FIELDS { get; set; } = new HashSet<GRID_FIELDS>();
 }

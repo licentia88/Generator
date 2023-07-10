@@ -12,8 +12,8 @@ namespace Generator.Components.Components;
 
 public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<GenComboBox>
 {
-    [CascadingParameter(Name = nameof(ParentGrid))]
-    public INonGenGrid ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
+    INonGenGrid  IGenComponent.ParentGrid { get; set; }
 
     [Parameter, EditorRequired]
     public string DisplayField { get; set; }
@@ -87,9 +87,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     private void AddComponents()
     {
         if (IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
+            ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
         else
-            ParentGrid?.AddChildComponent(this);
+            ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
     }
 
     public void Initialize()
@@ -114,8 +114,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         Model.SetPropertyValue(BindingField, null);
         Value = null;
 
-        ParentGrid.StateHasChanged();
-        ParentGrid?.CurrentGenPage.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.StateHasChanged();
+        ((IGenComponent)this).ParentGrid?.CurrentGenPage.StateHasChanged();
     }
 
     public void SetValue(object value)
@@ -142,10 +142,10 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
             {
                 Model?.SetPropertyValue(BindingField, null);
 
-                ParentGrid.ValidateSearchFields(BindingField);
+                ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField);
             });
 
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ParentGrid.ValidateSearchFields(BindingField));
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField));
         }
         else
         {
@@ -155,11 +155,10 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
                 OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
             }
 
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ((IGenComponent)this).ParentGrid.ValidateValue(BindingField); });
         }
 
-
-    }
+     }
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
     {
@@ -210,7 +209,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public void ValidateObject()
     {
-        ParentGrid.ValidateValue(BindingField);
+        ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
     public object GetValue()
@@ -221,7 +220,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     public void SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
-        ParentGrid.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.StateHasChanged();
 
     }
 

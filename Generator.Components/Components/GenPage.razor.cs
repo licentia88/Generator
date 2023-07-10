@@ -19,6 +19,9 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     public string Title { get; set; }
 
     [Parameter]
+    public INonGenGrid ParentGrid { get; set; }
+
+    [Parameter]
     public ViewState ViewState { get; set; }
 
     [Parameter]
@@ -27,20 +30,8 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     [Parameter]
     public TModel OriginalEditItem { get; set; }
 
-    //[Parameter]
-    public EventCallback RefreshParentGrid { get; set; }
-
     [Parameter]
     public TModel SelectedItem { get; set; }
-
-
-    public bool EnableModelValidation { get; set; }
-
-    public bool IsTopLevel { get; set; }
-
-    public bool IsValid { get; set; }
-
-    public bool ShoulShowDialog { get; set; } = true;
 
     [Parameter]
     public bool IsIndividual { get; set; }
@@ -51,7 +42,6 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     [Parameter]
     public List<IGenComponent> SearchFieldComponents { get; set; }
 
-
     [Parameter]
     public EventCallback<IGenView<TModel>> Load { get; set; }
 
@@ -61,9 +51,19 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     [CascadingParameter(Name =nameof(Parameters))]
     private Dictionary<string, object> _Parameters { get => Parameters; set => Parameters = value; }
 
+    internal EventCallback RefreshParentGrid { get; set; }
+
+    public bool EnableModelValidation { get; set; }
+
+    bool INonGenView.IsTopLevel { get; set; }
+
+    bool INonGenPage.IsValid { get; set; }
+
+    public bool ShoulShowDialog { get; set; } = true;
+
     protected override async Task OnInitializedAsync()
     {
-        GenGrid.CurrentGenPage = this;
+        ((INonGenGrid)GenGrid).CurrentGenPage = this;
 
 
         if (Load.HasDelegate)
@@ -84,52 +84,43 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //if (OnRender.HasDelegate)
-        //    await OnRender.InvokeAsync(this);
-
-       
-
         GetSubmitTextFromViewState();
 
         await base.OnAfterRenderAsync(firstRender);
-    }
+    }       
 
-       
-
-    public bool ValidateAsync()
+    public bool Validate()
     {
-        IsValid =  GenGrid.ValidateModel(true);
+        ((INonGenPage)this).IsValid = GenGrid.ValidateModel(true);
         StateHasChanged();
 
-        return IsValid;
+        return ((INonGenPage)this).IsValid;
     }
 
-
-
-    public void onInvalidSubmit()
+    internal void OnInvalidSubmit()
     {
-        ValidateAsync();
+        Validate();
     }
 
         
-    public async Task OnCommit()
+    async Task INonGenView.OnCommit()
     {
-        IsTopLevel = true;
-        await  OnCommit(SelectedItem, ViewState.None);
+        ((INonGenView)this).IsTopLevel = true;
+        await ((IGenView<TModel>)this).OnCommit(SelectedItem, ViewState.None);
     }
 
-    public async Task OnCommit(TModel model)
+    async Task IGenView<TModel>.OnCommit(TModel model)
     {
-        await  OnCommit(model, ViewState);
+        await ((IGenView<TModel>)this).OnCommit(model, ViewState);
     }
 
-    public  async Task OnCommit(TModel model, ViewState viewState)
+    async Task IGenView<TModel>.OnCommit(TModel model, ViewState viewState)
     {
-        if (!ValidateAsync()) return;
+        if (!Validate()) return;
 
         if (IsIndividual)
         {
-            await GenGrid.OnCommit(SelectedItem, viewState);
+            await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
 
             ViewState = ViewState.None;
 
@@ -141,41 +132,40 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
         if (GenGrid.ParentGrid?.ViewState == ViewState.Create)
             await GenGrid.ParentGrid.CurrentGenPage.OnCommitAndWait();
 
-        if (IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
+        if (((INonGenView)this).IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
         {
             //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
-            await GenGrid.OnCommit(SelectedItem, viewState);
+            await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
 
             ViewState = ViewState.None;
 
             CloseIfAllowed();
         }
- 
     }
 
-    public async Task OnCommitAndWait()
+    async Task INonGenView.OnCommitAndWait()
     {
-        ValidateAsync();
+        Validate();
 
-        if (IsValid)
+        if (((INonGenPage)this).IsValid)
         {
             ViewState = ViewState.Update;
 
-            await GenGrid.OnCommit(SelectedItem, ViewState.Update);
+            await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, ViewState.Update);
         }
 
         StateHasChanged();
     }
 
-
     private void CloseIfAllowed()
     {
-        if (!IsTopLevel) return;
+        if (!((INonGenView)this).IsTopLevel) return;
         GenGrid.RefreshButtonState();
         GenGrid.ResetValidation();
         MudDialog.Close();
     }
-    public void Close()
+
+    void  INonGenPage.Close()
     {
         Close(false);
         CloseIfAllowed();
@@ -183,7 +173,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
     public void Close(bool force)
     {
-        if (force) IsTopLevel = true;
+        if (force) ((INonGenView)this).IsTopLevel = true;
 
         CloseIfAllowed();
 
@@ -245,5 +235,12 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
         var item = SearchFieldComponents.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
 
         return item is null ? default : item.CastTo<TComponent>();
+    }
+
+    public bool HasErrors()
+    {
+        var result = Components.Any(x => x.component.Error);
+
+        return result;
     }
 }

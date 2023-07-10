@@ -16,11 +16,10 @@ public interface INonGenPage: INonGenView
 
     public bool EnableModelValidation { get; set; }
 
+    bool IsValid { get; set; }
 
-    public bool IsValid { get; set; }
+    void Close();
 
-    public void Close();
-
-    public bool ValidateAsync();
+    public bool Validate();
 
  }

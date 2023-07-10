@@ -11,6 +11,11 @@ public class GeneratorContext : DbContext
     {
     }
 
+    
+    
+
+    public DbSet<GRID_FIELDS> GRID_FIELDS { get; set; }
+
     public DbSet<COMPONENTS_BASE> COMPONENTS_BASE { get; set; }
 
     public DbSet<GRID_M> GRID_M { get; set; }

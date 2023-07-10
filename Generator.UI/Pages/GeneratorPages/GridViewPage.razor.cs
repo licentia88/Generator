@@ -4,7 +4,7 @@ using Generator.UI.Models;
 
 namespace Generator.UI.Pages.GeneratorPages;
 
-public partial class CrudViewPage
+public partial class GridViewPage
 {
     public List<TABLE_INFORMATION> TableList { get; set; }
 
@@ -15,7 +15,7 @@ public partial class CrudViewPage
 
     }
 
-    protected override async Task Load(IGenView<CRUD_VIEW> view)
+    protected override async Task Load(IGenView<GRID_VIEW> view)
     {
         await base.Load(view);
 

@@ -61,11 +61,13 @@
     <Compile Remove="Pages\GeneratorPages\DisplayFieldsPage.razor.cs" />
     <Compile Remove="Pages\GeneratorPages\GridPagesM.razor.cs" />
     <Compile Remove="Pages\GeneratorPages\GridCrudViewGrid.razor.cs" />
+    <Compile Remove="Pages\GeneratorPages\GridViewPage.razor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Pages\GeneratorPages\GridPagesD.razor" />
     <Content Remove="Pages\GeneratorPages\DisplayFieldsPage.razor" />
     <Content Remove="Pages\GeneratorPages\GridPagesM.razor" />
     <Content Remove="Pages\GeneratorPages\GridCrudViewGrid.razor" />
+    <Content Remove="Pages\GeneratorPages\GridViewPage.razor" />
   </ItemGroup>
 </Project>

@@ -10,12 +10,12 @@ namespace Generator.Shared.Models.ComponentModels;
 [Equatable]
 [MemoryPackable]
 [Table(nameof(GRID_VIEW))]
-[Index(nameof(VBM_GRID_REFNO),IsUnique =true)] //one per page allowed
-public partial class GRID_VIEW : VIEW_BASE_M
+[Index(nameof(VB_GRID_REFNO),IsUnique =true)] //one per page allowed
+public partial class GRID_VIEW : VIEW_BASE
 {
     public GRID_VIEW()
     {
-        VBM_TYPE = nameof(GRID_VIEW);
+        VB_TYPE = nameof(GRID_VIEW);
         //VBM_TITLE = "CRUD";
     }
 

@@ -93,35 +93,7 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
             return adaptedData;
         });
     }
-
-
-
-    public IDatabaseService WithOptions(CallOptions option)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IDatabaseService WithHeaders(Metadata headers)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IDatabaseService WithDeadline(DateTime deadline)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IDatabaseService WithCancellationToken(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IDatabaseService WithHost(string host)
-    {
-        throw new NotImplementedException();
-    }
-
-
+ 
 
     public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetFieldsUsingQuery(string connectionName, string Query)
     {

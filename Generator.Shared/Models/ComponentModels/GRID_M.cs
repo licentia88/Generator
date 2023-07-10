@@ -27,7 +27,4 @@ public partial class GRID_M : GRID_BASE, IGridRef
 
     [ForeignKey(nameof(ComponentModels.GRID_D.GD_M_REFNO))]
     public ICollection<GRID_D> GRID_D { get; set; }
-
-    [ForeignKey(nameof(ComponentModels.GRID_VIEW.VBM_GRID_REFNO))]
-    public ICollection<GRID_VIEW> GRID_VIEW { get; set; }
 }

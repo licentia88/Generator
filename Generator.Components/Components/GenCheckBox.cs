@@ -13,8 +13,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 {
     #region CascadingParameters
 
-    [CascadingParameter(Name = nameof(ParentGrid))]
-    public INonGenGrid ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
+    INonGenGrid IGenComponent.ParentGrid { get; set; }
 
     #endregion CascadingParameters
 
@@ -92,14 +92,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
      private void AddComponents()
      {
          if (IsSearchField)
-             ParentGrid?.AddSearchFieldComponent(this);
+            ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
          else
-             ParentGrid?.AddChildComponent(this);
+            ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
      }
 
      public void Initialize()
     {
-        if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+        if (((IGenComponent)this).ParentGrid.EditMode != Enums.EditMode.Inline && ((IGenComponent)this).ParentGrid.CurrentGenPage is null) return;
  
     }
 
@@ -124,8 +124,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
  
         _value = value;
 
-        ParentGrid.StateHasChanged();
-        ParentGrid.CurrentGenPage?.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
 
     }
 
@@ -168,7 +168,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public void ValidateObject()
     {
-        ParentGrid.ValidateValue(BindingField);
+        ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
     public object GetValue()
@@ -188,7 +188,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     public void SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
-        ParentGrid.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.StateHasChanged();
     }
 
     public void SetEmpty()

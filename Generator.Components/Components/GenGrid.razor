@@ -6,7 +6,7 @@
 <CascadingValue Name="@(nameof(ParentGrid))" Value="this">
 
     @{
-        if (GenColumns is not null && IsFirstRender)
+        if (GenColumns is not null && ((INonGenGrid)this).IsFirstRender)
         {
             @GenColumns
 
@@ -14,7 +14,7 @@
                 @GenSearchFields
             </CascadingValue>
 
-            IsFirstRender = false;
+            ((INonGenGrid)this).IsFirstRender = false;
         }
     }
 
@@ -30,7 +30,7 @@
                         if (EnableSearch)
                         {
                             <MudTextField @bind-Value="@_searchString"
-                                          Disabled="SearchDisabled"
+                                          Disabled=" ((INonGenGrid)this). SearchDisabled"
                                           Class="mt-0 mr-5"
                                           Placeholder="@SearchPlaceHolderText"
                                           Adornment="Adornment.Start"
@@ -53,8 +53,6 @@
                                             {
                                                 searchFieldModel.Add(item.BindingField, null);
                                             }
-
-
 
                                             <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
                                                 @{
@@ -109,7 +107,7 @@
                                                                         Size="Size.Small"
                                                                         Label="@SearchText"
                                                                         DisableElevation="true"
-                                                                        @onclick="OnSearchClicked" Disabled="SearchDisabled" />
+                                                                        @onclick="OnSearchClicked" Disabled=" ((INonGenGrid)this). SearchDisabled" />
                                                             </MudItem>
 
                                                         </MudGrid>
@@ -187,7 +185,7 @@
 
                     <HeaderContent >
                         @{
-                            if (HasDetail && EditMode != EditMode.SmartForm)
+                            if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
                             {
                                 <MudTh>
 
@@ -246,9 +244,9 @@
                         @if (Create.HasDelegate)
                         {
                             <MudTh>
-                                <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
+                                <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
                                     @*<MudGrid Class="ml-10" Justify="Justify.FlexEnd">*@
-                                    <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=> { NewDisabled = true; await OnCreateClick(); NewDisabled = false; }" Disabled="NewDisabled|| Disabled" />
+                                    <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=> { ((INonGenGrid)this).NewDisabled  = true; await OnCreateClick(); ((INonGenGrid)this).NewDisabled  = false; }" Disabled="((INonGenGrid)this).NewDisabled || Disabled" />
                                     @*</MudGrid>*@
                                 </div>
                             </MudTh>
@@ -258,7 +256,7 @@
                     <RowTemplate>
 
                         @{
-                            if (HasDetail && EditMode != EditMode.SmartForm)
+                            if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
                             {
                                 var expandIcon = Icons.Material.Filled.ExpandMore;
 
@@ -273,9 +271,9 @@
                                 <MudTd Style="padding:0px!important;">
                                     <MudIconButton Size="Size.Small"
                                                     Style="@($"width:100%!important;height:100%!important;border-radius:0px!important;padding:{padding}!important;")"
-                                                    Disabled="ExpandDisabled"
+                                                    Disabled="((INonGenGrid)this).ExpandDisabled"
                                                     Icon="@expandIcon"
-                                                    OnClick="async () => await OnDetailClicked(context)" />
+                                                    OnClick="async () => await ((IGenGrid<TModel>)this).OnDetailClicked(context)" />
                                 </MudTd>
 
                             }
@@ -332,14 +330,14 @@
                                     editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
                                 }
                             }
-                            if (HasDetail && EditMode != EditMode.SmartForm)
+                            if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
                             {
                                 <MudTd></MudTd>
                             }
 
                             foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible && x is not GenSpacer).OrderBy(x => x.Order).ToList())
                             {
-                                if (EditMode != EditMode.Inline || !ShoulShowDialog || DetailClicked)
+                                if (EditMode != EditMode.Inline || !ShoulShowDialog || ((INonGenGrid)this).DetailClicked)
                                 {
                                     <MudTd Style="width: auto !important">
                                         @item.RenderAsGridComponent(_context)
@@ -365,7 +363,7 @@
                     <ChildRowContent>
                         @{
                             
-                            if (EditMode != EditMode.SmartForm && ShouldDisplay(context) && HasDetail)
+                            if (EditMode != EditMode.SmartForm && ShouldDisplay(context) && ((INonGenGrid)this).HasDetail)
                             {
                                 <tr style="display: table-row !important; overflow: hidden">
                                     <td style="display: table-cell !important; overflow: hidden" colspan="100">
@@ -392,7 +390,7 @@
                             TModel model = (TModel)button.ButtonAction.Target.CastTo<MudTr>().Item;
                         }
 
-                        <div style="@(DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
+                        <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
                             @{
                                 if (!EditButtonActionList.Contains(button.ButtonAction))
                                     EditButtonActionList.Add(button.ButtonAction);
@@ -419,9 +417,9 @@
                     </EditButtonContent>
                 </MudTable>
 
-                IsRendered = true;
+                 ((INonGenGrid)this).IsRendered = true;
 
-            }
+                }
 
 
         }

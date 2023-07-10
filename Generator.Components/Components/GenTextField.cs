@@ -13,9 +13,8 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 { 
-
-    [CascadingParameter(Name = nameof(ParentGrid))]
-    public INonGenGrid ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
+    INonGenGrid IGenComponent.ParentGrid { get; set; }
 
  
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
@@ -94,9 +93,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     private void AddComponents()
     {
         if (IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
+            ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
         else
-            ParentGrid?.AddChildComponent(this);
+            ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
     }
 
     public void Initialize()
@@ -146,8 +145,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         
         Value = value;
 
-        ParentGrid.StateHasChanged();
-        ParentGrid.CurrentGenPage?.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
 
     }
 
@@ -166,14 +165,14 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             OnClearButtonClick = EventCallback.Factory.Create(this, (MouseEventArgs arg) =>
             {
                 SetValue(null);
-                ParentGrid.ValidateSearchFields(BindingField);
+                ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField);
             });
             
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ParentGrid.ValidateSearchFields(BindingField));
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField));
         }
         else
         {  
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ParentGrid.ValidateValue(BindingField); });
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ((IGenComponent)this).ParentGrid.ValidateValue(BindingField); });
 
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
         }
@@ -213,9 +212,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public void ValidateObject()
     {
-          ParentGrid.ValidateValue( BindingField);
-
-
+        ((IGenComponent)this).ParentGrid.ValidateValue( BindingField);
     }
 
     public object GetValue()
@@ -226,7 +223,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public void SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
-        ParentGrid.StateHasChanged();
+        ((IGenComponent)this).ParentGrid.StateHasChanged();
 
     }
     public object GetSearchValue()

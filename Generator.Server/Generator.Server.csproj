@@ -75,4 +75,7 @@
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Services\GridViewService.cs" />
+  </ItemGroup>
 </Project>

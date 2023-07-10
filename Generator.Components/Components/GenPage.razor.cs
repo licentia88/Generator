@@ -46,14 +46,14 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
     public bool IsIndividual { get; set; }
 
     [Parameter]
-    public List<IGenComponent> Components { get; set; }
+    public List<(Type type, IGenComponent component)> Components { get; set; }
 
     [Parameter]
     public List<IGenComponent> SearchFieldComponents { get; set; }
 
 
-    //[Parameter]
-    //public EventCallback<IGenView<TModel>> Load { get; set; }
+    [Parameter]
+    public EventCallback<IGenView<TModel>> Load { get; set; }
 
     [Parameter]
     public Dictionary<string, object> Parameters { get; set; } = new();
@@ -66,8 +66,15 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
         GenGrid.CurrentGenPage = this;
 
 
-        //if (Load.HasDelegate)
-        //    await Load.InvokeAsync(this);
+        if (Load.HasDelegate)
+        {
+            await Load.InvokeAsync(this);
+            if (!ShoulShowDialog)
+            {
+                Close(true);
+                return;
+            }
+        }
 
         RefreshParentGrid = EventCallback.Factory.Create(this, GenGrid.RefreshButtonState);
 
@@ -204,9 +211,9 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
     {
-        var item = Components.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
+        var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component.BindingField.Equals(bindingField));
 
-        return item is null ? default : item.CastTo<TComponent>();
+        return item.component is null ? default : item.component.CastTo<TComponent>();
     }
  
     public void Dispose()

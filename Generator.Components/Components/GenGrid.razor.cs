@@ -68,12 +68,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             //Burada render de stabil kalmasini istedigin parametreleri set et
             OriginalTable.RowsPerPage = RowsPerPage;
         }
-
     }
 
     public INonGenPage CurrentGenPage { get; set; }
-
- 
 
     public DialogResult DialogResult { get; set; }
 
@@ -105,7 +102,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public bool DetailClicked { get; set; }
 
-    public List<IGenComponent> Components { get; set; } = new();
+    public List<(Type type, IGenComponent component)> Components { get; set; } = new();
 
     public List<IGenComponent> SearchFieldComponents { get; set; } = new();
 
@@ -362,14 +359,22 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     }
 
+    //*****BURASI edit button rowclick de tetiklenmez, kurguyu ona gore kur*****
     public async Task OnEditContextButtonClick(EditButtonContext button)
     {
-         
+        //Should be at top
+        if (ViewState == ViewState.None)
+            ViewState = ViewState.Update;
+
+
         if (Load.HasDelegate)
         {
             var item = button.ButtonAction.Target.CastTo<MudTr>().Item.CastTo<TModel>();
             SelectedItem = item;
-            await InvokeLoad();
+
+            //Form degilken tetiklensin formken load event tetiklenir zaten
+            if(EditMode == EditMode.Inline)
+                await InvokeLoad();
 
             if (!ShoulShowDialog)
             {
@@ -379,16 +384,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             }
         }
 
-        if (ViewState == ViewState.None)
-        {
-            ViewState = ViewState.Update;
-        }
+        
         button.ButtonAction.Invoke();
     }
 
     public bool HasErrors()
     {
-        var result = Components.Any(x => x.Error);
+        var result = Components.Any(x => x.component.Error);
 
         return result;
     }
@@ -585,7 +587,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
         ViewState = ViewState.None;
 
-        Components.ForEach(ResetValidation);
+        foreach (var item in Components)
+        {
+            ResetValidation(item.component);
+        }
+        //Components.Select(x=> x.component).ForEach(ResetValidation);
 
         //RefreshButtonState sonunda statehaschanged var
         RefreshButtonState();
@@ -613,10 +619,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
  
         var paramList = new List<(string, object)>
         {
+            (nameof(GenPage<TModel>.Load), Load),
             (nameof(GenPage<TModel>.SearchFieldComponents), SearchFieldComponents),
             (nameof(GenPage<TModel>.Components), Components),
             (nameof(GenPage<TModel>.SelectedItem), SelectedItem),
-             (nameof(GenPage<TModel>.OriginalEditItem), OriginalEditItem),
+            (nameof(GenPage<TModel>.OriginalEditItem), OriginalEditItem),
             (nameof(GenPage<TModel>.IsIndividual), IsIndividual),
             (nameof(GenPage<TModel>.Parameters), Parameters),
             (nameof(GenPage<TModel>.Title), Title),
@@ -635,10 +642,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             DialogParameters.Add(prm.key, prm.value);
         }
 
-        if (Load.HasDelegate)
-        {
-           await InvokeLoad();
-        }
+       
+
         if (ShoulShowDialog)
             return await DialogService.ShowAsync<GenPage<TModel>>(Title, DialogParameters, DialogOptions());
 
@@ -659,31 +664,31 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
     {
-        var item = Components.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
+        var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component.BindingField.Equals(bindingField));
 
-        return item is null ? default : item.CastTo<TComponent>();
+        return item.component is null ? default : item.CastTo<TComponent>();
     }
 
     private List<TComponent> GetComponentsOf<TComponent>() where TComponent : IGenComponent
     {
-        return Components.Where(x => x is TComponent).Cast<TComponent>().ToList();
+        var result = Components.Where(((Type type, IGenComponent component) arg) => arg.component is TComponent).Select(x=> x.component).Cast<TComponent>().ToList();
+        return result;
     }
 
     public void AddChildComponent(IGenComponent childComponent)
-    {  
-        if (Components.Any(x => x is not GenSpacer && x.BindingField == childComponent.BindingField )) return;
+    {
+        var componentType = childComponent.GetType();
 
-        if (childComponent.Order == 0) {
-            childComponent.Order = Components.Count == 0 ? 1 : Components.Max(x => x.Order) + 1;
-        }
-
-        Components.Add(childComponent);
+        if (Components.Any(x => x.type == componentType && x.component.BindingField == childComponent.BindingField )) return;
+ 
+        Components.Add((componentType, childComponent));
     }
 
     public void AddSearchFieldComponent(IGenComponent component)
     {
-        if (SearchFieldComponents.Any(x => x is not GenSpacer && x.BindingField == component.BindingField )) return;
+        if (SearchFieldComponents.Any(x => x.BindingField == component.BindingField )) return;
         component.Model = new();
+
         SearchFieldComponents.Add(component);
     }
 
@@ -756,9 +761,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         var result = true;
 
         if (SelectedItem.IsModel())
-            result = GenValidator.ValidateModel(SelectedItem,all?Components:null);
+            result = GenValidator.ValidateModel(SelectedItem,all?Components.Select(x=> x.component):null);
         else
-            result = Components.Where(x=> x is not GenSpacer && x.EditorVisible).All(x => GenValidator.ValidateValue(x, SelectedItem, x.BindingField));
+            result = Components.Where(x=> x.type !=typeof(GenSpacer) && x.component.EditorVisible).All(x => GenValidator.ValidateValue(x.component, SelectedItem, x.component.BindingField));
 
         if (!result)
             ForceRenderOnce = !result;
@@ -770,9 +775,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
 
     public bool ValidateValue(string propertyName)
     {
-        var component = Components.FirstOrDefault(x => x.BindingField == propertyName);
+        var component = Components.FirstOrDefault(x => x.component.BindingField == propertyName);
 
-        var result = GenValidator.ValidateValue(component, SelectedItem, propertyName);
+        var result = GenValidator.ValidateValue(component.component, SelectedItem, propertyName);
 
         if (!result)
             ForceRenderOnce = !result;
@@ -788,7 +793,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
     {
         foreach (var component in Components)
         {
-            GenValidator.ResetValidation(component);
+            GenValidator.ResetValidation(component.component);
         }
     }
 
@@ -820,7 +825,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         }
 
         // Create a dictionary of default values from the Components collection
-        var newData = Components.Where(x => x is not GenSpacer).ToDictionary(comp => comp.BindingField, comp => comp.GetDefaultValue);
+        var newData = Components.Where(x => x.type != typeof(GenSpacer)).ToDictionary(comp => comp.component.BindingField, comp => comp.component.GetDefaultValue);
 
         // Configure TypeAdapter to transform newData dictionary to TModel
         TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel))
@@ -877,6 +882,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
         SelectedItem = adaptedData;
 
         OnBackUp(SelectedItem);
+
+      
 
         await ShowDialogAsync<GenPage<TModel>>();
 
@@ -1016,7 +1023,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, INonGenGrid, IGenGrid<T
             return;
         }
 
-        if (!HasErrors())
+        if (!HasErrors() && EditMode == EditMode.Inline)
             await InvokeLoad();
     }
 

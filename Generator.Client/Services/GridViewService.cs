@@ -5,7 +5,7 @@ using Generator.Shared.Services;
 namespace Generator.Client.Services;
 
 [RegisterSingleton]
-public class GRidCrudViewService : ServiceBase<IGRidCrudViewService, CRUD_VIEW>, IGRidCrudViewService
+public class GridViewService : ServiceBase<IGridViewService, GRID_VIEW>, IGridViewService
 {
 
 }

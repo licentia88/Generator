@@ -4,6 +4,7 @@ using Generator.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Generator.Server.Migrations
 {
     [DbContext(typeof(GeneratorContext))]
-    partial class GeneratorContextModelSnapshot : ModelSnapshot
+    [Migration("20230706193146_crudView")]
+    partial class crudView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,8 +89,20 @@ namespace Generator.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VBM_ROWID"), 1L, 1);
 
-                    b.Property<int>("VBM_GRID_REFNO")
+                    b.Property<bool>("CV_CREATE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CV_DELETE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CV_UPDATE")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("VBM_PAGE_REFNO")
                         .HasColumnType("int");
+
+                    b.Property<string>("VBM_SOURCE")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VBM_TITLE")
                         .HasColumnType("nvarchar(450)");
@@ -99,10 +113,7 @@ namespace Generator.Server.Migrations
 
                     b.HasKey("VBM_ROWID");
 
-                    b.HasIndex("VBM_GRID_REFNO")
-                        .IsUnique();
-
-                    b.HasIndex("VBM_GRID_REFNO", "VBM_TYPE", "VBM_TITLE")
+                    b.HasIndex("VBM_PAGE_REFNO", "VBM_TYPE", "VBM_TITLE")
                         .IsUnique()
                         .HasFilter("[VBM_TITLE] IS NOT NULL");
 
@@ -265,15 +276,6 @@ namespace Generator.Server.Migrations
                 {
                     b.HasBaseType("Generator.Shared.Models.ComponentModels.Abstracts.COMPONENTS_BASE");
 
-                    b.Property<bool>("GB_CREATE")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("GB_CRUD_SOURCE")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("GB_DELETE")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("GB_DENSE")
                         .HasColumnType("bit");
 
@@ -297,9 +299,6 @@ namespace Generator.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("GB_STRIPED")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("GB_UPDATE")
                         .HasColumnType("bit");
 
                     b.ToTable("GRID_M");
@@ -343,7 +342,7 @@ namespace Generator.Server.Migrations
                 {
                     b.HasOne("Generator.Shared.Models.ComponentModels.GRID_M", null)
                         .WithMany("CRUD_VIEW")
-                        .HasForeignKey("VBM_GRID_REFNO")
+                        .HasForeignKey("VBM_PAGE_REFNO")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

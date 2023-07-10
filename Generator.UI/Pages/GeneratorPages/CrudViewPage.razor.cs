@@ -1,12 +1,6 @@
-﻿using System;
-using Generator.Components.Args;
-using Generator.Components.Components;
-using Generator.Components.Interfaces;
-using Generator.Shared.Extensions;
+﻿using Generator.Components.Interfaces;
 using Generator.Shared.Models.ComponentModels;
-using Generator.UI.Extensions;
 using Generator.UI.Models;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Generator.UI.Pages.GeneratorPages;
 
@@ -14,19 +8,19 @@ public partial class CrudViewPage
 {
     public List<TABLE_INFORMATION> TableList { get; set; }
 
-    private GenComboBox SourceComboBox;
+ 
+    protected override async Task OnInitializedAsync()
+    {
+        await ReadByParent();
 
-    private GenCheckBox CreateCheckBox;
-    private GenCheckBox UpdateCheckBox;
-    private GenCheckBox DeleteCheckBox;
-
-
-    private IGenView<CRUD_VIEW> genView;
+    }
 
     protected override async Task Load(IGenView<CRUD_VIEW> view)
     {
-        genView = view;
+        await base.Load(view);
 
+        View.SelectedItem.VBM_TITLE = ParentModel.CB_TITLE;
+        
         if (string.IsNullOrEmpty(ParentModel.CB_DATABASE))
             NotificationsView.Notifications.Add(new NotificationVM("Select Database First", MudBlazor.Severity.Warning));
 
@@ -37,74 +31,20 @@ public partial class CrudViewPage
 
         if (NotificationsView.Notifications.Any())
         {
-            view.ShoulShowDialog = false;
+            View.ShoulShowDialog = false;
 
             NotificationsView.Fire();
             return;
         }
 
-        if (view.ViewState != Components.Enums.ViewState.Create)
-            MyInitialize();
+ 
+        //view.Parameters.AddOrReplace(nameof(ParentModel.CB_QUERY_OR_METHOD), ParentModel.CB_QUERY_OR_METHOD);
+        //view.Parameters.AddOrReplace(nameof(ParentModel.CB_DATABASE), ParentModel.CB_DATABASE);
 
-       
-
-
-        var res = await DatabaseService.GetTableListForConnection(ParentModel.CB_DATABASE);
-
-        TableList = res.Data;
-
-        SourceComboBox.DataSource = TableList;
-
-
-        view.Parameters.AddOrReplace(nameof(ParentModel.CB_QUERY_OR_METHOD), ParentModel.CB_QUERY_OR_METHOD);
-        view.Parameters.AddOrReplace(nameof(ParentModel.CB_DATABASE), ParentModel.CB_DATABASE);
-
-        if (!string.IsNullOrEmpty(view.SelectedItem.VBM_SOURCE))
-            view.Parameters.AddOrReplace(nameof(CRUD_VIEW.VBM_SOURCE), view.SelectedItem.VBM_SOURCE);
-
-        view.Parameters.AddOrReplace(nameof(ParentModel.CB_COMMAND_TYPE), ParentModel.CB_COMMAND_TYPE);
-        view.Parameters.AddOrReplace(nameof(TableList), TableList);
+ 
+        //view.Parameters.AddOrReplace(nameof(ParentModel.CB_COMMAND_TYPE), ParentModel.CB_COMMAND_TYPE);
+        //view.Parameters.AddOrReplace(nameof(TableList), TableList);
     }
 
-    private void SourceComboBoxChanged(object model)
-    {
-        if (model is not TABLE_INFORMATION data) return;
-
-        CreateCheckBox.EditorEnabled = true;
-        UpdateCheckBox.EditorEnabled = true;
-        DeleteCheckBox.EditorEnabled = true;
-
-
-        SourceComboBox.SetValue(model);
-
-        genView.Parameters.AddOrReplace(nameof(CRUD_VIEW.VBM_SOURCE), genView.SelectedItem.VBM_SOURCE);
-
-    }
-
-    private void OnClear(MouseEventArgs args)
-    {
-        SourceComboBox.OnClearClicked(args);
-
-        CreateCheckBox.EditorEnabled = false;
-        UpdateCheckBox.EditorEnabled = false;
-        DeleteCheckBox.EditorEnabled = false;
-
-        genView.Parameters.Remove(nameof(CRUD_VIEW.VBM_SOURCE));
-
-        CreateCheckBox.SetValue(false);
-        UpdateCheckBox.SetValue(false);
-        DeleteCheckBox.SetValue(false);
-
-
-    }
-
-    public void MyInitialize()
-    {
-        CreateCheckBox.EditorEnabled = SourceComboBox.Model is null ? false : true;
-        UpdateCheckBox.EditorEnabled = SourceComboBox.Model is null ? false : true;
-        DeleteCheckBox.EditorEnabled = SourceComboBox.Model is null ? false : true;
-    }
-
-    
 }
 

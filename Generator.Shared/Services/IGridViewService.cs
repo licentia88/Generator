@@ -4,7 +4,7 @@ using Generator.Shared.Services.Base;
 namespace Generator.Shared.Services;
 
 
-public interface IGRidCrudViewService : IGenericService<IGRidCrudViewService, CRUD_VIEW>
+public interface IGridViewService : IGenericService<IGridViewService, GRID_VIEW>
 {
 }
 

@@ -23,16 +23,16 @@
                                     foreach (var component in Components)
                                     {
                                         <MudItem Class="mt-4"
-                                                    xs="component.xs"
-                                                    sm="component.sm"
-                                                    md="component.md"
-                                                    lg="component.lg"
-                                                    xl="component.xl"
-                                                    xxl="component.xxl">
+                                                    xs="component.component.xs"
+                                                    sm="component.component.sm"
+                                                    md="component.component.md"
+                                                    lg="component.component.lg"
+                                                    xl="component.component.xl"
+                                                    xxl="component.component.xxl">
                                             @{
-                                                if (component.EditorVisible)
+                                                if (component.component.EditorVisible)
                                                 {
-                                                    @component.RenderAsComponent(SelectedItem)
+                                                    @component.component.RenderAsComponent(SelectedItem)
                                                 }
 
                                             }

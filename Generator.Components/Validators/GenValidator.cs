@@ -16,7 +16,7 @@ public class GenValidator<T>
         return ValidateModel(obj, null);
     }
 
-    public bool ValidateModel(T obj,IList<IGenComponent> components)
+    public bool ValidateModel(T obj,IEnumerable<IGenComponent> components)
     {
         var results = new List<ValidationResult>();
 

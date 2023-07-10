@@ -1,50 +1,26 @@
-﻿@inherits ServicePageBase<GRID_M, CRUD_VIEW, IGRidCrudViewService>
+﻿@inherits ServicePageBase<GRID_M, GRID_VIEW, IGridViewService>
 
-
+ 
 
 <GenGrid DataSource="@(DataSource)"
-         TModel="CRUD_VIEW"
+         TModel="GRID_VIEW"
          EditMode="EditMode.SmartForm"
          Title="Crud Settings"
          MaxWidth="MaxWidth.ExtraLarge"
          EditTrigger="TableEditTrigger.EditButton"
          Class="m-2"
          Load="Load"
+         Update="Update"
          Cancel="Cancel"
          Create="@Create">
     <GenColumns>
 
-        @*ROW1*@
-        <GenSpacer xs="12" sm="12" md="12" lg="9" xl="9" xxl="9" />
-
-        <GenComboBox DataSource="TableList" @ref="SourceComboBox"
-                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
-                     Label="Source" 
-                     ValueChanged="SourceComboBoxChanged"
-                     Clearable="true"
-                     OnClearButtonClick="OnClear"
-                     BindingField="@nameof(CRUD_VIEW.VBM_SOURCE)"
-                     ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
-                     DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)" />
-
-        @*ROW2*@
-        <GenCheckBox BindingField="@nameof(CRUD_VIEW.CV_CREATE)" @ref="CreateCheckBox"
-                     Label="Create" TrueText="Yes"  FalseText="No"
-                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"  EditorEnabled="false"/>
-
-        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
-
-        <GenCheckBox BindingField="@nameof(CRUD_VIEW.CV_UPDATE)" @ref="UpdateCheckBox"
-                     Label="Update"  TrueText="Yes" FalseText="No"
-                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" EditorEnabled="false" />
-
-        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
-
-        <GenCheckBox BindingField="@nameof(CRUD_VIEW.CV_DELETE)"  @ref="DeleteCheckBox"
-                     Label="Delete" TrueText="Yes" FalseText="No"
-                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" EditorEnabled="false" />
-
-        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+ 
+        <GenTextField BindingField="@nameof(GRID_VIEW.VBM_TITLE)"
+                      Label="Title"
+                      EditorEnabled="false"
+                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"/>
+  
     </GenColumns>
 
     <GenDetailGrid>

@@ -32,6 +32,7 @@ where TService : IGenericService<TService, TModel>
     [Inject]
     public ISubscriber<Operation, TModel> Subscriber { get; set; }
 
+    protected IGenView<TModel> View;
 
     protected override Task OnInitializedAsync()
     {
@@ -112,8 +113,10 @@ where TService : IGenericService<TService, TModel>
         DataSource[args.Index] = args.OldModel;
     }
 
-    protected virtual Task Load(IGenView<TModel> View)
+    protected virtual Task Load(IGenView<TModel> view)
     {
+        View = view;
+
         return Task.CompletedTask;
     }
 

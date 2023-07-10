@@ -25,5 +25,12 @@ public abstract partial class GRID_BASE:COMPONENTS_BASE
     public bool GB_ENABLE_FILTERING { get; set; }
 
     public bool GB_STRIPED { get; set; }
- 
+
+    public bool GB_CREATE { get; set; }
+
+    public bool GB_UPDATE { get; set; }
+
+    public bool GB_DELETE { get; set; }
+
+    public string GB_CRUD_SOURCE { get; set; }
 }

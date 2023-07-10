@@ -8,7 +8,7 @@ public class DataHelpers
     {
         var type = typeof(TEnum);
 
-        return  ((IEnumerable<TEnum>)Enum.GetValues(type)).Select((TEnum arg1, int arg2) => new CODE_ENUM { C_CODE = arg2, C_DESC = arg1.ToString() }).ToList();
+        return  Enum.GetValues(type).Cast<TEnum>().Select((TEnum @enum) => new CODE_ENUM { C_CODE = Convert.ToInt32(@enum), C_DESC = @enum.ToString() }).ToList();
             
     }
 

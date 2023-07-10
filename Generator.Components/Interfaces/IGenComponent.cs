@@ -2,7 +2,9 @@
 
 public interface IGenComponent: IGenCompRenderer
 {
+    void SetValue(object value);
 
+    public void SetEmpty();
 
     public object GetValue();
 

@@ -19,7 +19,7 @@
          DataSource="@DataSource"
          MaxWidth="MaxWidth.ExtraExtraLarge"
          EditTrigger="TableEditTrigger.EditButton"
-         EditMode="EditMode.Form">
+         EditMode="EditMode.SmartForm">
 
     <GenColumns>
 
@@ -29,7 +29,7 @@
         <GenComboBox DataSource="DatabaseList" @ref="DatabaseComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Database"
-                     Order="0"
+                     Order="2"
                      ValueChanged="DatabaseChanged"
                      BindingField="@nameof(GRID_M.CB_DATABASE)"
                      ValueField="@(nameof(DATABASE_INFORMATION.DI_DATABASE_NAME))"
@@ -40,7 +40,7 @@
 
         <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
                       Label="Page Title"
-                      Order="1"
+                      Order="0"
                       xs="12" sm="12" md="12" lg="7" xl="7" xxl="7" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
@@ -60,7 +60,7 @@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<EditMode>()"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Edit Mode"
-                     Order="3"
+                     Order="4"
                      BindingField="@nameof(GRID_M.GB_EDIT_MODE)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -70,7 +70,7 @@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<TableEditTrigger>()"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Edit Trigger"
-                     Order="4"
+                     Order="5"
                      BindingField="@nameof(GRID_M.GB_EDIT_TRIGGER)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -80,7 +80,7 @@
         <GenComboBox DataSource="DataHelpers.GetEnumValues<MaxWidth>()"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Page Size"
-                     Order="5"
+                     Order="6"
                      BindingField="@nameof(GRID_M.GB_MAX_WIDTH)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -126,7 +126,7 @@
 
         <GenTextField BindingField="@(nameof(GRID_M.CB_IDENTIFIER))"
                       Label="Identifier"
-                      Order="2"
+                      Order="1"
                       EditorVisible="false"
                       xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
 
@@ -135,19 +135,89 @@
         <GenSpacer xs="12" sm="12" md="12" lg="10" xl="10" xxl="10" />
         @*ROW6*@
 
-        <GenTextField BindingField="@nameof(GRID_M.CB_QUERY_OR_METHOD)" Class="mt-5"
-                      Label="Query"
+        <GenComboBox DataSource="CommandTypes" @ref="CommandTypeComboBox"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Command Type"
+                     Order="3"
+                     ValueChanged="CommandTypeComboBoxChanged"
+                     BindingField="@nameof(GRID_M.CB_COMMAND_TYPE)"
+                     ValueField="@(nameof(CODE_ENUM.C_CODE))"
+                     DisplayField="@nameof(CODE_ENUM.C_DESC)" />
+
+        <GenTextField BindingField="@nameof(GRID_M.CB_QUERY_OR_METHOD)"
+                      @ref="QuryTextField"
+                      Class="mt-5"
+                      Label="Query/Method"
                       Order="6"
                       Lines="7"
+                      GridVisible="false"
+                      EditorVisible="false"
                       Variant="Variant.Outlined"
                       Placeholder=@($"Sample Query:\nSELECT U_NAME, U_AGE FROM USERS \nWHERE U_NAME LIKE '%@U_NAME%' \nAND U_AGE = @U_AGE")
                       xs="12" sm="12" md="12" lg="12" xl="12" xxl="12" />
+
+
+         <GenComboBox BindingField="@nameof(GRID_M.CB_QUERY_OR_METHOD)"
+                      Class="mt-5" @ref="StoredProcedureCombo"
+                      Label="Stored Procedure"
+                      DataSource="StoredProcedureList"
+                      GridVisible="false"
+                      EditorVisible="false"
+                      DisplayField="@nameof(STORED_PROCEDURES.SP_NAME)"
+                      ValueField="@nameof(STORED_PROCEDURES.SP_NAME)"/>
+
+        @*ROW*@
+        <GenComboBox DataSource="TableList"
+                     @ref="CrudSourceComboBox"
+                     xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
+                     Label="Source"
+                     ValueChanged="CrudSourceComboBoxChangedAsync"
+                     Clearable="true"
+                     GridVisible="false"
+                     EditorEnabled="false"
+                     OnClearButtonClick="OnCrudSourceComboBoxClear"
+                     BindingField="@nameof(GRID_M.GB_CRUD_SOURCE)"
+                     ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
+                     DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)" />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(GRID_M.GB_CREATE)"
+                     @ref="CreateCheckBox"
+                     EditorEnabled="false"
+                     Label="Create"
+                     TrueText="Yes"
+                     FalseText="No"
+                     GridVisible="false"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"  />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(GRID_M.GB_UPDATE)"
+                     @ref="UpdateCheckBox"
+                    EditorEnabled="false"
+                     Label="Update"
+                     TrueText="Yes"
+                     FalseText="No"
+                     GridVisible="false"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"  />
+
+        <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
+
+        <GenCheckBox BindingField="@nameof(GRID_M.GB_DELETE)"
+                     @ref="DeleteCheckBox"
+                     EditorEnabled="false"
+                     Label="Delete"
+                     TrueText="Yes"
+                     FalseText="No"
+                     GridVisible="false"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"  />
 
     </GenColumns>
     <GenDetailGrid>
         <MudTabs Class="mt-5" Style="width:100%!important" Color="Color.Primary">
             <MudTabPanel Text="Crud">
-                <CrudViewPage ParentModel="context" />
+                <CrudViewPage ParentModel="context"  />
             </MudTabPanel>
 
             <MudTabPanel Text="Permissions">

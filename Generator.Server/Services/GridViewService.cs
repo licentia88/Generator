@@ -5,9 +5,9 @@ using Generator.Shared.Services;
 namespace Generator.Server.Services;
 
 // ReSharper disable once UnusedType.Global
-public class GridCrudViewService : MagicBase<IGRidCrudViewService, CRUD_VIEW>, IGRidCrudViewService
+public class GridViewService : MagicBase<IGridViewService, GRID_VIEW>, IGridViewService
 {
-    public GridCrudViewService(IServiceProvider provider) : base(provider)
+    public GridViewService(IServiceProvider provider) : base(provider)
     {
     }
 

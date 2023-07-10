@@ -6,8 +6,6 @@ using Generator.Components.Interfaces;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
-using Microsoft.AspNetCore.Components.Web;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Generator.Components.Components;
 
@@ -113,14 +111,22 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         AddComponents();
     }
 
+    void IGenComponent.SetValue(object value)
+    {
+        SetValue((bool)value);
+    }
+
     public void SetValue(bool value)
     {
         Model?.SetPropertyValue(BindingField, value);
 
         Checked = value;
+ 
+        _value = value;
 
         ParentGrid.StateHasChanged();
         ParentGrid.CurrentGenPage?.StateHasChanged();
+
     }
 
     private void SetCallBackEvents()
@@ -167,8 +173,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public object GetValue()
     {
-        return Model.GetPropertyValue(BindingField);
-        //return this.GetFieldValue(nameof(_value));
+        //return Model.GetPropertyValue(BindingField);
+        return this.GetFieldValue(nameof(_value));
     }
 
     public object GetSearchValue()
@@ -183,6 +189,12 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
         ParentGrid.StateHasChanged();
+    }
+
+    public void SetEmpty()
+    {
+        Model?.SetPropertyValue(BindingField, default);
+        _value = false;
     }
     //public GenCheckBox GetReference()
     //{

@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace Generator.Components.Components;
 
-public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField> 
+public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 { 
 
     [CascadingParameter(Name = nameof(ParentGrid))]
@@ -143,8 +143,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public void SetValue(object value)
     {
         Model?.SetPropertyValue(BindingField, value);
+        
+        Value = value;
+
         ParentGrid.StateHasChanged();
         ParentGrid.CurrentGenPage?.StateHasChanged();
+
     }
 
     public void OnClearClicked(MouseEventArgs arg)
@@ -228,6 +232,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public object GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
+    }
+
+    public void SetEmpty()
+    {
+        Model?.SetPropertyValue(BindingField, default);
+        Value = null;
     }
 }
 

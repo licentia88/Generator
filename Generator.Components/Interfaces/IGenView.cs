@@ -1,4 +1,5 @@
 ﻿using Generator.Components.Enums;
+using Microsoft.AspNetCore.Components;
 
 namespace Generator.Components.Interfaces;
 
@@ -13,7 +14,7 @@ public interface INonGenView
 
     public EditMode EditMode { get; set; }
 
-    public List<IGenComponent> Components { get; set; }
+    public List<(Type type, IGenComponent component)> Components { get; set; }
 
     public List<IGenComponent> SearchFieldComponents { get; set; }
 
@@ -46,7 +47,7 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
 
     public bool ShoulShowDialog { get; set; }
 
-    //public EventCallback<IGenView<TModel>> Load { get; set; }
+    public EventCallback<IGenView<TModel>> Load { get; set; }
 
     public Task OnCommit(TModel model);
 

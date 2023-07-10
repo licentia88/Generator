@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
-using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
@@ -9,8 +7,12 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Generator.Components.Components;
 
-public partial class GenSpacer :ComponentBase, IGenSpacer
+public partial class GenSpacer : ComponentBase, IGenSpacer
 {
+    public GenSpacer()
+    {
+        BindingField = Guid.NewGuid().ToString();
+    }
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public string BindingField { get; set; }
 
@@ -152,5 +154,13 @@ public partial class GenSpacer :ComponentBase, IGenSpacer
         throw new NotImplementedException();
     }
 
+    void IGenComponent.SetValue(object value)
+    {
+        //throw new NotImplementedException();
+    }
 
+    public void SetEmpty()
+    {
+        //throw new NotImplementedException();
+    }
 }

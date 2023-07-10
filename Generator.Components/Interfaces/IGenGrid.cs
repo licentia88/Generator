@@ -114,7 +114,6 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
 
     public EventCallback<TModel> OnAfterCancel { get; set; }
 
-    public EventCallback<IGenView<TModel>> Load { get; set; }
 
  
     //public EventCallback<IGenGrid<TModel>> OnBeforeShowDialog { get; set; }

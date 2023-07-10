@@ -21,11 +21,11 @@ public class GenExcel
 
         var ws =  excelWorkBook.Worksheets.Add("Sheet1");
 
-        var displayableFields = grid.Components.Where(x => x.GridVisible && x is not IGenSpacer).ToList();
+        var displayableFields = grid.Components.Where(x => x.component.GridVisible && x.type != typeof(IGenSpacer)).ToList();
 
 
         for (int i = 0; i < displayableFields.Count(); i++)
-            ws.Cell(1, i + 1).Value = displayableFields[i].Label;
+            ws.Cell(1, i + 1).Value = displayableFields[i].component.Label;
 
  
         int row = 1;
@@ -34,7 +34,7 @@ public class GenExcel
         {
             foreach (var field in displayableFields)
             {
-                var value = item.GetPropertyValue(field.BindingField)?.ToString() ?? string.Empty;
+                var value = item.GetPropertyValue(field.component.BindingField)?.ToString() ?? string.Empty;
 
                 ws.Cell(row + 1, col).Value = value;
 

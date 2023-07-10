@@ -4,7 +4,6 @@ using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.VisualBasic;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -113,7 +112,10 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
             
         Model.SetPropertyValue(BindingField, null);
+        Value = null;
 
+        ParentGrid.StateHasChanged();
+        ParentGrid?.CurrentGenPage.StateHasChanged();
     }
 
     public void SetValue(object value)
@@ -121,12 +123,10 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (value is null) return;
 
         Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
+       
+        Value = Model;
 
-        ParentGrid.StateHasChanged();
-        ParentGrid.CurrentGenPage?.StateHasChanged();
-
-        //ParentGrid.ValidateValue(BindingField);
-
+ 
     }
 
     private void SetCallBackEvents()
@@ -229,5 +229,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
         return Model.GetPropertyValue(BindingField);
     }
-
+    public void SetEmpty()
+    {
+        Model?.SetPropertyValue(BindingField, default);
+        Value = null;
+    }
 }

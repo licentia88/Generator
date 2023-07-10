@@ -11,7 +11,7 @@ namespace Generator.Shared.Models.ComponentModels.Abstracts;
 [MemoryPackUnion(1, typeof(GRID_M))]
 [MemoryPackUnion(2, typeof(GRID_D))]
 [Index(nameof(CB_IDENTIFIER),IsUnique =true)]
-public abstract partial class COMPONENTS_BASE//:Annotation.IValidatableObject
+public abstract partial class COMPONENTS_BASE
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int CB_ROWID { get; set; }

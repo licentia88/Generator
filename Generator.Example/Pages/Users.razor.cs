@@ -7,11 +7,13 @@ using Generator.Examples.Shared.Models;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models.ComponentModels;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace Generator.Example.Pages;
 
 public partial class Users
 {
+    
     [Inject]
     public PermissionHub PermissionHub { get; set; }
 
@@ -106,8 +108,8 @@ public partial class Users
         //Console.WriteLine(view.ViewState.ToString());
         View = view;
 
-        //if (view.SelectedItem.U_AGE == 0)
-        //    view.ShoulShowDialog = false;
+        if (view.SelectedItem.U_AGE == 0)
+            view.ShoulShowDialog = false;
 
         U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
 

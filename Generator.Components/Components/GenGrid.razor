@@ -14,7 +14,6 @@
                 @GenSearchFields
             </CascadingValue>
 
-
             IsFirstRender = false;
         }
     }
@@ -75,20 +74,17 @@
                                         }
                                     }
                                     @{
-                                        <MudGrid Class="" Justify="Justify.FlexEnd">
+                                        <MudGrid Class="mt-1 mb-1 mr-1" Justify="Justify.FlexEnd">
                                             @{
-                                                <MudItem>
-                                                    <MudGrid Justify="Justify.FlexEnd">
+                                                    <MudItem>
                                                         @if (GenHeaderButtons is not null)
                                                         {
                                                             @GenHeaderButtons
 
                                                         }
-                                                    </MudGrid>
-                                                </MudItem>
+                                                    </MudItem>
                                                
-                                                <MudItem>
-                                                    <MudGrid Justify="Justify.FlexEnd">
+                                                    <MudItem>
                                                         <MudItem>
                                                             @{
                                                                 if (!string.IsNullOrEmpty(ExcelFile))
@@ -102,9 +98,7 @@
                                                                 }
                                                             }
                                                         </MudItem>
-
-                                                    </MudGrid>
-                                                </MudItem>
+                                                    </MudItem>
                                                 if (Search.HasDelegate)
                                                 {
                                                     <MudItem Class="mr-7">

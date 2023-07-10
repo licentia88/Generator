@@ -2,11 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-using Generator.Components.Validators;
 //using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
 namespace Generator.Components.Components;
@@ -95,9 +93,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     {
         Model?.SetPropertyValue(BindingField, date);
 
+        
+        _value = date;
+
         ParentGrid.StateHasChanged();
         ParentGrid.CurrentGenPage?.StateHasChanged();
-        //ParentGrid.ValidateValue(BindingField);
+
     }
 
     protected override void OnClosed()
@@ -195,5 +196,14 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         return Model.GetPropertyValue(BindingField);
     }
 
-    
+    void IGenComponent.SetValue(object value)
+    {
+        SetValue((DateTime?)value);
+    }
+
+    public void SetEmpty()
+    {
+        Model?.SetPropertyValue(BindingField, default);
+        _value = null;
+    }
 }

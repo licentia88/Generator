@@ -181,9 +181,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         {
             Model?.SetPropertyValue(BindingField, value);
 
-            //Checked = value;
+            Checked = value;
 
-            //_value = value;
+            _value = value;
 
             comp.ParentGrid.StateHasChanged();
             comp.ParentGrid.CurrentGenPage?.StateHasChanged();
@@ -206,9 +206,10 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     void IGenComponent.SetEmpty()
     {
-        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue().CastTo<bool>();
         Model?.SetPropertyValue(BindingField, defaultValue);
-        //this.va = false;
+        _value = defaultValue;
+        Checked = defaultValue;
     }
 
 

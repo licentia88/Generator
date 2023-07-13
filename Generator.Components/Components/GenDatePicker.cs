@@ -97,7 +97,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         else
         {
             Model?.SetPropertyValue(BindingField, date);
-            //_value = date;
+            _value = date;
 
             comp.ParentGrid.StateHasChanged();
             comp.ParentGrid.CurrentGenPage?.StateHasChanged();
@@ -212,10 +212,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     void IGenComponent.SetEmpty()
     {
-        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue().CastTo<DateTime?>();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
-        //_value = null;
+
+        _value = defaultValue;
     }
 
     public Task Clear()

@@ -245,10 +245,13 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         {
             if (_ShouldRender)
             {
-                
+                OriginalTable.SetEditingItem(null);
+                ViewState = ViewState.None;
+
                 MudTr row = GetCurrentRow();
                 row?.ManagePreviousEdition();
                 RefreshButtonState();
+
                 _ShouldRender = false;
                 return Task.CompletedTask;
             }
@@ -256,7 +259,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
             _ShouldRender = !_ShouldRender;
 
             ((INonGenGrid)this).IsFirstRender = false;
-            ViewState = ViewState.None;
+          
 
             return Task.CompletedTask;
         }
@@ -1036,10 +1039,12 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
         if (!ShouldShowDialog)
         {
-            if(ViewState == ViewState.Create)
-            {
+            //if(ViewState == ViewState.Create)
+            //{
                 DataSource.Remove(SelectedItem);
-            }
+            //}
+
+            OriginalTable.SetEditingItem(null);
 
             ((INonGenGrid)this).IsFirstRender = false;
             //RefreshButtonState();

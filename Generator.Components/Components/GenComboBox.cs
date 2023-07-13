@@ -126,7 +126,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         {
             Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            //Value = Model;
+            Value = Model;
+            _value = Model;
 
             comp.ParentGrid.StateHasChanged();
             comp.ParentGrid.CurrentGenPage?.StateHasChanged();
@@ -242,7 +243,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
-        //Value = null;
+        Value = null;
+        _value = Model;
     }
 
     public new async Task Clear()

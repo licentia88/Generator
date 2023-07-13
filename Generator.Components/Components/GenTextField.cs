@@ -144,7 +144,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Model?.SetPropertyValue(BindingField, value);
 
             Value = value;
-            //_value
+            _value = value;
+
             comp.ParentGrid.StateHasChanged();
             comp.ParentGrid.CurrentGenPage?.StateHasChanged();
         }
@@ -241,7 +242,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
-        //Value = null;
+        Value = null;
+        _value = null;
     }
 
     public new async Task Clear()

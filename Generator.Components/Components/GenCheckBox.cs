@@ -2,7 +2,6 @@
 using MudBlazor;
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
-//using Generator.Shared.Extensions;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
@@ -33,9 +32,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [Parameter, EditorRequired]
     public string FalseText { get; set; }
 
-    public Type DataType { get; set; } = typeof(bool);
+    Type IGenComponent.DataType { get; set; } = typeof(bool);
 
-    public object GetDefaultValue => DataType.GetDefaultValue();
+    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
 
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -76,8 +75,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     //public IGenComponent Reference { get; set; }
 
-    [CascadingParameter(Name = nameof(IsSearchField))]
-    public bool IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
+    bool IGenComponent.IsSearchField { get; set; }
 
      protected override Task OnInitializedAsync()
     {
@@ -91,17 +90,19 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
      private void AddComponents()
      {
-         if (IsSearchField)
+         if (((IGenComponent)this).IsSearchField)
             ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
          else
             ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
+
+         
      }
 
-     public void Initialize()
-    {
-        if (((IGenComponent)this).ParentGrid.EditMode != Enums.EditMode.Inline && ((IGenComponent)this).ParentGrid.CurrentGenPage is null) return;
+    // public void Initialize()
+    //{
+    //    if (((IGenComponent)this).ParentGrid.EditMode != Enums.EditMode.Inline && ((IGenComponent)this).ParentGrid.CurrentGenPage is null) return;
  
-    }
+    //}
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -111,23 +112,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         AddComponents();
     }
 
-    void IGenComponent.SetValue(object value)
-    {
-        SetValue((bool)value);
-    }
-
-    public void SetValue(bool value)
-    {
-        Model?.SetPropertyValue(BindingField, value);
-
-        Checked = value;
- 
-        _value = value;
-
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
-        ((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
-
-    }
+    
 
     private void SetCallBackEvents()
     {
@@ -166,18 +151,46 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         RenderExtensions.RenderGrid(builder, gridValue);
     };
 
-    public void ValidateObject()
+    void IGenComponent.ValidateObject()
     {
         ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
     public object GetValue()
     {
-        //return Model.GetPropertyValue(BindingField);
-        return this.GetFieldValue(nameof(_value));
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).GetSearchValue();
+        else
+            return this.GetFieldValue(nameof(_value));
     }
 
-    public object GetSearchValue()
+    void IGenComponent.SetValue(object value)
+    {
+        SetValue((bool)value);
+    }
+
+    public void SetValue(bool value)
+    { 
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once HeuristicUnreachableCode
+        if (this is not IGenComponent comp) return;
+
+        if (comp.IsSearchField)
+            comp.SetSearchValue(value);
+        else
+        {
+            Model?.SetPropertyValue(BindingField, value);
+
+            //Checked = value;
+
+            //_value = value;
+
+            comp.ParentGrid.StateHasChanged();
+            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        }
+    }
+
+    object IGenComponent.GetSearchValue()
     {
         if (!TriState)
             return Model.GetPropertyValue(BindingField) ?? false;
@@ -185,21 +198,30 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         return Model.GetPropertyValue(BindingField) ?? false;
     }
 
-    public void SetSearchValue(object Value)
+    void IGenComponent.SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
         ((IGenComponent)this).ParentGrid.StateHasChanged();
     }
 
-    public void SetEmpty()
+    void IGenComponent.SetEmpty()
     {
-        Model?.SetPropertyValue(BindingField, default);
-        _value = false;
+        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+        Model?.SetPropertyValue(BindingField, defaultValue);
+        //this.va = false;
     }
-    //public GenCheckBox GetReference()
-    //{
-    //    return (GenCheckBox)Reference;
-    //}
+
+
+    public Task Clear()
+    {
+        ((IGenComponent)this).SetEmpty();
+        return Task.CompletedTask;
+    }
+
+    public new bool Validate()
+    {
+        return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+    }
 }
 
 

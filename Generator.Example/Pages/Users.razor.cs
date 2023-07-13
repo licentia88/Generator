@@ -75,16 +75,17 @@ public partial class Users
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
-            CheckBoxText?.SetSearchValue(true);
+            CheckBoxText?.SetValue(true);
 
         base.OnAfterRender(firstRender);
     }
     public void OnBeforeLoad(IGenGrid<USER> grid)
     {
-        //if (grid.SelectedItem.U_AGE == 0)
-        //{
-        //    grid.ShouldShowDialog = false;
-        //}
+        if (grid.SelectedItem.U_AGE == 0)
+        {
+            grid.ShouldShowDialog = false;
+        }
+        
 
         //grid.ShowDialog = false;
     }
@@ -109,7 +110,7 @@ public partial class Users
         View = view;
 
         if (view.SelectedItem.U_AGE == 0)
-            view.ShoulShowDialog = false;
+            view.ShouldShowDialog = false;
 
         U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
 

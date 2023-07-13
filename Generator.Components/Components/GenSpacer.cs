@@ -65,10 +65,10 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     public string Label { get; set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public Type DataType { get; set; }
+    Type IGenComponent.DataType { get; set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public object GetDefaultValue { get; set; }
+    object IGenComponent.GetDefaultValue { get;  }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public bool Required { get; set; }
@@ -81,8 +81,8 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     public Action<object> ValueChangedAction { get; set; }
 
-    [CascadingParameter(Name = nameof(IsSearchField))]
-    public bool IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
+    bool IGenComponent.IsSearchField { get; set; }
 
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -101,7 +101,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     private void AddComponents()
     {
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
             ParentGrid?.AddSearchFieldComponent(this);
         else
             ParentGrid?.AddChildComponent(this);
@@ -135,7 +135,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         //RenderExtensions.RenderGrid(builder, "");
     };
 
-    public void ValidateObject()
+    void IGenComponent.ValidateObject()
     {
     }
 
@@ -144,12 +144,12 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         throw new NotImplementedException();
     }
 
-    public void SetSearchValue(object Value)
+    void IGenComponent.SetSearchValue(object Value)
     {
         throw new NotImplementedException();
     }
 
-    public object GetSearchValue()
+    object IGenComponent.GetSearchValue()
     {
         throw new NotImplementedException();
     }
@@ -162,5 +162,15 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     public void SetEmpty()
     {
         //throw new NotImplementedException();
+    }
+
+    public new bool Validate()
+    {
+        return default;
+    }
+
+    public Task Clear()
+    {
+        throw new NotImplementedException();
     }
 }

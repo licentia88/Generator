@@ -1,4 +1,5 @@
-﻿using AQueryDisassembler;
+﻿using System.Text.RegularExpressions;
+using AQueryDisassembler;
 using Generator.Server.Helpers;
 using Generator.Server.Services.Base;
 using Generator.Shared.Models.ComponentModels;
@@ -72,7 +73,7 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
         {
             var query = " SELECT COLUMN_NAME DFI_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @TABLE_NAME ";
 
-            var queryResult = await GetDatabase(connectionName).QueryAsync(query, ("TABLE_NAME", TableName));
+            var queryResult = await GetDatabase(connectionName).QueryAsync(query, new KeyValuePair<string, object>("TABLE_NAME", TableName));
 
             var adaptedData = queryResult.Adapt<List<DISPLAY_FIELD_INFORMATION>>();
 
@@ -99,13 +100,40 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
     {
         return TaskHandler.Execute(() =>
         {
-
             var connection = GetDatabase(connectionName).Connection;
 
             SQLQueryParser = new SQLQueryParser(connection);
 
+            var queryParams = GetQueryParameters(Query);
+
             var fieldsList = SQLQueryParser.GetFieldNamesFromQuery(Query);
-            return fieldsList.Select(x => new DISPLAY_FIELD_INFORMATION { DFI_NAME = x }).ToList();
+ 
+            return fieldsList.Select(x => new DISPLAY_FIELD_INFORMATION { DFI_NAME = x , DFI_IS_SEARCH_FIELD = queryParams.Contains(x) }).ToList();
         });
+    }
+
+    private List<string> GetQueryParameters(string query)
+    {
+        
+        string pattern = @"@\w+";
+
+        Regex regex = new Regex(pattern);
+
+        MatchCollection matches = regex.Matches(query);
+
+        return matches.Select(x => x.Value.Substring(1)).ToList();
+        
+    }
+
+    private async Task<List<TABLE_INFORMATION>> GetSpParametersAsync(string connectionName, string StoredProcedure)
+    {
+        var query = @"SELECT SUBSTRING(PARAMETER_NAME,2,LEN(PARAMETER_NAME)) DFI_NAME FROM INFORMATION_SCHEMA.PARAMETERS
+                      WHERE SPECIFIC_NAME = @SPECIFIC_NAME
+                        ORDER BY ORDINAL_POSITION";
+
+        var queryResult = await GetDatabase(connectionName).QueryAsync(query,new KeyValuePair<string, object>("SPECIFIC_NAME", StoredProcedure));
+
+        return queryResult.Adapt<List<TABLE_INFORMATION>>();
+
     }
 }

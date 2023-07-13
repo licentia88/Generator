@@ -41,11 +41,6 @@ public partial class GridFieldsPage
 
         await ReadByParent();
 
-        if (ParentModel.CB_COMMAND_TYPE == 1)
-            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetFieldsUsingQuery(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
-
-        if(ParentModel.CB_COMMAND_TYPE == 4)
-            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetStoredProcedureFieldsAsync(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
 
 
     }
@@ -54,9 +49,22 @@ public partial class GridFieldsPage
 	{
         await base.Load(view);
 
-        if (view.ParentGrid.ValidateModel())
+
+        if (ParentModel.CB_COMMAND_TYPE == 1)
+            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetFieldsUsingQuery(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
+
+        if (ParentModel.CB_COMMAND_TYPE == 4)
         {
-            view.ShoulShowDialog = false;
+            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetStoredProcedureFieldsAsync(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
+
+        }
+
+
+        await CheckRulesAsync();
+
+        if (!view.ParentGrid.ValidateModel())
+        {
+            view.ShouldShowDialog = false;
             return;
         }
 
@@ -70,33 +78,25 @@ public partial class GridFieldsPage
             View.SelectedItem.GF_XXLG = 12;
         }
 
-        
+  
 
-        //if(page.Components.hase)
+  //      await GetQuerySelectFields(View);
 
-        TableList = View.Parameters.GetFromDict(nameof(TableList)).CastTo<List<TABLE_INFORMATION>>();
-
-        CurrentDatabase = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_DATABASE)).ToString();
-        //SourceDatabase = View.Parameters.GetFromDict(nameof(CRUD_VIEW.VBM_SOURCE)).ToString();
-
-        DisplayFieldCombobox.BindingField = nameof(GRID_FIELDS.GF_BINDINGFIELD);
-
-		IsSearchFieldCheckBox.Checked = IsSearchField(View.SelectedItem.GF_BINDINGFIELD);
-
-        await GetQuerySelectFields(View);
-
-		GetQueryParameters(View);
+		//GetQueryParameters(View);
 
     }
 
 
-	private void DisplayFieldChanged(object obj)
+	private async Task DisplayFieldChanged(object obj)
 	{
 		if (obj is not DISPLAY_FIELD_INFORMATION comboModel) return;
 
-        IsSearchFieldCheckBox.SetValue(comboModel.DFI_IS_SEARCH_FIELD);
+        //IsSearchFieldCheckBox.SetValue(comboModel.DFI_IS_SEARCH_FIELD);
 
         DisplayFieldCombobox.SetValue(obj);
+
+        await CheckRulesAsync();
+
     }
 
     private void DataSourceDisplayFieldChanged(object obj)
@@ -229,29 +229,7 @@ public partial class GridFieldsPage
 		//DisplayFieldCombobox.DataSource = DisplayFieldsList;
     }
 
-	private void GetQueryParameters(IGenView<GRID_FIELDS> View)
-    {
-        var currentQueryOrMethod = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_QUERY_OR_METHOD))?.ToString();
-
-        string pattern = @"@\w+";
-        Regex regex = new Regex(pattern);
-
-        MatchCollection matches = regex.Matches(currentQueryOrMethod);
-
 	
-        foreach (Match match in matches)
-        {
-            var existingField = DisplayFieldsList.FirstOrDefault((x) => x.DFI_NAME.Equals(match.Value.Substring(1)));
-
-			if (existingField is null)
-				DisplayFieldsList.Add(new DISPLAY_FIELD_INFORMATION { DFI_NAME = match.Value, DFI_IS_SEARCH_FIELD = true });
-			else
-				existingField.DFI_IS_SEARCH_FIELD = true;
-
-            DisplayFieldCombobox.DataSource = DisplayFieldsList;
-
-        }
-    }
 
     private bool IsSearchField(string bindingField)
     {
@@ -267,9 +245,12 @@ public partial class GridFieldsPage
         DataSourceQueryTextField.SetValue($"SELECT {valueField??string.Empty}, {displayField??string.Empty} FROM {tableName??string.Empty}");
     }
 
-    private void CheckRules()
+    private async Task CheckRulesAsync()
     {
+      
+        IsSearchFieldCheckBox.SetValue(IsSearchField(View.SelectedItem.GF_BINDINGFIELD));
 
+        //await InvokeAsync(View.StateHasChanged);
     }
 }
 

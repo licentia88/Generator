@@ -1,6 +1,5 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
@@ -65,12 +64,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
  
 
-    public Type DataType { get; set; }
+    Type IGenComponent.DataType { get; set; }
 
-    public object GetDefaultValue => DataType.GetDefaultValue();
+    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
 
-    [CascadingParameter( Name = nameof(IsSearchField))]
-    public bool IsSearchField { get; set; }
+    [CascadingParameter( Name = nameof(IGenComponent.IsSearchField))]
+    bool IGenComponent.IsSearchField { get; set; }
 
    
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -83,7 +82,20 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     protected override  Task OnInitializedAsync()
     {
-        Initialize();
+        if (InputType == InputType.Date)
+        {
+            Converter = _dateConverter;
+            Culture = CultureInfo.GetCultureInfo("en-US");
+            Format = "yyyy-MM-dd";
+            ((IGenComponent)this).DataType = typeof(DateTime);
+        }
+        else
+        {
+            Converter = _stringConverter;
+            ((IGenComponent)this).DataType = typeof(string);
+        }
+
+        //Immediate = true;
 
         AddComponents();
         
@@ -92,32 +104,13 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     private void AddComponents()
     {
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
             ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
         else
             ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
     }
 
-    public void Initialize()
-    {
-        //if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
-
-        if (InputType == InputType.Date)
-        {
-            Converter = _dateConverter;
-            Culture = CultureInfo.GetCultureInfo("en-US");
-            Format = "yyyy-MM-dd";
-            DataType = typeof(DateTime);
-        }
-        else
-        {
-            Converter = _stringConverter;
-            DataType = typeof(string);
-        }
-
-        Immediate = true;
-
-    }
+  
     private Converter<object> _stringConverter = new()
     {
         SetFunc = value => value?.ToString(),
@@ -137,18 +130,27 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
-   
 
     public void SetValue(object value)
     {
-        Model?.SetPropertyValue(BindingField, value);
-        
-        Value = value;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once HeuristicUnreachableCode
+        if (this is not IGenComponent comp) return;
 
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
-        ((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
+        if (comp.IsSearchField)
+            comp.SetSearchValue(value);
+        else
+        {
+            Model?.SetPropertyValue(BindingField, value);
 
+            Value = value;
+            //_value
+            comp.ParentGrid.StateHasChanged();
+            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        }
     }
+
+ 
 
     public void OnClearClicked(MouseEventArgs arg)
     {
@@ -160,9 +162,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         if (!ValueChanged.HasDelegate)
             ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
         {
-            OnClearButtonClick = EventCallback.Factory.Create(this, (MouseEventArgs arg) =>
+            OnClearButtonClick = EventCallback.Factory.Create(this, (MouseEventArgs _) =>
             {
                 SetValue(null);
                 ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField);
@@ -210,31 +212,48 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         RenderExtensions.RenderGrid(builder, data);
     };
 
-    public void ValidateObject()
+    void IGenComponent.ValidateObject()
     {
         ((IGenComponent)this).ParentGrid.ValidateValue( BindingField);
     }
 
     public object GetValue()
     {
-        return this.GetFieldValue(nameof(_value));
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).GetSearchValue();
+        else
+            return this.GetFieldValue(nameof(_value));
     }
 
-    public void SetSearchValue(object Value)
+    void IGenComponent.SetSearchValue(object value)
     {
-        Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
+        Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
         ((IGenComponent)this).ParentGrid.StateHasChanged();
-
     }
-    public object GetSearchValue()
+
+    object IGenComponent.GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
     }
 
-    public void SetEmpty()
+    void IGenComponent.SetEmpty()
     {
-        Model?.SetPropertyValue(BindingField, default);
-        Value = null;
+        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+
+        Model?.SetPropertyValue(BindingField, defaultValue);
+        //Value = null;
+    }
+
+    public new async Task Clear()
+    {
+        await base.Clear();
+
+        ((IGenComponent)this).SetEmpty();
+    }
+
+    public new bool Validate()
+    {
+        return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 }
 

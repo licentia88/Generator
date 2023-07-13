@@ -23,9 +23,9 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [EditorRequired]
     public string BindingField { get; set; }
 
-    public Type DataType { get; set; } = typeof(DateTime);
+    Type IGenComponent.DataType { get; set; } = typeof(DateTime);
 
-    public object GetDefaultValue => DataType.GetDefaultValue();
+    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
 
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -62,24 +62,21 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     public int xxl { get; set; } = 12;
 
 
-    [CascadingParameter(Name = nameof(IsSearchField))]
-    public bool IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
+    bool IGenComponent.IsSearchField { get; set; }
 
        
     protected override Task OnInitializedAsync()
     {
-        Initialize();
+        Date = (DateTime?)Model?.GetPropertyValue(BindingField);
+
         AddComponents();
 
         return Task.CompletedTask;
-    }
 
-    public void Initialize()
-    {
-        //if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
+     }
 
-        Date = (DateTime?)Model?.GetPropertyValue(BindingField);
-    }
+  
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -91,23 +88,29 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     public void SetValue(DateTime? date)
     {
-        Model?.SetPropertyValue(BindingField, date);
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once HeuristicUnreachableCode
+        if (this is not IGenComponent comp) return;
 
-        
-        _value = date;
+        if (comp.IsSearchField)
+            comp.SetSearchValue(date);
+        else
+        {
+            Model?.SetPropertyValue(BindingField, date);
+            //_value = date;
 
-        //((IGenComponent)this).ParentGrid.StateHasChanged();
-
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
-        ((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
-
+            comp.ParentGrid.StateHasChanged();
+            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        }
     }
+
+ 
 
     protected override void OnClosed()
     {
         if (!Error)
         {
-            if (!IsSearchField)
+            if (!((IGenComponent)this).IsSearchField)
                 ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
             else
                 ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField);
@@ -119,7 +122,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     private void AddComponents()
     {
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
             ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
         else
             ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
@@ -129,7 +132,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     private void SetCallBackEvents()
     {
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
         {
             this.DateChanged = EventCallback.Factory.Create<DateTime?>(this, x =>
             {
@@ -177,23 +180,27 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
   
 
-    public void ValidateObject()
+    void IGenComponent.ValidateObject()
     {
         ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
+
     public object GetValue()
     {
-        return this.GetFieldValue(nameof(_value));
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).GetSearchValue();
+        else
+            return this.GetFieldValue(nameof(_value));
     }
 
-    public void SetSearchValue(object Value)
+    void IGenComponent.SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
         ((IGenComponent)this).ParentGrid.StateHasChanged();
 
     }
 
-    public object GetSearchValue()
+    object IGenComponent.GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
     }
@@ -203,9 +210,25 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         SetValue((DateTime?)value);
     }
 
-    public void SetEmpty()
+    void IGenComponent.SetEmpty()
     {
-        Model?.SetPropertyValue(BindingField, default);
-        _value = null;
+        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+
+        Model?.SetPropertyValue(BindingField, defaultValue);
+        //_value = null;
+    }
+
+    public Task Clear()
+    {
+        base.Clear();
+
+        ((IGenComponent)this).SetEmpty();
+        
+        return Task.CompletedTask;
+    }
+
+    public new bool Validate()
+    {
+        return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 }

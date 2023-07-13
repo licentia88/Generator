@@ -77,7 +77,7 @@ public partial class GridMPage
         {
             await FillCrudSourceCombobox();
 
-            if (View.SelectedItem.CB_COMMAND_TYPE == 4)//storedProcedure ise
+            if (View.SelectedItem.CB_COMMAND_TYPE == 4 && !string.IsNullOrEmpty(View.SelectedItem.CB_DATABASE))//storedProcedure ise
                 await FillStoredProceduresCombobox();
         }
 
@@ -115,7 +115,13 @@ public partial class GridMPage
 
         if(View.SelectedItem.CB_COMMAND_TYPE == 4)
         {
-            await FillStoredProceduresCombobox();
+            if (string.IsNullOrEmpty(View.SelectedItem.CB_DATABASE))
+            {
+                NotificationsView.Notifications.Add(new NotificationVM("Database not selected!", MudBlazor.Severity.Error));
+                NotificationsView.Fire();
+            }
+            else
+                await FillStoredProceduresCombobox();
         }
 
         await CheckRules();

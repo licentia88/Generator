@@ -29,9 +29,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [EditorRequired]
     public string BindingField { get; set; }
 
-    public Type DataType { get; set; } = typeof(object);
+    Type IGenComponent.DataType { get; set; } = typeof(object);
 
-    public object GetDefaultValue => DataType.GetDefaultValue();
+    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
 
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -74,8 +74,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     //[Parameter]
     //public Action<object> ValueChangedAction { get; set; }
 
-    [CascadingParameter(Name = nameof(IsSearchField))]
-    public bool IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
+    bool IGenComponent.IsSearchField { get; set; }
 
 
     protected override Task OnInitializedAsync()
@@ -86,19 +86,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     private void AddComponents()
     {
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
             ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
         else
             ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
+        
     }
-
-    public void Initialize()
-    {
-        // if (ParentGrid.EditMode != Enums.EditMode.Inline && ParentGrid.CurrentGenPage is null) return;
-
-    }
-
-
+ 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Model is not null && Model.GetType().Name != "Object")
@@ -122,11 +116,21 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
         if (value is null) return;
 
-        Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
-       
-        Value = Model;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once HeuristicUnreachableCode
+        if (this is not IGenComponent comp) return;
 
- 
+        if (comp.IsSearchField)
+            comp.SetSearchValue(value);
+        else
+        {
+            Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
+
+            //Value = Model;
+
+            comp.ParentGrid.StateHasChanged();
+            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        }
     }
 
     private void SetCallBackEvents()
@@ -136,7 +140,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (!ValueChanged.HasDelegate)
             ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
-        if (IsSearchField)
+        if (((IGenComponent)this).IsSearchField)
         {
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, _ =>
             {
@@ -207,30 +211,49 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
     };
 
-    public void ValidateObject()
+    void IGenComponent.ValidateObject()
     {
         ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
     public object GetValue()
     {
-        return this.GetFieldValue(nameof(_value));
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).GetSearchValue();
+        else
+            return this.GetFieldValue(nameof(_value));
     }
 
-    public void SetSearchValue(object value)
+    
+
+    void IGenComponent.SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
         ((IGenComponent)this).ParentGrid.StateHasChanged();
-
     }
 
-    public object GetSearchValue()
+    object IGenComponent.GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
     }
-    public void SetEmpty()
+
+    void IGenComponent.SetEmpty()
     {
-        Model?.SetPropertyValue(BindingField, default);
-        Value = null;
+        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+
+        Model?.SetPropertyValue(BindingField, defaultValue);
+        //Value = null;
+    }
+
+    public new async Task Clear()
+    {
+        await base.Clear();
+
+        ((IGenComponent)this).SetEmpty();
+    }
+
+    public new bool Validate()
+    {
+        return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 }

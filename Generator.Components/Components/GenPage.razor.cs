@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel : new() 
+public partial class GenPage<TModel> where TModel : new() 
 {
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
@@ -59,7 +59,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
     bool INonGenPage.IsValid { get; set; }
 
-    public bool ShoulShowDialog { get; set; } = true;
+    public bool ShouldShowDialog { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +69,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
         if (Load.HasDelegate)
         {
             await Load.InvokeAsync(this);
-            if (!ShoulShowDialog)
+            if (!ShouldShowDialog)
             {
                 Close(true);
                 return;
@@ -134,6 +134,7 @@ public partial class GenPage<TModel> :IDisposable, IGenPage<TModel> where TModel
 
         if (((INonGenView)this).IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
         {
+            
             //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
 

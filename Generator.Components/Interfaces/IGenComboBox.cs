@@ -8,7 +8,4 @@ public interface IGenComboBox: IGenComponent
 
     public string ValueField { get; set; }
 
-    //public void SetValue(object value);
-
-
 }

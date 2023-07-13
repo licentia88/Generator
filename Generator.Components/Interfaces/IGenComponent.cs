@@ -2,17 +2,19 @@
 
 public interface IGenComponent: IGenCompRenderer
 {
-    void SetValue(object value);
+    Type DataType { get; set; }
 
-    public void SetEmpty();
+    bool IsSearchField { get; set; }
 
-    public object GetValue();
+    object GetDefaultValue { get; }
 
-    public bool IsSearchField { get; set; }
+    void SetSearchValue(object Value);
+
+    object GetSearchValue();
+
+    void ValidateObject();
 
     public string BindingField { get; set; }
-
-    public Type DataType { get; set; }
 
     public int Order { get; set; }
 
@@ -38,8 +40,6 @@ public interface IGenComponent: IGenCompRenderer
 
     public object Model { get; set; }
 
-    public object GetDefaultValue { get; }
-
     public string Label { get; set; }
 
     public bool Required { get; set; }
@@ -47,15 +47,15 @@ public interface IGenComponent: IGenCompRenderer
     public bool Error { get; set; }
 
     public string ErrorText { get; set; }
+ 
+    void SetEmpty();
 
-    public void ValidateObject();
+    public object GetValue();
 
-    public void Initialize();
+    public void SetValue(object value);
 
-    public void SetSearchValue(object Value);
+    public Task Clear();
 
-    public object GetSearchValue();
-    //public Action<object> ValueChangedAction { get; set; }
-
+    public bool Validate();
 }
 

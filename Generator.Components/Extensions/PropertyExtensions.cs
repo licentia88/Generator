@@ -9,31 +9,45 @@ internal static class PropertyExtensions
 
     public static object GetPropertyValue<T>(this T obj, string propertyName)
     {
-        if (obj is null) return default;
+        try
+        {
+            if (obj is null) return default;
 
-        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
-            return ((IDictionary<string, object>)obj)[propertyName] ?? null;
+            if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+                return ((IDictionary<string, object>)obj)[propertyName] ?? null;
 
-        return obj.GetType()
-            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            ?.GetValue(obj);
+            return obj.GetType()
+                .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(obj);
 
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
 
     }
 
     public static void SetPropertyValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+        try
         {
-            ((IDictionary<string, object>)obj)[propertyName] = propertyValue;
+            if (obj is ExpandoObject || obj is Dictionary<string, object>)
+            {
+                ((IDictionary<string, object>)obj)[propertyName] = propertyValue;
 
-            return;
+                return;
+            }
+
+            var property = obj.GetType()
+                .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
         }
+        catch (Exception ex)
+        {
 
-        var property = obj.GetType()
-            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-        property.SetValue(obj, ChangeToType(propertyValue, property.PropertyType));
+        }
 
     }
 
@@ -51,27 +65,41 @@ internal static class PropertyExtensions
 
     public static object GetFieldValue<T>(this T obj, string propertyName) //where T:new()
     {
-        if (obj is null) return default;
+        try
+        {
+            if (obj is null) return default;
 
-        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
-            return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
+            if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+                return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
 
-        return obj.GetType()
-            .GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .GetValue(obj) ?? null;
+            return obj.GetType()
+                .GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(obj) ?? null;
+        }
+        catch (Exception ex)
+        {
+            return null; 
+        }
     }
 
     public static void SetFieldValue<T>(this T obj, string propertyName, object propertyValue)
     {
-        if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+        try
         {
-            ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
+            if (obj is ExpandoObject || obj is Dictionary<string, object>)
+            {
+                ((IDictionary<string, Object>)obj)[propertyName] = propertyValue;
 
-            return;
+                return;
+            }
+
+            obj.GetType().GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(obj, propertyValue);
+
         }
+        catch (Exception ex)
+        {
 
-        obj.GetType().GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).SetValue(obj, propertyValue);
-
+        }
     }
 
     public static List<T> CreateDynamicList<T>(this T type)

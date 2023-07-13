@@ -49,7 +49,7 @@ public interface IGenView<TModel> : INonGenView where TModel:new()
 
     public Dictionary<string,object> Parameters { get; set; }
 
-    public bool ShoulShowDialog { get; set; }
+    public bool ShouldShowDialog { get; set; }
 
     public EventCallback<IGenView<TModel>> Load { get; set; }
 

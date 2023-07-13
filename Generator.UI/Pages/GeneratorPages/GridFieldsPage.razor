@@ -17,7 +17,7 @@
     <GenColumns>
 
         @*ROW1*@
-        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_BINDINGFIELD)"  
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_BINDINGFIELD)"
                       xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                       Label="BindingField" />
 
@@ -28,7 +28,7 @@
                      DataSource="DisplayFieldsList"
                      GridVisible="false"
                      ValueChanged="DisplayFieldChanged"
-                     BindingField="@nameof(DisplayFieldCombobox)"
+                     BindingField="@nameof(GRID_FIELDS.GF_BINDINGFIELD)"
                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
                      DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3" />
@@ -63,6 +63,7 @@
 
         <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_TRUE_TEXT))" @ref="TrueTextCheckBox"
                       EditorVisible="false"
+                      GridVisible="false"
                       Label="True Text"
                       xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
@@ -70,12 +71,14 @@
 
         <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FALSE_TEXT))" @ref="FalseTextCheckBox"
                       EditorVisible="false"
+                      GridVisible="false"
                       Label="False Text"
                       xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
 
         <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FORMAT))" @ref="FormatTextField"
                       EditorVisible="false"
+                      GridVisible="false"
                       Placeholder="Default: ddMMyyyy"
                       Label="Format"
                       xs="12" sm="12" md="12" lg="2" xl="2" xxl="2" />
@@ -86,6 +89,7 @@
                      DataSource="TableList"
                      ValueChanged="DataSourceChanged"
                      EditorVisible="false"
+                     GridVisible="false"
                      BindingField="@nameof(GRID_FIELDS.GF_DATASOURCE)"
                      ValueField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)"
                      DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)"
@@ -97,6 +101,7 @@
         <GenComboBox Label="Value" @ref="DataSourceValueFieldComboBox"
                      DataSource="ComboDisplayFieldList"
                      EditorVisible="false"
+                     GridVisible="false"
                      ValueChanged="DataSourceValueFieldChanged"
                      BindingField="@nameof(GRID_FIELDS.GF_VALUEFIELD)"
                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
@@ -108,6 +113,7 @@
         <GenComboBox Label="Display" @ref="DataSourceDisplayFieldComboBox"
                      DataSource="ComboDisplayFieldList"
                      EditorVisible="false"
+                     GridVisible="false"
                      ValueChanged="DataSourceDisplayFieldChanged"
                      BindingField="@nameof(GRID_FIELDS.GF_DISPLAYFIELD)"
                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
@@ -125,20 +131,19 @@
 
 
         @*ROW3*@
+
+        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_REQUIRED)"
+                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
+                     TrueText="Yes" FalseText="No"
+                     Label="Required" />
+
         <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_USE_AS_SEARCHFIELD)"
                      @ref="IsSearchFieldCheckBox"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
                      EditorEnabled="false"
                      TrueText="Yes" FalseText="No"
                      Label="Search" />
-
-
-        <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_REQUIRED)"
-                     xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
-                     TrueText="Yes" FalseText="No"
-
-                     Label="Required" />
-
+ 
         <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_GRID_VISIBLE)"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
                      TrueText="Yes" FalseText="No"

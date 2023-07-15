@@ -24,7 +24,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
-       
+   
+
     [Parameter]
     [EditorRequired]
     public string BindingField { get; set; }
@@ -77,6 +78,11 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
 
+    [Parameter]
+    public Func<object, bool> EditorVisibleFunc { get; set; }
+
+    [Parameter]
+    public Func<object, bool> EditorEnabledFunc { get; set; }
 
     protected override Task OnInitializedAsync()
     {
@@ -165,13 +171,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
      }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
-    {
-        RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
-    };
+    //public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
+    //{
+    //    RenderAsComponent(model, ignoreLabels, new KeyValuePair<string, object>(nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled))).Invoke(builder);
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
-        params KeyValuePair<string, object>[] valuePairs) => builder =>
+    //};
+
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
         if (Model is null || Model.GetType().Name == "Object")
             Model = model;
@@ -198,7 +204,11 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         var loValue = DataSource?.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == Model.GetPropertyValue(BindingField)?.ToString());
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
+
         additionalParams.Add((nameof(Value), loValue));
+
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
+
         additionalParams.Add(innerFragment);
         
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());

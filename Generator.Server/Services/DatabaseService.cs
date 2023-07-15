@@ -6,9 +6,9 @@ using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ComponentModels.NonDB;
 using Generator.Shared.Models.ServiceModels;
 using Generator.Shared.Services;
-using Grpc.Core;
 using MagicOnion;
 using Mapster;
+   
 
 namespace Generator.Server.Services;
 
@@ -41,12 +41,10 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
     public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetStoredProcedureFieldsAsync(string connectionName, string StoredProcedure)
     {
         return TaskHandler.ExecuteAsync(async () =>
-        {
-            var query = $"SELECT NAME DFI_NAME FROM SYS.DM_EXEC_DESCRIBE_FIRST_RESULT_SET('EXEC {StoredProcedure}', NULL, 0)";
+        {      
+            var procedureFields = await GetDatabase(connectionName).GetStoredProcedureFieldsAsync(StoredProcedure);
 
-            var queryResult = await GetDatabase(connectionName).QueryAsync(query, new KeyValuePair<string, object>());
-
-            var adaptedData = queryResult.Adapt<List<DISPLAY_FIELD_INFORMATION>>();
+            var adaptedData = procedureFields.Select(x => new DISPLAY_FIELD_INFORMATION { DFI_NAME = x["NAME"].ToString() }).ToList();
 
             return adaptedData;
         });
@@ -56,46 +54,39 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
     {
         return await TaskHandler.ExecuteAsync(async () =>
         {
-            var query = " SELECT NAME AS SP_NAME FROM SYS.PROCEDURES WHERE TYPE = 'P' AND IS_MS_SHIPPED = 0 ORDER BY NAME;\n";
+            var procedureFields = await GetDatabase(connectionName).GetStoredProcedures();
 
-            var queryResult = await GetDatabase(connectionName).QueryAsync(query, new KeyValuePair<string, object>());
-
-            var adaptedData = queryResult.Adapt<List<STORED_PROCEDURES>>();
+            var adaptedData = procedureFields.Select(x => new STORED_PROCEDURES { SP_NAME = x["SP_NAME"].ToString() }).ToList();
 
             return adaptedData;
         });
 
     }
 
-    public async UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetTableFields(string connectionName, string TableName)
+    public async UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetTableFieldsAsync(string connectionName, string TableName)
     {
         return await TaskHandler.ExecuteAsync(async () =>
         {
-            var query = " SELECT COLUMN_NAME DFI_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @TABLE_NAME ";
+            var queryResult = await GetDatabase(connectionName).GetTableFieldsAsync(TableName);
 
-            var queryResult = await GetDatabase(connectionName).QueryAsync(query, new KeyValuePair<string, object>("TABLE_NAME", TableName));
-
-            var adaptedData = queryResult.Adapt<List<DISPLAY_FIELD_INFORMATION>>();
+            var adaptedData = queryResult.Select(x => new DISPLAY_FIELD_INFORMATION { DFI_NAME = x["COLUMN_NAME"].ToString() }).ToList();
 
             return adaptedData;
         });
     }
 
-    public async UnaryResult<RESPONSE_RESULT<List<TABLE_INFORMATION>>> GetTableListForConnection(string connectionName)
+    public async UnaryResult<RESPONSE_RESULT<List<TABLE_INFORMATION>>> GetTableListAsync(string connectionName)
     {
         return await TaskHandler.ExecuteAsync(async () =>
         {
-            var query = " SELECT TABLE_NAME TI_TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY  TABLE_NAME ASC ";
+            var queryResult = await GetDatabase(connectionName).GetTableListAsync();
 
-            var queryResult = await GetDatabase(connectionName).QueryAsync(query, new KeyValuePair<string, object>());
-
-            var adaptedData = queryResult.Adapt<List<TABLE_INFORMATION>>();
+            var adaptedData = queryResult.Select(x => new TABLE_INFORMATION { TI_TABLE_NAME = x["TABLE_NAME"].ToString() }).ToList();
 
             return adaptedData;
         });
     }
  
-
     public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetFieldsUsingQuery(string connectionName, string Query)
     {
         return TaskHandler.Execute(() =>
@@ -104,7 +95,7 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
 
             SQLQueryParser = new SQLQueryParser(connection);
 
-            var queryParams = GetQueryParameters(Query);
+            var queryParams = GetParametersFromQuery(Query);
 
             var fieldsList = SQLQueryParser.GetFieldNamesFromQuery(Query);
  
@@ -112,12 +103,11 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
         });
     }
 
-    private List<string> GetQueryParameters(string query)
-    {
-        
+    private List<string> GetParametersFromQuery(string query)
+    {     
         string pattern = @"@\w+";
 
-        Regex regex = new Regex(pattern);
+        Regex regex = new(pattern);
 
         MatchCollection matches = regex.Matches(query);
 
@@ -125,15 +115,18 @@ public class DatabaseService : MagicBase<IDatabaseService, DATABASE_INFORMATION>
         
     }
 
-    private async Task<List<TABLE_INFORMATION>> GetSpParametersAsync(string connectionName, string StoredProcedure)
+    
+
+    public async UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetStoredProcedureParametersAsync(string connectionName, string StoredProcedure)
     {
-        var query = @"SELECT SUBSTRING(PARAMETER_NAME,2,LEN(PARAMETER_NAME)) DFI_NAME FROM INFORMATION_SCHEMA.PARAMETERS
-                      WHERE SPECIFIC_NAME = @SPECIFIC_NAME
-                        ORDER BY ORDINAL_POSITION";
+        return await TaskHandler.ExecuteAsync(async () =>
+        {
+            var queryResult = await GetDatabase(connectionName).GetStoredProcedureParametersAsync(StoredProcedure);
 
-        var queryResult = await GetDatabase(connectionName).QueryAsync(query,new KeyValuePair<string, object>("SPECIFIC_NAME", StoredProcedure));
+            return queryResult.Select(x => new DISPLAY_FIELD_INFORMATION { DFI_NAME = x["PARAMETER_NAME"].ToString(), DFI_IS_SEARCH_FIELD = true }).ToList();
 
-        return queryResult.Adapt<List<TABLE_INFORMATION>>();
-
+            
+        });
+      
     }
 }

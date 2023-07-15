@@ -94,7 +94,11 @@ where TService : IGenericService<TService, TModel>
         var dialogResult = await Dialog.Result;
 
         if (dialogResult.Cancelled)
+        {
             NotificationsView.Notifications.Add(new NotificationVM("Cancelled", Severity.Info));
+            NotificationsView.Fire();
+            return;
+        }
 
         await ExecuteAsync(async () =>
         {

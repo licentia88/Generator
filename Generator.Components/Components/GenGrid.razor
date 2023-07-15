@@ -196,7 +196,7 @@
 
                             if (ViewState != ViewState.None && EditMode == EditMode.Inline)
                             {   //edit create vs
-                                predicate = x => x.EditorVisible && x is not GenSpacer;
+                                predicate = x => (x.EditorVisible || (x.EditorVisibleFunc?.Invoke(SelectedItem) ?? false)) && x is not GenSpacer;
                             }
                             else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
                             {
@@ -334,8 +334,13 @@
                             {
                                 <MudTd></MudTd>
                             }
-
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x.EditorVisible && x is not GenSpacer).OrderBy(x => x.Order).ToList())
+                            //if (component.component.VisibleFunc is not null)
+                            //{
+                            //    component.component.EditorVisible = component.component.VisibleFunc.Invoke(SelectedItem);
+                            //}
+                            foreach (var item in GetComponentsOf<IGenComponent>()
+                                    .Where(x=> x is not GenSpacer)
+                                    .Where(x => x.EditorVisible || (x.EditorVisibleFunc?.Invoke(SelectedItem)??false)).OrderBy(x => x.Order).ToList())
                             {
                                 if (EditMode != EditMode.Inline || !ShouldShowDialog || ((INonGenGrid)this).DetailClicked)
                                 {

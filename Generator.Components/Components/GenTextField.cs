@@ -62,7 +62,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public int xxl { get; set; } = 12;
 
- 
+
+    [Parameter]
+    public Func<object,bool> EditorVisibleFunc { get; set; }
+
+    [Parameter]
+    public Func<object, bool> EditorEnabledFunc { get; set; }
 
     Type IGenComponent.DataType { get; set; }
 
@@ -78,6 +83,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             base.BuildRenderTree(builder);
 
         AddComponents();
+
+        
     }
 
     protected override  Task OnInitializedAsync()
@@ -175,30 +182,33 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
         else
         {  
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ((IGenComponent)this).ParentGrid.ValidateValue(BindingField); });
+            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {
+                ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+                //((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
+            });
 
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
         }
     }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) =>  builder =>
-    {
-        RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
-    };
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params KeyValuePair<string, object>[] valuePairs)=>  builder =>
+
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
-        if(Model is null || Model.GetType().Name == "Object")
+        if (Model is null || Model.GetType().Name == "Object")
             Model = model;
-
+       
         SetCallBackEvents();
 
         var loValue = Model.GetPropertyValue(BindingField);
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-      
+
         additionalParams.Add((nameof(Value), loValue));
-        
-        builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
+
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled) ));
+
+
+        builder.RenderComponent(this, ignoreLabels, additionalParams.ToArray());
     };
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>

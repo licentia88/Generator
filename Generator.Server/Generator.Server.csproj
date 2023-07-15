@@ -11,6 +11,12 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
 
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>11.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>11.0</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />
     <PackageReference Include="MagicOnion.Server" Version="5.1.8" />
@@ -25,7 +31,6 @@
     </PackageReference>
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
     <PackageReference Include="AQueryDisassembler" Version="1.0.0" />
-    <PackageReference Include="AQueryMaker" Version="1.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="LitJWT" Version="2.0.2" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />
@@ -36,6 +41,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
  
@@ -72,6 +78,9 @@
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj" />
 
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QueryMakerSolution\AQueryMaker\AQueryMaker.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

@@ -1,10 +1,14 @@
 ﻿namespace Generator.Components.Interfaces;
 
-public interface IGenComponent: IGenCompRenderer
+public interface IGenComponent : IGenCompRenderer
 {
     Type DataType { get; set; }
 
     bool IsSearchField { get; set; }
+
+    public Func<object,bool> EditorVisibleFunc { get;set;}
+
+    public Func<object, bool> EditorEnabledFunc { get; set; }
 
     object GetDefaultValue { get; }
 

@@ -1,5 +1,4 @@
-﻿using Generator.Server.FIlters;
-using Generator.Server.Helpers;
+﻿using Generator.Server.Helpers;
 using Generator.Server.Hubs.Base;
 using Generator.Shared.Enums;
 using Generator.Shared.Hubs;
@@ -22,7 +21,6 @@ public class GridMHub : MagicHubServerBase<IGridMHub, IGridMReceiver, GRID_M>, I
 
     public override async Task<RESPONSE_RESULT<GRID_M>> CreateAsync(GRID_M model)
     {
-
         return await TaskHandler.ExecuteAsync(async () =>
         {
             var newPermission = new PERMISSIONS().SetPermissionInfo(model.CB_TITLE, Operation.Read);

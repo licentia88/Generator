@@ -37,6 +37,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
 
     [Parameter]
+    public Func<object, bool> VisibleFunc { get; set; }
+
+    [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
     public int Width { get; set; }
 
@@ -78,7 +81,13 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
 
-     protected override Task OnInitializedAsync()
+    [Parameter]
+    public Func<object, bool> EditorVisibleFunc { get; set; }
+
+    [Parameter]
+    public Func<object, bool> EditorEnabledFunc { get; set; }
+
+    protected override Task OnInitializedAsync()
     {
         AddComponents();
 
@@ -120,13 +129,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
             CheckedChanged = EventCallback.Factory.Create<bool>(this, SetValue);
     }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
-    {
-        RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
-    };
+    //public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+    //{
+    //    //EditorEnabled = EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled;
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
-        params KeyValuePair<string, object>[] valuePairs) => (builder) =>
+    //    RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
+    //};
+
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => (builder) =>
     {
         if (Model is null || Model.GetType().Name == "Object")
             Model = model;
@@ -136,8 +146,11 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
+
         additionalParams.Add((nameof(Checked), val));
-        
+
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
+
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
         
     };

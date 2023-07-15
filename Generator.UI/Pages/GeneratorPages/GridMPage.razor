@@ -22,9 +22,9 @@
          EditMode="EditMode.SmartForm">
 
     <GenColumns>
-
+            
         @*ROW1*@
-        <GenSpacer xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
+        <GenSpacer  xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
 
         <GenComboBox DataSource="DatabaseList" @ref="DatabaseComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
@@ -41,6 +41,8 @@
         <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
                       Label="Page Title"
                       Order="0"
+                      Required="true"
+                      EditorEnabledFunc="@(x =>  ((GRID_M)x).CB_DATABASE == "DefaultConnection")"
                       xs="12" sm="12" md="12" lg="7" xl="7" xxl="7" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />

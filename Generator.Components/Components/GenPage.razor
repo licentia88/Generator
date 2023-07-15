@@ -1,8 +1,24 @@
-@typeparam TModel where TModel : new() 
+@typeparam TModel where TModel : new()
 
- 
+
 @implements IGenPage<TModel>
 @implements IDisposable
+
+<style>
+      .mud-dialog .mud-dialog-actions
+      {
+        flex: 0 0 auto;
+        display: flex;
+        margin-top:2rem!important;
+/*        padding: 8px !important;*/
+        padding-right:3.5rem!important;
+        align-items: center;
+        justify-content: flex-end;
+        border-bottom-left-radius: var(--mud-default-borderradius);
+        border-bottom-right-radius: var(--mud-default-borderradius);
+    }
+      
+</style>
 
 @{
     if (SelectedItem is null) return;
@@ -14,26 +30,33 @@
                     @{
                         <DataAnnotationsValidator />
                     }
-                <MudContainer Class="m-0 p-2" Style="max-height: 80vh; overflow-y: scroll; max-width:100%!important">
-                    @{
-                        <div style="overflow-x:hidden; overflow-y:hidden;">
+                    <MudContainer Class="m-0 p-2" Style="overflow-y: scroll">
+                        @{
+                            @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
                             <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
                                 @{
-                                    foreach (var component in Components)
+                                    foreach (var componentDetail in Components)
                                     {
-                                        <MudItem Class="mt-4"
-                                                    xs="component.component.xs"
-                                                    sm="component.component.sm"
-                                                    md="component.component.md"
-                                                    lg="component.component.lg"
-                                                    xl="component.component.xl"
-                                                    xxl="component.component.xxl">
+                                        if(componentDetail.component.EditorVisibleFunc is not null)
+                                        {
+                                            componentDetail.component.EditorVisible = componentDetail.component.EditorVisibleFunc.Invoke(SelectedItem);
+                                        }
+
+                                        
+                                        <MudItem Class="mt-4" 
+                                                 xs="componentDetail.component.xs"
+                                                 sm="componentDetail.component.sm"
+                                                 md="componentDetail.component.md"
+                                                 lg="componentDetail.component.lg"
+                                                 xl="componentDetail.component.xl"
+                                                 xxl="componentDetail.component.xxl">
                                             @{
-                                                if (component.component.EditorVisible)
-                                                {
-                                                    @component.component.RenderAsComponent(SelectedItem)
-                                                }
+                                               if (componentDetail.component.EditorVisible)
+                                               {
+                                                    @componentDetail.component.RenderAsComponent(SelectedItem);
+                                               }
+
 
                                             }
                                         </MudItem>
@@ -41,27 +64,27 @@
 
                                 }
                             </MudGrid>
-                        </div>
+                            @*</div>*@
 
 
-                        if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
-                        {
-                             @*<div style=" overflow-y: scroll!important; ">*@
+                            if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
+                            {
+                                @*<div style=" overflow-y: scroll!important; ">*@
                                 @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
-                                    <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
-                                        <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
-                                            <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
-                                                @GenGrid.GenDetailGrid(SelectedItem)
-                                            </CascadingValue>
+                                <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
+                                    <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
+                                        <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+                                            @GenGrid.GenDetailGrid(SelectedItem)
                                         </CascadingValue>
                                     </CascadingValue>
+                                </CascadingValue>
 
                                 @*</div>
-                            </div>*@
+                                    </div>*@
 
+                            }
                         }
-                    }
-                </MudContainer>
+                    </MudContainer>
                 </DialogContent>
                 <DialogActions>
                     <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>
@@ -73,7 +96,7 @@
         </EditForm>
 
     </CascadingValue>
-    
+
 
 
 }

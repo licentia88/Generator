@@ -64,7 +64,6 @@ namespace Generator.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_TITLE")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CB_TYPE")

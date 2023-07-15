@@ -121,7 +121,7 @@ public partial class GridFieldsPage
     {
         if (model is not TABLE_INFORMATION data) return;
 
-        var fieldList = await DatabaseService.GetTableFields(CurrentDatabase, data.TI_TABLE_NAME);
+        var fieldList = await DatabaseService.GetTableFieldsAsync(CurrentDatabase, data.TI_TABLE_NAME);
 
         DisplayFieldsList = fieldList.Data;
 

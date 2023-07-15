@@ -176,7 +176,7 @@ public partial class GridMPage
 
     private async Task FillCrudSourceCombobox()
     {
-        TableList = await CrudSourceComboBox.FillAsync(() => DatabaseService.GetTableListForConnection(View.SelectedItem.CB_DATABASE));
+        TableList = await CrudSourceComboBox.FillAsync(() => DatabaseService.GetTableListAsync(View.SelectedItem.CB_DATABASE));
     }
     private async Task FillStoredProceduresCombobox()
     {

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace Generator.Server.Exceptions.Strategies;
 

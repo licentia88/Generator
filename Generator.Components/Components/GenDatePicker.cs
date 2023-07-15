@@ -43,6 +43,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [Parameter]
     public bool GridVisible { get; set; } = true;
 
+ 
     [Parameter]
     public int xs { get; set; } = 12;
 
@@ -65,7 +66,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
 
-       
+    [Parameter]
+    public Func<object, bool> EditorVisibleFunc { get; set; }
+
+    [Parameter]
+    public Func<object, bool> EditorEnabledFunc { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         Date = (DateTime?)Model?.GetPropertyValue(BindingField);
@@ -149,12 +155,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         }
     }
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
-    {
-        RenderAsComponent(model, ignoreLabels,new KeyValuePair<string, object>(nameof(Disabled),!EditorEnabled)).Invoke(builder);
-    };
+    //public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
+    //{
+    //    RenderAsComponent(model, ignoreLabels, new KeyValuePair<string, object>(nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled))).Invoke(builder);
+    // };
 
-    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params KeyValuePair<string, object>[] valuePairs) => (builder) =>
+    public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => (builder) =>
     {
         if (Model is null || Model.GetType().Name == "Object")
             Model = model;
@@ -164,7 +170,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
+
         additionalParams.Add((nameof(_value), valDate));
+
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
+
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
         //throw new NotImplementedException();
     };

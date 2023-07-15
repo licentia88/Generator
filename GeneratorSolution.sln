@@ -18,13 +18,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.UI", "Generator.U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Client", "Generator.Client\Generator.Client.csproj", "{DCAD00C2-0349-44F9-AD07-A00504CED381}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryMaker", "QueryMaker\QueryMaker.csproj", "{E8535C80-403F-4D36-B03E-1B5CD13FFB87}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Server", "Generator.Server\Generator.Server.csproj", "{B48BEAF2-7C0D-4641-869E-1B5CB458DA61}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Example", "Generator.Example\Generator.Example.csproj", "{1BFC1960-5477-4791-BF7B-73A3D398B2AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Examples.Shared", "Generator.Examples.Shared\Generator.Examples.Shared.csproj", "{51BC09EC-690D-4008-9D93-87608A147571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AQueryMaker", "..\QueryMakerSolution\AQueryMaker\AQueryMaker.csproj", "{72B3DFE6-C777-4C40-B4FE-6C39DEE6053F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,10 +52,6 @@ Global
 		{DCAD00C2-0349-44F9-AD07-A00504CED381}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCAD00C2-0349-44F9-AD07-A00504CED381}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCAD00C2-0349-44F9-AD07-A00504CED381}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8535C80-403F-4D36-B03E-1B5CD13FFB87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8535C80-403F-4D36-B03E-1B5CD13FFB87}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8535C80-403F-4D36-B03E-1B5CD13FFB87}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8535C80-403F-4D36-B03E-1B5CD13FFB87}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B48BEAF2-7C0D-4641-869E-1B5CB458DA61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B48BEAF2-7C0D-4641-869E-1B5CB458DA61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B48BEAF2-7C0D-4641-869E-1B5CB458DA61}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -68,6 +64,10 @@ Global
 		{51BC09EC-690D-4008-9D93-87608A147571}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51BC09EC-690D-4008-9D93-87608A147571}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51BC09EC-690D-4008-9D93-87608A147571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B3DFE6-C777-4C40-B4FE-6C39DEE6053F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B3DFE6-C777-4C40-B4FE-6C39DEE6053F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B3DFE6-C777-4C40-B4FE-6C39DEE6053F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B3DFE6-C777-4C40-B4FE-6C39DEE6053F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

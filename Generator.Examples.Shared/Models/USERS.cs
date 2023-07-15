@@ -11,7 +11,7 @@ public partial class USER
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int U_ROWID { get; set; }
 
-    [Required(ErrorMessage = "Zorunlu alan")]
+    //[Required(ErrorMessage = "Zorunlu alan")]
     [DisplayName("User")]
     public string U_NAME { get; set; }
 

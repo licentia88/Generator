@@ -3,8 +3,6 @@ using Generator.Server.Helpers;
 using Generator.Server.OptionsTemplates;
 using AQueryMaker;
 using Generator.Server.Seed;
-using MagicOnion.Server.Hubs;
-using Grpc.Core;
 using MagicOnion.Server;
 
 namespace Generator.Server.Extensions;

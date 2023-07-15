@@ -8,7 +8,7 @@ using MagicOnion;
 namespace Generator.Client.Services;
 
 [RegisterSingleton]
-public  class DatabaseService : ServiceBase<IDatabaseService, DATABASE_INFORMATION>, IDatabaseService
+public class DatabaseService : ServiceBase<IDatabaseService, DATABASE_INFORMATION>, IDatabaseService
 {
     public UnaryResult<RESPONSE_RESULT<List<DATABASE_INFORMATION>>> GetDatabaseList()
     {
@@ -25,19 +25,24 @@ public  class DatabaseService : ServiceBase<IDatabaseService, DATABASE_INFORMATI
         return Client.GetStoredProcedureFieldsAsync(connectionName, StoredProcedure);
     }
 
+    public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetStoredProcedureParametersAsync(string connectionName, string StoredProcedure)
+    {
+        return Client.GetStoredProcedureParametersAsync(connectionName, StoredProcedure);
+    }
+
     public UnaryResult<RESPONSE_RESULT<List<STORED_PROCEDURES>>> GetStoredProcedures(string connectionNameRequest)
     {
         return Client.GetStoredProcedures(connectionNameRequest);
     }
 
-    public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetTableFields(string connectionName, string TableName)
+    public UnaryResult<RESPONSE_RESULT<List<DISPLAY_FIELD_INFORMATION>>> GetTableFieldsAsync(string connectionName, string TableName)
     {
-        return Client.GetTableFields(connectionName,TableName);
+        return Client.GetTableFieldsAsync(connectionName,TableName);
     }
 
-    public UnaryResult<RESPONSE_RESULT<List<TABLE_INFORMATION>>> GetTableListForConnection(string connectionNameRequest)
+    public UnaryResult<RESPONSE_RESULT<List<TABLE_INFORMATION>>> GetTableListAsync(string connectionNameRequest)
     {
-        return Client.GetTableListForConnection(connectionNameRequest);
+        return Client.GetTableListAsync(connectionNameRequest);
     }
 
     

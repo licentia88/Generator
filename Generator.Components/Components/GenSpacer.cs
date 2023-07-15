@@ -19,6 +19,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
     public int Width { get; set; }
+ 
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public int Order { get; set; }
@@ -83,7 +84,8 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
-
+    public Func<object, bool> EditorVisibleFunc { get; set; }
+    public Func<object, bool> EditorEnabledFunc { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -125,7 +127,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     };
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
-        params KeyValuePair<string, object>[] valuePairs) => (builder) =>
+        params (string, object)[] valuePairs) => (builder) =>
         {
             //builder.RenderComponent(this, ignoreLabels);
         };

@@ -84,6 +84,12 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [Parameter]
     public Func<object, bool> EditorEnabledFunc { get; set; }
 
+    [Parameter]
+    public Func<object, bool> WhereFunc { get; set; }
+
+    [Parameter]
+    public Func<object, bool> RequiredIf { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         AddComponents();
@@ -110,12 +116,12 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public void OnClearClicked(MouseEventArgs arg)
     {
-            
         Model.SetPropertyValue(BindingField, null);
-        Value = null;
+
+        ((IGenComponent)this).SetEmpty();
 
         ((IGenComponent)this).ParentGrid.StateHasChanged();
-        ((IGenComponent)this).ParentGrid?.CurrentGenPage.StateHasChanged();
+        ((IGenComponent)this).ParentGrid?.CurrentGenPage?.StateHasChanged();
     }
 
     public void SetValue(object value)
@@ -127,17 +133,22 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (this is not IGenComponent comp) return;
 
         if (comp.IsSearchField)
+        {
             comp.SetSearchValue(value);
+
+            comp.ParentGrid.ResetConditionalSearchFields();
+
+        }
         else
         {
             Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
             Value = Model;
             _value = Model;
-
-            comp.ParentGrid.StateHasChanged();
-            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
         }
+
+        comp.ParentGrid.StateHasChanged();
+        comp.ParentGrid.CurrentGenPage?.StateHasChanged();
     }
 
     private void SetCallBackEvents()
@@ -147,27 +158,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (!ValueChanged.HasDelegate)
             ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
-        if (((IGenComponent)this).IsSearchField)
-        {
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, _ =>
-            {
-                Model?.SetPropertyValue(BindingField, null);
+        if (!OnClearButtonClick.HasDelegate)
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
 
-                ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField);
-            });
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>  Validate());
 
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField));
-        }
-        else
-        {
 
-            if (!OnClearButtonClick.HasDelegate)
-            {
-                OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
-            }
-
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => { ((IGenComponent)this).ParentGrid.ValidateValue(BindingField); });
-        }
+        
 
      }
 
@@ -189,7 +186,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
             var i = 1000;
 
             if (DataSource is null) return;
-            foreach (var data in DataSource)
+
+            foreach (var data in DataSource.Where(x => WhereFunc?.Invoke(Model)??true))
             {
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
@@ -209,8 +207,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
 
+        additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
+
         additionalParams.Add(innerFragment);
-        
+
+        if (!RequiredIf?.Invoke(Model) ?? Required)
+            Error = false;
+
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
         // (nameof(Disabled), !EditorEnabled)
      };
@@ -239,7 +242,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     void IGenComponent.SetSearchValue(object value)
     {
-        Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
+        Model.CastTo<Dictionary<string, object>>()[BindingField] = value.GetPropertyValue(BindingField);
         ((IGenComponent)this).ParentGrid.StateHasChanged();
     }
 
@@ -253,7 +256,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
+
         Value = null;
+
         _value = Model;
     }
 
@@ -266,6 +271,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public new bool Validate()
     {
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
+
         return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+    }
+
+    bool IGenComponent.IsEditorVisible(object Model)
+    {
+        return ((IGenComponent)this).EditorVisibleFunc?.Invoke(Model) ?? ((IGenComponent)this).EditorVisible;
+    }
+
+    bool IGenComponent.IsRequired(object Model)
+    {
+        return ((IGenComponent)this).RequiredIf?.Invoke(Model) ?? ((IGenComponent)this).Required;
     }
 }

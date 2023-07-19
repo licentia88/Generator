@@ -162,7 +162,7 @@ public partial class GenPage<TModel> where TModel : new()
     {
         if (!((INonGenView)this).IsTopLevel) return;
         GenGrid.RefreshButtonState();
-        GenGrid.ResetValidation();
+        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component));
         MudDialog.Close();
     }
 
@@ -212,7 +212,7 @@ public partial class GenPage<TModel> where TModel : new()
         if (ViewState != ViewState.None)
         {
             MudDialog.Close();
-
+            
             //Cancel eventini tetikler
             GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
         }
@@ -225,7 +225,9 @@ public partial class GenPage<TModel> where TModel : new()
         //Components.ForEach(x => x.Model = null);
 
         RefreshParentGrid.InvokeAsync();
-        GenGrid.ResetValidation();
+
+        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component));
+
         MudDialog.Dispose();
 
            

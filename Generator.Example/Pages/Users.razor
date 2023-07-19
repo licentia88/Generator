@@ -36,6 +36,7 @@ if (DataSource.Count ==0) return;
 
         <GenTextField Clearable="true" BindingField="TexFld" Label="Name"
                       Required="false"
+                      RequiredIf="@(x=> ((Dictionary<string,object>)x)[nameof(USER.U_ROWID)] is null)"
                       xs="5" sm="5" md="5" lg="5" xl="5" xxl="5" />
 
         <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
@@ -43,14 +44,15 @@ if (DataSource.Count ==0) return;
         <GenComboBox DataSource="DataSource" Dense="true"
                      DisplayField="@nameof(USER.U_NAME)"
                      ValueField="@nameof(USER.U_ROWID)"
-                     Clearable="true" BindingField="comboField"
+                     Clearable="true"
+                     BindingField="@nameof(USER.U_ROWID)"
                      xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
                      Label="Peopel" Required="false" />
 
         <GenComboBox DataSource="pERMISSIONs" Dense="true"
                      DisplayField="@nameof(PERMISSIONS.AUTH_NAME)"
                      ValueField="@nameof(PERMISSIONS.AUTH_ROWID)"
-                     Clearable="true" BindingField="comboField2"
+                     Clearable="true" BindingField=@nameof(PERMISSIONS.AUTH_ROWID)
                      xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
                      Label="Permissions" Required="false" />
 

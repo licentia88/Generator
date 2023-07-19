@@ -8,4 +8,6 @@ public interface IGenComboBox: IGenComponent
 
     public string ValueField { get; set; }
 
+    public Func<object, bool> WhereFunc { get; set; }
+
 }

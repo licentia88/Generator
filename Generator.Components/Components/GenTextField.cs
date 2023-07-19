@@ -69,6 +69,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public Func<object, bool> EditorEnabledFunc { get; set; }
 
+   
+
     Type IGenComponent.DataType { get; set; }
 
     object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
@@ -80,7 +82,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Model is not null && Model.GetType().Name != "Object")
+        {
+           
             base.BuildRenderTree(builder);
+        }
 
         AddComponents();
 
@@ -137,6 +142,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new string Text => Model.GetPropertyValue(BindingField).ToString();
 
+    [Parameter]
+    public Func<object, bool> RequiredIf { get; set; }
 
     public void SetValue(object value)
     {
@@ -158,11 +165,18 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
     }
 
- 
 
     public void OnClearClicked(MouseEventArgs arg)
     {
-        Model?.SetPropertyValue(BindingField, null);
+        if (((IGenComponent)this).IsSearchField)
+        {
+            SetValue(null);
+            Validate();
+            return;
+        }
+
+        ((IGenComponent)this).SetEmpty();
+        //Model?.SetPropertyValue(BindingField, null);
     }
 
     private void SetCallBackEvents()
@@ -170,25 +184,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         if (!ValueChanged.HasDelegate)
             ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
-        if (((IGenComponent)this).IsSearchField)
-        {
-            OnClearButtonClick = EventCallback.Factory.Create(this, (MouseEventArgs _) =>
-            {
-                SetValue(null);
-                ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField);
-            });
-            
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => ((IGenComponent)this).ParentGrid.ValidateSearchFields(BindingField));
-        }
-        else
-        {  
-            OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {
-                ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
-                //((IGenComponent)this).ParentGrid.CurrentGenPage?.StateHasChanged();
-            });
+        OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
 
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
-        }
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => Validate());
+
     }
 
 
@@ -207,6 +206,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled) ));
 
+        additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
+
+        if (!RequiredIf?.Invoke(Model) ?? Required)
+            Error = false;
 
         builder.RenderComponent(this, ignoreLabels, additionalParams.ToArray());
     };
@@ -225,7 +228,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     void IGenComponent.ValidateObject()
     {
-        ((IGenComponent)this).ParentGrid.ValidateValue( BindingField);
+        ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
     public object GetValue()
@@ -256,6 +259,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         _value = null;
     }
 
+    
+
     public new async Task Clear()
     {
         await base.Clear();
@@ -265,7 +270,20 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public new bool Validate()
     {
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
+
         return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+    }
+
+    bool IGenComponent.IsEditorVisible(object Model)
+    {
+        return ((IGenComponent)this).EditorVisibleFunc?.Invoke(Model) ?? ((IGenComponent)this).EditorVisible;
+    }
+
+    bool IGenComponent.IsRequired(object Model)
+    {
+        return ((IGenComponent)this).RequiredIf?.Invoke(Model) ?? ((IGenComponent)this).Required;
     }
 }
 

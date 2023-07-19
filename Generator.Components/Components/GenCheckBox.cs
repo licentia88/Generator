@@ -87,6 +87,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [Parameter]
     public Func<object, bool> EditorEnabledFunc { get; set; }
 
+    [Parameter]
+    public Func<object, bool> RequiredIf { get; set; }
+
+
+
+    //[Parameter]
+    //public Func<object, bool> CheckedFunc { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         AddComponents();
@@ -118,6 +126,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         if (Model is not null && Model.GetType().Name != "Object")
             base.BuildRenderTree(builder);
 
+
         AddComponents();
     }
 
@@ -126,7 +135,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     private void SetCallBackEvents()
     {
         if (!CheckedChanged.HasDelegate)
-            CheckedChanged = EventCallback.Factory.Create<bool>(this, SetValue);
+            CheckedChanged = EventCallback.Factory.Create<bool>(this, x => { SetValue(x); Validate(); });
+
     }
 
     //public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
@@ -138,7 +148,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => (builder) =>
     {
-        if (Model is null || Model.GetType().Name == "Object")
+          if (Model is null || Model.GetType().Name == "Object")
             Model = model;
  
         SetCallBackEvents();
@@ -146,10 +156,16 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-
+        
         additionalParams.Add((nameof(Checked), val));
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
+
+        additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
+
+        if (!RequiredIf?.Invoke(Model)??Required)
+            Error = false;
+
 
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
         
@@ -188,19 +204,20 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         // ReSharper disable once HeuristicUnreachableCode
         if (this is not IGenComponent comp) return;
 
+
         if (comp.IsSearchField)
             comp.SetSearchValue(value);
         else
         {
             Model?.SetPropertyValue(BindingField, value);
-
+            
             Checked = value;
 
             _value = value;
 
-            comp.ParentGrid.StateHasChanged();
-            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
         }
+        comp.ParentGrid.StateHasChanged();
+        comp.ParentGrid.CurrentGenPage?.StateHasChanged();
     }
 
     object IGenComponent.GetSearchValue()
@@ -234,7 +251,22 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public new bool Validate()
     {
+        if (((IGenComponent)this).IsSearchField)
+            return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
+
         return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+    }
+
+   
+
+    bool IGenComponent.IsEditorVisible(object Model)
+    {
+        return ((IGenComponent)this).EditorVisibleFunc?.Invoke(Model) ?? ((IGenComponent)this).EditorVisible;
+    }
+
+    bool IGenComponent.IsRequired(object Model)
+    {
+        return ((IGenComponent)this).RequiredIf?.Invoke(Model) ?? ((IGenComponent)this).Required;
     }
 }
 

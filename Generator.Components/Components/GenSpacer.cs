@@ -86,6 +86,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     bool IGenComponent.IsSearchField { get; set; }
     public Func<object, bool> EditorVisibleFunc { get; set; }
     public Func<object, bool> EditorEnabledFunc { get; set; }
+    public Func<object, bool> RequiredIf { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -174,5 +175,15 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     public Task Clear()
     {
         throw new NotImplementedException();
+    }
+
+    bool IGenComponent.IsEditorVisible(object Model)
+    {
+        return true;
+    }
+
+    bool IGenComponent.IsRequired(object Model)
+    {
+        return false;
     }
 }

@@ -82,7 +82,7 @@ public partial class GridMPage
         }
 
 
-        await CheckRules();
+        //await CheckRules();
 
     }
 
@@ -93,25 +93,24 @@ public partial class GridMPage
         DatabaseComboBox.SetValue(data);
 
         await FillCrudSourceCombobox();
-
-        //StateHasChanged();
     }
 
 
-    private async Task CrudSourceComboBoxChangedAsync(object model)
+    private void CrudSourceComboBoxChangedAsync(object model)
     {
         if (model is not TABLE_INFORMATION data) return;
 
         CrudSourceComboBox.SetValue(model);
 
-        await CheckRules();
+        //await CheckRules();
      }
 
-    private async void CommandTypeComboBoxChanged(object model)
+    private async Task CommandTypeComboBoxChangedAsync(object model)
     {
         if (model is not CODE_ENUM data) return;
 
-        CommandTypeComboBox.SetValue(model);
+        View.SelectedItem.CB_COMMAND_TYPE = data.C_CODE;
+        //CommandTypeComboBox.SetValue(model);
 
         if(View.SelectedItem.CB_COMMAND_TYPE == 4)
         {
@@ -123,57 +122,17 @@ public partial class GridMPage
             else
                 await FillStoredProceduresCombobox();
         }
-
-        await CheckRules();
+        View.SelectedItem.CB_QUERY_OR_METHOD = string.Empty;
+        View.StateHasChanged();
     }
 
   
-    private async void OnCrudSourceComboBoxClear(MouseEventArgs args)
-    {
-        CrudSourceComboBox.OnClearClicked(args);
+    //private void OnCrudSourceComboBoxClear(MouseEventArgs args)
+    //{
+    //    CrudSourceComboBox.OnClearClicked(args);
+    //}
 
-        await CheckRules();
-    }
-
-    public async Task CheckRules()
-    {
-        if (View.SelectedItem.CB_COMMAND_TYPE == 1)  //Text
-        {
-            QuryTextField.Show(); 
-
-            CrudSourceComboBox.Enable();
-
-            StoredProcedureCombo.Hide();
-        }
-
-        if (View.SelectedItem.CB_COMMAND_TYPE == 4) //Stored Procedure
-        {
-            CrudSourceComboBox.Disable();
  
-            StoredProcedureCombo.Show();
-
-            QuryTextField.Hide();
-        }
-
-
-        if(!string.IsNullOrEmpty(View.SelectedItem.GB_CRUD_SOURCE))
-        {
-            CreateCheckBox.Enable();
-            UpdateCheckBox.Enable();
-            DeleteCheckBox.Enable();
-        }
-        else
-        {
-            CreateCheckBox.Disable();
-            UpdateCheckBox.Disable();
-            DeleteCheckBox.Disable();
-        }
- 
-      
-        await InvokeAsync(View.StateHasChanged);
-
-    }
-
     private async Task FillCrudSourceCombobox()
     {
         TableList = await CrudSourceComboBox.FillAsync(() => DatabaseService.GetTableListAsync(View.SelectedItem.CB_DATABASE));

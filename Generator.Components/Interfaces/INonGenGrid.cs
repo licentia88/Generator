@@ -68,14 +68,19 @@ public interface INonGenGrid:INonGenView
 
     bool ValidateSearchFields(IEnumerable<IGenComponent> searchFields);
 
-    bool ValidateSearchFields(string bindingField);
+    bool ValidateSearchField(string BindingField);
  
     void ResetValidation(IGenComponent component);
 
+    void ResetValidations(IEnumerable<IGenComponent> components);
+
+    void ResetConditionalSearchFields();
+    
     void AddChildComponent(IGenComponent component);
 
     void AddSearchFieldComponent(IGenComponent component);
 
+    
     //public bool HasErrors();
 
     void ForceRenderAll();

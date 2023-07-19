@@ -124,7 +124,7 @@ public partial class Users
         Console.WriteLine();
     }
 
-    public async ValueTask CreateAsync(Generator.Components.Args.GenArgs<USER> data)
+    public async ValueTask CreateAsync(GenArgs<USER> data)
     {
      
         //throw new Exception();

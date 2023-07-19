@@ -11,6 +11,7 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.ComponentModel;
 
 namespace Generator.Components.Components;
 
@@ -454,7 +455,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         try
         {
             GridIsBusy = true;
-
+ 
             //_ShouldRender = false;
 
             if (OnBeforeSubmit.HasDelegate)
@@ -673,6 +674,18 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         return result;
     }
 
+    //private List<IGenComponent> GetRowTemplateComponents()  
+    //{
+    //    var result = Components.Select(x => x.component)
+    //    .Where(x => x is not GenSpacer)
+    //    .Where(x => x.EditorVisible || (x.EditorVisibleFunc?.Invoke(x.Model) ?? false)).OrderBy(x => x.Order).ToList();
+
+    //    Components.Select(x => x.component).Except(result).ToList().ForEach(x => x.SetEmpty());
+
+    //    return result;
+    //}
+
+
     void INonGenGrid.AddChildComponent(IGenComponent childComponent)
     {
         var componentType = childComponent.GetType();
@@ -716,32 +729,12 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         return ((INonGenGrid)this).DetailClicked && _selectedDetailObject.Equals(context);
     }
 
-    bool INonGenGrid.ValidateSearchFields(IEnumerable<IGenComponent> searchFields)
+
+    bool INonGenGrid.ValidateSearchField(string BindingField)
     {
-        var genComponents = searchFields.ToList();
-        
-        foreach (var comp in genComponents.Where(x=> x.Required))
-        {
-            var currentVal = comp.Model.GetPropertyValue(comp.BindingField);
+        var comp = GetSearchFieldComponent<IGenComponent>(BindingField);
 
-            // if (currentVal is null || currentVal == default || string.IsNullOrEmpty(currentVal?.ToString()))
-
-            if (currentVal == null || string.IsNullOrEmpty(currentVal?.ToString()))
-                comp.Error = true;
-            else
-                comp.Error = false;
-
-        }
-
-        var isValid = genComponents.All(x => !x.Error);
-
-        StateHasChanged();
-        return isValid;
-    }
-
-    bool INonGenGrid.ValidateSearchFields(string bindingField)
-    {
-        return ((INonGenGrid)this).ValidateSearchFields(SearchFieldComponents.Where(x=>x.BindingField == bindingField));
+        return GenValidator.ValidateValue(comp);
     }
 
     bool INonGenGrid.ValidateSearchFields()
@@ -749,10 +742,37 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         return ((INonGenGrid)this).ValidateSearchFields(SearchFieldComponents);
     }
 
+    bool INonGenGrid.ValidateSearchFields(IEnumerable<IGenComponent> searchFields)
+    {
+        ((INonGenGrid)this).ResetValidations(searchFields);
+
+        foreach (var comp in searchFields)
+        {
+            if (comp.Required || (comp.RequiredIf?.Invoke(comp.Model) ?? false))
+            {
+                var currentVal = comp.Model.GetPropertyValue(comp.BindingField);
+
+                if (currentVal == null || string.IsNullOrEmpty(currentVal?.ToString()))
+                    comp.Error = true;
+                else
+                    comp.Error = false;
+            }
+           
+
+        }
+
+        var isValid = searchFields.All(x => !x.Error);
+
+        StateHasChanged();
+        return isValid;
+    }
+
 
     public bool ValidateModel(bool all=false)
     {
-        var result = SelectedItem.IsModel() ? GenValidator.ValidateModel(SelectedItem,all?Components.Select(x=> x.component):null) : Components.Where(x=> x.type !=typeof(GenSpacer) && x.component.EditorVisible).All(x => GenValidator.ValidateValue(x.component, SelectedItem, x.component.BindingField));
+        var result = SelectedItem.IsModel() ?
+            GenValidator.ValidateModel(SelectedItem,all?Components.Select(x=> x.component):null) :
+            Components.Where(x=> x.type !=typeof(GenSpacer) && x.component.EditorVisible).All(x => GenValidator.ValidateValue(x.component));
 
         if (!result)
             ((INonGenGrid)this).ForceRenderOnce = true;
@@ -765,7 +785,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
     {
         var component = Components.FirstOrDefault(x => x.component.BindingField == propertyName);
 
-        var result = GenValidator.ValidateValue(component.component, SelectedItem, propertyName);
+        var result = GenValidator.ValidateValue(component.component);
 
         if (!result)
             ((INonGenGrid)this).ForceRenderOnce = true;
@@ -775,13 +795,21 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         return result;
     }
 
-   
 
-    public void ResetValidation()
+    void INonGenGrid.ResetValidations(IEnumerable<IGenComponent> Components)
     {
-        foreach (var component in Components)
+        foreach (var component in Components.Where(x=> x.Error))
         {
-            GenValidator.ResetValidation(component.component);
+            GenValidator.ResetValidation(component);
+        }
+    }
+
+    void INonGenGrid.ResetConditionalSearchFields()
+    {
+        foreach (var component in SearchFieldComponents.Where(x=> x.Error && (!x.RequiredIf?.Invoke(x.Model) ?? false) ) )
+        {
+            GenValidator.ResetValidation(component);
+
         }
     }
 
@@ -790,7 +818,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         GenValidator.ResetValidation(component);
     }
 
-
+ 
 
     /// <summary>
     /// Creates a new instance of the data model using the provided components.

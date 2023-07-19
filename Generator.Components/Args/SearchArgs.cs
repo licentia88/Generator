@@ -1,4 +1,5 @@
-﻿using Generator.Components.Interfaces;
+﻿using Generator.Components.Components;
+using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
 //using Generator.Shared.Models;
 
@@ -39,8 +40,9 @@ public class SearchArgs:EventArgs
         Components = components;
     }
 
-    public Dictionary<string, object> WhereStatements => Components.Where(x=> x.BindingField is not null).ToDictionary(component => component.BindingField,
-                                                                          component => component.GetSearchValue());
+    public Dictionary<string, object> WhereStatements =>
+                                     Components.Where(x=> x.BindingField is not null && x is not GenSpacer)
+                                     .ToDictionary(component => component.BindingField, component => component.GetSearchValue());
 
 }
 

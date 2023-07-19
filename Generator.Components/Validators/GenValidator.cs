@@ -1,10 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-//using Generator.Shared.Extensions;
-//using Microsoft.FSharp.Data.UnitSystems.SI.UnitNames;
-//using ProtoBuf.Meta;
-
+ 
 namespace Generator.Components.Validators;
 
 public class GenValidator<T> 
@@ -16,11 +13,13 @@ public class GenValidator<T>
         return ValidateModel(obj, null);
     }
 
-    public bool ValidateModel(T obj,IEnumerable<IGenComponent> components)
+
+    public bool ValidateModel(T obj, IEnumerable<IGenComponent> components)
     {
         var results = new List<ValidationResult>();
 
         if (obj is null) return default;
+
         var context = new ValidationContext(obj);
 
         bool isValid = Validator.TryValidateObject(obj, context, results, true);
@@ -36,36 +35,54 @@ public class GenValidator<T>
                 SetError(component, errorMessage);
             }
         }
+
+        foreach (var comp in components)
+        {
+            comp.Required = comp.RequiredIf?.Invoke(obj) ?? comp.Required;
+
+            if (comp.Required)
+            {
+                var errorText = string.IsNullOrEmpty(comp.ErrorText) ? "*" : comp.ErrorText;
+                SetError(comp, errorText);
+                isValid = false;
+            }
+        }
+
         return isValid;
     }
 
-    public bool ValidateValue(IGenComponent component, T model, string propertyName)
+    public bool ValidateValue(IGenComponent component)
     {
-        if (model.IsModel())
-            return ValidateModelValue(component, model, propertyName);
+        bool isValid = true;
 
-        return ValidateExpandObject(component, model, propertyName);
+        if (component.Model.IsModel())
+            isValid = ValidateModelValue(component);
+ 
+        if (component.IsRequired(component.Model))
+        {
+            SetError(component);
+            isValid = false;
+        }
+        return isValid;
     }
 
 
      
-    private bool ValidateModelValue(IGenComponent component, T model, string propertyName)
-    {
-        var modelHasProperty = typeof(T).GetProperties().Any(x => x.Name.Equals(propertyName));
+    private bool ValidateModelValue(IGenComponent component)
+        {
+        var modelType = component.Model.GetType();
 
-        if (!typeof(T).HasProperty(propertyName)) return true;
+        if (!modelType.HasProperty(component.BindingField)) return true;
 
         var results = new List<ValidationResult>();
 
-        var context = new ValidationContext(model);
+        var context = new ValidationContext(component.Model);
 
-        context.MemberName = propertyName;
+        context.MemberName = component.BindingField;
 
-        context.DisplayName = AttributeExtensions.GetDisplayName<T>(propertyName);
+        context.DisplayName = AttributeExtensions.GetDisplayName<T>(component.BindingField);
 
-        var value = model.GetPropertyValue(propertyName);
-
-        //if (value is null) return false;
+        var value = component.Model.GetPropertyValue(component.BindingField);
 
         bool isValid = Validator.TryValidateProperty(value, context, results);
 
@@ -80,16 +97,17 @@ public class GenValidator<T>
         return false;
     }
 
-    private bool ValidateExpandObject(IGenComponent component, T model, string propertyName)
+    private bool ValidateExpandObject(IGenComponent component)
     {
+        var Model = component.Model;
 
-        if (component.Required)
+        if (component.RequiredIf?.Invoke(Model) ?? component.Required)
         {
-            var resIsNull = model.GetPropertyValue(component.BindingField).IsNullOrDefault();
+            var resIsNull = Model.GetPropertyValue(component.BindingField).IsNullOrDefault();
 
             if (resIsNull)
             {
-                SetError(component, $"Required");
+                SetError(component, $"*");
 
                 return false;
             }
@@ -99,11 +117,11 @@ public class GenValidator<T>
         {
             var maxlength = component.GetPropertyValue(nameof(IGenTextField.MaxLength)).CastTo<int>();
 
-            var compLength = model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
+            var compLength = Model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
 
-            var lengthresult = compLength > maxlength;
+            var isBigger = compLength > maxlength;
 
-            if (!lengthresult)
+            if (isBigger)
             {
                 SetError(component, $"Max {maxlength} characters");
 
@@ -115,11 +133,11 @@ public class GenValidator<T>
         {
             var minLength = component.GetPropertyValue(nameof(IGenTextField.MinLength)).CastTo<int>();
 
-            var compLength = model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
+            var compLength = Model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
 
-            var lengthresult = compLength < minLength;
+            var isSmaller = compLength < minLength;
 
-            if (!lengthresult)
+            if (isSmaller)
             {
                 SetError(component, $"Min {minLength} characters");
 
@@ -127,11 +145,18 @@ public class GenValidator<T>
             }
         }
 
+        //ResetValidation(component);
         return true;
        
     }
 
-    
+    private void SetError(IGenComponent component)
+    {
+        if (component is null) return;
+        component.Error = true;
+
+        component.ErrorText = string.IsNullOrEmpty(component.ErrorText) ? "*" : component.ErrorText;
+    }
 
     private void SetError(IGenComponent component, string errorMessage)
     {
@@ -145,9 +170,10 @@ public class GenValidator<T>
     {
         if (component is null) return;
 
-        component.Error = false;
+         component.Error = false;
 
-        component.ErrorText = string.Empty;
+        //component.ErrorText = string.Empty;
+
     }
 }
 

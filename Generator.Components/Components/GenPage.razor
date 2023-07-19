@@ -10,7 +10,6 @@
         flex: 0 0 auto;
         display: flex;
         margin-top:2rem!important;
-/*        padding: 8px !important;*/
         padding-right:3.5rem!important;
         align-items: center;
         justify-content: flex-end;
@@ -33,37 +32,49 @@
                     <MudContainer Class="m-0 p-2" Style="overflow-y: scroll">
                         @{
                             @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
-                            <MudGrid Justify="Justify.FlexStart" Spacing="0">
+                        <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-                                @{
-                                    foreach (var componentDetail in Components)
+                            @{
+                                var components = Components.Select(x => x.component);
+                                var duplicateComponents = components
+                                                         .GroupBy(component => component.BindingField)
+                                                         .Where(group => group.Count() > 1)
+                                                         .SelectMany(group => group);
+
+                                foreach (var componentDetail in components)
                                     {
-                                        if(componentDetail.component.EditorVisibleFunc is not null)
-                                        {
-                                            componentDetail.component.EditorVisible = componentDetail.component.EditorVisibleFunc.Invoke(SelectedItem);
-                                        }
+                                    //if (componentDetail.EditorVisibleFunc is not null)
+                                    //{
+                                    //    componentDetail.EditorVisible = componentDetail.EditorVisibleFunc.Invoke(SelectedItem);
+                                    //}
 
-                                        
-                                        <MudItem Class="mt-4" 
-                                                 xs="componentDetail.component.xs"
-                                                 sm="componentDetail.component.sm"
-                                                 md="componentDetail.component.md"
-                                                 lg="componentDetail.component.lg"
-                                                 xl="componentDetail.component.xl"
-                                                 xxl="componentDetail.component.xxl">
-                                            @{
-                                               if (componentDetail.component.EditorVisible)
-                                               {
-                                                    @componentDetail.component.RenderAsComponent(SelectedItem);
-                                               }
+                                    <MudItem Class="mt-4"
+                                                xs="componentDetail.xs"
+                                                sm="componentDetail.sm"
+                                                md="componentDetail.md"
+                                                lg="componentDetail.lg"
+                                                xl="componentDetail.xl"
+                                                xxl="componentDetail.xxl">
+                                        @{
+
+                                            if (componentDetail.IsEditorVisible(SelectedItem))
+                                            {
+                                                @componentDetail.RenderAsComponent(SelectedItem);
+                                            }
+                                            else
+                                            {
+                                                if (components.Where(x => x.BindingField == componentDetail.BindingField).Count() == 1)
+                                                { componentDetail.SetEmpty(); }
 
 
                                             }
-                                        </MudItem>
-                                    }
 
+                                            }
+                                    </MudItem>
                                 }
-                            </MudGrid>
+
+                            }
+                                            </MudGrid>
                             @*</div>*@
 
 

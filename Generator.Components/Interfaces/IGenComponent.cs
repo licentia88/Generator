@@ -10,6 +10,8 @@ public interface IGenComponent : IGenCompRenderer
 
     public Func<object, bool> EditorEnabledFunc { get; set; }
 
+    public Func<object, bool> RequiredIf { get; set; }
+
     object GetDefaultValue { get; }
 
     void SetSearchValue(object Value);
@@ -61,5 +63,9 @@ public interface IGenComponent : IGenCompRenderer
     public Task Clear();
 
     public bool Validate();
+
+    bool IsEditorVisible(object Model);
+
+    bool IsRequired(object Model);
 }
 

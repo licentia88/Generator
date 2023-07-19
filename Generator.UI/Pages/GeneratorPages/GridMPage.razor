@@ -26,7 +26,8 @@
         @*ROW1*@
         <GenSpacer  xs="12" sm="12" md="12" lg="8" xl="8" xxl="8" />
 
-        <GenComboBox DataSource="DatabaseList" @ref="DatabaseComboBox"
+        <GenComboBox DataSource="DatabaseList"
+                     @ref="DatabaseComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Database"
                      Order="2"
@@ -41,8 +42,7 @@
         <GenTextField BindingField="@(nameof(GRID_M.CB_TITLE))"
                       Label="Page Title"
                       Order="0"
-                      Required="true"
-                      EditorEnabledFunc="@(x =>  ((GRID_M)x).CB_DATABASE == "DefaultConnection")"
+                      RequiredIf="x=> ((GRID_M)x).GB_ROWS_PER_PAGE==11"
                       xs="12" sm="12" md="12" lg="7" xl="7" xxl="7" />
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
@@ -141,7 +141,7 @@
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
                      Label="Command Type"
                      Order="3"
-                     ValueChanged="CommandTypeComboBoxChanged"
+                     ValueChanged="CommandTypeComboBoxChangedAsync"
                      BindingField="@nameof(GRID_M.CB_COMMAND_TYPE)"
                      ValueField="@(nameof(CODE_ENUM.C_CODE))"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)" />
@@ -152,8 +152,9 @@
                       Label="Query/Method"
                       Order="6"
                       Lines="7"
+                      
                       GridVisible="false"
-                      EditorVisible="false"
+                      EditorVisibleFunc="x=> ((GRID_M)x).CB_COMMAND_TYPE == 1"
                       Variant="Variant.Outlined"
                       Placeholder=@($"Sample Query:\nSELECT U_NAME, U_AGE FROM USERS \nWHERE U_NAME LIKE '%@U_NAME%' \nAND U_AGE = @U_AGE")
                       xs="12" sm="12" md="12" lg="12" xl="12" xxl="12" />
@@ -164,7 +165,7 @@
                       Label="Stored Procedure"
                       DataSource="StoredProcedureList"
                       GridVisible="false"
-                      EditorVisible="false"
+                      EditorVisibleFunc="x=> ((GRID_M)x).CB_COMMAND_TYPE == 4"
                       DisplayField="@nameof(STORED_PROCEDURES.SP_NAME)"
                       ValueField="@nameof(STORED_PROCEDURES.SP_NAME)"/>
 
@@ -172,12 +173,12 @@
         <GenComboBox DataSource="TableList"
                      @ref="CrudSourceComboBox"
                      xs="12" sm="12" md="12" lg="3" xl="3" xxl="3"
-                     Label="Source"
+                     Label="CRUD Source"
                      ValueChanged="CrudSourceComboBoxChangedAsync"
                      Clearable="true"
                      GridVisible="false"
-                     EditorEnabled="false"
-                     OnClearButtonClick="OnCrudSourceComboBoxClear"
+                     EditorVisibleFunc="x=> ((GRID_M)x).CB_COMMAND_TYPE == 1"
+                     
                      BindingField="@nameof(GRID_M.GB_CRUD_SOURCE)"
                      ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
                      DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)" />
@@ -186,8 +187,10 @@
 
         <GenCheckBox BindingField="@nameof(GRID_M.GB_CREATE)"
                      @ref="CreateCheckBox"
-                     EditorEnabled="false"
                      Label="Create"
+                     EditorVisibleFunc="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE)"
+                     RequiredIf="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE) && (!((GRID_M)x).GB_CREATE && !((GRID_M)x).GB_UPDATE) && !((GRID_M)x).GB_DELETE"
+                     ErrorText="Zorunlu alan"
                      TrueText="Yes"
                      FalseText="No"
                      GridVisible="false"
@@ -197,8 +200,9 @@
 
         <GenCheckBox BindingField="@nameof(GRID_M.GB_UPDATE)"
                      @ref="UpdateCheckBox"
-                    EditorEnabled="false"
                      Label="Update"
+                     EditorVisibleFunc="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE)"
+                     RequiredIf="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE) && (!((GRID_M)x).GB_CREATE && !((GRID_M)x).GB_UPDATE) && !((GRID_M)x).GB_DELETE"
                      TrueText="Yes"
                      FalseText="No"
                      GridVisible="false"
@@ -208,8 +212,9 @@
 
         <GenCheckBox BindingField="@nameof(GRID_M.GB_DELETE)"
                      @ref="DeleteCheckBox"
-                     EditorEnabled="false"
                      Label="Delete"
+                     EditorVisibleFunc="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE)"
+                     RequiredIf="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE) && (!((GRID_M)x).GB_CREATE && !((GRID_M)x).GB_UPDATE) && !((GRID_M)x).GB_DELETE"
                      TrueText="Yes"
                      FalseText="No"
                      GridVisible="false"

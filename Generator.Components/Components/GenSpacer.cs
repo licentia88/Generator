@@ -51,7 +51,8 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     [Parameter, EditorRequired]
     public int xxl { get; set; }
 
-
+    [Parameter]
+    public bool ClearIfNotVisible { get; set; } = false;
 
     [CascadingParameter(Name = nameof(ParentGrid))]
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -84,8 +85,8 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
-    public Func<object, bool> EditorVisibleFunc { get; set; }
-    public Func<object, bool> EditorEnabledFunc { get; set; }
+    public Func<object, bool> EditorVisibleIf { get; set; }
+    public Func<object, bool> EditorEnabledIf { get; set; }
     public Func<object, bool> RequiredIf { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -185,5 +186,10 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     bool IGenComponent.IsRequired(object Model)
     {
         return false;
+    }
+
+    void IGenComponent.ValidateRequiredRules()
+    {
+         
     }
 }

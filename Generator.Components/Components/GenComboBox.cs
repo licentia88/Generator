@@ -1,6 +1,5 @@
 ﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
@@ -51,6 +50,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     public bool GridVisible { get; set; } = true;
 
     [Parameter]
+    public bool ClearIfNotVisible { get; set; } = false;
+
+    [Parameter]
     public int xs { get; set; } = 12;
 
     [Parameter]
@@ -79,13 +81,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     bool IGenComponent.IsSearchField { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorVisibleFunc { get; set; }
+    public Func<object, bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledFunc { get; set; }
+    public Func<object, bool> EditorEnabledIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> WhereFunc { get; set; }
+    public Func<object, bool> Where { get; set; }
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -187,7 +189,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
             if (DataSource is null) return;
 
-            foreach (var data in DataSource.Where(x => WhereFunc?.Invoke(Model)??true))
+            foreach (var data in DataSource.Where(_ => Where?.Invoke(Model)??true))
             {
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
@@ -205,13 +207,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         additionalParams.Add((nameof(Value), loValue));
 
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
         additionalParams.Add(innerFragment);
 
-        if (!RequiredIf?.Invoke(Model) ?? Required)
+        if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;
 
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
@@ -277,13 +279,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
-    bool IGenComponent.IsEditorVisible(object Model)
+    bool IGenComponent.IsEditorVisible(object model)
     {
-        return ((IGenComponent)this).EditorVisibleFunc?.Invoke(Model) ?? ((IGenComponent)this).EditorVisible;
+        return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
     }
 
-    bool IGenComponent.IsRequired(object Model)
+    bool IGenComponent.IsRequired(object model)
     {
-        return ((IGenComponent)this).RequiredIf?.Invoke(Model) ?? ((IGenComponent)this).Required;
+        return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
+    }
+
+    void IGenComponent.ValidateRequiredRules()
+    {
+        if (Model is null) return;
+        ((IGenComponent)this).ParentGrid.ValidateRequiredRules(this);
     }
 }

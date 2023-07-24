@@ -43,93 +43,81 @@
                 </MudGrid>
 
                 @{
-                  <MudGrid Class="">
-                                    @{
-                                        if (GenSearchFields is not null)
-                                        {
-                                            var searchFieldModel = new Dictionary<string, object>();
+                <MudGrid Class="">
+                    @{
+                        if (GenSearchFields is not null)
+                        {
+                            var searchFieldModel = new Dictionary<string, object>();
 
-                                            foreach (var item in SearchFieldComponents.Where(x => x is not GenSpacer))
+                            foreach (var item in SearchFieldComponents.Where(x => x is not GenSpacer))
+                            {
+                                searchFieldModel.Add(item.BindingField, null);
+                            }
+
+                            <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
+                                @{
+                                    foreach (IGenComponent searchComp in SearchFieldComponents.OrderBy(x => x.Order).ToList())
+                                    {
+                                        <MudItem xs="searchComp.xs"
+                                                    sm="searchComp.sm"
+                                                    md="searchComp.md"
+                                                    lg="searchComp.lg"
+                                                    xl="searchComp.xl"
+                                                    xxl="searchComp.xxl">
+                                            @searchComp.RenderAsComponent(searchFieldModel)
+                                        </MudItem>
+                                    }
+                                }
+                            </CascadingValue>
+                        }
+                    }
+                    @{
+                        <MudGrid Class="mt-1 mb-1 mr-1" Justify="Justify.FlexEnd">
+                            @{
+                                <MudItem>
+                                    @if (GenHeaderButtons is not null)
+                                    {
+                                        @GenHeaderButtons
+
+                                    }
+                                </MudItem>
+
+                                <MudItem>
+                                    <MudItem>
+                                        @{
+                                            if (!string.IsNullOrEmpty(ExcelFile))
                                             {
-                                                searchFieldModel.Add(item.BindingField, null);
+                                                <MudFab EndIcon="@Icons.Custom.FileFormats.FileExcel"
+                                                        Color="Color.Success"
+                                                        Size="Size.Small"
+                                                        DisableElevation="true"
+                                                        Label="@ExcelButtonText"
+                                                        @onclick="@(async _=> await GenExcel.Create(this,ExcelFile))" />
                                             }
-
-                                            <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
-                                                @{
-                                                    foreach (IGenComponent searchComp in SearchFieldComponents.OrderBy(x => x.Order).ToList())
-                                                    {
-                                                        <MudItem xs="searchComp.xs"
-                                                                 sm="searchComp.sm"
-                                                                 md="searchComp.md"
-                                                                 lg="searchComp.lg"
-                                                                 xl="searchComp.xl"
-                                                                 xxl="searchComp.xxl">
-                                                            @searchComp.RenderAsComponent(searchFieldModel)
-                                                        </MudItem>
-                                                    }
-                                                }
-                                            </CascadingValue>
                                         }
-                                    }
-                                    @{
-                                        <MudGrid Class="mt-1 mb-1 mr-1" Justify="Justify.FlexEnd">
-                                            @{
-                                                    <MudItem>
-                                                        @if (GenHeaderButtons is not null)
-                                                        {
-                                                            @GenHeaderButtons
+                                    </MudItem>
+                                </MudItem>
+                                if (Search.HasDelegate)
+                                {
+                                    <MudItem Class="mr-7">
+                                        <MudGrid Justify="Justify.FlexEnd">
+                                            <MudItem>
+                                                <MudFab EndIcon="@Icons.Material.Filled.Search"
+                                                        Color="Color.Info"
+                                                        Size="Size.Small"
+                                                        Label="@SearchText"
+                                                        DisableElevation="true"
+                                                        @onclick="OnSearchClicked" Disabled=" ((INonGenGrid)this). SearchDisabled" />
+                                            </MudItem>
 
-                                                        }
-                                                    </MudItem>
-                                               
-                                                    <MudItem>
-                                                        <MudItem>
-                                                            @{
-                                                                if (!string.IsNullOrEmpty(ExcelFile))
-                                                                {
-                                                                    <MudFab EndIcon="@Icons.Custom.FileFormats.FileExcel"
-                                                                            Color="Color.Success"
-                                                                            Size="Size.Small"
-                                                                            DisableElevation="true"
-                                                                            Label="@ExcelButtonText"
-                                                                            @onclick="@(async x=> await GenExcel.Create<TModel>(this,ExcelFile))" />
-                                                                }
-                                                            }
-                                                        </MudItem>
-                                                    </MudItem>
-                                                if (Search.HasDelegate)
-                                                {
-                                                    <MudItem Class="mr-7">
-                                                        <MudGrid Justify="Justify.FlexEnd">
-                                                            <MudItem>
-                                                                <MudFab EndIcon="@Icons.Material.Filled.Search"
-                                                                        Color="Color.Info"
-                                                                        Size="Size.Small"
-                                                                        Label="@SearchText"
-                                                                        DisableElevation="true"
-                                                                        @onclick="OnSearchClicked" Disabled=" ((INonGenGrid)this). SearchDisabled" />
-                                                            </MudItem>
-
-                                                        </MudGrid>
-                                                    </MudItem>
-                                                }
-
-                                                @*<MudItem xs="1" sm="1" md="1" lg="1" xl="1" xxl="1">
-                                                    <MudGrid Justify="Justify.Center">
-                                                        <MudItem>
-
-                                                        </MudItem>
-
-                                                    </MudGrid>
-                                                </MudItem>*@
-
-
-
-                                            }
                                         </MudGrid>
-                                    }
+                                    </MudItem>
+                                }
+                            }
+                        </MudGrid>
+                    }
 
-                                </MudGrid>
+                </MudGrid>
                 }
 
             </CardHeaderContent>
@@ -196,7 +184,18 @@
 
                             if (ViewState != ViewState.None && EditMode == EditMode.Inline)
                             {   //edit create vs
-                                predicate = x => (x.EditorVisible || (x.EditorVisibleFunc?.Invoke(SelectedItem) ?? false)) && x is not GenSpacer;
+
+                                if(SelectedItem is null)
+                                {
+                                    predicate = x => x.EditorVisible && x is not GenSpacer;
+
+                                }
+                                else
+                                {
+                                    predicate = x => x.EditorVisible && x is not GenSpacer && x.IsEditorVisible(SelectedItem);
+
+                                }
+
                             }
                             else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
                             {
@@ -278,17 +277,28 @@
 
                             }
 
+                            var components = Components.Select(x => x.component).Where(x => x is not GenSpacer).OrderBy(x => x.Order);
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(x => x is not GenSpacer).OrderBy(x => x.Order))
+                            foreach (var component in components)
                             {
-                                if (!item.GridVisible)
+                                if(EditMode == EditMode.Inline && SelectedItem is not null)
                                 {
-                                    @*<MudTd >
-                                    </MudTd>*@
+                                    if (!component.IsEditorVisible(SelectedItem))
+                                        continue;
+                                }
+                                else if (!component.GridVisible)
+                                {
                                     continue;
                                 }
                                 <MudTd @onclick:stopPropagation="EditMode == EditMode.Form">
-                                    @item.RenderAsGridComponent(context)
+                                    @{
+                                        if (component.GridVisible)
+                                        {
+                                            @component.RenderAsGridComponent(context)
+                                        }
+                                       
+                                    }
+
                                 </MudTd>
                             }
 
@@ -312,7 +322,7 @@
 
                     
                     
-                    <RowEditingTemplate Context="_context" >
+                    <RowEditingTemplate Context="_context">
 
                         @{
 
@@ -338,21 +348,40 @@
                             //{
                             //    component.component.EditorVisible = component.component.VisibleFunc.Invoke(SelectedItem);
                             //}
-                            foreach (var item in GetComponentsOf<IGenComponent>()
-                                    .Where(x=> x is not GenSpacer)
-                                    .Where(x => x.EditorVisible || (x.EditorVisibleFunc?.Invoke(SelectedItem)??false)).OrderBy(x => x.Order).ToList())
+
+                            //else
+                            //{
+                            //    if (components.Where(x => x.BindingField == component.BindingField).Count() == 1)
+                            //    {
+                            //        component.SetEmpty();
+                            //    }
+                            //}
+                            var components = Components.Select(x => x.component).Where(x => x is not GenSpacer).OrderBy(x => x.Order);
+
+                            foreach (var component in components)
                             {
                                 if (EditMode != EditMode.Inline || !ShouldShowDialog || ((INonGenGrid)this).DetailClicked)
                                 {
                                     <MudTd Style="width: auto !important">
-                                        @item.RenderAsGridComponent(_context)
+                                        @component.RenderAsGridComponent(_context)
                                     </MudTd>
                                 }
                                 else
                                 {
-                                    <MudTd Style="width: auto !important">
-                                        @item.RenderAsComponent(_context, true)
-                                    </MudTd>
+                                    if (component.IsEditorVisible(_context))
+                                    {
+                                        <MudTd Style="width: auto !important">
+                                            @component.RenderAsComponent(_context, true)
+                                        </MudTd>
+                                    }
+                                    else
+                                    {
+
+                                        if(component.ClearIfNotVisible)
+                                            component.SetEmpty();
+
+                                    }
+
                                 }
                             }
 

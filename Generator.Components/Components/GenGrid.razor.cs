@@ -338,7 +338,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         if (EditButtonActionList.Any())
         {
             // ReSharper disable once PossibleNullReferenceException
-            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+            var firstItem = EditButtonActionList.LastOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
             if (firstItem is null) return;
 
@@ -353,8 +353,6 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
                 editingRow.Context.Table.RowEditCancel.Invoke(null);
                 StateHasChanged();
                 ((INonGenGrid)this).ForceRenderOnce = false;
-
-                return;
             }
             else
             {
@@ -744,24 +742,20 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     bool INonGenGrid.ValidateSearchFields(IEnumerable<IGenComponent> searchFields)
     {
-        ((INonGenGrid)this).ResetValidations(searchFields);
+        var genComponents = searchFields as IGenComponent[] ?? searchFields.ToArray();
+       
+        ((INonGenGrid)this).ResetValidations(genComponents);
 
-        foreach (var comp in searchFields)
+        foreach (var comp in genComponents)
         {
-            if (comp.Required || (comp.RequiredIf?.Invoke(comp.Model) ?? false))
-            {
-                var currentVal = comp.Model.GetPropertyValue(comp.BindingField);
+            if (!comp.Required && !(comp.RequiredIf?.Invoke(comp.Model) ?? false)) continue;
+            var currentVal = comp.Model.GetPropertyValue(comp.BindingField);
 
-                if (currentVal == null || string.IsNullOrEmpty(currentVal?.ToString()))
-                    comp.Error = true;
-                else
-                    comp.Error = false;
-            }
-           
+            comp.Error = currentVal is null or "";
 
         }
 
-        var isValid = searchFields.All(x => !x.Error);
+        var isValid = genComponents.All(x => !x.Error);
 
         StateHasChanged();
         return isValid;
@@ -781,6 +775,10 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         return result;
     }
 
+    public bool ValidateRequiredRules(IGenComponent component)
+    {
+        return GenValidator.ValidateRequiredRules(component);
+    }
     public bool ValidateValue(string propertyName)
     {
         var component = Components.FirstOrDefault(x => x.component.BindingField == propertyName);
@@ -796,9 +794,9 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
     }
 
 
-    void INonGenGrid.ResetValidations(IEnumerable<IGenComponent> Components)
+    void INonGenGrid.ResetValidations(IEnumerable<IGenComponent> components)
     {
-        foreach (var component in Components.Where(x=> x.Error))
+        foreach (var component in components.Where(x=> x.Error))
         {
             GenValidator.ResetValidation(component);
         }
@@ -942,7 +940,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         {
             return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
         }
-        catch (Exception ex)
+        catch  
         {
             return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(((IGenView<TModel>)this).OriginalEditItem)).Value;
         }
@@ -982,7 +980,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
 
             row.SetFieldValue("hasBeenCanceled", true);
-            row.SetFieldValue("hasBeenCommitted", false);
+            row.SetFieldValue("hasBeenCommitted", true);
             row.SetFieldValue("hasBeenClickedFirstTime", false);
         }
 

@@ -36,17 +36,19 @@
 
                             @{
                                 var components = Components.Select(x => x.component);
-                                var duplicateComponents = components
-                                                         .GroupBy(component => component.BindingField)
-                                                         .Where(group => group.Count() > 1)
-                                                         .SelectMany(group => group);
+                                //var duplicateComponents = components
+                                //                         .GroupBy(component => component.BindingField)
+                                //                         .Where(group => group.Count() > 1)
+                                //                         .SelectMany(group => group);
 
                                 foreach (var componentDetail in components)
-                                    {
+                                {
                                     //if (componentDetail.EditorVisibleFunc is not null)
                                     //{
                                     //    componentDetail.EditorVisible = componentDetail.EditorVisibleFunc.Invoke(SelectedItem);
                                     //}
+
+                                    componentDetail.ValidateRequiredRules();
 
                                     <MudItem Class="mt-4"
                                                 xs="componentDetail.xs"
@@ -63,10 +65,8 @@
                                             }
                                             else
                                             {
-                                                if (components.Where(x => x.BindingField == componentDetail.BindingField).Count() == 1)
-                                                { componentDetail.SetEmpty(); }
-
-
+                                                if(componentDetail.ClearIfNotVisible)
+                                                    componentDetail.SetEmpty();
                                             }
 
                                             }

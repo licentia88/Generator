@@ -10,7 +10,7 @@ if (DataSource.Count ==0) return;
          Title="Users"
          Dense="true"
          MaxWidth="MaxWidth.ExtraLarge"
-         EditMode="EditMode.Form"
+         EditMode="EditMode.Inline"
          EditTrigger="TableEditTrigger.EditButton"
          EnableSearch="true"
          Disabled="IsDisabled"
@@ -78,14 +78,18 @@ if (DataSource.Count ==0) return;
     <GenColumns>
         <GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Ref No" />
 
-        <GenTextField BindingField="@nameof(USER.U_NAME)" Label="Name" Required="true" />
+        <GenTextField BindingField="@nameof(USER.U_NAME)"
+                      EditorVisibleIf="x=> ((USER)x).U_AGE == 0"
+                      ClearIfNotVisible="true"
+                      Label="Name"
+                      Required="true" />
 
         <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
 
         <GenTextField BindingField="@nameof(USER.U_LASTNAME)"
                       Label="Last Name" />
 
-        <GenTextField BindingField="@nameof(USER.U_AGE)" />
+        <GenTextField BindingField="@nameof(USER.U_AGE)" Label="Age" />
 
         <GenCheckBox BindingField="@nameof(USER.U_IS_MARRIED)"
                      Label="Evli mi" TrueText="Evet" FalseText="Hayir" />

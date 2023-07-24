@@ -6,9 +6,9 @@ public interface IGenComponent : IGenCompRenderer
 
     bool IsSearchField { get; set; }
 
-    public Func<object,bool> EditorVisibleFunc { get;set;}
+    public Func<object,bool> EditorVisibleIf { get;set;}
 
-    public Func<object, bool> EditorEnabledFunc { get; set; }
+    public Func<object, bool> EditorEnabledIf { get; set; }
 
     public Func<object, bool> RequiredIf { get; set; }
 
@@ -28,7 +28,9 @@ public interface IGenComponent : IGenCompRenderer
 
     public bool EditorVisible { get; set; } 
 
-    public bool GridVisible { get; set; } 
+    public bool GridVisible { get; set; }
+
+    public bool ClearIfNotVisible { get; set; }
 
     public int xs { get; set; }
 
@@ -63,6 +65,8 @@ public interface IGenComponent : IGenCompRenderer
     public Task Clear();
 
     public bool Validate();
+
+    void ValidateRequiredRules();
 
     bool IsEditorVisible(object Model);
 

@@ -109,8 +109,8 @@ public partial class Users
         //Console.WriteLine(view.ViewState.ToString());
         View = view;
 
-        if (view.SelectedItem.U_AGE == 0)
-            view.ShouldShowDialog = false;
+        //if (view.SelectedItem.U_AGE == 0)
+        //    view.ShouldShowDialog = false;
 
         U_LASTNAME = view.GetComponent<GenTextField>(nameof(USER.U_LASTNAME));
 

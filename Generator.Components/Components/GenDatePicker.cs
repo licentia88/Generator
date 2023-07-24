@@ -43,7 +43,9 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [Parameter]
     public bool GridVisible { get; set; } = true;
 
- 
+    [Parameter]
+    public bool ClearIfNotVisible { get; set; } = false;
+
     [Parameter]
     public int xs { get; set; } = 12;
 
@@ -67,10 +69,10 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     bool IGenComponent.IsSearchField { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorVisibleFunc { get; set; }
+    public Func<object, bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledFunc { get; set; }
+    public Func<object, bool> EditorEnabledIf { get; set; }
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -177,11 +179,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         additionalParams.Add((nameof(_value), valDate));
 
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled)));
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
-        if (!RequiredIf?.Invoke(Model) ?? Required)
+        if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;
 
         builder.RenderComponent(this, ignoreLabels,  additionalParams.ToArray());
@@ -255,13 +257,19 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
-    bool IGenComponent.IsEditorVisible(object Model)
+    bool IGenComponent.IsEditorVisible(object model)
     {
-        return ((IGenComponent)this).EditorVisibleFunc?.Invoke(Model) ?? ((IGenComponent)this).EditorVisible;
+        return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
     }
 
-    bool IGenComponent.IsRequired(object Model)
+    bool IGenComponent.IsRequired(object model)
     {
-        return ((IGenComponent)this).RequiredIf?.Invoke(Model) ?? ((IGenComponent)this).Required;
+        return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
+    }
+
+    void IGenComponent.ValidateRequiredRules()
+    {
+        if (Model is null) return;
+        ((IGenComponent)this).ParentGrid.ValidateRequiredRules(this);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
  
@@ -6,13 +7,10 @@ namespace Generator.Components.Validators;
 
 public class GenValidator<T> 
 {
-    
-
     public bool ValidateModel(T obj)
     {
         return ValidateModel(obj, null);
     }
-
 
     public bool ValidateModel(T obj, IEnumerable<IGenComponent> components)
     {
@@ -51,25 +49,39 @@ public class GenValidator<T>
         return isValid;
     }
 
+    private void CheckRequiredAttributes()
+    {
+
+    }
     public bool ValidateValue(IGenComponent component)
     {
         bool isValid = true;
 
         if (component.Model.IsModel())
             isValid = ValidateModelValue(component);
- 
+
         if (component.IsRequired(component.Model))
         {
             SetError(component);
             isValid = false;
         }
+
         return isValid;
     }
 
+    public bool ValidateRequiredRules(IGenComponent component)
+    {
+        if (component.IsRequired(component.Model))
+        {
+           SetError(component);
+           return  false;
+        }
 
+        return true;
+    }
      
     private bool ValidateModelValue(IGenComponent component)
-        {
+   {
         var modelType = component.Model.GetType();
 
         if (!modelType.HasProperty(component.BindingField)) return true;

@@ -64,10 +64,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
 
     [Parameter]
-    public Func<object,bool> EditorVisibleFunc { get; set; }
+    public Func<object,bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledFunc { get; set; }
+    public Func<object, bool> EditorEnabledIf { get; set; }
 
    
 
@@ -145,6 +145,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
+    [Parameter]
+    public bool ClearIfNotVisible { get; set; } = false;
+
     public void SetValue(object value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
@@ -204,11 +207,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         additionalParams.Add((nameof(Value), loValue));
 
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledFunc?.Invoke(Model) ?? EditorEnabled) ));
+        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled) ));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
-        if (!RequiredIf?.Invoke(Model) ?? Required)
+        //TODO burada render yapmadan value yu kontrol et
+        if (!Required && (!RequiredIf?.Invoke(Model) ?? false)) 
             Error = false;
 
         builder.RenderComponent(this, ignoreLabels, additionalParams.ToArray());
@@ -276,14 +280,24 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
     }
 
-    bool IGenComponent.IsEditorVisible(object Model)
+    bool IGenComponent.IsEditorVisible(object model)
     {
-        return ((IGenComponent)this).EditorVisibleFunc?.Invoke(Model) ?? ((IGenComponent)this).EditorVisible;
+        return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
     }
 
-    bool IGenComponent.IsRequired(object Model)
+    bool IGenComponent.IsRequired(object model)
     {
-        return ((IGenComponent)this).RequiredIf?.Invoke(Model) ?? ((IGenComponent)this).Required;
+        return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
+    }
+
+    void IGenComponent.ValidateRequiredRules()
+    {
+        if (Model is null) return;
+
+        if (((IGenComponent)this).Required && string.IsNullOrEmpty(((IGenComponent)this).GetDefaultValue.ToString()))
+            Error = true;
+
+        //((IGenComponent)this).ParentGrid.ValidateRequiredRules(this);
     }
 }
 

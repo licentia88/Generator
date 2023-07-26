@@ -28,7 +28,7 @@ public static class RenderExtensions
             if (param.Value is null) continue;
 
             var index = i;
-
+             
             builder.AddAttribute(index, param.Key, param.Value);
 
             i++;

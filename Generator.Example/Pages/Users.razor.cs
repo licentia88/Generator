@@ -92,10 +92,18 @@ public partial class Users
 
     private GenTextField U_LASTNAME;
     private GenDatePicker U_REGISTER_DATE;
+    private GenComboBox U_NAME_COMBOBOX;
+
 
     public void OnDateChanged(DateTime? date)
     {
         U_REGISTER_DATE.SetValue(date);
+        //U_LASTNAME.SetValue("VALUE SET!!");
+    }
+
+    public void onValChanged(object date)
+    {
+        U_NAME_COMBOBOX.SetValue(date);
         //U_LASTNAME.SetValue("VALUE SET!!");
     }
 

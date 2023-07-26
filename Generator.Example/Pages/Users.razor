@@ -1,11 +1,11 @@
 ﻿@page "/Users"
 @{
 
-if (DataSource.Count ==0) return;
+    if (DataSource.Count() == 0) return;
 
     @*<MudButton OnClick="TEST">Click</MudButton>*@
 
-<GenGrid DataSource="@DataSource.Where(x=> x.U_AGE <30).ToList()"
+<GenGrid DataSource="@DataSource.Where(x=> x.U_AGE <999).ToList()"
          TModel="USER"
          Title="Users"
          Dense="true"
@@ -45,6 +45,7 @@ if (DataSource.Count ==0) return;
                      DisplayField="@nameof(USER.U_NAME)"
                      ValueField="@nameof(USER.U_ROWID)"
                      Clearable="true"
+                  
                      BindingField="@nameof(USER.U_ROWID)"
                      xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
                      Label="Peopel" Required="false" />
@@ -57,10 +58,10 @@ if (DataSource.Count ==0) return;
                      Label="Permissions" Required="false" />
 
 
-        <GenDatePicker Clearable="true"
+        @*<GenDatePicker Clearable="true"
                        BindingField="DateField"
                        xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
-                       Label="DateExample" Required="false" />
+                       Label="DateExample" Required="false" />*@
 
         <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
@@ -76,13 +77,21 @@ if (DataSource.Count ==0) return;
 
     </GenSearchFields>
     <GenColumns>
-        <GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Ref No" />
+        @*<GenTextField BindingField="@nameof(USER.U_ROWID)" EditorEnabled="false" Label="Ref No" />*@
 
         <GenTextField BindingField="@nameof(USER.U_NAME)"
                       EditorVisibleIf="x=> ((USER)x).U_AGE == 0"
-                      ClearIfNotVisible="true"
                       Label="Name"
                       Required="true" />
+
+        <GenComboBox DataSource="DataSource" Dense="true" @ref="U_NAME_COMBOBOX"
+                     DisplayField="@nameof(USER.U_NAME)"
+                     ValueField="@nameof(USER.U_ROWID)"
+                     Clearable="true"
+                     ValueChanged="onValChanged"
+                     BindingField="@nameof(USER.U_ROWID)"
+                     xs="5" sm="5" md="5" lg="5" xl="5" xxl="5"
+                     Label="Peopel"  />
 
         <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
 

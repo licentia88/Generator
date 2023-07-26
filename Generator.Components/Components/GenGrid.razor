@@ -281,7 +281,7 @@
 
                             foreach (var component in components)
                             {
-                                if(EditMode == EditMode.Inline && SelectedItem is not null)
+                                if(EditMode == EditMode.Inline && SelectedItem is not null && ViewState!= ViewState.None)
                                 {
                                     if (!component.IsEditorVisible(SelectedItem))
                                         continue;
@@ -428,6 +428,7 @@
                             @{
                                 if (!EditButtonActionList.Contains(button.ButtonAction))
                                     EditButtonActionList.Add(button.ButtonAction);
+
                                 if (Update.HasDelegate)
                                 {
                                     <MudIconButton @ref="EditButtonRef"

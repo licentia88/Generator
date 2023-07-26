@@ -268,7 +268,8 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
  
         if ((ViewState == ViewState.Create || ViewState == ViewState.Update) && EditMode == EditMode.Inline)
         {
-             
+            if (GridIsBusy) return Task.CompletedTask;
+
             //if (EditButtonActionList.Any())
             //{
             var editingRow = GetCurrentRow();
@@ -338,7 +339,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         if (EditButtonActionList.Any())
         {
             // ReSharper disable once PossibleNullReferenceException
-            var firstItem = EditButtonActionList.LastOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
 
             if (firstItem is null) return;
 
@@ -508,8 +509,9 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
                 await OnAfterSubmit.InvokeAsync(SelectedItem);
 
         }
-        catch  
+        catch  (Exception ex )
         {
+            Console.WriteLine(ex.Message);
             var currentRow = GetCurrentRow();
 
             if (currentRow is not null)
@@ -538,6 +540,8 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
             await Close.InvokeAsync(this);
 
         //ForceRenderAll();
+
+        EditButtonActionList.Clear();
         (this as INonGenGrid).ForceRenderAll();
 
         //Components.Clear();
@@ -732,7 +736,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
     {
         var comp = GetSearchFieldComponent<IGenComponent>(BindingField);
 
-        return GenValidator.ValidateValue(comp);
+        return GenValidator.ValidateComponentValue(comp);
     }
 
     bool INonGenGrid.ValidateSearchFields()
@@ -764,26 +768,28 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     public bool ValidateModel(bool all=false)
     {
-        var result = SelectedItem.IsModel() ?
-            GenValidator.ValidateModel(SelectedItem,all?Components.Select(x=> x.component):null) :
-            Components.Where(x=> x.type !=typeof(GenSpacer) && x.component.EditorVisible).All(x => GenValidator.ValidateValue(x.component));
+        var isValid = GenValidator.ValidateDataSource(SelectedItem, all ? Components.Select(x => x.component) : null);
+        //var result = SelectedItem.IsModel() ?
+        //    GenValidator.ValidateDataSource(SelectedItem,all?Components.Select(x=> x.component):null) :
+        //    Components.Where(x=> x.type !=typeof(GenSpacer) && x.component.EditorVisible).All(x => GenValidator.ValidateComponentValue(x.component));
 
-        if (!result)
+        if (!isValid)
             ((INonGenGrid)this).ForceRenderOnce = true;
         
         //StateHasChanged();
-        return result;
+        return isValid;
     }
 
-    public bool ValidateRequiredRules(IGenComponent component)
-    {
-        return GenValidator.ValidateRequiredRules(component);
-    }
-    public bool ValidateValue(string propertyName)
+    //public bool ValidateRequiredRules(IGenComponent component)
+    //{
+    //    return GenValidator.ValidateRequiredRules(component);
+    //}
+
+    public bool ValidateField(string propertyName)
     {
         var component = Components.FirstOrDefault(x => x.component.BindingField == propertyName);
 
-        var result = GenValidator.ValidateValue(component.component);
+        var result = GenValidator.ValidateComponentValue(component.component);
 
         if (!result)
             ((INonGenGrid)this).ForceRenderOnce = true;
@@ -807,7 +813,6 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         foreach (var component in SearchFieldComponents.Where(x=> x.Error && (!x.RequiredIf?.Invoke(x.Model) ?? false) ) )
         {
             GenValidator.ResetValidation(component);
-
         }
     }
 

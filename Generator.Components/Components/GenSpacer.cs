@@ -188,7 +188,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         return false;
     }
 
-    void IGenComponent.ValidateRequiredRules()
+    void IGenComponent.ValidateField()
     {
          
     }

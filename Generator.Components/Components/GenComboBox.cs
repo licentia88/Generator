@@ -145,8 +145,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         {
             Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            Value = Model;
-            _value = Model;
+            SelectOption(value);
         }
 
         comp.ParentGrid.StateHasChanged();
@@ -229,7 +228,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     void IGenComponent.ValidateObject()
     {
-        ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+        ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
     }
 
     public object GetValue()
@@ -259,9 +258,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         Model?.SetPropertyValue(BindingField, defaultValue);
 
-        Value = null;
+        //Value = null;
 
-        _value = Model;
+        //_value = Model;
     }
 
     public new async Task Clear()
@@ -276,7 +275,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (((IGenComponent)this).IsSearchField)
             return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
 
-        return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+        return ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
     }
 
     bool IGenComponent.IsEditorVisible(object model)
@@ -289,9 +288,18 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
     }
 
-    void IGenComponent.ValidateRequiredRules()
+    void IGenComponent.ValidateField()
     {
         if (Model is null) return;
-        ((IGenComponent)this).ParentGrid.ValidateRequiredRules(this);
+
+        if (((IGenComponent)this).IsEditorVisible(Model))
+        {
+            var loValue = Model.GetPropertyValue(BindingField);
+
+            if ((RequiredIf?.Invoke(Model) ?? false) || (Required && loValue is null))
+                Error = true;
+            else
+                Error = false;
+        }
     }
 }

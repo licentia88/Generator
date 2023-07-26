@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DocumentFormat.OpenXml.EMMA;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
  
@@ -7,22 +8,38 @@ namespace Generator.Components.Validators;
 
 public class GenValidator<T> 
 {
-    public bool ValidateModel(T obj)
+    public bool ValidateDataSource(T model)
     {
-        return ValidateModel(obj, null);
+        return ValidateDataSource(model, null);
     }
 
-    public bool ValidateModel(T obj, IEnumerable<IGenComponent> components)
+    public bool ValidateDataSource(T model, IEnumerable<IGenComponent> components)
     {
+         
+        foreach (var component in components)
+        {
+            ResetValidation(component);
+        }
+
+        bool isValid = true;
+
+        //Dictionary ise sadece bunu kontrol edip don
+        if (!model.IsModel())
+        {
+            ValidateByRequiredTags(components.Where(x=> x.IsRequired(model)), ref isValid);
+            return isValid;
+        }
+
         var results = new List<ValidationResult>();
 
-        if (obj is null) return default;
+        if (model is null) return default;
 
-        var context = new ValidationContext(obj);
+        var context = new ValidationContext(model);
 
-        bool isValid = Validator.TryValidateObject(obj, context, results, true);
+        isValid = Validator.TryValidateObject(model, context, results, true);
 
-        if(components is not null)
+ 
+        if(components is not null && !isValid)
         {
             foreach (var result in results)
             {
@@ -34,145 +51,89 @@ public class GenValidator<T>
             }
         }
 
-        foreach (var comp in components)
-        {
-            comp.Required = comp.RequiredIf?.Invoke(obj) ?? comp.Required;
-
-            if (comp.Required)
-            {
-                var errorText = string.IsNullOrEmpty(comp.ErrorText) ? "*" : comp.ErrorText;
-                SetError(comp, errorText);
-                isValid = false;
-            }
-        }
+        ValidateByRequiredTags(components.Where(x => x.IsRequired(model)), ref isValid);
 
         return isValid;
     }
 
-    private void CheckRequiredAttributes()
+    private void ValidateByRequiredTags(IEnumerable<IGenComponent> components, ref bool isValid)
     {
+        foreach (var comp in components)
+        {
+            comp.ValidateField();
 
+            if (comp.Error)
+                isValid = false;
+        }
     }
-    public bool ValidateValue(IGenComponent component)
+  
+    public bool ValidateComponentValue(IGenComponent component)
     {
         bool isValid = true;
 
         if (component.Model.IsModel())
             isValid = ValidateModelValue(component);
 
-        if (component.IsRequired(component.Model))
-        {
-            SetError(component);
-            isValid = false;
-        }
-
         return isValid;
     }
 
-    public bool ValidateRequiredRules(IGenComponent component)
+
+    private bool ValidateModelValue(IGenComponent component)
     {
-        if (component.IsRequired(component.Model))
+        bool isValid;
+
+        //Dictionary ise sadece bunu kontrol edip don
+        if (!component.Model.IsModel())
         {
-           SetError(component);
-           return  false;
+            component.ValidateField();
+
+            isValid = !component.Error;
+
+            return isValid;
         }
 
-        return true;
-    }
-     
-    private bool ValidateModelValue(IGenComponent component)
-   {
         var modelType = component.Model.GetType();
 
         if (!modelType.HasProperty(component.BindingField)) return true;
 
         var results = new List<ValidationResult>();
 
-        var context = new ValidationContext(component.Model);
+        var context = new ValidationContext(component.Model)
+        {
+            MemberName = component.BindingField
+        };
 
-        context.MemberName = component.BindingField;
 
         context.DisplayName = AttributeExtensions.GetDisplayName<T>(component.BindingField);
 
         var value = component.Model.GetPropertyValue(component.BindingField);
 
-        bool isValid = Validator.TryValidateProperty(value, context, results);
+        isValid = Validator.TryValidateProperty(value, context, results);
 
         if (isValid)
-        {
             ResetValidation(component);
-            return true;
+        else
+            SetError(component, results.FirstOrDefault().ErrorMessage);
+
+        component.ValidateField();
+ 
+        if (component.Error)
+        {
+            var errorText = string.IsNullOrEmpty(component.ErrorText) ? "*" : component.ErrorText;
+            isValid = !component.Error;
+            SetError(component, errorText);
         }
-
-        SetError(component, results.FirstOrDefault().ErrorMessage);
-
-        return false;
+          
+ 
+        return isValid;
     }
 
-    private bool ValidateExpandObject(IGenComponent component)
-    {
-        var Model = component.Model;
 
-        if (component.RequiredIf?.Invoke(Model) ?? component.Required)
-        {
-            var resIsNull = Model.GetPropertyValue(component.BindingField).IsNullOrDefault();
-
-            if (resIsNull)
-            {
-                SetError(component, $"*");
-
-                return false;
-            }
-        }
-
-        if (component.HasProperty(nameof(IGenTextField.MaxLength)))
-        {
-            var maxlength = component.GetPropertyValue(nameof(IGenTextField.MaxLength)).CastTo<int>();
-
-            var compLength = Model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
-
-            var isBigger = compLength > maxlength;
-
-            if (isBigger)
-            {
-                SetError(component, $"Max {maxlength} characters");
-
-                return false;
-            }
-        }
-
-        if (component.HasProperty(nameof(IGenTextField.MinLength)))
-        {
-            var minLength = component.GetPropertyValue(nameof(IGenTextField.MinLength)).CastTo<int>();
-
-            var compLength = Model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
-
-            var isSmaller = compLength < minLength;
-
-            if (isSmaller)
-            {
-                SetError(component, $"Min {minLength} characters");
-
-                return false;
-            }
-        }
-
-        //ResetValidation(component);
-        return true;
-       
-    }
-
-    private void SetError(IGenComponent component)
-    {
-        if (component is null) return;
-        component.Error = true;
-
-        component.ErrorText = string.IsNullOrEmpty(component.ErrorText) ? "*" : component.ErrorText;
-    }
 
     private void SetError(IGenComponent component, string errorMessage)
     {
         if (component is null) return;
+
         component.Error = true;
 
         component.ErrorText = errorMessage;
@@ -187,6 +148,67 @@ public class GenValidator<T>
         //component.ErrorText = string.Empty;
 
     }
+
+    //private bool ValidateExpandObject(IGenComponent component)
+    //{
+    //    var Model = component.Model;
+
+    //    if (component.RequiredIf?.Invoke(Model) ?? component.Required)
+    //    {
+    //        var resIsNull = Model.GetPropertyValue(component.BindingField).IsNullOrDefault();
+
+    //        if (resIsNull)
+    //        {
+    //            SetError(component, $"*");
+
+    //            return false;
+    //        }
+    //    }
+
+    //    if (component.HasProperty(nameof(IGenTextField.MaxLength)))
+    //    {
+    //        var maxlength = component.GetPropertyValue(nameof(IGenTextField.MaxLength)).CastTo<int>();
+
+    //        var compLength = Model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
+
+    //        var isBigger = compLength > maxlength;
+
+    //        if (isBigger)
+    //        {
+    //            SetError(component, $"Max {maxlength} characters");
+
+    //            return false;
+    //        }
+    //    }
+
+    //    if (component.HasProperty(nameof(IGenTextField.MinLength)))
+    //    {
+    //        var minLength = component.GetPropertyValue(nameof(IGenTextField.MinLength)).CastTo<int>();
+
+    //        var compLength = Model.GetPropertyValue(component.BindingField)?.ToString()?.Length ?? 0;
+
+    //        var isSmaller = compLength < minLength;
+
+    //        if (isSmaller)
+    //        {
+    //            SetError(component, $"Min {minLength} characters");
+
+    //            return false;
+    //        }
+    //    }
+
+    //    //ResetValidation(component);
+    //    return true;
+
+    //}
+
+    //private void SetError(IGenComponent component)
+    //{
+    //    if (component is null) return;
+    //    component.Error = true;
+
+    //    component.ErrorText = string.IsNullOrEmpty(component.ErrorText) ? "*" : component.ErrorText;
+    //}
 }
 
 

@@ -77,6 +77,41 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
+
+    public new DateTime? Date
+    {
+        get
+        {
+            return _value;
+        }
+        set
+        {
+            SetDateAsync(value, updateValue: true).AndForget();
+        }
+    }
+    protected async  new Task SetDateAsync(DateTime? date, bool updateValue)
+    {
+        if (!(_value != date))
+        {
+            return;
+        }
+        base.Touched = true;
+        if (date.HasValue && base.IsDateDisabledFunc(date.Value.Date))
+        {
+            await SetTextAsync(null, callback: false);
+            return;
+        }
+        _value = date;
+        if (updateValue)
+        {
+            base.Converter.GetError = false;
+            await SetTextAsync(base.Converter.Set(_value), callback: false);
+        }
+        await DateChanged.InvokeAsync(_value);
+        await BeginValidateAsync();
+        FieldChanged(_value);
+    }
+
     protected override Task OnInitializedAsync()
     {
         Date = (DateTime?)Model?.GetPropertyValue(BindingField);
@@ -97,10 +132,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         AddComponents();
     }
 
-    public void SetValue(DateTime? date)
+    public DateTime? _originalDate;
+
+    public  void SetValue(DateTime? date)
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        // ReSharper disable once HeuristicUnreachableCode
+        
         if (this is not IGenComponent comp) return;
 
         if (comp.IsSearchField)
@@ -108,7 +144,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         else
         {
             Model?.SetPropertyValue(BindingField, date);
-            _value = date;
+            //await SetTextAsync(base.Converter.Set(date), true);
 
         }
 
@@ -116,14 +152,14 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         comp.ParentGrid.CurrentGenPage?.StateHasChanged();
     }
 
- 
+
 
     protected override void OnClosed()
     {
         if (!Error)
         {
             if (!((IGenComponent)this).IsSearchField)
-                ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+                ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
             else
                 ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
         }
@@ -177,7 +213,9 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
-        additionalParams.Add((nameof(_value), valDate));
+        //additionalParams.Add((nameof(_value), valDate));
+
+        //additionalParams.Add((nameof(Date), valDate));
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
 
@@ -203,7 +241,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     void IGenComponent.ValidateObject()
     {
-        ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+        ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
     }
 
     public object GetValue()
@@ -254,7 +292,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         if (((IGenComponent)this).IsSearchField)
             return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
 
-        return ((IGenComponent)this).ParentGrid.ValidateValue(BindingField);
+        return ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
     }
 
     bool IGenComponent.IsEditorVisible(object model)
@@ -267,9 +305,18 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
     }
 
-    void IGenComponent.ValidateRequiredRules()
+    void IGenComponent.ValidateField()
     {
         if (Model is null) return;
-        ((IGenComponent)this).ParentGrid.ValidateRequiredRules(this);
+
+        if (((IGenComponent)this).IsEditorVisible(Model))
+        {
+            var loValue = Model.GetPropertyValue(BindingField).CastTo<DateTime?>();
+
+            if ((RequiredIf?.Invoke(Model) ?? false) || (Required && loValue is null))
+                Error = true;
+            else
+                Error = false;
+        }
     }
 }

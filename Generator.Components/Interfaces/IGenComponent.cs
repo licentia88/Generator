@@ -66,7 +66,7 @@ public interface IGenComponent : IGenCompRenderer
 
     public bool Validate();
 
-    void ValidateRequiredRules();
+    void ValidateField();
 
     bool IsEditorVisible(object Model);
 

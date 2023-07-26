@@ -62,9 +62,8 @@ public interface INonGenGrid:INonGenView
 
     public bool ValidateModel(bool all=false);
 
-    public bool ValidateValue(string propertyName);
+    public bool ValidateField(string propertyName);
 
-    public bool ValidateRequiredRules(IGenComponent component);
 
     bool ValidateSearchFields();
 

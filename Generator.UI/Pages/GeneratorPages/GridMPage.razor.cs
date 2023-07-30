@@ -4,6 +4,7 @@ using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Shared.Models.ComponentModels;
 using Generator.Shared.Models.ComponentModels.NonDB;
+using Generator.Shared.Services;
 using Generator.UI.Extensions;
 using Generator.UI.Helpers;
 using Generator.UI.Models;
@@ -40,8 +41,11 @@ public partial class GridMPage
     private GenCheckBox UpdateCheckBox;
 
     private GenCheckBox DeleteCheckBox;
- 
-	protected override async Task OnInitializedAsync()
+
+    [Inject]
+    public IRolesService roleService { get; set; }
+
+    protected override async Task OnInitializedAsync()
 	{
 		DataSource = GridList;
 

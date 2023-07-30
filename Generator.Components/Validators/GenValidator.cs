@@ -103,7 +103,7 @@ public class GenValidator<T>
             MemberName = component.BindingField
         };
 
-
+ 
         context.DisplayName = AttributeExtensions.GetDisplayName<T>(component.BindingField);
 
         var value = component.Model.GetPropertyValue(component.BindingField);

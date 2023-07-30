@@ -82,10 +82,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Model is not null && Model.GetType().Name != "Object")
-        {
-           
             base.BuildRenderTree(builder);
-        }
 
         AddComponents();
 
@@ -189,7 +186,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => Validate());
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {
+            Validate();
+        });
 
     }
 
@@ -199,7 +198,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     {
         if (Model is null || Model.GetType().Name == "Object")
             Model = model;
-       
+
         SetCallBackEvents();
 
         var loValue = Model.GetPropertyValue(BindingField);
@@ -212,7 +211,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
         //TODO burada render yapmadan value yu kontrol et
- 
+        if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
+            Error = false;
+
         builder.RenderComponent(this, ignoreLabels, additionalParams.ToArray());
     };
 

@@ -12,6 +12,7 @@ public static class TaskHandler
 {
     private static readonly DbExceptionHandler ExceptionHandler = new();
 
+
     /// <summary>
     /// Executes an asynchronous task and wraps the result in a <see cref="RESPONSE_RESULT{T}"/> object.
     /// </summary>
@@ -126,32 +127,43 @@ public static class TaskHandler
         return ExceptionHandler.HandleException(ex);
     }
 
-    //public static async Task<UnaryResult<T>> OnComplete<T>(this UnaryResult<T> result, Action<Task> action)
-    //{
-    //    await result;
-    //    action.Invoke(Task.CompletedTask);
-    //    return result;
-    //}
-
-
+    /// <summary>
+    /// Executes an asynchronous task and performs an action on its result.
+    /// </summary>
+    /// <typeparam name="T">The type of the task result.</typeparam>
+    /// <param name="result">The asynchronous task result to act upon.</param>
+    /// <param name="action">The action to perform on the result.</param>
+    /// <returns>The original task result after the action is performed.</returns>
     public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Func<T, Task> action)
     {
         var data = await result;
-
         await action.Invoke(data);
-
         return data;
     }
 
+    /// <summary>
+    /// Executes an asynchronous task and performs an action on its result.
+    /// </summary>
+    /// <typeparam name="T">The type of the task result.</typeparam>
+    /// <param name="result">The asynchronous task result to act upon.</param>
+    /// <param name="action">The action to perform on the result.</param>
+    /// <returns>The original task result after the action is performed.</returns>
     public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Action<T> action)
     {
         var data = await result;
-
         action.Invoke(data);
-
         return data;
     }
 
+    /// <summary>
+    /// Executes an asynchronous task and performs an action on its result with an additional argument.
+    /// </summary>
+    /// <typeparam name="T">The type of the task result.</typeparam>
+    /// <typeparam name="TArg">The type of the additional argument for the action.</typeparam>
+    /// <param name="result">The asynchronous task result to act upon.</param>
+    /// <param name="action">The action to perform on the result.</param>
+    /// <param name="arg">The additional argument for the action.</param>
+    /// <returns>The original task result after the action is performed.</returns>
     public static async Task<T> OnComplete<T, TArg>(this UnaryResult<T> result, Action<T, TArg> action, TArg arg)
     {
         var data = await result;
@@ -159,16 +171,21 @@ public static class TaskHandler
         return data;
     }
 
+    /// <summary>
+    /// Executes an asynchronous task and performs an action after its completion.
+    /// </summary>
+    /// <typeparam name="T">The type of the task result.</typeparam>
+    /// <param name="result">The asynchronous task result to act upon.</param>
+    /// <param name="action">The action to perform after the task completion.</param>
+    /// <returns>The original task result after the action is performed.</returns>
     public static async Task<T> OnComplete<T>(this UnaryResult<T> result, Action action)
     {
         var data = await result;
-
         action.Invoke();
-
         return data;
     }
 
-
+ 
 
 }
 

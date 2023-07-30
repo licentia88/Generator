@@ -13,6 +13,7 @@ using MudBlazor;
 
 namespace Generator.UI.Pages.Base;
 
+
 public abstract class HubPageBase<THub, THubReceiver,TModel> : PageBaseClass
 where TModel:new()
 where THub : IMagicHub<THub, THubReceiver,TModel>

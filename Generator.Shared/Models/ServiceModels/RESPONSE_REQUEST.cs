@@ -3,25 +3,25 @@ using MemoryPack;
 
 namespace Generator.Shared.Models.ServiceModels;
 
-[MemoryPackable]
-public partial struct PipeData
-{
+//[MemoryPackable]
+//public partial struct PipeData
+//{
    
-    public PipeData(string host, Operation? operation)
-    {
-        Host = host;
-        Operation = operation;
-    }
+//    public PipeData(string host, Operation? operation)
+//    {
+//        Host = host;
+//        Operation = operation;
+//    }
  
-    public static PipeData New(string host, Operation? operation)
-    {
-        return new PipeData(host, operation);
-    }
+//    public static PipeData New(string host, Operation? operation)
+//    {
+//        return new PipeData(host, operation);
+//    }
 
-    public string Host { get; set; }
+//    public string Host { get; set; }
 
-    public Operation? Operation { get; set; }
-}
+//    public Operation? Operation { get; set; }
+//}
 
 [MemoryPackable]
 public partial class RESPONSE_REQUEST<TModel>

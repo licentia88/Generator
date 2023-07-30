@@ -12,8 +12,7 @@ using MudBlazor;
 namespace Generator.Example.Pages;
 
 public partial class Users
-{
-    
+{   
     [Inject]
     public PermissionHub PermissionHub { get; set; }
 
@@ -55,6 +54,7 @@ public partial class Users
          //var res = isMarriedCheckBox?.GetValue().CastTo<bool>() ?? true; ;
         DataSource =  await UserService.ReadAll();
 
+        Console.WriteLine();
         //DataSource = res;
 
         //DataSource = userList.Value.Take(1).ToList();
@@ -171,7 +171,9 @@ public partial class Users
 
     public  Task Cancel(GenArgs<USER> data)
     {
-        DataSource[data.Index] = data.OldModel;
+         var index = DataSource.IndexOf(data.Model);
+        DataSource[index] = data.OldModel;
+        //DataSource[data.Index] = data.OldModel;
         return Task.CompletedTask;
     }
 }

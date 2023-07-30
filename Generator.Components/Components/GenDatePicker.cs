@@ -311,12 +311,16 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         if (((IGenComponent)this).IsEditorVisible(Model))
         {
-            var loValue = Model.GetPropertyValue(BindingField).CastTo<DateTime?>();
+            var loValue = Model.GetPropertyValue(BindingField);
 
-            if ((RequiredIf?.Invoke(Model) ?? false) || (Required && loValue is null))
-                Error = true;
-            else
-                Error = false;
+            if (RequiredIf is not null)
+            {
+                Error = RequiredIf.Invoke(Model);
+            }
+            else if (Required)
+            {
+                Error = loValue is null || loValue.ToString() == string.Empty;
+            }
         }
     }
 }

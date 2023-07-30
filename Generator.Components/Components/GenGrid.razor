@@ -283,7 +283,8 @@
                             {
                                 if(EditMode == EditMode.Inline && SelectedItem is not null && ViewState!= ViewState.None)
                                 {
-                                    if (!component.IsEditorVisible(SelectedItem))
+                                    //burada selected item e gore kontrol yapip context i gecmek gerek?
+                                    if (!component.IsEditorVisible(context))
                                         continue;
                                 }
                                 else if (!component.GridVisible)
@@ -296,7 +297,7 @@
                                         {
                                             @component.RenderAsGridComponent(context)
                                         }
-                                       
+
                                     }
 
                                 </MudTd>

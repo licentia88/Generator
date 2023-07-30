@@ -118,12 +118,21 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public void OnClearClicked(MouseEventArgs arg)
     {
-        Model.SetPropertyValue(BindingField, null);
+        if (((IGenComponent)this).IsSearchField)
+        {
+            SetValue(null);
+            Validate();
+            return;
+        }
 
         ((IGenComponent)this).SetEmpty();
 
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
-        ((IGenComponent)this).ParentGrid?.CurrentGenPage?.StateHasChanged();
+        //Model.SetPropertyValue(BindingField, null);
+
+        //((IGenComponent)this).SetEmpty();
+
+        //((IGenComponent)this).ParentGrid.StateHasChanged();
+        //((IGenComponent)this).ParentGrid?.CurrentGenPage?.StateHasChanged();
     }
 
     public void SetValue(object value)
@@ -145,7 +154,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         {
             Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
 
-            SelectOption(value);
+            //SelectOption(value);
         }
 
         comp.ParentGrid.StateHasChanged();
@@ -162,12 +171,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (!OnClearButtonClick.HasDelegate)
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>  Validate());
+
+        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>
+        {
+            Validate();
+        });
+
+        OnKeyDown = EventCallback.Factory.Create<KeyboardEventArgs>(this, () =>
+        {
+            Validate();
+        });
 
 
-        
-
-     }
+    }
 
     //public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => builder =>
     //{
@@ -290,16 +306,20 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     void IGenComponent.ValidateField()
     {
-        if (Model is null) return;
+         if (Model is null) return;
 
         if (((IGenComponent)this).IsEditorVisible(Model))
         {
             var loValue = Model.GetPropertyValue(BindingField);
 
-            if ((RequiredIf?.Invoke(Model) ?? false) || (Required && loValue is null))
-                Error = true;
-            else
-                Error = false;
+            if (RequiredIf is not null)
+            {
+                Error = RequiredIf.Invoke(Model);
+            }
+            else if (Required)
+            {
+                Error = loValue is null || loValue.ToString() == string.Empty;
+            }
         }
     }
 }

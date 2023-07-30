@@ -5,7 +5,6 @@ namespace Generator.Shared.Extensions;
 
 public class ReflectionExtensions
 {
-
     public static Type ReconstructType(string assemblyQualifiedName, bool throwOnError = true, params Assembly[] referencedAssemblies)
     {
         foreach (Assembly asm in referencedAssemblies)

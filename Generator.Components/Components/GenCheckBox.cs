@@ -281,10 +281,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         {
             var loValue = Model.GetPropertyValue(BindingField);
 
-            if ((RequiredIf?.Invoke(Model) ?? false) || (Required && loValue is null))
-                Error = true;
-            else
-                Error = false;
+            if (RequiredIf is not null)
+            {
+                Error = RequiredIf.Invoke(Model);
+            }
+            else if (Required)
+            {
+                Error = loValue is null || loValue.ToString() == string.Empty;
+            }
         }
     }
 }

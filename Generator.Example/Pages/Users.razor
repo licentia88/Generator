@@ -87,6 +87,10 @@
         <GenTextField BindingField="@nameof(USER.U_NAME)"
                       EditorVisibleIf="x=> ((USER)x).U_AGE == 0"
                       Label="Name"
+                      OnValueChanged="tuple => 
+                      {
+                        Console.WriteLine(tuple.Value.ToString());
+                      }"
                       Required="true" />
 
         <GenAutoComplete DataSource="GenderList" Label="Gender"

@@ -111,7 +111,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         await BeginValidateAsync();
         FieldChanged(_value);
         
-        await OnDateChanged.InvokeAsync(date);
+        await OnDateChanged.InvokeAsync((Model,date));
     }
 
     protected override Task OnInitializedAsync()
@@ -184,7 +184,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     
     [Parameter]
-    public EventCallback<DateTime?> OnDateChanged { get; set; }
+    public EventCallback<(object Model, DateTime? value)> OnDateChanged { get; set; }
 
  
     

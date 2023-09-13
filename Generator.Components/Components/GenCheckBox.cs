@@ -139,11 +139,11 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     protected new async Task SetCheckedAsync(bool value)
     {
         await base.SetCheckedAsync(value);
-        await OnCheckedChanged.InvokeAsync(value);
+        await OnCheckedChanged.InvokeAsync((Model,value));
     }
     
     [Parameter]
-    public EventCallback<bool> OnCheckedChanged{ get; set; }
+    public EventCallback<(object Model, bool Value)> OnCheckedChanged{ get; set; }
 
     private void SetCallBackEvents()
     {

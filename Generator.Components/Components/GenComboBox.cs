@@ -167,11 +167,11 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(value);
+        await OnValueChanged.InvokeAsync((Model, value));
     }
 
     [Parameter]
-    public EventCallback<object> OnValueChanged { get; set; }
+    public EventCallback<(object Model, object Value)> OnValueChanged { get; set; }
 
     private void SetCallBackEvents()
     {

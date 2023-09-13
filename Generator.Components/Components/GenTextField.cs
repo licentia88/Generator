@@ -182,12 +182,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     }
 
     [Parameter]
-    public EventCallback<object> OnValueChanged { get; set; }
+    public EventCallback<(object Model, object Value)> OnValueChanged { get; set; }
 
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(value);
+        await OnValueChanged.InvokeAsync((Model,value));
     }
 
     private void SetCallBackEvents()

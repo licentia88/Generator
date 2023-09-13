@@ -5,11 +5,11 @@ using Generator.Server.Services.Base;
 
 namespace Generator.Server.Services;
 
-public class UserService : MagicBase<IUserService, USER,TestContext>, IUserService
+public class UserService : MagicBase<IUserService, USER, TestContext>, IUserService
 {
     public UserService(IServiceProvider provider) : base(provider)
     {
     }
 
-     
+
 }

@@ -15,10 +15,13 @@ public partial class GRID_FIELDS
 
     public int GF_COMPONENT_REFNO { get; set; }
 
-    public string GF_CONTROL_TYPE { get; set; }
+    [Required(ErrorMessage = "*")]
+    public int GF_CONTROL_TYPE { get; set; }
 
+    [Required(ErrorMessage = "*")]
     public string GF_BINDINGFIELD { get; set; }
 
+    [Required(ErrorMessage = "*")]
     public string GF_LABEL { get; set; }
 
     [Range(1, 12, ErrorMessage = "Value must be between 1-12")]

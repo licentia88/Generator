@@ -89,7 +89,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             SetDateAsync(value, updateValue: true).AndForget();
         }
     }
-    protected async  new Task SetDateAsync(DateTime? date, bool updateValue)
+    protected new  async Task SetDateAsync(DateTime? date, bool updateValue)
     {
         if (!(_value != date))
         {
@@ -110,6 +110,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         await DateChanged.InvokeAsync(_value);
         await BeginValidateAsync();
         FieldChanged(_value);
+        
+        await OnDateChanged.InvokeAsync(date);
     }
 
     protected override Task OnInitializedAsync()
@@ -117,6 +119,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         Date = (DateTime?)Model?.GetPropertyValue(BindingField);
 
         AddComponents();
+
+        ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
         return Task.CompletedTask;
 
@@ -178,6 +182,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
        
     }
 
+    
+    [Parameter]
+    public EventCallback<DateTime?> OnDateChanged { get; set; }
+
+ 
+    
     private void SetCallBackEvents()
     {
         if (((IGenComponent)this).IsSearchField)
@@ -190,10 +200,9 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         }
         else
         {
-            if (!DateChanged.HasDelegate)
-            {
+            // if (!DateChanged.HasDelegate)
                 DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => SetValue(x.CastTo<DateTime?>()));
-            }
+
         }
     }
 

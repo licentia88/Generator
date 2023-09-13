@@ -15,8 +15,6 @@ namespace Generator.Client.Extensions;
 
 public static class DependencyExtensions
 {
-
-
     public static void AddMagicServices(this IServiceCollection Services)
     {
         Services.AutoRegisterFromGeneratorClient();
@@ -36,6 +34,7 @@ public static class DependencyExtensions
 
     public static void RegisterExampleServices(this IServiceCollection Services)
     {
+        Services.AddSingleton<GenderService>();
         Services.AddSingleton<UserService>();
         Services.AddSingleton<OrdersMService>();
         Services.AddSingleton<OrdersDService>();

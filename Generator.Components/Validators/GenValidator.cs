@@ -63,7 +63,10 @@ public class GenValidator<T>
             comp.ValidateField();
 
             if (comp.Error)
+            {
                 isValid = false;
+                 
+            }
         }
     }
   
@@ -91,6 +94,9 @@ public class GenValidator<T>
 
             return isValid;
         }
+
+        if (component.Model is null)
+            return false;
 
         var modelType = component.Model.GetType();
 
@@ -128,7 +134,11 @@ public class GenValidator<T>
         return isValid;
     }
 
-
+    private void SetError(IGenComponent component)
+    {
+        var errorMessage = string.IsNullOrEmpty(component.ErrorText) ? "*" : component.ErrorText;
+        SetError(component, errorMessage);
+    }
 
     private void SetError(IGenComponent component, string errorMessage)
     {

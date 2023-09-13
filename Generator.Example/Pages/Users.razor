@@ -1,17 +1,18 @@
 ﻿@page "/Users"
 @{
 
-    if (DataSource.Count() == 0) return;
+    //if (DataSource.Count() == 0) return;
+
+    if (GenderList.Count() == 0) return;
 
     @*<MudButton OnClick="TEST">Click</MudButton>*@
 
-<GenGrid DataSource="@DataSource.Where(x=> x.U_AGE <999).ToList()"
+<GenGrid DataSource="@DataSource"
          TModel="USER"
          Title="Users"
          Dense="true"
          MaxWidth="MaxWidth.ExtraLarge"
-         EditMode="EditMode.Inline"
-         EditTrigger="TableEditTrigger.EditButton"
+         EditMode="EditMode.SmartForm"
          EnableSearch="true"
          Disabled="IsDisabled"
          SearchText="Search"
@@ -34,6 +35,8 @@
     </GenHeaderButtons>
     <GenSearchFields>
 
+       
+
         <GenTextField Clearable="true" BindingField="TexFld" Label="Name"
                       Required="false"
                       RequiredIf="@(x=> ((Dictionary<string,object>)x)[nameof(USER.U_ROWID)] is null)"
@@ -41,9 +44,11 @@
 
         <GenSpacer xs="2" sm="2" md="2" lg="2" xl="2" xxl="2"></GenSpacer>
 
-        <GenComboBox DataSource="DataSource" Dense="true"
+        <GenComboBox DataSource="DataSource" Dense="true" @ref="U_NAME_COMBOBOX"
                      DisplayField="@nameof(USER.U_NAME)"
                      ValueField="@nameof(USER.U_ROWID)"
+                     ValueChanged="onValChanged"
+
                      Clearable="true"
                   
                      BindingField="@nameof(USER.U_ROWID)"
@@ -84,7 +89,10 @@
                       Label="Name"
                       Required="true" />
 
-      
+        <GenAutoComplete DataSource="GenderList" Label="Gender"
+                         BindingField="@nameof(USER.U_GEN_CODE)"
+                         ValueField="@nameof(GENDER.GEN_CODE)"
+                         DisplayField="@nameof(GENDER.GEN_DESC)" />
 
         <GenSpacer xs="12" xl="12" xxl="12" sm="12" md="12" lg="12" />
 

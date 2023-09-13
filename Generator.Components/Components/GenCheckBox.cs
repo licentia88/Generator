@@ -101,6 +101,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     {
         AddComponents();
 
+        ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
+
         if (string.IsNullOrEmpty(Class))
             Class = "mt-3";
 
@@ -133,13 +135,24 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     }
 
     
+ 
+    protected new async Task SetCheckedAsync(bool value)
+    {
+        await base.SetCheckedAsync(value);
+        await OnCheckedChanged.InvokeAsync(value);
+    }
+    
+    [Parameter]
+    public EventCallback<bool> OnCheckedChanged{ get; set; }
 
     private void SetCallBackEvents()
     {
-        if (!CheckedChanged.HasDelegate)
+        // if (!CheckedChanged.HasDelegate)
             CheckedChanged = EventCallback.Factory.Create<bool>(this, x => { SetValue(x); Validate(); });
 
     }
+    
+    
 
     //public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false) => (builder) =>
     //{

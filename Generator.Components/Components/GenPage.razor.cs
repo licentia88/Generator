@@ -91,7 +91,7 @@ public partial class GenPage<TModel> where TModel : new()
 
     public bool Validate()
     {
-        ((INonGenPage)this).IsValid = GenGrid.ValidateModel(true);
+        ((INonGenPage)this).IsValid = GenGrid.ValidateModel();
         StateHasChanged();
 
         return ((INonGenPage)this).IsValid;
@@ -116,6 +116,7 @@ public partial class GenPage<TModel> where TModel : new()
 
     async Task IGenView<TModel>.OnCommit(TModel model, ViewState viewState)
     {
+
         if (!Validate()) return;
 
         if (IsIndividual)

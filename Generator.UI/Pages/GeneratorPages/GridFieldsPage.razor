@@ -1,6 +1,12 @@
 ﻿ 
  @inherits ServicePageBase<GRID_M, GRID_FIELDS, IGridFieldsService> 
- 
+
+
+@{
+    if (View is not null && View.ViewState != ViewState.None && DisplayFieldsList.Count == 0)
+        return;
+}
+
 <GenGrid DataSource="DataSource" 
           TModel="GRID_FIELDS"
           MaxWidth="MaxWidth.ExtraLarge"
@@ -23,11 +29,10 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenComboBox @ref="DisplayFieldCombobox"
+        <GenComboBox @ref="DisplayFieldsCombobox"
                      Label="Fields"
                      DataSource="DisplayFieldsList"
                      GridVisible="false"
-                     ValueChanged="DisplayFieldChanged"
                      BindingField="@nameof(GRID_FIELDS.GF_BINDINGFIELD)"
                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
                      DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
@@ -40,9 +45,8 @@
                       Label="Label" />
 
         @*ROW2*@
-        <GenComboBox Label="Control" @ref="ControlTypeComboBox"
+        <GenComboBox Label="Control"  
                      DataSource="DataHelpers.GetEnumValues<ComponentTypes>()"
-                     ValueChanged="ControlTypeChanged"
                      BindingField="@nameof(GRID_FIELDS.GF_CONTROL_TYPE)"
                      ValueField="@nameof(CODE_ENUM.C_CODE)"
                      DisplayField="@nameof(CODE_ENUM.C_DESC)"
@@ -50,9 +54,9 @@
 
         <GenSpacer xs="12" sm="1" md="1" lg="1" xl="1" xxl="1" />
 
-        <GenComboBox Label="Input Type" @ref="InputTypeComboBox"
+        <GenComboBox Label="Input Type" 
                      DataSource="DataHelpers.GetEnumValues<InputType>()"
-                     EditorVisible="false"
+                     EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.ComboBox" 
                      GridVisible="false"
                      BindingField="@nameof(GRID_FIELDS.GF_INPUT_TYPE)"
                      ValueField="@nameof(CODE_ENUM.C_CODE)"
@@ -61,23 +65,23 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_TRUE_TEXT))" @ref="TrueTextCheckBox"
-                      EditorVisible="false"
+        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_TRUE_TEXT))"  
+                      EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.CheckBox"
                       GridVisible="false"
                       Label="True Text"
                       xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
         <GenSpacer xs="12" sm="1" md="1" lg="1" xl="1" xxl="1" />
 
-        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FALSE_TEXT))" @ref="FalseTextCheckBox"
-                      EditorVisible="false"
+        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FALSE_TEXT))"  
+                      EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.CheckBox"
                       GridVisible="false"
                       Label="False Text"
                       xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
 
-        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FORMAT))" @ref="FormatTextField"
-                      EditorVisible="false"
+        <GenTextField BindingField="@(nameof(GRID_FIELDS.GF_FORMAT))"  
+                      EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.DatePicker"
                       GridVisible="false"
                       Placeholder="Default: ddMMyyyy"
                       Label="Format"
@@ -85,10 +89,10 @@
 
 
         @*ROW3*@
-        <GenComboBox Label="DataSource" @ref="DataSourceComboBox"
+        <GenComboBox Label="DataSource"  
                      DataSource="TableList"
                      ValueChanged="DataSourceChanged"
-                     EditorVisible="false"
+                     EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.ComboBox"
                      GridVisible="false"
                      BindingField="@nameof(GRID_FIELDS.GF_DATASOURCE)"
                      ValueField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)"
@@ -98,11 +102,10 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenComboBox Label="Value" @ref="DataSourceValueFieldComboBox"
+        <GenComboBox Label="Value"  
                      DataSource="ComboDisplayFieldList"
-                     EditorVisible="false"
+                     EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.ComboBox"
                      GridVisible="false"
-                     ValueChanged="DataSourceValueFieldChanged"
                      BindingField="@nameof(GRID_FIELDS.GF_VALUEFIELD)"
                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
                      DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
@@ -110,11 +113,10 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="1" xl="1" xxl="1" />
 
-        <GenComboBox Label="Display" @ref="DataSourceDisplayFieldComboBox"
+        <GenComboBox Label="Display" 
                      DataSource="ComboDisplayFieldList"
-                     EditorVisible="false"
+                     EditorVisibleIf="x=> ((GRID_FIELDS)x).GF_CONTROL_TYPE == (int)ComponentTypes.ComboBox"
                      GridVisible="false"
-                     ValueChanged="DataSourceDisplayFieldChanged"
                      BindingField="@nameof(GRID_FIELDS.GF_DISPLAYFIELD)"
                      ValueField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
                      DisplayField="@nameof(DISPLAY_FIELD_INFORMATION.DFI_NAME)"
@@ -122,7 +124,7 @@
 
         <GenSpacer xs="12" sm="12" md="12" lg="4" xl="4" xxl="4" />
 
-        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_DATASOURCE_QUERY)" @ref="DataSourceQueryTextField"
+        <GenTextField BindingField="@nameof(GRID_FIELDS.GF_DATASOURCE_QUERY)" 
                       Lines="5"
                       Label="DataSource Query"
                       GridVisible="false"
@@ -138,7 +140,6 @@
                      Label="Required" />
 
         <GenCheckBox BindingField="@nameof(GRID_FIELDS.GF_USE_AS_SEARCHFIELD)"
-                     @ref="IsSearchFieldCheckBox"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"
                      EditorEnabled="false"
                      TrueText="Yes" FalseText="No"

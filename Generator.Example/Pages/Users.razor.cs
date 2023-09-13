@@ -4,6 +4,7 @@ using Generator.Components.Args;
 using Generator.Components.Components;
 using Generator.Components.Interfaces;
 using Generator.Examples.Shared.Models;
+using Generator.Examples.Shared.Services;
 using Generator.Shared.Extensions;
 using Generator.Shared.Models.ComponentModels;
 using Microsoft.AspNetCore.Components;
@@ -16,6 +17,8 @@ public partial class Users
     [Inject]
     public PermissionHub PermissionHub { get; set; }
 
+    [Inject]
+    public GenderService GenderService { get; set; }
 
     [Inject]
     public UserService UserService { get; set; }
@@ -40,6 +43,7 @@ public partial class Users
 
     public GenCheckBox CheckBoxText { get; set; }
 
+    public List<GENDER> GenderList { get; set; } = new List<GENDER>();
     //public async IAsyncEnumerable<string> TestData()
     //{
     //    foreach (var item in DataSource)
@@ -51,6 +55,9 @@ public partial class Users
     //}
     protected override async Task OnInitializedAsync()
     {
+
+        GenderList = await GenderService.ReadAll();
+
          //var res = isMarriedCheckBox?.GetValue().CastTo<bool>() ?? true; ;
         DataSource =  await UserService.ReadAll();
 

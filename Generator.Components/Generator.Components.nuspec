@@ -29,7 +29,6 @@
 
 	<files>
 		<file src="bin\Debug\net7.0\Generator.Components.dll" target="lib\net7.0" />
-		<file src="bin\Debug\net7.0\Generator.Shared.dll" target="lib\net7.0" />
 		<file src="wwwroot\GeneratorJs.js"  target="Content\Test\GeneratorJs.js" />
 		<file src="GeneratorJs.cs"  target="content\Test\GeneratorJs.cs" />
 	</files>

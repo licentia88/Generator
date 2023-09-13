@@ -6,7 +6,6 @@ using Generator.Server.Seed;
 using Grpc.Net.Client;
 using LitJWT;
 using LitJWT.Algorithms;
-using MagicOnion;
 using MagicOnion.Serialization.MemoryPack;
 using MagicOnion.Server;
 using MessagePipe;

@@ -1,34 +1,19 @@
-﻿using System.Text.RegularExpressions;
-using Generator.Components.Components;
+﻿using Generator.Components.Components;
 using Generator.Components.Interfaces;
-using Generator.Shared.Extensions;
 using Generator.Shared.Models.ComponentModels;
-using Generator.Shared.Models.ComponentModels.Abstracts;
 using Generator.Shared.Models.ComponentModels.NonDB;
-using Generator.UI.Enums;
 using Generator.UI.Extensions;
-using Generator.UI.Models;
 
 namespace Generator.UI.Pages.GeneratorPages;
 
 public partial class GridFieldsPage
 {
- 
 	private List<DISPLAY_FIELD_INFORMATION> DisplayFieldsList { get; set; } = new();
     private List<DISPLAY_FIELD_INFORMATION> ComboDisplayFieldList { get; set; } = new();
     public List<TABLE_INFORMATION> TableList { get; set; } = new();
 
-	private GenComboBox DisplayFieldCombobox;
-	private GenCheckBox IsSearchFieldCheckBox;
-    private GenComboBox ControlTypeComboBox;
-    private GenComboBox InputTypeComboBox;
-    private GenComboBox DataSourceComboBox;
-    private GenComboBox DataSourceValueFieldComboBox;
-    private GenComboBox DataSourceDisplayFieldComboBox;
-    private GenTextField TrueTextCheckBox;
-    private GenTextField FalseTextCheckBox;
-    private GenTextField FormatTextField;
-    private GenTextField DataSourceQueryTextField;
+
+    public GenComboBox DisplayFieldsCombobox { get; set; }
 
     private string CurrentDatabase;
 
@@ -41,8 +26,6 @@ public partial class GridFieldsPage
 
         await ReadByParent();
 
-
-
     }
 
     protected override async Task Load(IGenView<GRID_FIELDS> view)
@@ -51,16 +34,12 @@ public partial class GridFieldsPage
 
 
         if (ParentModel.CB_COMMAND_TYPE == 1)
-            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetFieldsUsingQuery(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
+            DisplayFieldsList = await DisplayFieldsCombobox.FillAsync(() => DatabaseService.GetFieldsUsingQuery(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
 
         if (ParentModel.CB_COMMAND_TYPE == 4)
-        {
-            DisplayFieldsList = await DisplayFieldCombobox.FillAsync(() => DatabaseService.GetStoredProcedureFieldsAsync(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
+            DisplayFieldsList = await DisplayFieldsCombobox.FillAsync(() => DatabaseService.GetStoredProcedureFieldsAsync(ParentModel.CB_DATABASE, ParentModel.CB_QUERY_OR_METHOD));
 
-        }
-
-
-        await CheckRulesAsync();
+      
 
         if (!view.ParentGrid.ValidateModel())
         {
@@ -78,44 +57,13 @@ public partial class GridFieldsPage
             View.SelectedItem.GF_XXLG = 12;
         }
 
-  
-
-  //      await GetQuerySelectFields(View);
-
-		//GetQueryParameters(View);
-
+        //StateHasChanged();
     }
 
 
-	private async Task DisplayFieldChanged(object obj)
-	{
-		if (obj is not DISPLAY_FIELD_INFORMATION comboModel) return;
+	 
 
-        //IsSearchFieldCheckBox.SetValue(comboModel.DFI_IS_SEARCH_FIELD);
-
-        DisplayFieldCombobox.SetValue(obj);
-
-        await CheckRulesAsync();
-
-    }
-
-    private void DataSourceDisplayFieldChanged(object obj)
-    {
-        if (obj is not DISPLAY_FIELD_INFORMATION comboModel) return;
-
-        DataSourceDisplayFieldComboBox.SetValue(obj);
-
-        //BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
-    }
-
-    private void DataSourceValueFieldChanged(object obj)
-    {
-        if (obj is not DISPLAY_FIELD_INFORMATION comboModel) return;
-
-        DataSourceValueFieldComboBox.SetValue(obj);
-
-        //BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
-    }
+    
 
     private async Task DataSourceChanged(object model)
     {
@@ -124,113 +72,10 @@ public partial class GridFieldsPage
         var fieldList = await DatabaseService.GetTableFieldsAsync(CurrentDatabase, data.TI_TABLE_NAME);
 
         DisplayFieldsList = fieldList.Data;
-
-        DataSourceDisplayFieldComboBox.SetValue(new TABLE_INFORMATION());
-        DataSourceValueFieldComboBox.SetValue(new TABLE_INFORMATION());
-
-        DataSourceDisplayFieldComboBox.DataSource = DisplayFieldsList;
-        DataSourceValueFieldComboBox.DataSource = DisplayFieldsList;
-
-        
-        DataSourceQueryTextField.SetValue($"SELECT * FROM {data.TI_TABLE_NAME}");
-        DataSourceComboBox.SetValue(model);
-
+ 
         //BuildDbQuery(CurrentModel.GF_DATASOURCE, CurrentModel.GF_VALUEFIELD, CurrentModel.GF_DISPLAYFIELD);
     }
-
-
-    private void ControlTypeChanged(object obj)
-	{
-		if (obj is not CODE_ENUM controlType) return;
-
-        if (controlType.C_CODE == (int)ComponentTypes.ComboBox)
-        {
-			DataSourceComboBox.EditorVisible = true;
-            DataSourceValueFieldComboBox.EditorVisible = true;
-            DataSourceDisplayFieldComboBox.EditorVisible = true;
-            DataSourceQueryTextField.EditorVisible = true;
-
-            DataSourceComboBox.DataSource = TableList;
-
-            //ClearExcept(DataSourceComboBox, DataSourceValueFieldComboBox, DataSourceDisplayFieldComboBox, DataSourceQueryTextField);
-
-        }
-        else if (controlType.C_CODE == (int)ComponentTypes.CheckBox)
-        {
-			TrueTextCheckBox.EditorVisible = true;
-			FalseTextCheckBox.EditorVisible = true;
-
-            //ClearExcept(TrueTextCheckBox, FalseTextCheckBox);
-		}
-        else if (controlType.C_CODE == (int)ComponentTypes.DatePicker)
-        {
-            //formatte
-            FormatTextField.EditorVisible = true;
-            //ClearExcept(FormatTextField);
-        }
-        else if (controlType.C_CODE == (int)ComponentTypes.TextField)
-        {
-			InputTypeComboBox.EditorVisible = true;
-            //ClearExcept(InputTypeComboBox);
-        }
-		else
-		{
-            DataSourceComboBox.EditorVisible = false;
-            TrueTextCheckBox.EditorVisible = false;
-            FalseTextCheckBox.EditorVisible = false;
-            InputTypeComboBox.EditorVisible = false;
-            //Clear All
-
-            //ClearExcept();
-        }
-
-
-		ControlTypeComboBox.SetValue(obj);
-    }
-
-	//private void ClearExcept(params IGenComponent[] genComponents)
-	//{
- //       var fieldsToClear = HiddenFields.Where(x => !genComponents.Contains(x)).ToList();
-
- //       foreach (var field in fieldsToClear)
- //       {
- //           field.Model?.SetPropertyValue(field.BindingField, null);
- //           field.EditorVisible = false;
- //       }
-
- //   }
-	
-	private async Task GetQuerySelectFields(IGenView<GRID_FIELDS> View)
-	{
-		//var activeDatabase = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_DATABASE))?.ToString();
-  //      var sourceDatabase = View.Parameters.GetFromDict(nameof(CRUD_VIEW.VBM_SOURCE))?.ToString();
-
-  //      var currentQueryOrMethod = View.Parameters.GetFromDict(nameof(COMPONENTS_BASE.CB_QUERY_OR_METHOD))?.ToString();
-
-  //      var responseResult = await DatabaseService.GetFieldsUsingQuery(activeDatabase, currentQueryOrMethod);
-
-
-  //      DisplayFieldsList.AddRange(responseResult.Data);
-
-  //      if (!string.IsNullOrEmpty(sourceDatabase))
-  //      {
-  //          var sourceFields = await DatabaseService.GetTableFields(activeDatabase, sourceDatabase);
-
-  //          foreach (var sourceField in sourceFields.Data)
-  //          {
-  //              var existing = DisplayFieldsList.FirstOrDefault(x => x.DFI_NAME == sourceField.DFI_NAME);
-
-  //              if (existing is null)
-  //                  DisplayFieldsList.Add(sourceField);
-  //          }
-  //      }
-        
-
-		//DisplayFieldCombobox.DataSource = DisplayFieldsList;
-    }
-
-	
-
+ 
     private bool IsSearchField(string bindingField)
     {
         var field = DisplayFieldsList.FirstOrDefault(x => bindingField is not null && x.DFI_NAME == bindingField);
@@ -242,16 +87,10 @@ public partial class GridFieldsPage
 
     private void BuildDbQuery(string tableName, string valueField, string displayField)
     {
-        DataSourceQueryTextField.SetValue($"SELECT {valueField??string.Empty}, {displayField??string.Empty} FROM {tableName??string.Empty}");
+        View.SelectedItem.GF_DATASOURCE_QUERY = $"SELECT {valueField ?? string.Empty}, {displayField ?? string.Empty} FROM {tableName ?? string.Empty}";
     }
 
-    private async Task CheckRulesAsync()
-    {
-      
-        IsSearchFieldCheckBox.SetValue(IsSearchField(View.SelectedItem.GF_BINDINGFIELD));
-
-        //await InvokeAsync(View.StateHasChanged);
-    }
+     
 }
 
 

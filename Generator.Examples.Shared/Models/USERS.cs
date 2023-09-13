@@ -25,6 +25,11 @@ public partial class USER
 
     public bool U_IS_MARRIED { get; set; }
 
+    public string U_GEN_CODE { get; set; }
+
+    [ForeignKey(nameof(U_GEN_CODE))]
+    public GENDER GENDER { get; set; }
+
     [ForeignKey(nameof(Models.ORDERS_M.OM_USER_REFNO))]
     public ICollection<ORDERS_M> ORDERS_M { get; set; } = new HashSet<ORDERS_M>();
 }

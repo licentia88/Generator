@@ -24,6 +24,7 @@ public class GeneratorContext : DbContext
 
     public DbSet<USERS> USERS { get; set; }
 
+
     public DbSet<USER_AUTHORIZATIONS> USER_AUTHORIZATIONS { get; set; }
 
     public DbSet<AUTH_BASE> AUTH_BASE { get; set; }

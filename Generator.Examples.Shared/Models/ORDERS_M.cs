@@ -4,6 +4,15 @@ using MemoryPack;
 
 namespace Generator.Examples.Shared.Models;
 
+[MemoryPackable]
+public partial class GENDER
+{
+    [Key]
+    public string GEN_CODE { get; set; }
+
+    public string GEN_DESC { get; set; }
+}
+
 [MemoryPackable()]
 public partial class ORDERS_M
 {

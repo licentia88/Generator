@@ -9,7 +9,6 @@ using Generator.UI.Extensions;
 using Generator.UI.Helpers;
 using Generator.UI.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Generator.UI.Pages.GeneratorPages;
 

@@ -8,9 +8,12 @@ public class TestContext : DbContext
 {
     public TestContext(DbContextOptions<TestContext> options) : base(options)
     {
-
+        //Database.EnsureDeleted();
     }
- 
+
+    public DbSet<GENDER> GENDER { get; set; }
+
+
     public DbSet<TEST_TABLE> TEST_TABLE { get; set; }
     
     public DbSet<COMPUTED_TABLE> COMPUTED_TABLE { get; set; }

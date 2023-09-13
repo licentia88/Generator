@@ -177,7 +177,7 @@
                      Clearable="true"
                      GridVisible="false"
                      EditorVisibleIf="x=> ((GRID_M)x).CB_COMMAND_TYPE == 1"
-                     
+                     ClearIfNotVisible="true"
                      BindingField="@nameof(GRID_M.GB_CRUD_SOURCE)"
                      ValueField="@(nameof(TABLE_INFORMATION.TI_TABLE_NAME))"
                      DisplayField="@nameof(TABLE_INFORMATION.TI_TABLE_NAME)" />
@@ -192,6 +192,7 @@
                      ErrorText="Zorunlu alan"
                      TrueText="Yes"
                      FalseText="No"
+                     ClearIfNotVisible="true"
                      GridVisible="false"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"  />
 
@@ -204,6 +205,7 @@
                      RequiredIf="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE) && (!((GRID_M)x).GB_CREATE && !((GRID_M)x).GB_UPDATE) && !((GRID_M)x).GB_DELETE"
                      TrueText="Yes"
                      FalseText="No"
+                     ClearIfNotVisible="true"
                      GridVisible="false"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"  />
 
@@ -216,6 +218,7 @@
                      RequiredIf="x=> !string.IsNullOrEmpty(((GRID_M)x).GB_CRUD_SOURCE) && (!((GRID_M)x).GB_CREATE && !((GRID_M)x).GB_UPDATE) && !((GRID_M)x).GB_DELETE"
                      TrueText="Yes"
                      FalseText="No"
+                     ClearIfNotVisible="true"
                      GridVisible="false"
                      xs="12" sm="12" md="12" lg="2" xl="2" xxl="2"  />
 

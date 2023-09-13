@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Generator.Components.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Interfaces;
@@ -60,7 +61,7 @@ public interface INonGenGrid:INonGenView
 
     bool ForceRenderOnce { get; set; }
 
-    public bool ValidateModel(bool all=false);
+    public bool ValidateModel();
 
     public bool ValidateField(string propertyName);
 
@@ -79,9 +80,10 @@ public interface INonGenGrid:INonGenView
     
     void AddChildComponent(IGenComponent component);
 
+
     void AddSearchFieldComponent(IGenComponent component);
 
-    
+
     //public bool HasErrors();
 
     void ForceRenderAll();

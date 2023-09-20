@@ -17,7 +17,7 @@ internal static class PropertyExtensions
                 return ((IDictionary<string, object>)obj)[propertyName] ?? null;
 
             return obj.GetType()
-                .GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                 ?.GetValue(obj);
 
         }
@@ -73,7 +73,7 @@ internal static class PropertyExtensions
                 return ((IDictionary<string, Object>)obj)[propertyName] ?? null;
 
             return obj.GetType()
-                .GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetField(propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                 .GetValue(obj) ?? null;
         }
         catch (Exception ex)

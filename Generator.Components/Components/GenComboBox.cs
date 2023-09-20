@@ -87,7 +87,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     public Func<object, bool> EditorEnabledIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> Where { get; set; }
+    public Func<(object Model, object Value), bool> Where { get; set; }
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -216,7 +216,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
             if (DataSource is null) return;
 
-            foreach (var data in DataSource.Where(_ => Where?.Invoke(Model) ?? true))
+            foreach (var data in DataSource.Where(x => Where?.Invoke((Model,x)) ?? true))
             {
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 

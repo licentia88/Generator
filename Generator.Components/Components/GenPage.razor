@@ -29,9 +29,10 @@
                     @{
                         <DataAnnotationsValidator />
                     }
-                    <MudContainer Class="m-0 p-2" Style="overflow-y: scroll">
-                        @{
-                            @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
+                <MudContainer Class="m-0 p-2">
+                    @*<MudContainer Class="m-0 p-2" Style="overflow-y: scroll">*@
+                    @{
+                        @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
                         <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
                             @{
@@ -51,12 +52,12 @@
                                     componentDetail.ValidateField();
 
                                     <MudItem Class="mt-4"
-                                                xs="componentDetail.xs"
-                                                sm="componentDetail.sm"
-                                                md="componentDetail.md"
-                                                lg="componentDetail.lg"
-                                                xl="componentDetail.xl"
-                                                xxl="componentDetail.xxl">
+                                             xs="componentDetail.xs"
+                                             sm="componentDetail.sm"
+                                             md="componentDetail.md"
+                                             lg="componentDetail.lg"
+                                             xl="componentDetail.xl"
+                                             xxl="componentDetail.xxl">
                                         @{
 
                                             if (componentDetail.IsEditorVisible(SelectedItem))
@@ -65,22 +66,22 @@
                                             }
                                             else
                                             {
-                                                if(componentDetail.ClearIfNotVisible)
+                                                if (componentDetail.ClearIfNotVisible)
                                                     componentDetail.SetEmpty();
                                             }
 
-                                            }
+                                        }
                                     </MudItem>
                                 }
 
                             }
-                                            </MudGrid>
-                            @*</div>*@
+                        </MudGrid>
+                        @*</div>*@
 
 
-                            if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
-                            {
-                                @*<div style=" overflow-y: scroll!important; ">*@
+                        if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
+                        {
+                            <div style=" overflow-y: scroll!important; ">
                                 @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
                                 <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
                                     <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
@@ -90,12 +91,12 @@
                                     </CascadingValue>
                                 </CascadingValue>
 
-                                @*</div>
-                                    </div>*@
+                            </div>
+                            @*</div>*@
 
-                            }
                         }
-                    </MudContainer>
+                    }
+                </MudContainer>
                 </DialogContent>
                 <DialogActions>
                     <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>

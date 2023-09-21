@@ -6,5 +6,6 @@ public interface IGenTextField : IGenComponent
 
     public int MinLength { get; set; }
 
- 
- }
+    public object InitialValue { get; set; }
+
+}

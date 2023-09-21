@@ -18,9 +18,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
  
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
-    
 
- 
+    [Parameter]
+    public object InitialValue { get; set; }
+
     [Parameter]
     [EditorRequired]
     public string BindingField { get; set; }
@@ -89,8 +90,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         
     }
 
-    protected override  Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         if (InputType == InputType.Date)
         {
             Converter = _dateConverter;
@@ -110,8 +113,11 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
-        return Task.CompletedTask;
+        if (Model is null || Model.GetType().Name == "Object") return;
+        if (InitialValue is not null)
+            SetValue(InitialValue);
     }
+   
 
     private void AddComponents()
     {

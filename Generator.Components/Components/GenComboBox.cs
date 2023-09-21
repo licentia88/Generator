@@ -23,7 +23,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
-
+    [Parameter]
+    public object InitialValue { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -92,13 +93,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         AddComponents();
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
-        return Task.CompletedTask;
+        if (Model is null || Model.GetType().Name == "Object") return;
+
+        if (InitialValue is not null)
+            SetValue(InitialValue);
     }
+ 
 
     private void AddComponents()
     {

@@ -16,8 +16,6 @@ public class GenAutoCompleteT<T>: GenAutoComplete
     [Parameter, EditorRequired]
     public Func<string,Task<List<T>>> ServiceMethod { get; set; }
 
-
-
     new IEnumerable<object> DataSource { get; set; }
 
     protected override void SetCallBackEvents()
@@ -56,8 +54,6 @@ public class GenAutoCompleteT<T>: GenAutoComplete
         ShowProgressIndicator = true;
         var innerFragment = (nameof(ProgressIndicatorTemplate), (RenderFragment)(treeBuilder =>
         {
-            //< MudProgressLinear Size = "Size.Small" Indeterminate = "true" Color = "SelectedColor" />
-
             treeBuilder.OpenComponent(1000, typeof(MudProgressLinear));
             treeBuilder.AddAttribute(1001, nameof(Size), Size.Small);
             treeBuilder.AddAttribute(1002, nameof(MudProgressLinear.Indeterminate), true);
@@ -102,8 +98,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
-
-
+ 
 
     [Parameter]
     [EditorRequired]
@@ -153,8 +148,9 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     [Parameter, EditorRequired]
     public IEnumerable<object> DataSource { get; set; }
 
+    //[Parameter]
+    //public object InitialValue { get; set; }
 
- 
 
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
@@ -169,22 +165,25 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
-     
-    protected override Task OnInitializedAsync()
+    protected override void  OnInitialized()
     {
+        base.OnInitialized();
+
         AddComponents();
 
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
-        return Task.CompletedTask;   
+        //if (Model is null || Model.GetType().Name == "Object") return;
+
+        //if (InitialValue is not null)
+        //    SetValue(InitialValue);
     }
 
 
-
     /// <summary>
-	/// Toggle the menu (if not disabled or not readonly, and is opened).
-	/// </summary>
-	public new async Task ToggleMenu()
+    /// Toggle the menu (if not disabled or not readonly, and is opened).
+    /// </summary>
+    public new async Task ToggleMenu()
     {
 
         await base.ToggleMenu();
@@ -194,10 +193,9 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     private async Task<IEnumerable<object>> FindMethod(string value)
     {
         await Task.Delay(0);
-       
-        if (string.IsNullOrEmpty(value))
-            return DataSource.ToList();
 
+         if (string.IsNullOrEmpty(value))
+            return DataSource.Take(MaxItems.Value).ToList();
  
         var filteredData = DataSource.Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
@@ -219,7 +217,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     {
         if (Model is not null && Model.GetType().Name != "Object")
         {
-            this.TextUpdateSuppression = true;
+            TextUpdateSuppression = true;
             base.BuildRenderTree(builder);
         }
 
@@ -229,16 +227,16 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
 
     public void OnClearClicked(MouseEventArgs arg)
     {
+        ForceUpdate();
+        Count = null;
+        TextUpdateSuppression = false;
+
         if (((IGenComponent)this).IsSearchField)
         {
-            TextUpdateSuppression = false;
-            ForceUpdate();
-            Count = null;
-
             Validate();
             return;
         }
- 
+
     }
 
 
@@ -250,27 +248,27 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
         // ReSharper disable once HeuristicUnreachableCode
         if (this is not IGenComponent comp) return;
 
+        var loValue = value.GetPropertyValue(ValueField);
+
         if (comp.IsSearchField)
         {
             //comp.SetSearchValue(value);
-            Model?.SetPropertyValue(BindingField, value.GetPropertyValue(ValueField));
+            Model?.SetPropertyValue(BindingField,loValue);
             comp.ParentGrid.ResetConditionalSearchFields();
 
         }
         else
         {
-            var loValue = value.GetPropertyValue(ValueField);
+         
             Model?.SetPropertyValue(BindingField, loValue);
-
-            Text = value.GetPropertyValue(DisplayField)?.ToString();
-
  
-            //Value = value.GetPropertyValue(DisplayField);
-            //Text = Value?.ToString();
         }
 
-        //comp.ParentGrid.StateHasChanged();
-        //comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        Text = value.GetPropertyValue(DisplayField)?.ToString();
+        //Value = Text;
+
+        comp.ParentGrid.StateHasChanged();
+        comp.ParentGrid.CurrentGenPage?.StateHasChanged();
     }
 
     protected override void OnConversionErrorOccurred(string error)
@@ -280,7 +278,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
 
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
-         await base.SetValueAsync(value, updateText, force);
+        await base.SetValueAsync(value, updateText, force);
         await OnValueChanged.InvokeAsync((Model,value));
     }
 

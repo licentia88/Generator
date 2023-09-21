@@ -20,7 +20,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
- 
+
+    [Parameter]
+    public Nullable<bool> InitialValue { get; set; }
 
     [Parameter]
     [EditorRequired()]
@@ -97,14 +99,26 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     //[Parameter]
     //public Func<object, bool> CheckedFunc { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         AddComponents();
 
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
         if (string.IsNullOrEmpty(Class))
             Class = "mt-3";
+
+        if (Model is null || Model.GetType().Name == "Object") return;
+
+        if (InitialValue is not null)
+            SetValue(InitialValue.Value);
+    }
+    protected override Task OnInitializedAsync()
+    {
+
+       
 
         return Task.CompletedTask;
     }

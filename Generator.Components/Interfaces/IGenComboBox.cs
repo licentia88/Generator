@@ -10,4 +10,5 @@ public interface IGenComboBox: IGenComponent
 
     public Func<(object Model, object Value), bool> Where { get; set; }
 
+    public object InitialValue { get; set; }
 }

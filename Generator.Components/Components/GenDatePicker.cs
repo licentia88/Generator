@@ -17,7 +17,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
-     
+
+    public DateTime? InitialValue { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -114,19 +115,22 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         await OnDateChanged.InvokeAsync((Model,date));
     }
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         Date = (DateTime?)Model?.GetPropertyValue(BindingField);
 
         AddComponents();
 
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
-        return Task.CompletedTask;
+        if (Model is null || Model.GetType().Name == "Object") return;
 
-     }
-
-  
+        if (InitialValue is not null)
+            SetValue(InitialValue);
+    }
+ 
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

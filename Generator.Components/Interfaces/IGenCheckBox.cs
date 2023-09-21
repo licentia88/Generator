@@ -9,6 +9,7 @@ public interface IGenCheckBox : IGenComponent
 
     public void SetValue(bool value);
 
+    public bool? InitialValue { get; set; }
     //public Func<object,bool> CheckedFunc { get; set; }
 
 }

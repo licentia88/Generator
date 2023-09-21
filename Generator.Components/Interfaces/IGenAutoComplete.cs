@@ -8,4 +8,6 @@ public interface IGenAutoComplete : IGenComponent
     public string DisplayField { get; set; }
 
     public string ValueField { get; set; }
+
+    //public object InitialValue { get; set; }
 }

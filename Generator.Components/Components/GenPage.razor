@@ -5,18 +5,19 @@
 @implements IDisposable
 
 <style>
-      .mud-dialog .mud-dialog-actions
-      {
+    .mud-dialog .mud-dialog-actions {
         flex: 0 0 auto;
         display: flex;
-        margin-top:2rem!important;
-        padding-right:3.5rem!important;
+        margin-top: 0;
+        padding-right: 3.5rem !important;
         align-items: center;
         justify-content: flex-end;
         border-bottom-left-radius: var(--mud-default-borderradius);
         border-bottom-right-radius: var(--mud-default-borderradius);
     }
-      
+    .mud-dialog .mud-dialog-content.mud-dialog-no-side-padding {
+         padding: 0; 
+    }
 </style>
 
 @{
@@ -24,64 +25,59 @@
 
     <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
         <EditForm Model="@SelectedItem" OnValidSubmit="((INonGenPage)this).OnCommit" OnInvalidSubmit="OnInvalidSubmit">
-            <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))">
+            <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))" DisableSidePadding="true">
                 <DialogContent>
-                    @{
-                        <DataAnnotationsValidator />
-                    }
-                <MudContainer Class="m-0 p-2">
-                    @*<MudContainer Class="m-0 p-2" Style="overflow-y: scroll">*@
-                    @{
-                        @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
-                        <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-                            @{
-                                var components = Components.Select(x => x.component);
-                                //var duplicateComponents = components
-                                //                         .GroupBy(component => component.BindingField)
-                                //                         .Where(group => group.Count() > 1)
-                                //                         .SelectMany(group => group);
+                    <DataAnnotationsValidator />
 
-                                foreach (var componentDetail in components)
-                                {
-                                    //if (componentDetail.EditorVisibleFunc is not null)
-                                    //{
-                                    //    componentDetail.EditorVisible = componentDetail.EditorVisibleFunc.Invoke(SelectedItem);
-                                    //}
+                    <MudContainer Class="m-0" Style="max-height: 75vh;overflow-y: scroll;max-width:100vw!important">
+                        @*<MudContainer Class="m-0 p-2" Style="overflow-y: scroll">*@
+                        @{
 
-                                    componentDetail.ValidateField();
+                            <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-                                    <MudItem Class="mt-4"
-                                             xs="componentDetail.xs"
-                                             sm="componentDetail.sm"
-                                             md="componentDetail.md"
-                                             lg="componentDetail.lg"
-                                             xl="componentDetail.xl"
-                                             xxl="componentDetail.xxl">
-                                        @{
+                                @{
+                                    var components = Components.Select(x => x.component);
 
-                                            if (componentDetail.IsEditorVisible(SelectedItem))
-                                            {
-                                                @componentDetail.RenderAsComponent(SelectedItem);
+
+                                    foreach (var componentDetail in components)
+                                    {
+
+                                        componentDetail.ValidateField();
+
+                                        <MudItem Class="mt-4"
+                                                 xs="componentDetail.xs"
+                                                 sm="componentDetail.sm"
+                                                 md="componentDetail.md"
+                                                 lg="componentDetail.lg"
+                                                 xl="componentDetail.xl"
+                                                 xxl="componentDetail.xxl">
+                                            @{
+
+                                                if (componentDetail.IsEditorVisible(SelectedItem))
+                                                {
+                                                    @componentDetail.RenderAsComponent(SelectedItem);
+                                                }
+                                                else
+                                                {
+                                                    if (componentDetail.ClearIfNotVisible)
+                                                        componentDetail.SetEmpty();
+                                                }
+
                                             }
-                                            else
-                                            {
-                                                if (componentDetail.ClearIfNotVisible)
-                                                    componentDetail.SetEmpty();
-                                            }
+                                        </MudItem>
+                                    }
 
-                                        }
-                                    </MudItem>
                                 }
+                            </MudGrid>
+                            @*<div style="overflow-x:hidden; ">
 
-                            }
-                        </MudGrid>
-                        @*</div>*@
+                            </div>*@
 
 
-                        if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
-                        {
-                            <div style=" overflow-y: scroll!important; ">
+                            if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
+                            {
+                                @*<div style=" overflow-y: scroll!important; ">*@
                                 @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
                                 <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
                                     <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
@@ -91,12 +87,12 @@
                                     </CascadingValue>
                                 </CascadingValue>
 
-                            </div>
-                            @*</div>*@
+                                @*</div>*@
+                                @*</div>*@
 
+                            }
                         }
-                    }
-                </MudContainer>
+                    </MudContainer>
                 </DialogContent>
                 <DialogActions>
                     <MudButton OnClick="()=> Close(true)">@GenGrid.CancelText</MudButton>

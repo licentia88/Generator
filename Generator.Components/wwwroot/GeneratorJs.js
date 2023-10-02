@@ -49,3 +49,15 @@ export function BlazorOpenFile(filename, content) {
     a.target = "_self";
     a.click();
 }
+
+export function BlankClick() {
+
+    console.log("getting body")
+    var body = document.body;
+    if (body) {
+        console.log("clicking body")
+        body.click(); // Simulate a click on the document body
+        console.log("clicked body")
+    }
+    console.log("existing body")
+};

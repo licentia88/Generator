@@ -47,5 +47,11 @@ public class GeneratorJs : IAsyncDisposable
             await module.DisposeAsync();
         }
     }
+
+    public async ValueTask BlankClick()
+    {
+        var module = await moduleTask.Value;
+        await module.InvokeVoidAsync("BlankClick");
+    }
 }
 

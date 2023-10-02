@@ -1,4 +1,5 @@
-﻿using Generator.Components.Extensions;
+﻿using Generator.Components.Args;
+using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -114,7 +115,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
         if (Model is null || Model.GetType().Name == "Object") return;
-        if (InitialValue is not null)
+
+         if (InitialValue is not null && Value is null)
             SetValue(InitialValue);
     }
    
@@ -193,7 +195,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync((Model,value));
+        await OnValueChanged.InvokeAsync((Model, value));
+
     }
 
     private void SetCallBackEvents()
@@ -213,10 +216,15 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
-        if (Model is null || Model.GetType().Name == "Object")
+        if (Model is null || Model?.GetType().Name == "Object")
             Model = model;
 
         SetCallBackEvents();
+
+        if (((IGenComponent)this).IsSearchField)
+        {
+            Clearable = true;
+        }
 
         var loValue = Model.GetPropertyValue(BindingField);
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();

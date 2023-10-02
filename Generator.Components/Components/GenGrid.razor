@@ -243,9 +243,13 @@
                         {
                             <MudTh>
                                 <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
-                                    @*<MudGrid Class="ml-10" Justify="Justify.FlexEnd">*@
-                                    <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=> { ((INonGenGrid)this).NewDisabled  = true; await OnCreateClick(); ((INonGenGrid)this).NewDisabled  = false; }" Disabled="((INonGenGrid)this).NewDisabled || Disabled" />
-                                    @*</MudGrid>*@
+                                    <MudIconButton Icon="@AddIcon" Size="Size.Medium" @onclick="async ()=>
+                                    {
+                                        ((INonGenGrid)this).NewDisabled  = true;
+                                        await OnCreateClick();
+                                        //((INonGenGrid)this).NewDisabled  = false;
+                                    }"
+                                    Disabled="((INonGenGrid)this).NewDisabled || Disabled" />
                                 </div>
                             </MudTh>
                         }
@@ -309,7 +313,7 @@
                             {
                                 <MudTd>
                                     <MudIconButton Size="@Size.Small"
-                                                   Icon="@Icons.Outlined.Delete"
+                                                   Icon="@Icons.Material.Outlined.Delete"
                                                    Class="pa-0"
                                                    OnClick="@(() => OnDeleteClicked(context))" Disabled="Disabled || CancelDisabled" />
                                 </MudTd>
@@ -422,33 +426,41 @@
                         @{
 
                             TModel model = (TModel)button.ButtonAction.Target.CastTo<MudTr>().Item;
+                            if (model is not null)
+                            {
+                                <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
+                                    @{
+                                        if (!EditButtonActionList.Contains(button.ButtonAction))
+                                            EditButtonActionList.Add(button.ButtonAction);
+
+                                        if (Update.HasDelegate)
+                                        {
+                                            <MudIconButton @ref="EditButtonRef"
+                                                           Size="@Size.Small"
+                                                           Icon="@Icons.Material.Outlined.Edit"
+                                                           Class="pa-0"
+                                                           OnClick="()=>OnEditContextButtonClick(button)"
+                                                           Disabled="button.ButtonDisabled||Disabled" />
+                                        }
+
+                                    }
+
+                                    @{
+                                        if (Delete.HasDelegate)
+                                        {
+                                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="button.ButtonDisabled||Disabled" />
+                                        }
+                                    }
+
+                                </div>
+                            }
+                            //if (EditMode == EditMode.Inline && ViewState == ViewState.Create && model.Equals(SelectedItem))
+                            //{
+
+                            //    button.ButtonDisabled = false;
+                            //}
                         }
 
-                        <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
-                            @{
-                                if (!EditButtonActionList.Contains(button.ButtonAction))
-                                    EditButtonActionList.Add(button.ButtonAction);
-
-                                if (Update.HasDelegate)
-                                {
-                                    <MudIconButton @ref="EditButtonRef"
-                                                   Size="@Size.Small"
-                                                   Icon="@Icons.Outlined.Edit"
-                                                   Class="pa-0"
-                                                   OnClick="()=>OnEditContextButtonClick(button)"
-                                                   Disabled="button.ButtonDisabled||Disabled" />
-                                }
-
-                            }
-
-                            @{
-                                if (Delete.HasDelegate)
-                                {
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="button.ButtonDisabled||Disabled" />
-                                }
-                            }
-
-                        </div>
                     </EditButtonContent>
                 </MudTable>
 

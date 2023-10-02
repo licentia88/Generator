@@ -144,6 +144,7 @@ public class GenValidator<T>
     {
         if (component is null) return;
 
+        component.Required = true;
         component.Error = true;
 
         component.ErrorText = errorMessage;
@@ -155,7 +156,7 @@ public class GenValidator<T>
 
          component.Error = false;
 
-        //component.ErrorText = string.Empty;
+         component.ErrorText = string.Empty;
 
     }
 

@@ -92,6 +92,7 @@ public partial class GenPage<TModel> where TModel : new()
     public bool Validate()
     {
         ((INonGenPage)this).IsValid = GenGrid.ValidateModel();
+        GenGrid.IsValid = ((INonGenPage)this).IsValid;
         StateHasChanged();
 
         return ((INonGenPage)this).IsValid;
@@ -116,9 +117,9 @@ public partial class GenPage<TModel> where TModel : new()
 
     async Task IGenView<TModel>.OnCommit(TModel model, ViewState viewState)
     {
-
         if (!Validate()) return;
 
+ 
         if (IsIndividual)
         {
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
@@ -135,9 +136,11 @@ public partial class GenPage<TModel> where TModel : new()
 
         if (((INonGenView)this).IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
         {
-            
+           
             //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
+
+            if (!GenGrid.IsValid) return;
 
             ViewState = ViewState.None;
 
@@ -147,8 +150,6 @@ public partial class GenPage<TModel> where TModel : new()
 
     async Task INonGenView.OnCommitAndWait()
     {
-        Validate();
-
         if (((INonGenPage)this).IsValid)
         {
             ViewState = ViewState.Update;

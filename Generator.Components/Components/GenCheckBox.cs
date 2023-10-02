@@ -22,7 +22,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
 
     [Parameter]
-    public Nullable<bool> InitialValue { get; set; }
+    public bool? InitialValue { get; set; }
 
     [Parameter]
     [EditorRequired()]
@@ -112,7 +112,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-        if (InitialValue is not null)
+        if (InitialValue is not null && !Checked)
             SetValue(InitialValue.Value);
     }
     protected override Task OnInitializedAsync()
@@ -157,7 +157,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     }
     
     [Parameter]
-    public EventCallback<(object Model, bool Value)> OnCheckedChanged{ get; set; }
+    public EventCallback<(object Model,bool Value)> OnCheckedChanged{ get; set; }
 
     private void SetCallBackEvents()
     {

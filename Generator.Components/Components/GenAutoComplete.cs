@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml.EMMA;
+﻿using Generator.Components.Args;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -7,85 +7,12 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Size = MudBlazor.Size;
+using System.Linq;
 
 namespace Generator.Components.Components;
 
-public class GenAutoCompleteT<T>: GenAutoComplete
-{
-    [Parameter, EditorRequired]
-    public Func<string,Task<List<T>>> ServiceMethod { get; set; }
 
-    new IEnumerable<object> DataSource { get; set; }
-
-    protected override void SetCallBackEvents()
-    {
-        base.SetCallBackEvents();
-
-        SearchFunc = FindMethod;
-    }
-
-    private async Task<IEnumerable<object>> FindMethod(string value)
-    {
-        var result = await ServiceMethod.Invoke(value);
-
-        if(result is null)
-            return Array.Empty<object>(); 
-
- 
-        if (string.IsNullOrEmpty(value))
-            return result.Cast<object>().Take(MaxItems.Value).ToList();
-
-        
-        var filteredData = result.Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
-
-        Count = filteredData.Count;
-
-        return filteredData.Cast<object>().ToList();
-    }
-
-    public override RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
-    {
-        if (Model is null || Model.GetType().Name == "Object")
-            Model = model;
-
-        SetCallBackEvents();
-
-        ShowProgressIndicator = true;
-        var innerFragment = (nameof(ProgressIndicatorTemplate), (RenderFragment)(treeBuilder =>
-        {
-            treeBuilder.OpenComponent(1000, typeof(MudProgressLinear));
-            treeBuilder.AddAttribute(1001, nameof(Size), Size.Small);
-            treeBuilder.AddAttribute(1002, nameof(MudProgressLinear.Indeterminate), true);
-
-            treeBuilder.CloseComponent();
-
-        }));
-
-        var loValue = Model.GetPropertyValue(BindingField);
-        var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-
-        additionalParams.Add((nameof(Value), loValue));
-
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
-
-        additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
-
-        additionalParams.Add(innerFragment);
-
-        SelectValueOnTab = true;
-        Clearable = true;
-
-        //additionalParams.Add((nameof(ToStringFunc), (object x) => x.GetPropertyValue(DisplayField)?.ToString()));
-        //TODO burada render yapmadan value yu kontrol et
-        if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
-            Error = false;
-
-        builder.RenderComponent(this, ignoreLabels, additionalParams.ToArray());
-    };
-}
-
-public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
+public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 {
     [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
     INonGenGrid IGenComponent.ParentGrid { get; set; }
@@ -98,7 +25,9 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
- 
+
+    [Parameter]
+    public Func<string,Task<IEnumerable<T>>> ServiceMethod { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -146,11 +75,12 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     public int xxl { get; set; } = 12;
 
     [Parameter, EditorRequired]
-    public IEnumerable<object> DataSource { get; set; }
+    public IEnumerable<T> DataSource { get; set; }
 
     //[Parameter]
     //public object InitialValue { get; set; }
-
+    [Parameter]
+    public Func<ComponentArgs<T>, bool> Where { get; set; }
 
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
@@ -165,9 +95,25 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
-    protected override void  OnInitialized()
+    private T CurrentData;
+
+    //protected override void OnInitialized()
+    //{
+    //    base.OnInitialized();
+
+    //    AddComponents();
+
+    //    ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
+
+    //    //if (Model is null || Model.GetType().Name == "Object") return;
+
+    //    //if (InitialValue is not null)
+    //    //    SetValue(InitialValue);
+
+    //}
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
 
         AddComponents();
 
@@ -177,7 +123,29 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
 
         //if (InitialValue is not null)
         //    SetValue(InitialValue);
+
+        await SetInitialValue();
     }
+
+    private async Task SetInitialValue()
+    {
+        if (Model is not null)
+        {
+            var currentPropertyValue = Model.GetPropertyValue(BindingField);
+
+            if (currentPropertyValue is null) return;
+
+            CurrentData = DataSource.FirstOrDefault(x => x.GetType().GetProperty(ValueField).GetValue(x).ToString() == currentPropertyValue.ToString());
+
+            var tosetValue = CurrentData.GetPropertyValue(DisplayField).ToString();
+
+            await SetTextAsync(tosetValue);
+            await SetValueAsync(CurrentData);
+
+
+        }
+    }
+
 
 
     /// <summary>
@@ -190,21 +158,60 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     }
 
     protected int? Count = null;
-    private async Task<IEnumerable<object>> FindMethod(string value)
+
+    private async Task<IEnumerable<T>> ExecuteService(string value)
     {
-        await Task.Delay(0);
+         var serviceResult = await ServiceMethod.Invoke(value);
 
-         if (string.IsNullOrEmpty(value))
-            return DataSource.Take(MaxItems.Value).ToList();
- 
-        var filteredData = DataSource.Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        if (serviceResult is null)
+            return Array.Empty<T>();
 
-        Count = filteredData.Count;
+        return serviceResult.Take(MaxItems.Value).ToList();
+        //if (string.IsNullOrEmpty(value))
+        //    return serviceResult.Take(MaxItems.Value).ToList();
 
-        return filteredData;
+          
+        //return serviceResult.Where(x => Where?.Invoke((Model, x)) ?? true).Take(MaxItems.Value).ToList();
+
+    }
+    private async Task<IEnumerable<T>> FindMethod(string value)
+    {
+        //if (CurrentData is null && string.IsNullOrEmpty(Text))
+        //{
+        //     await ForceUpdate();
+        //    Count = null;
+        //}
+
+        if (!string.IsNullOrEmpty(value) && value == Text)
+            return Array.Empty<T>();
+
+        if (ServiceMethod is null)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                var dataToReturn = DataSource.Where(x => Where?.Invoke(new ComponentArgs<T>(Model,x)) ?? true).Take(MaxItems.Value).ToList();
+                Count = dataToReturn.Count;
+                return dataToReturn;
+            }
+            //return Task.FromResult<IEnumerable<T>>(DataSource.Where(x => Where?.Invoke((Model, x)) ?? true).Take(MaxItems.Value).ToList());
+
+            var filteredData = DataSource.Where(x => Where?.Invoke(new ComponentArgs<T>(Model, x)) ?? true)
+                                         .Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase))
+                                         .ToList();
+
+            Count = filteredData.Count;
+            return filteredData;
+            //return Task.FromResult<IEnumerable<T>>(filteredData);
+        }
+
+        var serviceData = await ExecuteService(value);
+
+        Count = serviceData.Count();
+
+        return serviceData;
     }
 
-    private void AddComponents()
+    protected void AddComponents()
     {
         if (((IGenComponent)this).IsSearchField)
             ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
@@ -218,6 +225,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
         if (Model is not null && Model.GetType().Name != "Object")
         {
             TextUpdateSuppression = true;
+
             base.BuildRenderTree(builder);
         }
 
@@ -228,9 +236,9 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     public void OnClearClicked(MouseEventArgs arg)
     {
         ForceUpdate();
-        Count = null;
+        Count = 0;
         TextUpdateSuppression = false;
-
+       
         if (((IGenComponent)this).IsSearchField)
         {
             Validate();
@@ -240,12 +248,10 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
     }
 
 
-    public  void SetValue(object value)
+    public void SetValue(object value)
     {
         //if (value is null) return;
 
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        // ReSharper disable once HeuristicUnreachableCode
         if (this is not IGenComponent comp) return;
 
         var loValue = value.GetPropertyValue(ValueField);
@@ -253,19 +259,20 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
         if (comp.IsSearchField)
         {
             //comp.SetSearchValue(value);
-            Model?.SetPropertyValue(BindingField,loValue);
+            Model?.SetPropertyValue(BindingField, loValue);
             comp.ParentGrid.ResetConditionalSearchFields();
 
         }
         else
         {
-         
             Model?.SetPropertyValue(BindingField, loValue);
- 
         }
 
-        Text = value.GetPropertyValue(DisplayField)?.ToString();
-        //Value = Text;
+
+        //var textValue = value.GetPropertyValue(DisplayField)?.ToString();
+        CurrentData = value.CastTo<T>();
+
+
 
         comp.ParentGrid.StateHasChanged();
         comp.ParentGrid.CurrentGenPage?.StateHasChanged();
@@ -276,23 +283,28 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
         base.OnConversionErrorOccurred(error);
     }
 
-    protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
+    protected override async Task SetValueAsync(T value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync((Model,value));
+        await OnValueChanged.InvokeAsync(new ComponentArgs<T>(Model, value));
     }
+   
 
     [Parameter]
-    public EventCallback<(object Model, object Value)> OnValueChanged { get; set; }
+    public EventCallback<ComponentArgs<T>> OnValueChanged { get; set; }
+
+   
+
 
     protected virtual void SetCallBackEvents()
     {
         ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
 
-        // if (!ValueChanged.HasDelegate)
-        ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
-
         SearchFunc = FindMethod;
+ 
+        if (!ValueChanged.HasDelegate)
+            ValueChanged = EventCallback.Factory.Create(this, (T arg) => SetValue(arg));
+
 
         if (!OnClearButtonClick.HasDelegate)
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
@@ -302,7 +314,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
         {
 
  
-            if (Count == 0)
+            if (Count == 0 || CurrentData is null)
             {
                 TextUpdateSuppression = false;
                 ForceUpdate();
@@ -329,22 +341,27 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
         SetCallBackEvents();
 
         ShowProgressIndicator = true;
+
         var innerFragment = (nameof(ProgressIndicatorTemplate), (RenderFragment)(treeBuilder =>
         {
             //< MudProgressLinear Size = "Size.Small" Indeterminate = "true" Color = "SelectedColor" />
 
             treeBuilder.OpenComponent(1000, typeof(MudProgressLinear));
             treeBuilder.AddAttribute(1001, nameof(Size), Size.Small);
-            treeBuilder.AddAttribute(1002, nameof(MudProgressLinear.Indeterminate),true);
-
+            treeBuilder.AddAttribute(1002, nameof(MudProgressLinear.Indeterminate), true);
+            treeBuilder.AddAttribute(1003, nameof(MudProgressLinear.Color), ProgressIndicatorColor);
+ 
             treeBuilder.CloseComponent();
 
         }));
 
-        var loValue = Model.GetPropertyValue(BindingField);
+        //var loValue = Model.GetPropertyValue(BindingField);
+
+        //var selectedField = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == loValue.ToString());
+
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
-        additionalParams.Add((nameof(Value), loValue));
+        //additionalParams.Add((nameof(Value), selectedField));
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
 
@@ -365,9 +382,9 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete
 
     public RenderFragment RenderAsGridComponent(object model) => (builder) =>
     {
-        //var selectedField = DataSource?.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
+        var selectedField = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == model.GetPropertyValue(BindingField)?.ToString());
 
-        RenderExtensions.RenderGrid(builder, model.GetPropertyValue(BindingField));
+        RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
     };
 
     void IGenComponent.ValidateObject()

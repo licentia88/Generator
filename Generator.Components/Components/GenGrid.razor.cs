@@ -11,10 +11,11 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Collections.Generic;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
+public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TModel : new()
 {
     private int index;
 
@@ -58,6 +59,11 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
     IDialogService  INonGenGrid.DialogService { get; set; }
 
     private MudTable<TModel> _OriginalTable { get; set; }
+
+
+    public bool IsValid { get; set; }
+
+    
 
     internal MudTable<TModel> OriginalTable
     {
@@ -413,13 +419,14 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     }
 
+   
     private async Task Commit()
     {
-        var isValid = ValidateModel();
+        IsValid =  ValidateModel();
 
-        if (!isValid)
+        if (!IsValid)
         {
-            //UseTableItems = true;
+             //UseTableItems = true;
             StateHasChanged();
             //_ShouldRender = false;
             return;
@@ -458,10 +465,28 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
             GridIsBusy = true;
 
 
-            //_ShouldRender = false;
-
             if (OnBeforeSubmit.HasDelegate)
                await OnBeforeSubmit.InvokeAsync(model);
+
+            if (!IsValid)
+            {
+                if (((INonGenGrid)this).CurrentGenPage is not null)
+                    ((INonGenGrid)this).CurrentGenPage.IsValid = false;
+
+                EditButtonActionList.Clear();
+
+                (this as INonGenGrid).ForceRenderAll();
+
+                this.OriginalTable.UpdateSelection();
+                this.OriginalTable.Context.TableStateHasChanged();
+                SetEditingItem(SelectedItem);
+                //Components.Clear();
+
+                GridIsBusy = false;
+
+                //StateHasChanged();
+                return;
+            }
 
             switch (ViewState)
             {
@@ -570,8 +595,6 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     }
 
-    
-
     private async Task OnCancelClick(TModel element)
     {
         if (ViewState == ViewState.None) return;
@@ -596,10 +619,9 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         {
             ((INonGenGrid)this).ResetValidation(item.component);
         }
-        //Components.Select(x=> x.component).ForEach(ResetValidation);
-
+      
         //RefreshButtonState sonunda statehaschanged var
-        RefreshButtonState();
+      
 
 
         if (OnAfterCancel.HasDelegate)
@@ -608,9 +630,15 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         if (Close.HasDelegate)
             await Close.InvokeAsync();
 
-         //ForceRenderAll();
+        //itemToRemove = SelectedItem;
 
+        Components.Clear();
+
+        SelectedItem = default;
+         
         (this as INonGenGrid).ForceRenderAll();
+
+        RefreshButtonState(true);
 
     }
 
@@ -618,7 +646,7 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
     {
         ((INonGenGrid)this).IsFirstRender = true;
         ((INonGenGrid)this).IsRendered = false;
-        Components.Clear();
+        //Components.Clear();
     }
 
     public virtual async ValueTask<IDialogReference> ShowDialogAsync<TPage>() where TPage : IGenPage<TModel>
@@ -698,6 +726,8 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     void INonGenGrid.AddChildComponent(IGenComponent childComponent)
     {
+        if (childComponent is not GenSpacer && string.IsNullOrEmpty(childComponent.BindingField)) return;
+
         var componentType = childComponent.GetType();
 
         if (Components.Any(x => x.type == componentType && x.component.BindingField == childComponent.BindingField )) return;
@@ -707,7 +737,10 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     void INonGenGrid.AddSearchFieldComponent(IGenComponent component)
     {
+        if (component is not GenSpacer && string.IsNullOrEmpty(component.BindingField)) return;
+
         if (SearchFieldComponents.Any(x => x.BindingField == component.BindingField )) return;
+
         component.Model = new();
 
         SearchFieldComponents.Add(component);
@@ -884,6 +917,25 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
         var adaptedData = CreateNewDataModel();
 
+        //if (itemToRemove is not null)
+        //{
+        //    var itemsCount = OriginalTable.Context.Rows.Count();
+        //    try
+        //    {
+              
+        //        OriginalTable.Context.Rows = (Dictionary<TModel, MudTr>)OriginalTable.Context.Rows.Take(itemsCount);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var dictionary = OriginalTable.Context.Rows
+        //                        .Take(itemsCount-1)
+        //                        .ToDictionary(x => x.Key, y => y.Value);
+        //        OriginalTable.Context.Rows = dictionary;
+
+        //    }
+        //    itemToRemove = default;
+        // }
         SelectedItem = adaptedData;
  
 
@@ -950,16 +1002,26 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
         return result;
     }
 
+    internal MudTr GetCurrentRow(TModel model)
+    {
+        return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(model??SelectedItem)).Value;
+
+      
+    }
+
     internal MudTr GetCurrentRow()
     {
-        try
-        {
-            return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
-        }
-        catch  
-        {
-            return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(((IGenView<TModel>)this).OriginalEditItem)).Value;
-        }
+        return GetCurrentRow(default);
+        //return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
+
+        //try
+        //{
+        //    return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
+        //}
+        //catch  
+        //{
+        //    return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(((IGenView<TModel>)this).OriginalEditItem)).Value;
+        //}
     }
 
     internal MudTr GetRow(TModel model)
@@ -1098,6 +1160,8 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     internal async Task OnDeleteClicked(TModel model)
     {
+        IsValid = true;
+
         ViewState = ViewState.Delete;
 
         ((IGenView<TModel>)this).OriginalEditItem = model;
@@ -1106,8 +1170,17 @@ public partial class GenGrid<TModel> : MudTable<TModel> where TModel : new()
 
     }
 
-    public new void StateHasChanged()
+    public new async void StateHasChanged()
     {
-        base.StateHasChanged();
+        await InvokeAsync(base.StateHasChanged);
+        //base.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (EditMode == EditMode.Inline && (ViewState == ViewState.Create || ViewState == ViewState.Update))
+        {
+            DataSource.RemoveAt(0);
+        }
     }
 }

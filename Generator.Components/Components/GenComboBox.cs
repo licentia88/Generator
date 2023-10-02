@@ -1,4 +1,5 @@
-﻿using Generator.Components.Extensions;
+﻿using Generator.Components.Args;
+using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -87,8 +88,12 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [Parameter]
     public Func<object, bool> EditorEnabledIf { get; set; }
 
+    //[Parameter]
+    //public Func<(object Model, object Value), bool> Where { get; set; }
+
     [Parameter]
-    public Func<(object Model, object Value), bool> Where { get; set; }
+    public Func<ComponentArgs<object>, bool> Where { get; set; }
+
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -102,7 +107,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-        if (InitialValue is not null)
+        if (InitialValue is not null && Value is null)
             SetValue(InitialValue);
     }
  
@@ -146,7 +151,12 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public void SetValue(object value)
     {
-        if (value is null) return;
+        //if (value is null) return;
+
+        if (value is null)
+        {
+            //null olmayan deger girdikten sonra buraya duser mi diye kontrol et.
+        }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         // ReSharper disable once HeuristicUnreachableCode
@@ -173,12 +183,13 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
+        if (value is null) return;
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync((Model, value));
+        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value));
     }
 
     [Parameter]
-    public EventCallback<(object Model, object Value)> OnValueChanged { get; set; }
+    public EventCallback<ComponentArgs<object>> OnValueChanged { get; set; }
 
     private void SetCallBackEvents()
     {
@@ -217,13 +228,17 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         SetCallBackEvents();
 
+        if (((IGenComponent)this).IsSearchField)
+        {
+            Clearable = true;
+        }
         var innerFragment = (nameof(ChildContent), (RenderFragment)(treeBuilder =>
         {
             var i = 1000;
 
             if (DataSource is null) return;
 
-            foreach (var data in DataSource.Where(x => Where?.Invoke((Model,x)) ?? true))
+            foreach (var data in DataSource.Where(x => Where?.Invoke(new ComponentArgs<object>(Model,x)) ?? true))
             {
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Args;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
@@ -18,6 +19,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     public object Model { get; set; }
 
 
+    [Parameter]
     public DateTime? InitialValue { get; set; }
 
     [Parameter]
@@ -111,13 +113,14 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         await DateChanged.InvokeAsync(_value);
         await BeginValidateAsync();
         FieldChanged(_value);
-        
-        await OnDateChanged.InvokeAsync((Model,date));
+
+        await OnDateChanged.InvokeAsync((Model, date));
+
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
 
         Date = (DateTime?)Model?.GetPropertyValue(BindingField);
 
@@ -127,10 +130,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-        if (InitialValue is not null)
-            SetValue(InitialValue);
+        if (InitialValue is not null && Date is null)
+        {
+            await SetDateAsync(InitialValue, true);
+        }
     }
- 
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -188,7 +192,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     
     [Parameter]
-    public EventCallback<(object Model, DateTime? value)> OnDateChanged { get; set; }
+    public EventCallback<(object Model, DateTime? Value)> OnDateChanged { get; set; }
 
  
     
@@ -221,6 +225,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             Model = model;
 
         SetCallBackEvents();
+
+        if (((IGenComponent)this).IsSearchField)
+        {
+            Clearable = true;
+        }
 
         var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
 

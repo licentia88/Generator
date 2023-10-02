@@ -1,13 +1,20 @@
-﻿namespace Generator.Components.Interfaces;
+﻿using Generator.Components.Args;
+
+namespace Generator.Components.Interfaces;
 
 public interface IGenAutoComplete : IGenComponent
 {
-
-    public IEnumerable<object> DataSource { get; set; }
-
     public string DisplayField { get; set; }
 
     public string ValueField { get; set; }
 
-    //public object InitialValue { get; set; }
+ }
+
+public interface IGenAutoComplete<T> : IGenAutoComplete
+{
+    public IEnumerable<T> DataSource { get; set; }
+
+    //public Func<ComponentArgs<T>, bool> Where { get; set; }
+
 }
+

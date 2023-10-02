@@ -56,7 +56,9 @@ public interface INonGenGrid:INonGenView
 
     public RenderFragment GenHeaderButtons { get; set; }
 
- 
+    public bool IsValid { get; set; }
+
+
     public string SearchPlaceHolderText { get; set; }
 
     bool ForceRenderOnce { get; set; }
@@ -65,7 +67,7 @@ public interface INonGenGrid:INonGenView
 
     public bool ValidateField(string propertyName);
 
-
+ 
     bool ValidateSearchFields();
 
     bool ValidateSearchFields(IEnumerable<IGenComponent> searchFields);

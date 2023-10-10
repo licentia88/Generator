@@ -30,6 +30,7 @@ namespace Generator.Components.Args;
         IsSearchField = true;
     }
 
+  
 
     public T GetValueAs<T>(string bindingField)
     {
@@ -116,6 +117,14 @@ public class GenArgs<TModel> : EventArgs
 
     public int Index { get; set; }
 
+
+    public GenArgs(TModel model, TModel oldModel)
+    {
+        Model = model;
+
+        OldModel = oldModel;
+    }
+
     public GenArgs(TModel model,TModel oldModel, int index) 
     {
         Model = model;
@@ -124,6 +133,7 @@ public class GenArgs<TModel> : EventArgs
 
         Index = index;
     }
+
 
 
 }

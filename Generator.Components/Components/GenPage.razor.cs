@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public partial class GenPage<TModel> where TModel : new() 
+public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel : new() 
 {
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
@@ -19,7 +19,7 @@ public partial class GenPage<TModel> where TModel : new()
     public string Title { get; set; }
 
     [Parameter]
-    public INonGenGrid ParentGrid { get; set; }
+    public INonGenGrid Parent { get; set; }
 
     [Parameter]
     public ViewState ViewState { get; set; }
@@ -131,10 +131,10 @@ public partial class GenPage<TModel> where TModel : new()
         }
 
         //Parent Save
-        if (GenGrid.ParentGrid?.ViewState == ViewState.Create)
-            await GenGrid.ParentGrid.CurrentGenPage.OnCommitAndWait();
+        if (GenGrid.Parent?.ViewState == ViewState.Create)
+            await GenGrid.Parent.CurrentGenPage.OnCommitAndWait();
 
-        if (((INonGenView)this).IsTopLevel || GenGrid.ParentGrid.CurrentGenPage.IsValid)
+        if (((INonGenView)this).IsTopLevel || GenGrid.Parent.CurrentGenPage.IsValid)
         {
            
             //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
@@ -247,5 +247,10 @@ public partial class GenPage<TModel> where TModel : new()
         var result = Components.Any(x => x.component.Error);
 
         return result;
+    }
+
+    public void AddChildComponent(IGenComponent component)
+    {
+        //throw new NotImplementedException();
     }
 }

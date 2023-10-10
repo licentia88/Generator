@@ -41,7 +41,7 @@ public partial class GridFieldsPage
 
       
 
-        if (!view.ParentGrid.ValidateModel())
+        if (!view.Parent.ValidateModel())
         {
             view.ShouldShowDialog = false;
             return;

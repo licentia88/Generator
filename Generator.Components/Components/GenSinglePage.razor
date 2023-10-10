@@ -1,0 +1,103 @@
+﻿@typeparam TModel  where TModel : class
+
+@inherits ComponentBase
+@implements ISinglePage
+
+
+
+<style>
+    .mud-dialog .mud-dialog-actions {
+        flex: 0 0 auto;
+        display: flex;
+        margin-top: 0;
+        padding-right: 3.5rem !important;
+        align-items: center;
+        justify-content: flex-end;
+        border-bottom-left-radius: var(--mud-default-borderradius);
+        border-bottom-right-radius: var(--mud-default-borderradius);
+    }
+
+    .mud-dialog .mud-dialog-content.mud-dialog-no-side-padding {
+        padding: 0;
+    }
+</style>
+
+@if (Model is null)
+{
+    return;
+}
+
+<CascadingValue Name="Parent" Value="this">
+
+    @{
+        if (_isFirstRender)
+        {
+            @GenColumns
+            _isFirstRender = false;
+            return;
+        }
+
+    }
+    <EditForm EditContext="@editContext"  OnValidSubmit="OnCommit" OnInvalidSubmit="InvalidSubmit">
+        <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="Close" DisableSidePadding="true">
+            <DialogContent>
+
+                <DataAnnotationsValidator />
+                @*<ValidationSummary />*@
+
+                <MudContainer Class="m-0" Style="max-height: 75vh;overflow-y: scroll;max-width:100vw!important">
+
+                    <MudGrid Justify="Justify.FlexStart" Spacing="0">
+
+                        @{
+                            var components = Components.Select(x => x.component);
+
+
+                            foreach (var componentDetail in components)
+                            {
+
+                                componentDetail.ValidateField();
+
+                                <MudItem Class="mt-4"
+                                         xs="componentDetail.xs"
+                                         sm="componentDetail.sm"
+                                         md="componentDetail.md"
+                                         lg="componentDetail.lg"
+                                         xl="componentDetail.xl"
+                                         xxl="componentDetail.xxl">
+                                    @{
+
+                                        if (componentDetail.IsEditorVisible(Model))
+                                        {
+                                            @componentDetail.RenderAsComponent(Model);
+                                        }
+                                        else
+                                        {
+                                            if (componentDetail.ClearIfNotVisible)
+                                                componentDetail.SetEmpty();
+                                        }
+
+                                    }
+                                </MudItem>
+                            }
+
+                        }
+                    </MudGrid>
+
+
+                </MudContainer>
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="Close">@CancelText</MudButton>
+                <MudButton Color="Color.Success" Variant="Variant.Filled" ButtonType="ButtonType.Submit">
+                    @SubmitText
+                </MudButton>
+            </DialogActions>
+        </MudDialog>
+    </EditForm>
+
+</CascadingValue>
+
+
+
+

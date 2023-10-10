@@ -72,10 +72,9 @@ public class GenValidator<T>
   
     public bool ValidateComponentValue(IGenComponent component)
     {
-        bool isValid = true;
 
-        if (component.Model.IsModel())
-            isValid = ValidateModelValue(component);
+        //if (component.Model.IsModel())
+        bool isValid = ValidateModelValue(component);
 
         return isValid;
     }

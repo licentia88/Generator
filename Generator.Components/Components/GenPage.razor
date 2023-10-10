@@ -23,7 +23,7 @@
 @{
     if (SelectedItem is null) return;
 
-    <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+    <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.Parent))">
         <EditForm Model="@SelectedItem" OnValidSubmit="((INonGenPage)this).OnCommit" OnInvalidSubmit="OnInvalidSubmit">
             <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="(()=> Close(true))" DisableSidePadding="true">
                 <DialogContent>
@@ -81,7 +81,7 @@
                                 @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
                                 <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
                                     <CascadingValue Value="SelectedItem" Name="@(nameof(SelectedItem))">
-                                        <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.ParentGrid))">
+                                        <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.Parent))">
                                             @GenGrid.GenDetailGrid(SelectedItem)
                                         </CascadingValue>
                                     </CascadingValue>

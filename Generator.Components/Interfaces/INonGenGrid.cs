@@ -56,6 +56,8 @@ public interface INonGenGrid:INonGenView
 
     public RenderFragment GenHeaderButtons { get; set; }
 
+    public RenderFragment<object> GenSideButtons { get; set; }
+
     public bool IsValid { get; set; }
 
 
@@ -79,14 +81,11 @@ public interface INonGenGrid:INonGenView
     void ResetValidations(IEnumerable<IGenComponent> components);
 
     void ResetConditionalSearchFields();
-    
-    void AddChildComponent(IGenComponent component);
-
 
     void AddSearchFieldComponent(IGenComponent component);
 
 
-    //public bool HasErrors();
+    public Task OnCreateClick();
 
     void ForceRenderAll();
 }

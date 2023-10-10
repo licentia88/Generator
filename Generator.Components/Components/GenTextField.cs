@@ -1,5 +1,4 @@
-﻿using Generator.Components.Args;
-using Generator.Components.Extensions;
+﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -13,8 +12,8 @@ namespace Generator.Components.Components;
 
 public class GenTextField : MudTextField<object>, IGenTextField, IComponentMethods<GenTextField>
 { 
-    [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
-    INonGenGrid IGenComponent.ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.Parent))]
+    IPageBase IGenComponent.Parent { get; set; }
 
  
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
@@ -124,9 +123,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     private void AddComponents()
     {
         if (((IGenComponent)this).IsSearchField)
-            ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
+            ((INonGenGrid)((IGenComponent)this).Parent)?.AddSearchFieldComponent(this);
         else
-            ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
+            ((IGenComponent)this).Parent?.AddChildComponent(this);
     }
 
   
@@ -170,8 +169,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Value = value;
             _value = value;
 
-            comp.ParentGrid.StateHasChanged();
-            comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+            //comp.Parent?.StateHasChanged();
+            //comp.Parent?.CurrentGenPage?.StateHasChanged();
         }
     }
 
@@ -196,7 +195,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     {
         await base.SetValueAsync(value, updateText, force);
         await OnValueChanged.InvokeAsync((Model, value));
-
+        Validate();
     }
 
     private void SetCallBackEvents()
@@ -206,9 +205,11 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () => {
-            Validate();
-        });
+        //OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>
+        //{
+        //    Console.WriteLine();
+        //    Validate();
+        //});
 
     }
 
@@ -216,7 +217,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
-        if (Model is null || Model?.GetType().Name == "Object")
+        //if (Model is null || Model?.GetType().Name == "Object")
+        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
             Model = model;
 
         SetCallBackEvents();
@@ -256,7 +258,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     void IGenComponent.ValidateObject()
     {
-        ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
+        if (((IGenComponent)this).Parent is INonGenGrid grid)
+            grid.ValidateField(BindingField);
+
+        //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
     public object GetValue()
@@ -270,7 +275,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     void IGenComponent.SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
+        ((IGenComponent)this).Parent?.StateHasChanged();
     }
 
     object IGenComponent.GetSearchValue()
@@ -299,10 +304,14 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public new bool Validate()
     {
         if (((IGenComponent)this).IsSearchField)
-            return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
+            return ((INonGenGrid)((IGenComponent)this).Parent).ValidateSearchField(BindingField);
 
-        return ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
+        if (((IGenComponent)this).Parent is INonGenGrid grid)
+            return grid.ValidateField(BindingField);
+
+        return true;
     }
+
 
     void IGenComponent.ValidateField()
     {

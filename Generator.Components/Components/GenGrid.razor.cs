@@ -11,11 +11,10 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Collections.Generic;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TModel : new()
+public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel : new()
 {
     private int index;
 
@@ -163,8 +162,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
 
      bool CancelDisabled { get; set; }
 
-    [CascadingParameter(Name = nameof(ParentGrid))]
-    public INonGenGrid ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(Parent))]
+    public INonGenGrid Parent { get; set; }
 
     public bool ShouldShowDialog { get; set; } = true;
 
@@ -194,6 +193,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
 
     [Parameter, AllowNull]
     public RenderFragment GenHeaderButtons { get; set; }
+
+    [Parameter, AllowNull]
+    public RenderFragment<object> GenSideButtons { get; set; }
+
 
     [Parameter, AllowNull]
     public RenderFragment<TModel> GenDetailGrid { get; set; }
@@ -238,8 +241,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
     {
         base.OnInitialized();
 
-        if (ParentGrid is not null && ParentGrid.DetailClicked)
-            ParentGrid.StateHasChanged();
+        if (Parent is not null && Parent.DetailClicked)
+            Parent.StateHasChanged();
 
     }
     //protected override async Task OnInitializedAsync()
@@ -435,9 +438,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
         ((INonGenView)this).IsTopLevel = true;
 
         //Parent Save
-        if (ParentGrid?.ViewState == ViewState.Create)
+        if (Parent?.ViewState == ViewState.Create)
         {
-            await ParentGrid.OnCommitAndWait();
+            await Parent.OnCommitAndWait();
         }
 
         if (((INonGenView)this).IsTopLevel)
@@ -633,6 +636,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
         //itemToRemove = SelectedItem;
 
         Components.Clear();
+        //components clear veya reset validation
+        //eger reset validation sikinti cikarirsa clear components yap
+ 
+
 
         SelectedItem = default;
          
@@ -645,7 +652,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
     void INonGenGrid.ForceRenderAll()
     {
         ((INonGenGrid)this).IsFirstRender = true;
-        ((INonGenGrid)this).IsRendered = false;
+        //((INonGenGrid)this).IsRendered = false;
         //Components.Clear();
     }
 
@@ -667,9 +674,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
             (nameof(GenPage<TModel>.GenGrid), this)
         };
 
-        if(ParentGrid is not null)
+        if(Parent is not null)
         {
-            paramList.Add((nameof(GenPage<TModel>.ParentGrid), ParentGrid));
+            paramList.Add((nameof(GenPage<TModel>.Parent), Parent));
         }
 
         return await ShowDialogAsync<TPage>(paramList.ToArray());
@@ -724,9 +731,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
     //}
 
 
-    void INonGenGrid.AddChildComponent(IGenComponent childComponent)
+    void IPageBase.AddChildComponent(IGenComponent childComponent)
     {
-        if (childComponent is not GenSpacer && string.IsNullOrEmpty(childComponent.BindingField)) return;
+        //if (childComponent is not GenSpacer && string.IsNullOrEmpty(childComponent.BindingField)) return;
 
         var componentType = childComponent.GetType();
 
@@ -737,7 +744,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
 
     void INonGenGrid.AddSearchFieldComponent(IGenComponent component)
     {
-        if (component is not GenSpacer && string.IsNullOrEmpty(component.BindingField)) return;
+        //if (component is not GenSpacer && string.IsNullOrEmpty(component.BindingField)) return;
 
         if (SearchFieldComponents.Any(x => x.BindingField == component.BindingField )) return;
 
@@ -777,7 +784,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
     {
         var comp = GetSearchFieldComponent<IGenComponent>(BindingField);
 
-        return GenValidator.ValidateComponentValue(comp);
+        return ((INonGenGrid)this).ValidateSearchFields(new List<IGenComponent> { comp });
+        //return GenValidator.ValidateComponentValue(comp);
     }
 
     bool INonGenGrid.ValidateSearchFields()
@@ -787,11 +795,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
 
     bool INonGenGrid.ValidateSearchFields(IEnumerable<IGenComponent> searchFields)
     {
-        var genComponents = searchFields as IGenComponent[] ?? searchFields.ToArray();
+        //var genComponents = searchFields as IGenComponent[] ?? searchFields.ToArray();
        
-        ((INonGenGrid)this).ResetValidations(genComponents);
+        ((INonGenGrid)this).ResetValidations(searchFields);
 
-        foreach (var comp in genComponents)
+        foreach (var comp in searchFields)
         {
             if (!comp.Required && !(comp.RequiredIf?.Invoke(comp.Model) ?? false)) continue;
             var currentVal = comp.Model.GetPropertyValue(comp.BindingField);
@@ -800,7 +808,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
 
         }
 
-        var isValid = genComponents.All(x => !x.Error);
+        var isValid = searchFields.All(x => !x.Error);
 
         StateHasChanged();
         return isValid;
@@ -908,7 +916,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IDisposable where TMode
         ((INonGenGrid)this).SearchDisabled = false;
     }
 
-    internal async Task OnCreateClick()
+    public async Task OnCreateClick()
     {
         //_ShouldRender = true;
         ShouldShowDialog = true;

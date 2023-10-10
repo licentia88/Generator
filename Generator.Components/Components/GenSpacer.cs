@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
-//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
@@ -54,9 +53,9 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     [Parameter]
     public bool ClearIfNotVisible { get; set; } = false;
 
-    [CascadingParameter(Name = nameof(ParentGrid))]
+    [CascadingParameter(Name = nameof(Parent))]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public INonGenGrid ParentGrid { get; set; }
+    public IPageBase Parent { get; set; }
 
 
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -85,6 +84,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
     bool IGenComponent.IsSearchField { get; set; }
+
     public Func<object, bool> EditorVisibleIf { get; set; }
     public Func<object, bool> EditorEnabledIf { get; set; }
     public Func<object, bool> RequiredIf { get; set; }
@@ -93,22 +93,23 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     {
         base.BuildRenderTree(builder);
 
-        AddComponents();
+        //AddComponents();
     }
-    protected override Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
+        BindingField = Guid.NewGuid().ToString();
+
         AddComponents();
-
-
-        return Task.CompletedTask;
     }
+ 
 
     private void AddComponents()
     {
         if (((IGenComponent)this).IsSearchField)
-            ParentGrid?.AddSearchFieldComponent(this);
+            ((INonGenGrid)Parent)?.AddSearchFieldComponent(this);
         else
-            ParentGrid?.AddChildComponent(this);
+            Parent?.AddChildComponent(this);
     }
     public void Initialize()
     {

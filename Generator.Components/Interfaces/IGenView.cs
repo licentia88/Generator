@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 namespace Generator.Components.Interfaces;
 
 
-public interface INonGenView
+public interface INonGenView: IPageBase
 {
     public bool IsIndividual { get; set; }
 
@@ -24,7 +24,6 @@ public interface INonGenView
 
     bool IsTopLevel { get; set; }
 
-    void StateHasChanged();
 
     Task OnCommit();
 
@@ -32,7 +31,7 @@ public interface INonGenView
 
     public bool HasErrors();
 
-    public INonGenGrid ParentGrid { get; set; }
+    public INonGenGrid Parent { get; set; }
 
 
 }

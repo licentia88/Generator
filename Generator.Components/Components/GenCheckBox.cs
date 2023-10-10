@@ -12,8 +12,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 {
     #region CascadingParameters
 
-    [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
-    INonGenGrid IGenComponent.ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.Parent))]
+    IPageBase IGenComponent.Parent { get; set; }
 
     #endregion CascadingParameters
 
@@ -126,9 +126,9 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
      private void AddComponents()
      {
          if (((IGenComponent)this).IsSearchField)
-            ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
+            ((INonGenGrid)((IGenComponent)this).Parent)?.AddSearchFieldComponent(this);
          else
-            ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
+            ((IGenComponent)this).Parent?.AddChildComponent(this);
 
          
      }
@@ -177,10 +177,12 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => (builder) =>
     {
-          if (Model is null || Model.GetType().Name == "Object")
+        //if (Model is null || Model.GetType().Name == "Object")
+        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
             Model = model;
- 
-          SetCallBackEvents();
+
+
+        SetCallBackEvents();
 
           var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
@@ -211,7 +213,10 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     void IGenComponent.ValidateObject()
     {
-        ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
+        if (((IGenComponent)this).Parent is INonGenGrid grid)
+            grid.ValidateField(BindingField);
+
+        //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
     public object GetValue()
@@ -245,8 +250,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
             _value = value;
 
         }
-        comp.ParentGrid.StateHasChanged();
-        comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        //comp.Parent.StateHasChanged();
+        //comp.Parent.CurrentGenPage?.StateHasChanged();
     }
 
     object IGenComponent.GetSearchValue()
@@ -260,7 +265,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     void IGenComponent.SetSearchValue(object Value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
+        ((IGenComponent)this).Parent.StateHasChanged();
     }
 
     void IGenComponent.SetEmpty()
@@ -281,14 +286,17 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     public new bool Validate()
     {
         if (((IGenComponent)this).IsSearchField)
-            return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
+            return ((INonGenGrid)((IGenComponent)this).Parent).ValidateSearchField(BindingField);
 
-        return ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
+        if (((IGenComponent)this).Parent is INonGenGrid grid)
+            return grid.ValidateField(BindingField);
+
+        return true;
     }
 
 
 
-   
+
 
     bool IGenComponent.IsEditorVisible(object model)
     {

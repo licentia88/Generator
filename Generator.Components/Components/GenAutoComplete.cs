@@ -7,15 +7,14 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace Generator.Components.Components;
 
 
 public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 {
-    [CascadingParameter(Name = nameof(IGenComponent.ParentGrid))]
-    INonGenGrid IGenComponent.ParentGrid { get; set; }
+    [CascadingParameter(Name = nameof(IGenComponent.Parent))]
+    IPageBase IGenComponent.Parent { get; set; }
 
     [Parameter, EditorRequired]
     public string DisplayField { get; set; }
@@ -95,8 +94,9 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
+//#nullable enable
     private T CurrentData;
-
+//#nullable disable
     //protected override void OnInitialized()
     //{
     //    base.OnInitialized();
@@ -167,39 +167,39 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
             return Array.Empty<T>();
 
         return serviceResult.Take(MaxItems.Value).ToList();
-        //if (string.IsNullOrEmpty(value))
-        //    return serviceResult.Take(MaxItems.Value).ToList();
+    }
 
-          
-        //return serviceResult.Where(x => Where?.Invoke((Model, x)) ?? true).Take(MaxItems.Value).ToList();
-
+    public override async Task ForceUpdate()
+    {
+        await SetValueAsync(Value, updateText: true, force: true);
+        //return base.ForceUpdate();
     }
     private async Task<IEnumerable<T>> FindMethod(string value)
     {
-        //if (CurrentData is null && string.IsNullOrEmpty(Text))
-        //{
-        //     await ForceUpdate();
-        //    Count = null;
-        //}
 
         if (!string.IsNullOrEmpty(value) && value == Text)
+        {
+            //Count = null;
             return Array.Empty<T>();
+        }
 
         if (ServiceMethod is null)
         {
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value) )
             {
                 var dataToReturn = DataSource.Where(x => Where?.Invoke(new ComponentArgs<T>(Model,x)) ?? true).Take(MaxItems.Value).ToList();
                 Count = dataToReturn.Count;
                 return dataToReturn;
             }
-            //return Task.FromResult<IEnumerable<T>>(DataSource.Where(x => Where?.Invoke((Model, x)) ?? true).Take(MaxItems.Value).ToList());
 
-            var filteredData = DataSource.Where(x => Where?.Invoke(new ComponentArgs<T>(Model, x)) ?? true)
-                                         .Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase))
-                                         .ToList();
+
+            var filteredData = DataSource
+                               .Where(x => Where?.Invoke(new ComponentArgs<T>(Model, x)) ?? true)
+                               .Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase))
+                               .ToList();
 
             Count = filteredData.Count;
+
             return filteredData;
             //return Task.FromResult<IEnumerable<T>>(filteredData);
         }
@@ -214,9 +214,9 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     protected void AddComponents()
     {
         if (((IGenComponent)this).IsSearchField)
-            ((IGenComponent)this).ParentGrid?.AddSearchFieldComponent(this);
+            ((INonGenGrid)((IGenComponent)this).Parent)?.AddSearchFieldComponent(this);
         else
-            ((IGenComponent)this).ParentGrid?.AddChildComponent(this);
+            ((IGenComponent)this).Parent?.AddChildComponent(this);
 
     }
 
@@ -224,7 +224,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     {
         if (Model is not null && Model.GetType().Name != "Object")
         {
-            TextUpdateSuppression = true;
+            //TextUpdateSuppression = true;
 
             base.BuildRenderTree(builder);
         }
@@ -233,22 +233,27 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     }
 
 
-    public void OnClearClicked(MouseEventArgs arg)
+    public async void OnClearClicked(MouseEventArgs arg)
     {
-        ForceUpdate();
-        Count = 0;
-        TextUpdateSuppression = false;
-       
-        if (((IGenComponent)this).IsSearchField)
-        {
-            Validate();
-            return;
-        }
+        SetValue(null);
+        Text = string.Empty;
+        await ForceUpdate();
+        
+        //await ForceUpdate();
+        //Count = 0;
+        //TextUpdateSuppression = false;
+
+
+        //if (((IGenComponent)this).IsSearchField)
+        //{
+        //    Validate();
+        //    return;
+        //}
 
     }
 
 
-    public void SetValue(object value)
+    public  void SetValue(object value)
     {
         //if (value is null) return;
 
@@ -260,7 +265,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         {
             //comp.SetSearchValue(value);
             Model?.SetPropertyValue(BindingField, loValue);
-            comp.ParentGrid.ResetConditionalSearchFields();
+            ((INonGenGrid)comp.Parent).ResetConditionalSearchFields();
 
         }
         else
@@ -272,10 +277,12 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         //var textValue = value.GetPropertyValue(DisplayField)?.ToString();
         CurrentData = value.CastTo<T>();
 
+        //CanFetch = true;
 
 
-        comp.ParentGrid.StateHasChanged();
-        comp.ParentGrid.CurrentGenPage?.StateHasChanged();
+        //comp.Parent.StateHasChanged();
+
+        //comp.Parent.CurrentGenPage?.StateHasChanged();
     }
 
     protected override void OnConversionErrorOccurred(string error)
@@ -287,6 +294,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     {
         await base.SetValueAsync(value, updateText, force);
         await OnValueChanged.InvokeAsync(new ComponentArgs<T>(Model, value));
+        Validate();
     }
    
 
@@ -296,7 +304,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
    
 
 
-    protected virtual void SetCallBackEvents()
+    protected virtual  void SetCallBackEvents()
     {
         ToStringFunc = x => x?.GetPropertyValue(DisplayField)?.ToString();
 
@@ -310,23 +318,17 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
             OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClicked);
 
 
-        OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>
-        {
+        //OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, async () =>
+        //{
+        //    if (Count == 0 || CurrentData is null)
+        //    {
+        //        //TextUpdateSuppression = false;
+        //        await ForceUpdate();
+        //        Count = null;
+        //        //TextUpdateSuppression = true;
+        //    }
 
- 
-            if (Count == 0 || CurrentData is null)
-            {
-                TextUpdateSuppression = false;
-                ForceUpdate();
-                Count = null;
-                //TextUpdateSuppression = true;
-            }
-              
-        });
-
-        //OnKeyDown = EventCallback.Factory.Create<KeyboardEventArgs>(this, () => TextUpdateSuppression = true);
-
-
+        //});
 
     }
 
@@ -335,33 +337,28 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
     public virtual RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
-        if (Model is null || Model.GetType().Name == "Object")
+        //if (Model is null || Model.GetType().Name == "Object")
+        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
             Model = model;
         
         SetCallBackEvents();
 
         ShowProgressIndicator = true;
 
+        CoerceText = false;
+        CoerceValue = false;
+
         var innerFragment = (nameof(ProgressIndicatorTemplate), (RenderFragment)(treeBuilder =>
         {
-            //< MudProgressLinear Size = "Size.Small" Indeterminate = "true" Color = "SelectedColor" />
-
             treeBuilder.OpenComponent(1000, typeof(MudProgressLinear));
             treeBuilder.AddAttribute(1001, nameof(Size), Size.Small);
             treeBuilder.AddAttribute(1002, nameof(MudProgressLinear.Indeterminate), true);
             treeBuilder.AddAttribute(1003, nameof(MudProgressLinear.Color), ProgressIndicatorColor);
- 
             treeBuilder.CloseComponent();
-
         }));
 
-        //var loValue = Model.GetPropertyValue(BindingField);
-
-        //var selectedField = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == loValue.ToString());
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-
-        //additionalParams.Add((nameof(Value), selectedField));
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
 
@@ -369,8 +366,8 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
         additionalParams.Add(innerFragment);
        
-        SelectValueOnTab = true;
-        Clearable = true;
+        //SelectValueOnTab = true;
+        //Clearable = true;
 
         //additionalParams.Add((nameof(ToStringFunc), (object x) => x.GetPropertyValue(DisplayField)?.ToString()));
         //TODO burada render yapmadan value yu kontrol et
@@ -387,9 +384,13 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
     };
 
+
     void IGenComponent.ValidateObject()
     {
-        ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
+        if (((IGenComponent)this).Parent is INonGenGrid grid)
+            grid.ValidateField(BindingField);
+
+        //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
     public object GetValue()
@@ -405,7 +406,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     void IGenComponent.SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value.GetPropertyValue(BindingField);
-        ((IGenComponent)this).ParentGrid.StateHasChanged();
+        ((IGenComponent)this).Parent.StateHasChanged();
     }
 
     object IGenComponent.GetSearchValue()
@@ -425,20 +426,82 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         //_value = Model;
     }
 
+    //protected new virtual async Task SetTextAsync(string text, bool updateValue = true)
+    //{
+    //    if (Text != text)
+    //    {
+    //        Text = text;
+    //        if (!string.IsNullOrWhiteSpace(Text))
+    //        {
+    //            base.Touched = true;
+    //        }
+    //        if (updateValue)
+    //        {
+    //            await UpdateValuePropertyAsync(updateText: false);
+    //        }
+    //        await TextChanged.InvokeAsync(Text);
+    //    }
+    //}
+    //public new Task SetTextAsync(string text, bool updateValue = true)
+    //{
+    //    return base.SetTextAsync(text, updateValue);
+    //}
+
+
+    protected override async Task SetTextAsync(string text, bool updateValue = true)
+    {
+        if (Text != text)
+        {
+            Text = text;
+            if (!string.IsNullOrWhiteSpace(Text))
+            {
+                base.Touched = true;
+            }
+            if (updateValue)
+            {
+                await UpdateValuePropertyAsync(updateText: false);
+            }
+            await TextChanged.InvokeAsync(Text);
+        }
+    }
+
     public new async Task Clear()
     {
-        await base.Clear();
+        await OnClearButtonClick.InvokeAsync();
+        //await base.Clear();
 
-        ((IGenComponent)this).SetEmpty();
+        
+
+        //((IGenComponent)this).SetEmpty();
+
+
+        ////await UpdateValuePropertyAsync(updateText: false);
+
+        ////await TextChanged.InvokeAsync(string.Empty);
+        //Text = string.Empty;
+        //await UpdateValuePropertyAsync(updateText: false);
+        ////await TextChanged.InvokeAsync(Text);
+
+        ////await SetTextAsync(string.Empty);
+        ////isCleared = false;
+        //Count = 0;
+        //CurrentData = default;
+
+        //StateHasChanged();
+        //ForceRender(true);
     }
 
     public new bool Validate()
     {
         if (((IGenComponent)this).IsSearchField)
-            return ((IGenComponent)this).ParentGrid.ValidateSearchField(BindingField);
+            return ((INonGenGrid)((IGenComponent)this).Parent).ValidateSearchField(BindingField);
 
-        return ((IGenComponent)this).ParentGrid.ValidateField(BindingField);
+        if (((IGenComponent)this).Parent is INonGenGrid grid)
+            return grid.ValidateField(BindingField);
+
+        return true;
     }
+
 
     bool IGenComponent.IsEditorVisible(object model)
     {

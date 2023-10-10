@@ -44,7 +44,7 @@ public interface IGenComponent : IGenCompRenderer
 
     public int xxl { get; set; }
 
-    public INonGenGrid ParentGrid { get; set; }
+    public IPageBase Parent { get; set; }
 
     public object Model { get; set; }
 

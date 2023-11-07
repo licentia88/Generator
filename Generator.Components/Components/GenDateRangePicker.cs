@@ -106,8 +106,11 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null && Model.GetType().Name != "Object")
+        if (((IGenComponent)this).Parent is not null && Model is not null)
             base.BuildRenderTree(builder);
+
+        //if (Model is not null && Model.GetType().Name != "Object")
+        //    base.BuildRenderTree(builder);
 
         AddComponents();
     }
@@ -124,8 +127,9 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
         comp.SetSearchValue(date);
 
-        //comp.Parent.StateHasChanged();
-        //comp.Parent.CurrentGenPage?.StateHasChanged();
+        comp.Parent.StateHasChanged();
+        if (comp.Parent is INonGenGrid grid)
+            grid.CurrentGenPage?.StateHasChanged();
     }
 
 
@@ -179,8 +183,17 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => (builder) =>
     {
         //if (Model is null || Model.GetType().Name == "Object")
-        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //    Model = model;
+
+
+        if (!((IGenComponent)this).IsSearchField)
             Model = model;
+
+        if (((IGenComponent)this).IsSearchField && Model is null)
+        {
+            Model = model;
+        }
 
         SetCallBackEvents();
 

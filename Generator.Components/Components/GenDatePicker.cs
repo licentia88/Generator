@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Generator.Components.Args;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
@@ -114,7 +113,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         await BeginValidateAsync();
         FieldChanged(_value);
 
-        await OnDateChanged.InvokeAsync((Model, date));
+         await OnDateChanged.InvokeAsync((Model, date));
 
     }
 
@@ -138,15 +137,18 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null && Model.GetType().Name != "Object")
+        if (((IGenComponent)this).Parent is not null && Model is not null)
             base.BuildRenderTree(builder);
+
+        //if (Model is not null && Model.GetType().Name != "Object")
+        //    base.BuildRenderTree(builder);
 
         AddComponents();
     }
 
     public DateTime? _originalDate;
 
-    public  void SetValue(DateTime? date)
+    public async  void SetValue(DateTime? date)
     {
         
         if (this is not IGenComponent comp) return;
@@ -159,7 +161,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             //await SetTextAsync(base.Converter.Set(date), true);
 
         }
+        await OnDateChanged.InvokeAsync((Model, date));
 
+        comp.Parent.StateHasChanged();
+        if (comp.Parent is INonGenGrid grid)
+            grid.CurrentGenPage?.StateHasChanged();
         //comp.Parent.StateHasChanged();
         //comp.Parent.CurrentGenPage?.StateHasChanged();
     }
@@ -211,7 +217,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         else
         {
             // if (!DateChanged.HasDelegate)
-                DateChanged = EventCallback.Factory.Create<DateTime?>(this, x => SetValue(x.CastTo<DateTime?>()));
+                DateChanged = EventCallback.Factory.Create<DateTime?>(this,  x =>  SetValue(x));
 
         }
     }
@@ -224,8 +230,16 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => (builder) =>
     {
         //if (Model is null || Model.GetType().Name == "Object")
-        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //    Model = model;
+
+        if (!((IGenComponent)this).IsSearchField)
             Model = model;
+
+        if (((IGenComponent)this).IsSearchField && Model is null)
+        {
+            Model = model;
+        }
 
         SetCallBackEvents();
 
@@ -238,7 +252,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
-        //additionalParams.Add((nameof(_value), valDate));
+        //additionalParams.Add((nameof(_value), valDate?? _value));
 
         //additionalParams.Add((nameof(Date), valDate));
 

@@ -201,6 +201,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     [Parameter, AllowNull]
     public RenderFragment<TModel> GenDetailGrid { get; set; }
 
+ 
+
+
+
     bool INonGenGrid.HasDetail => GenDetailGrid is not null;
 
     [Parameter, EditorRequired]
@@ -748,7 +752,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         if (SearchFieldComponents.Any(x => x.BindingField == component.BindingField )) return;
 
-        component.Model = new();
+        //component.Model = string.Empty;
+        //component.Model = new();
 
         SearchFieldComponents.Add(component);
     }

@@ -10,25 +10,25 @@ namespace Generator.Components.Args;
 {
     public object Model;
 
-    public Dictionary<string,TModel> DictionaryModel { get; set; }
+    //public Dictionary<string,TModel> DictionaryModel { get; set; }
 
     private bool IsSearchField { get; set; }
 
     public TModel SourceValue { get; set; }
 
-    public ComponentArgs(object model, TModel sourceValue)
+    public ComponentArgs(object model, TModel sourceValue, bool isSearchField )
     {
         Model = model;
         SourceValue = sourceValue;
-        IsSearchField = false;
+        IsSearchField = isSearchField;
     }
 
-    public ComponentArgs(Dictionary<string, TModel> dictionaryModel ,TModel sourceValue)
-    {
-        DictionaryModel = dictionaryModel;
-        SourceValue = sourceValue;
-        IsSearchField = true;
-    }
+    //public ComponentArgs(Dictionary<string, TModel> dictionaryModel ,TModel sourceValue)
+    //{
+    //    DictionaryModel = dictionaryModel;
+    //    SourceValue = sourceValue;
+    //    IsSearchField = true;
+    //}
 
   
 
@@ -36,10 +36,10 @@ namespace Generator.Components.Args;
     {
         object value;
 
-        if (IsSearchField)
-            value = DictionaryModel[bindingField];
-        else
-            value = Model.GetPropertyValue(bindingField);
+        //if (IsSearchField)
+        //    value = DictionaryModel[bindingField];
+        //else
+        value = Model.GetPropertyValue(bindingField);
 
         if (value is null) return default;
 
@@ -174,7 +174,7 @@ public class SearchArgs:EventArgs
         T result;
 
         // Check if T supports TryParse
-        var tryParseMethod = typeof(T).GetMethod("TryParse", new[] { typeof(T), typeof(T).MakeByRefType() });
+        var tryParseMethod = typeof(T).GetMethod("TryParse", new[] { typeof(string), typeof(T).MakeByRefType() });
 
         if (tryParseMethod != null)
         {

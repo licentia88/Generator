@@ -71,7 +71,7 @@ public class MagicHubServerBase<THub, TReceiver, TModel, TContext> : StreamingHu
         (Room) = await Group.AddAsync(typeof(TModel).Name);
         //(Room, Storage) = await Group.AddAsync(typeof(TModel).Name, Collection);
 
-
+        
         var disposable = Subscriber.Subscribe(Context.GetClientName(), ((Operation operation, TModel model) data) =>
         {
             if (data.operation == Operation.Create)

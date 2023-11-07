@@ -1,4 +1,5 @@
-﻿using Generator.Components.Extensions;
+﻿using DocumentFormat.OpenXml.EMMA;
+using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -82,8 +83,13 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
    
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null && Model.GetType().Name != "Object")
+        //if (Model is not null && Model.GetType().Name != "Object")
+        //    base.BuildRenderTree(builder);
+
+        if (((IGenComponent)this).Parent is not null && Model is not null)
+        {
             base.BuildRenderTree(builder);
+        }
 
         AddComponents();
 
@@ -172,6 +178,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             //comp.Parent?.StateHasChanged();
             //comp.Parent?.CurrentGenPage?.StateHasChanged();
         }
+
+        comp.Parent.StateHasChanged();
+        if (comp.Parent is INonGenGrid grid)
+            grid.CurrentGenPage?.StateHasChanged();
     }
 
 
@@ -218,8 +228,16 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
         //if (Model is null || Model?.GetType().Name == "Object")
-        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //    Model = model;
+
+        if (!((IGenComponent)this).IsSearchField)
             Model = model;
+
+        if (((IGenComponent)this).IsSearchField && Model is null)
+        {
+            Model = model;
+        }
 
         SetCallBackEvents();
 
@@ -231,7 +249,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         var loValue = Model.GetPropertyValue(BindingField);
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
-        additionalParams.Add((nameof(Value), loValue));
+        //Bunu neden koyduk? simdilik acik kalsin, gozlemle
+        additionalParams.Add((nameof(Value), loValue??Value));
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled) ));
 

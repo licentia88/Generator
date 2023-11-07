@@ -140,9 +140,19 @@
 
             if (DataSource is not null)
             {
+                if (OriginalTable is not null && OriginalTable.GroupFooterTemplate is null)
+                    OriginalTable.GroupFooterTemplate = GroupFooterTemplate;
+
+                if (OriginalTable is not null && OriginalTable.GroupHeaderTemplate is null)
+                    OriginalTable.GroupHeaderTemplate = GroupHeaderTemplate;
+
+
+                if (OriginalTable is not null && OriginalTable.ColGroup is null)
+                    OriginalTable.ColGroup = ColGroup;
+
                 var _height = Height ?? "50";
                 var _measurement = Height is null ? "vh" : "px";
-                <MudTable T="TModel" 
+                <MudTable T="TModel"
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
                           LoadingProgressColor="@LoadingProgressColor"
@@ -155,6 +165,11 @@
                           Outlined="@Outlined"
                           Striped="@Striped"
                           Dense="Dense"
+                          GroupHeaderClass="@GroupHeaderClass"
+                          GroupFooterClass="@GroupFooterClass"
+                          GroupHeaderStyle="@GroupHeaderStyle"
+                          GroupFooterStyle="@GroupFooterStyle"
+                          GroupBy="@(GroupHeaderTemplate is not null && GroupFooterTemplate is not null?GroupBy:null)"
                           MultiSelection="MultiSelection"
                           Breakpoint="Breakpoint.None"
                           Hover="Hover"
@@ -219,7 +234,7 @@
                                     {
                                         @*<MudTh>
 
-                                            </MudTh>*@
+                            </MudTh>*@
                                         continue;
                                     }
                                 }
@@ -329,6 +344,7 @@
                     </RowTemplate>
 
 
+                  
 
                     <RowEditingTemplate Context="_context">
 
@@ -432,37 +448,37 @@
                             TModel model = (TModel)button.ButtonAction.Target.CastTo<MudTr>().Item;
                             if (model is not null)
                             {
-                               <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
-                                                    @{
-                                                        if (!EditButtonActionList.Contains(button.ButtonAction))
-                                                            EditButtonActionList.Add(button.ButtonAction);
+                                <div style="@(((INonGenGrid)this).DetailClicked ? "pointer-events: none;opacity:0.4;" : string.Empty)">
+                                    @{
+                                        if (!EditButtonActionList.Contains(button.ButtonAction))
+                                            EditButtonActionList.Add(button.ButtonAction);
 
-                                                        if (Update.HasDelegate)
-                                                        {
-                                                            <MudIconButton @ref="EditButtonRef"
-                                                                           Size="@Size.Small"
-                                                                           Icon="@Icons.Material.Outlined.Edit"
-                                                                           Class="pa-0"
-                                                                           OnClick="()=>OnEditContextButtonClick(button)"
-                                                                           Disabled="button.ButtonDisabled||Disabled" />
-                                                        }
+                                        if (Update.HasDelegate)
+                                        {
+                                            <MudIconButton @ref="EditButtonRef"
+                                                           Size="@Size.Small"
+                                                           Icon="@Icons.Material.Outlined.Edit"
+                                                           Class="pa-0"
+                                                           OnClick="()=>OnEditContextButtonClick(button)"
+                                                           Disabled="button.ButtonDisabled||Disabled" />
+                                        }
 
-                                                    }
+                                    }
 
-                                                    @{
-                                                        if (Delete.HasDelegate)
-                                                        {
-                                                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="button.ButtonDisabled||Disabled" />
-                                                        }
+                                    @{
+                                        if (Delete.HasDelegate)
+                                        {
+                                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClicked(model))" Disabled="button.ButtonDisabled||Disabled" />
+                                        }
 
-                                                        if (GenSideButtons is not null)
-                                                        {
-                                                            @GenSideButtons(model)
-                                                        }
-                                                    }
+                                        if (GenSideButtons is not null)
+                                        {
+                                            @GenSideButtons(model)
+                                        }
+                                    }
 
-                                                </div>
-                               
+                                </div>
+
                             }
 
 

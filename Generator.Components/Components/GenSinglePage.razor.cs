@@ -6,7 +6,6 @@ using Generator.Components.Args;
 using Force.DeepCloner;
 using MudBlazor;
 using Microsoft.AspNetCore.Components.Forms;
-using System.ComponentModel.DataAnnotations;
 
 namespace Generator.Components.Components;
 
@@ -15,8 +14,9 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
 
-    [Parameter]
+    [Parameter,EditorRequired]
     public TModel Model { get; set; }
+
 
     public List<(Type type, IGenComponent component)> Components { get; set; } = new();
 
@@ -41,19 +41,17 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
 
     protected override void OnInitialized()
     {
-        editContext = new EditContext(Model); // Initialize the EditContext with your model
+        // Initialize the EditContext with your model
+        editContext = new EditContext(Model); 
 
         OriginalModel = Model?.DeepClone();
+
         base.OnInitialized();
     }
 
     private bool _isFirstRender = true;
 
-    //protected override void OnAfterRender(bool firstRender)
-    //{
-    //    base.OnAfterRender(firstRender);
-    //}
-
+ 
     [Parameter]
     public string CancelText { get; set; } = "Cancel";
 
@@ -85,13 +83,12 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
     async Task OnCommit()
     {
         if (ViewState == ViewState.Create && Create.HasDelegate)
-        {
             await Create.InvokeAsync(new GenArgs<TModel>(Model, null));
-            Close();
-        }
 
         if (ViewState == ViewState.Update && Update.HasDelegate)
             await Update.InvokeAsync(new GenArgs<TModel>(Model, OriginalModel));
+
+        Close();
     }
 
     public void Close() => MudDialog.Close();

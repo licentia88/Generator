@@ -213,7 +213,8 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
     {
         if (ViewState != ViewState.None)
         {
-            MudDialog.Close();
+            Close(true);
+            //MudDialog.Close();
             
             //Cancel eventini tetikler
             GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);

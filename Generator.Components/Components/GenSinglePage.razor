@@ -34,6 +34,7 @@
         {
             @GenColumns
             _isFirstRender = false;
+            StateHasChanged();
             return;
         }
 
@@ -55,8 +56,6 @@
 
                             foreach (var componentDetail in components)
                             {
-
-                                componentDetail.ValidateField();
 
                                 <MudItem Class="mt-4"
                                          xs="componentDetail.xs"

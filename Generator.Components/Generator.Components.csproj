@@ -11,7 +11,7 @@
      <!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
      <EnableDefaultContentItems>true</EnableDefaultContentItems>
      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-     <Version>1.4.1</Version>
+     <Version>1.4.2</Version>
      <Authors>ASIM GUNDUZ</Authors>
     <Company>ASIM GUNDUZ</Company>
     <Description>MudBlazor Grid Component</Description>

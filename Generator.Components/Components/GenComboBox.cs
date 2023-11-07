@@ -123,8 +123,11 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (Model is not null && Model.GetType().Name != "Object")
+        if (((IGenComponent)this).Parent is not null && Model is not null)
             base.BuildRenderTree(builder);
+
+        //if (Model is not null && Model.GetType().Name != "Object")
+        //    base.BuildRenderTree(builder);
 
         AddComponents();
     }
@@ -137,7 +140,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         {
             SetValue(null);
 
-            await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, default));
+            await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, default, ((IGenComponent)this).IsSearchField));
 
             Validate();
             return;
@@ -176,16 +179,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
             //SelectOption(value);
         }
 
-        //comp.Parent.StateHasChanged();
-        //comp.Parent.CurrentGenPage?.StateHasChanged();
-    }
+
+        comp.Parent.StateHasChanged();
+        if (comp.Parent is INonGenGrid grid)
+            grid.CurrentGenPage?.StateHasChanged();
+     }
 
 
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         if (value is null) return;
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value));
+        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value, ((IGenComponent)this).IsSearchField));
+
         Validate();
     }
 
@@ -225,8 +231,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
         //if (Model is null || Model.GetType().Name == "Object" && !((IGenComponent)this).IsSearchField))
-        if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
+        //    Model = model;
+
+        if (!((IGenComponent)this).IsSearchField)
             Model = model;
+        
+        if (((IGenComponent)this).IsSearchField && Model is null)
+        {
+            Model = model;
+        }
+       
+        
+
 
         SetCallBackEvents();
 
@@ -240,7 +257,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
             if (DataSource is null) return;
 
-            foreach (var data in DataSource.Where(x => Where?.Invoke(new ComponentArgs<object>(Model,x)) ?? true))
+            foreach (var data in DataSource.Where(x => Where?.Invoke(new ComponentArgs<object>(Model,x,((IGenComponent)this).IsSearchField)) ?? true))
             {
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
@@ -256,7 +273,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
-        additionalParams.Add((nameof(Value), loValue));
+        additionalParams.Add((nameof(Value), loValue??Value));
 
         additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
 

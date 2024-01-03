@@ -54,6 +54,7 @@ public partial class GridMPage
 
 		var token = await AuthService.Request(8, "licentia");
 
+        
 		//var test = await Service.SetToken(token).ReadAll();
 
 		DatabaseList = (await DatabaseService.GetDatabaseList()).Data;

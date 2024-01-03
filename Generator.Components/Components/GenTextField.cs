@@ -83,17 +83,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
    
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        //if (Model is not null && Model.GetType().Name != "Object")
-        //    base.BuildRenderTree(builder);
-
         if (((IGenComponent)this).Parent is not null && Model is not null)
         {
             base.BuildRenderTree(builder);
         }
 
         AddComponents();
-
-        
     }
 
     protected override void OnInitialized()
@@ -152,7 +147,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     };
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public new string Text => Model.GetPropertyValue(BindingField).ToString();
+    public new string Text => Model.GetPropertyValue(BindingField)?.ToString();
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -250,8 +245,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle
-        additionalParams.Add((nameof(Value), loValue??Value));
-
+        //additionalParams.Add((nameof(Value), loValue ??Value));
+        additionalParams.Add((nameof(Value),Text));
+        //additionalParams.Add((nameof(Text), Value));
         additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled) ));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));

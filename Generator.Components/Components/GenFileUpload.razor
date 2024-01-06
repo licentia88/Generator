@@ -1,0 +1,31 @@
+﻿@inherits MudFileUpload<IBrowserFile>
+@implements IGenFileUpload
+
+@if (Model is null) return;
+
+<MudFileUpload T="IBrowserFile" FilesChanged="FilesChanged">
+    <ButtonTemplate>
+        <MudButton
+                   HtmlTag="label"
+                   Variant="this.Variant"
+                   Color="this.Color"
+                   for="@context.Id">
+            @this.Label
+        </MudButton>
+    </ButtonTemplate>
+    <SelectedTemplate>
+        @if (context != null)
+        {
+            <MudText>@context.Name</MudText>
+            Model.SetPropertyValue(BindingField, context.Name);
+        }
+        else if (!string.IsNullOrEmpty(Model.GetPropertyValue(BindingField)?.ToString()))
+        {
+            <MudText>@Model.GetPropertyValue(BindingField).ToString()</MudText>
+        }
+        else
+        {
+            <MudText>@EmptyText</MudText>
+        }
+    </SelectedTemplate>
+</MudFileUpload>

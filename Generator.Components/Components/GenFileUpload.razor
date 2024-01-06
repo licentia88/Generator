@@ -1,7 +1,7 @@
 ﻿@inherits MudFileUpload<IBrowserFile>
 @implements IGenFileUpload
 
-@if (Model is null) return;
+@if (Model is null) {return;}
 
 <MudFileUpload T="IBrowserFile" FilesChanged="FilesChanged">
     <ButtonTemplate>

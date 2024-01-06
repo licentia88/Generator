@@ -16,36 +16,36 @@ public static class ComponentExtensions
 		return result.Data;
 	}
 
-    public static void VisibleIf(this IGenComponent component, Func<bool> predicate)
+    public static void VisibleIf(this IGenControl component, Func<bool> predicate)
     {
         component.EditorVisible = predicate();
     }
 
-    public static void Hide(this IGenComponent component)
+    public static void Hide(this IGenControl component)
     {
         component.SetEmpty();
         component.EditorVisible = false;
        
     }
 
-    public static void Show(this IGenComponent component)
+    public static void Show(this IGenControl component)
     {
         component.EditorVisible = true;
     }
 
-    public static void Disable(this IGenComponent component)
+    public static void Disable(this IGenControl component)
     {
         component.SetEmpty();
         component.EditorEnabled = false;
 
     }
 
-    public static void Enable(this IGenComponent component)
+    public static void Enable(this IGenControl component)
     {
         component.EditorEnabled = true;
     }
 
-    public static void EnabledIf(this IGenComponent component, Func<bool> predicate)
+    public static void EnabledIf(this IGenControl component, Func<bool> predicate)
     {
         component.EditorEnabled = predicate();
     }

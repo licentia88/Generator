@@ -2,7 +2,7 @@
 
 namespace Generator.Components.Interfaces;
 
-public interface IGenAutoComplete : IGenComponent
+public interface IGenAutoComplete : IGenControl
 {
     public string DisplayField { get; set; }
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Generator.Components.Interfaces;
 
-public interface IGenComboBox: IGenComponent
+public interface IGenComboBox: IGenControl
 {
     public IEnumerable<object> DataSource { get; set; }
 

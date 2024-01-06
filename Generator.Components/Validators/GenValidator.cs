@@ -13,7 +13,7 @@ public class GenValidator<T>
         return ValidateDataSource(model, null);
     }
 
-    public bool ValidateDataSource(T model, IEnumerable<IGenComponent> components)
+    public bool ValidateDataSource(T model, IEnumerable<IGenControl> components)
     {
          
         foreach (var component in components)
@@ -56,7 +56,7 @@ public class GenValidator<T>
         return isValid;
     }
 
-    private void ValidateByRequiredTags(IEnumerable<IGenComponent> components, ref bool isValid)
+    private void ValidateByRequiredTags(IEnumerable<IGenControl> components, ref bool isValid)
     {
         foreach (var comp in components)
         {
@@ -70,7 +70,7 @@ public class GenValidator<T>
         }
     }
   
-    public bool ValidateComponentValue(IGenComponent component)
+    public bool ValidateComponentValue(IGenControl component)
     {
 
         //if (component.Model.IsModel())
@@ -80,7 +80,7 @@ public class GenValidator<T>
     }
 
 
-    private bool ValidateModelValue(IGenComponent component)
+    private bool ValidateModelValue(IGenControl component)
     {
         bool isValid;
 
@@ -133,13 +133,13 @@ public class GenValidator<T>
         return isValid;
     }
 
-    private void SetError(IGenComponent component)
+    private void SetError(IGenControl component)
     {
         var errorMessage = string.IsNullOrEmpty(component.ErrorText) ? "*" : component.ErrorText;
         SetError(component, errorMessage);
     }
 
-    private void SetError(IGenComponent component, string errorMessage)
+    private void SetError(IGenControl component, string errorMessage)
     {
         if (component is null) return;
 
@@ -149,7 +149,7 @@ public class GenValidator<T>
         component.ErrorText = errorMessage;
     }
 
-    public void ResetValidation(IGenComponent component)
+    public void ResetValidation(IGenControl component)
     {
         if (component is null) return;
 

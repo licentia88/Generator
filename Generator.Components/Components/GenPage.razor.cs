@@ -40,7 +40,7 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
     public List<(Type type, IGenComponent component)> Components { get; set; }
 
     [Parameter]
-    public List<IGenComponent> SearchFieldComponents { get; set; }
+    public List<IGenControl> SearchFieldComponents { get; set; }
 
     [Parameter]
     public EventCallback<IGenView<TModel>> Load { get; set; }
@@ -164,7 +164,7 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
     {
         if (!((INonGenView)this).IsTopLevel) return;
         GenGrid.RefreshButtonState();
-        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component));
+        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component as IGenControl));
         MudDialog.Close();
     }
 
@@ -202,7 +202,7 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
 
        
 
-    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
         var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component.BindingField.Equals(bindingField));
 
@@ -221,7 +221,7 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
         }
 
 
-         (GenGrid as INonGenGrid).ForceRenderAll();
+        (GenGrid as INonGenGrid).ForceRenderAll();
 
         //SelectedItem = default;
         //GenGrid.SelectedItem = default;
@@ -229,14 +229,14 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
 
         RefreshParentGrid.InvokeAsync();
 
-        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component));
+        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component as IGenControl));
 
         MudDialog.Dispose();
 
            
     }
 
-    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
         var item = SearchFieldComponents.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
 
@@ -245,7 +245,7 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
 
     public bool HasErrors()
     {
-        var result = Components.Any(x => x.component.Error);
+        var result = Components.Any(x => x.component is IGenControl cntrl && cntrl.Error);
 
         return result;
     }

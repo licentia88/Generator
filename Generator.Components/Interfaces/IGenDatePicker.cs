@@ -1,6 +1,6 @@
 ﻿namespace Generator.Components.Interfaces;
 
-public interface IGenDatePicker : IGenComponent
+public interface IGenDatePicker : IGenControl
 {
     public void SetValue(DateTime? date);
 

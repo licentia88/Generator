@@ -12,7 +12,7 @@
 
             if (!((INonGenGrid)this).IsRendered)
             {
-                <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
+                <CascadingValue Value="true" Name="@(nameof(IGenControl.IsSearchField))">
                     @GenSearchFields
                 </CascadingValue>
             }
@@ -60,9 +60,9 @@
                                     searchFieldModel.Add(item.BindingField, null);
                                 }
 
-                                <CascadingValue Value="true" Name="@(nameof(IGenComponent.IsSearchField))">
+                                <CascadingValue Value="true" Name="@(nameof(IGenControl.IsSearchField))">
                                     @{
-                                        foreach (IGenComponent searchComp in SearchFieldComponents.OrderBy(x => x.Order).ToList())
+                                        foreach (IGenControl searchComp in SearchFieldComponents.OrderBy(x => x.Order).ToList())
                                         {
                                             <MudItem xs="searchComp.xs"
                                                      sm="searchComp.sm"
@@ -200,7 +200,7 @@
                                 </MudTh>
                             }
 
-                            Func<IGenComponent, bool> predicate;
+                            Func<IGenControl, bool> predicate;
 
                             if (ViewState != ViewState.None && EditMode == EditMode.Inline)
                             {   //edit create vs
@@ -226,7 +226,7 @@
                                 predicate = x => x is not GenSpacer;
                             }
 
-                            foreach (var item in GetComponentsOf<IGenComponent>().Where(predicate).OrderBy(x => x.Order))
+                            foreach (var item in GetComponentsOf<IGenControl>().Where(predicate).OrderBy(x => x.Order))
                             {
                                 if (ViewState == ViewState.None)
                                 {
@@ -400,9 +400,11 @@
                                     }
                                     else
                                     {
-
-                                        if (component.ClearIfNotVisible)
-                                            component.SetEmpty();
+                                        if (component is IGenControl cntrl)
+                                        {
+                                            cntrl.SetEmpty();
+                                        }
+                                       
 
                                     }
 

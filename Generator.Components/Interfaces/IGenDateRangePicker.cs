@@ -2,7 +2,7 @@
 
 namespace Generator.Components.Interfaces;
 
-public interface IGenDateRangePicker : IGenComponent
+public interface IGenDateRangePicker : IGenControl
 {
     public void SetValue(DateRange range);
 

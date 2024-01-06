@@ -31,9 +31,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [EditorRequired]
     public string BindingField { get; set; }
 
-    Type IGenComponent.DataType { get; set; } = typeof(object);
+    Type IGenControl.DataType { get; set; } = typeof(object);
 
-    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
+    object IGenControl.GetDefaultValue => ((IGenControl)this).DataType.GetDefaultValue();
 
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -79,8 +79,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     //[Parameter]
     //public Action<object> ValueChangedAction { get; set; }
 
-    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
-    bool IGenComponent.IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenControl.IsSearchField))]
+    bool IGenControl.IsSearchField { get; set; }
 
     [Parameter]
     public Func<object, bool> EditorVisibleIf { get; set; }
@@ -114,16 +114,16 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     private void AddComponents()
     {
-        if (((IGenComponent)this).IsSearchField)
-            ((INonGenGrid)((IGenComponent)this).Parent)?.AddSearchFieldComponent(this);
+        if (((IGenControl)this).IsSearchField)
+            ((INonGenGrid)((IGenControl)this).Parent)?.AddSearchFieldComponent(this);
         else
-            ((IGenComponent)this).Parent?.AddChildComponent(this);
+            ((IGenControl)this).Parent?.AddChildComponent(this);
 
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (((IGenComponent)this).Parent is not null && Model is not null)
+        if (((IGenControl)this).Parent is not null && Model is not null)
             base.BuildRenderTree(builder);
 
         //if (Model is not null && Model.GetType().Name != "Object")
@@ -136,17 +136,17 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     public async Task OnClearClickedAsync(MouseEventArgs arg)
     {
 
-        if (((IGenComponent)this).IsSearchField)
+        if (((IGenControl)this).IsSearchField)
         {
             SetValue(null);
 
-            await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, default, ((IGenComponent)this).IsSearchField));
+            await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, default, ((IGenControl)this).IsSearchField));
 
             Validate();
             return;
         }
 
-        ((IGenComponent)this).SetEmpty();
+        ((IGenControl)this).SetEmpty();
 
         ////Model.SetPropertyValue(BindingField, null);
 
@@ -163,7 +163,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
        
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         // ReSharper disable once HeuristicUnreachableCode
-        if (this is not IGenComponent comp) return;
+        if (this is not IGenControl comp) return;
 
         if (comp.IsSearchField)
         {
@@ -183,14 +183,14 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         comp.Parent.StateHasChanged();
         if (comp.Parent is INonGenGrid grid)
             grid.CurrentGenPage?.StateHasChanged();
-     }
+    }
 
 
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         if (value is null) return;
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value, ((IGenComponent)this).IsSearchField));
+        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value, ((IGenControl)this).IsSearchField));
 
         Validate();
     }
@@ -234,10 +234,10 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
         //    Model = model;
 
-        if (!((IGenComponent)this).IsSearchField)
+        if (!((IGenControl)this).IsSearchField)
             Model = model;
         
-        if (((IGenComponent)this).IsSearchField && Model is null)
+        if (((IGenControl)this).IsSearchField && Model is null)
         {
             Model = model;
         }
@@ -247,7 +247,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         SetCallBackEvents();
 
-        if (((IGenComponent)this).IsSearchField)
+        if (((IGenControl)this).IsSearchField)
         {
             Clearable = true;
         }
@@ -257,7 +257,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
             if (DataSource is null) return;
 
-            foreach (var data in DataSource.Where(x => Where?.Invoke(new ComponentArgs<object>(Model,x,((IGenComponent)this).IsSearchField)) ?? true))
+            foreach (var data in DataSource.Where(x => Where?.Invoke(new ComponentArgs<object>(Model,x,((IGenControl)this).IsSearchField)) ?? true))
             {
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
@@ -295,9 +295,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         RenderExtensions.RenderGrid(builder, selectedField.GetPropertyValue(DisplayField));
     };
 
-    void IGenComponent.ValidateObject()
+    void IGenControl.ValidateObject()
     {
-        if(((IGenComponent)this).Parent is INonGenGrid grid)
+        if(((IGenControl)this).Parent is INonGenGrid grid)
             grid.ValidateField(BindingField);
 
         //((IGenComponent)this).Parent.ValidateField(BindingField);
@@ -305,28 +305,28 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public object GetValue()
     {
-        if (((IGenComponent)this).IsSearchField)
-            return ((IGenComponent)this).GetSearchValue();
+        if (((IGenControl)this).IsSearchField)
+            return ((IGenControl)this).GetSearchValue();
         else
             return this.GetFieldValue(nameof(_value));
     }
 
 
 
-    void IGenComponent.SetSearchValue(object value)
+    void IGenControl.SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value.GetPropertyValue(BindingField);
-        ((IGenComponent)this).Parent.StateHasChanged();
+        ((IGenControl)this).Parent.StateHasChanged();
     }
 
-    object IGenComponent.GetSearchValue()
+    object IGenControl.GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
     }
 
-    void IGenComponent.SetEmpty()
+    void IGenControl.SetEmpty()
     {
-        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+        var defaultValue = ((IGenControl)this).DataType.GetDefaultValue();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
 
@@ -339,16 +339,16 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
         await base.Clear();
 
-        ((IGenComponent)this).SetEmpty();
+        ((IGenControl)this).SetEmpty();
     }
 
     public new bool Validate()
     {
-        if (((IGenComponent)this).IsSearchField)
-            return ((INonGenGrid)((IGenComponent)this).Parent).ValidateSearchField(BindingField);
+        if (((IGenControl)this).IsSearchField)
+            return ((INonGenGrid)((IGenControl)this).Parent).ValidateSearchField(BindingField);
 
-        if(((IGenComponent)this).Parent is INonGenGrid grid)
-           return grid.ValidateField(BindingField);
+        if(((IGenControl)this).Parent is INonGenGrid grid)
+            return grid.ValidateField(BindingField);
 
         return true;
         //return ((IGenComponent)this).Parent.ValidateField(BindingField);
@@ -356,19 +356,19 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     bool IGenComponent.IsEditorVisible(object model)
     {
-        return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
+        return ((IGenControl)this).EditorVisibleIf?.Invoke(model) ?? ((IGenControl)this).EditorVisible;
     }
 
-    bool IGenComponent.IsRequired(object model)
+    bool IGenControl.IsRequired(object model)
     {
-        return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
+        return ((IGenControl)this).RequiredIf?.Invoke(model) ?? ((IGenControl)this).Required;
     }
 
-    void IGenComponent.ValidateField()
+    void IGenControl.ValidateField()
     {
         if (Model is null) return;
 
-        if (((IGenComponent)this).IsEditorVisible(Model))
+        if (((IGenControl)this).IsEditorVisible(Model))
         {
             var loValue = Model.GetPropertyValue(BindingField);
 

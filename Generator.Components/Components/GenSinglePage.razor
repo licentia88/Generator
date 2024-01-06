@@ -72,8 +72,8 @@
                                         }
                                         else
                                         {
-                                            if (componentDetail.ClearIfNotVisible)
-                                                componentDetail.SetEmpty();
+                                            if(componentDetail is IGenControl cntrl && cntrl.ClearIfNotVisible)
+                                                cntrl.SetEmpty();
                                         }
 
                                     }

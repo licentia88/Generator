@@ -66,10 +66,10 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     public string Label { get; set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    Type IGenComponent.DataType { get; set; }
+    Type IGenControl.DataType { get; set; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    object IGenComponent.GetDefaultValue { get;  }
+    object IGenControl.GetDefaultValue { get;  }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public bool Required { get; set; }
@@ -78,12 +78,12 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     public string ErrorText { get; set; }
 
-    public IGenComponent Reference { get; set; }
+    public IGenControl Reference { get; set; }
 
     public Action<object> ValueChangedAction { get; set; }
 
-    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
-    bool IGenComponent.IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenControl.IsSearchField))]
+    bool IGenControl.IsSearchField { get; set; }
 
     public Func<object, bool> EditorVisibleIf { get; set; }
     public Func<object, bool> EditorEnabledIf { get; set; }
@@ -106,7 +106,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
 
     private void AddComponents()
     {
-        if (((IGenComponent)this).IsSearchField)
+        if (((IGenControl)this).IsSearchField)
             ((INonGenGrid)Parent)?.AddSearchFieldComponent(this);
         else
             Parent?.AddChildComponent(this);
@@ -140,7 +140,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         //RenderExtensions.RenderGrid(builder, "");
     };
 
-    void IGenComponent.ValidateObject()
+    void IGenControl.ValidateObject()
     {
     }
 
@@ -149,17 +149,17 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         throw new NotImplementedException();
     }
 
-    void IGenComponent.SetSearchValue(object Value)
+    void IGenControl.SetSearchValue(object Value)
     {
         throw new NotImplementedException();
     }
 
-    object IGenComponent.GetSearchValue()
+    object IGenControl.GetSearchValue()
     {
         throw new NotImplementedException();
     }
 
-    void IGenComponent.SetValue(object value)
+    void IGenControl.SetValue(object value)
     {
         //throw new NotImplementedException();
     }
@@ -184,12 +184,12 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         return true;
     }
 
-    bool IGenComponent.IsRequired(object Model)
+    bool IGenControl.IsRequired(object Model)
     {
         return false;
     }
 
-    void IGenComponent.ValidateField()
+    void IGenControl.ValidateField()
     {
          
     }

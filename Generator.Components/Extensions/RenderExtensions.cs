@@ -39,7 +39,8 @@ public static class RenderExtensions
             builder.AddAttribute(i, additional.Key, additional.Value);
             i++;
         }
-        //builder.AddComponentReferenceCapture(i++, ins => { component.Reference = (IGenComponent)ins; });
+
+       
         builder.CloseComponent();
 
     }
@@ -51,7 +52,7 @@ public static class RenderExtensions
                         && x.Name != "UserAttributes");
 
         if (IgnoreLabels)
-            properties = properties.Where(x => !x.Name.Equals(nameof(IGenComponent.Label)));
+            properties = properties.Where(x => !x.Name.Equals(nameof(IGenControl.Label)));
 
 
         foreach (var property in properties)

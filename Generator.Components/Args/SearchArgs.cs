@@ -142,14 +142,14 @@ public class GenArgs<TModel> : EventArgs
 
 public class SearchArgs:EventArgs
 {
-    public List<IGenComponent> Components { get; set; }
+    public List<IGenControl> Components { get; set; }
 
     public SearchArgs()
     {
 
     }
 
-    public SearchArgs(List<IGenComponent> components)
+    public SearchArgs(List<IGenControl> components)
     {
         Components = components;
     }
@@ -160,7 +160,7 @@ public class SearchArgs:EventArgs
 
 
 
-    public IGenComponent GetComponent(string BindingField) => Components.FirstOrDefault(x => x.BindingField == BindingField);
+    public IGenControl GetComponent(string BindingField) => Components.FirstOrDefault(x => x.BindingField == BindingField);
 
 
     public T GetComponentValueAs<T>(string bindingField)

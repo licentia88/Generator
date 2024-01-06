@@ -110,7 +110,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     public List<(Type type, IGenComponent component)> Components { get; set; } = new();
 
-    public List<IGenComponent> SearchFieldComponents { get; set; } = new();
+    public List<IGenControl> SearchFieldComponents { get; set; } = new();
 
 
     private string _searchString = string.Empty;
@@ -412,7 +412,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     public bool HasErrors()
     {
-        var result = Components.Any(x => x.component.Error);
+        var result = Components.Any(x => x.component is IGenControl {Error: true});
+        
 
         return result;
     }
@@ -624,7 +625,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         foreach (var item in Components)
         {
-            ((INonGenGrid)this).ResetValidation(item.component);
+            if(item.component is not IGenControl cntrl) return;
+            ((INonGenGrid)this).ResetValidation(cntrl);
         }
       
         //RefreshButtonState sonunda statehaschanged var
@@ -703,21 +705,21 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     }
 
    
-    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
         var item = SearchFieldComponents.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
 
         return item is null ? default : item.CastTo<TComponent>();
     }
 
-    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent
+    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
         var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component.BindingField.Equals(bindingField));
 
         return item.component is null ? default : item.component.CastTo<TComponent>();
     }
 
-    private List<TComponent> GetComponentsOf<TComponent>() where TComponent : IGenComponent
+    private List<TComponent> GetComponentsOf<TComponent>() where TComponent : IGenControl
     {
         var result = Components.Where(arg => arg.component is TComponent).Select(x=> x.component).Cast<TComponent>().ToList();
         return result;
@@ -746,7 +748,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         Components.Add((componentType, childComponent));
     }
 
-    void INonGenGrid.AddSearchFieldComponent(IGenComponent component)
+    void INonGenGrid.AddSearchFieldComponent(IGenControl component)
     {
         //if (component is not GenSpacer && string.IsNullOrEmpty(component.BindingField)) return;
 
@@ -787,9 +789,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     bool INonGenGrid.ValidateSearchField(string BindingField)
     {
-        var comp = GetSearchFieldComponent<IGenComponent>(BindingField);
+        var comp = GetSearchFieldComponent<IGenControl>(BindingField);
 
-        return ((INonGenGrid)this).ValidateSearchFields(new List<IGenComponent> { comp });
+        return ((INonGenGrid)this).ValidateSearchFields(new List<IGenControl> { comp });
         //return GenValidator.ValidateComponentValue(comp);
     }
 
@@ -798,7 +800,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         return ((INonGenGrid)this).ValidateSearchFields(SearchFieldComponents);
     }
 
-    bool INonGenGrid.ValidateSearchFields(IEnumerable<IGenComponent> searchFields)
+    bool INonGenGrid.ValidateSearchFields(IEnumerable<IGenControl> searchFields)
     {
         //var genComponents = searchFields as IGenComponent[] ?? searchFields.ToArray();
        
@@ -822,11 +824,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     public bool ValidateModel()
     {
-        var isValid = GenValidator.ValidateDataSource(SelectedItem, Components.Select(x=> x.component));
-        //var result = SelectedItem.IsModel() ?
-        //    GenValidator.ValidateDataSource(SelectedItem,all?Components.Select(x=> x.component):null) :
-        //    Components.Where(x=> x.type !=typeof(GenSpacer) && x.component.EditorVisible).All(x => GenValidator.ValidateComponentValue(x.component));
-
+        var isValid = GenValidator.ValidateDataSource(SelectedItem, Components.Where(x=> x.component is IGenControl).Select(x=>   x.component as IGenControl));
+     
         if (!isValid)
             ((INonGenGrid)this).ForceRenderOnce = true;
         
@@ -843,7 +842,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     {
         var component = Components.FirstOrDefault(x => x.component.BindingField == propertyName);
 
-        var result = GenValidator.ValidateComponentValue(component.component);
+        var result = GenValidator.ValidateComponentValue(component.component as IGenControl);
 
         if (!result)
             ((INonGenGrid)this).ForceRenderOnce = true;
@@ -854,9 +853,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     }
 
 
-    void INonGenGrid.ResetValidations(IEnumerable<IGenComponent> components)
+    void INonGenGrid.ResetValidations(IEnumerable<IGenControl> components)
     {
-        foreach (var component in components.Where(x=> x.Error))
+        foreach (var component in components.Where(x=> x is IGenControl && x.Error))
         {
             GenValidator.ResetValidation(component);
         }
@@ -870,7 +869,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         }
     }
 
-    void INonGenGrid.ResetValidation(IGenComponent component)
+    void INonGenGrid.ResetValidation(IGenControl component)
     {
         GenValidator.ResetValidation(component);
     }
@@ -898,7 +897,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         }
 
         // Create a dictionary of default values from the Components collection
-        var newData = Components.Where(x => x.type != typeof(GenSpacer)).ToDictionary(comp => comp.component.BindingField, comp => comp.component.GetDefaultValue);
+        var newData = Components.Where(x => x.type != typeof(GenSpacer) && x.type !=(typeof(GenButton))).ToDictionary(comp => comp.component.BindingField, comp => (comp.component as IGenControl)?.GetDefaultValue);
 
         // Configure TypeAdapter to transform newData dictionary to TModel
         TypeAdapterConfig.GlobalSettings.NewConfig(newData.GetType(), typeof(TModel))
@@ -976,7 +975,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     {
         if (string.IsNullOrEmpty(_searchString)) return true;
 
-        var searchableFields = GetComponentsOf<IGenComponent>().Where((x) => x.BindingField is not null && x.GridVisible);
+        var searchableFields = GetComponentsOf<IGenControl>().Where((x) => x.BindingField is not null && x.GridVisible);
 
         var genComponents = searchableFields.ToList();
         foreach (var component in genComponents)

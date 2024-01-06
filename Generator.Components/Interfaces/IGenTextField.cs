@@ -1,6 +1,6 @@
 ﻿namespace Generator.Components.Interfaces;
 
-public interface IGenTextField : IGenComponent
+public interface IGenTextField : IGenControl
 {
     public int MaxLength { get; set; }
 

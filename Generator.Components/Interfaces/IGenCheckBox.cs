@@ -1,8 +1,7 @@
 ﻿namespace Generator.Components.Interfaces;
 
-public interface IGenCheckBox : IGenComponent
+public interface IGenCheckBox : IGenControl
 {
-
     public string TrueText { get; set; }
 
     public string FalseText { get; set; }

@@ -73,17 +73,17 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
    
 
-    Type IGenComponent.DataType { get; set; }
+    Type IGenControl.DataType { get; set; }
 
-    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
+    object IGenControl.GetDefaultValue => ((IGenControl)this).DataType.GetDefaultValue();
 
-    [CascadingParameter( Name = nameof(IGenComponent.IsSearchField))]
-    bool IGenComponent.IsSearchField { get; set; }
+    [CascadingParameter( Name = nameof(IGenControl.IsSearchField))]
+    bool IGenControl.IsSearchField { get; set; }
 
    
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (((IGenComponent)this).Parent is not null && Model is not null)
+        if (((IGenControl)this).Parent is not null && Model is not null)
         {
             base.BuildRenderTree(builder);
         }
@@ -100,12 +100,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Converter = _dateConverter;
             Culture = CultureInfo.GetCultureInfo("en-US");
             Format = "yyyy-MM-dd";
-            ((IGenComponent)this).DataType = typeof(DateTime);
+            ((IGenControl)this).DataType = typeof(DateTime);
         }
         else
         {
             Converter = _stringConverter;
-            ((IGenComponent)this).DataType = typeof(string);
+            ((IGenControl)this).DataType = typeof(string);
         }
 
         //Immediate = true;
@@ -123,10 +123,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     private void AddComponents()
     {
-        if (((IGenComponent)this).IsSearchField)
-            ((INonGenGrid)((IGenComponent)this).Parent)?.AddSearchFieldComponent(this);
+        if (((IGenControl)this).IsSearchField)
+            ((INonGenGrid)((IGenControl)this).Parent)?.AddSearchFieldComponent(this);
         else
-            ((IGenComponent)this).Parent?.AddChildComponent(this);
+            ((IGenControl)this).Parent?.AddChildComponent(this);
     }
 
   
@@ -159,7 +159,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         // ReSharper disable once HeuristicUnreachableCode
-        if (this is not IGenComponent comp) return;
+        if (this is not IGenControl comp) return;
 
         if (comp.IsSearchField)
             comp.SetSearchValue(value);
@@ -182,14 +182,14 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public void OnClearClicked(MouseEventArgs arg)
     {
-        if (((IGenComponent)this).IsSearchField)
+        if (((IGenControl)this).IsSearchField)
         {
             SetValue(null);
             Validate();
             return;
         }
 
-        ((IGenComponent)this).SetEmpty();
+        ((IGenControl)this).SetEmpty();
         //Model?.SetPropertyValue(BindingField, null);
     }
 
@@ -226,17 +226,17 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
         //    Model = model;
 
-        if (!((IGenComponent)this).IsSearchField)
+        if (!((IGenControl)this).IsSearchField)
             Model = model;
 
-        if (((IGenComponent)this).IsSearchField && Model is null)
+        if (((IGenControl)this).IsSearchField && Model is null)
         {
             Model = model;
         }
 
         SetCallBackEvents();
 
-        if (((IGenComponent)this).IsSearchField)
+        if (((IGenControl)this).IsSearchField)
         {
             Clearable = true;
         }
@@ -271,9 +271,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         RenderExtensions.RenderGrid(builder, data);
     };
 
-    void IGenComponent.ValidateObject()
+    void IGenControl.ValidateObject()
     {
-        if (((IGenComponent)this).Parent is INonGenGrid grid)
+        if (((IGenControl)this).Parent is INonGenGrid grid)
             grid.ValidateField(BindingField);
 
         //((IGenComponent)this).Parent.ValidateField(BindingField);
@@ -281,26 +281,26 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public object GetValue()
     {
-        if (((IGenComponent)this).IsSearchField)
-            return ((IGenComponent)this).GetSearchValue();
+        if (((IGenControl)this).IsSearchField)
+            return ((IGenControl)this).GetSearchValue();
         else
             return this.GetFieldValue(nameof(_value));
     }
 
-    void IGenComponent.SetSearchValue(object value)
+    void IGenControl.SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
-        ((IGenComponent)this).Parent?.StateHasChanged();
+        ((IGenControl)this).Parent?.StateHasChanged();
     }
 
-    object IGenComponent.GetSearchValue()
+    object IGenControl.GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
     }
 
-    void IGenComponent.SetEmpty()
+    void IGenControl.SetEmpty()
     {
-        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+        var defaultValue = ((IGenControl)this).DataType.GetDefaultValue();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
         Value = null;
@@ -313,48 +313,47 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     {
         await base.Clear();
 
-        ((IGenComponent)this).SetEmpty();
+        ((IGenControl)this).SetEmpty();
     }
 
     public new bool Validate()
     {
-        if (((IGenComponent)this).IsSearchField)
-            return ((INonGenGrid)((IGenComponent)this).Parent).ValidateSearchField(BindingField);
+        if (((IGenControl)this).IsSearchField)
+            return ((INonGenGrid)((IGenControl)this).Parent).ValidateSearchField(BindingField);
 
-        if (((IGenComponent)this).Parent is INonGenGrid grid)
+        if (((IGenControl)this).Parent is INonGenGrid grid)
             return grid.ValidateField(BindingField);
 
         return true;
     }
 
 
-    void IGenComponent.ValidateField()
+    void IGenControl.ValidateField()
     {
         if (Model is null) return;
 
-        if (((IGenComponent)this).IsEditorVisible(Model))
-        {
-            var loValue = Model.GetPropertyValue(BindingField);
+        if (!((IGenComponent) this).IsEditorVisible(Model)) return;
+        
+        var loValue = Model.GetPropertyValue(BindingField);
 
-            if (RequiredIf is not null)
-            {
-                Error = RequiredIf.Invoke(Model);
-            }
-            else if (Required)
-            {
-                Error = loValue is null || loValue.ToString() == string.Empty;
-            }
+        if (RequiredIf is not null)
+        {
+            Error = RequiredIf.Invoke(Model);
+        }
+        else if (Required)
+        {
+            Error = loValue is null || loValue.ToString() == string.Empty;
         }
     }
 
     bool IGenComponent.IsEditorVisible(object model)
     {
-        return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
+        return ((IGenControl)this).EditorVisibleIf?.Invoke(model) ?? ((IGenControl)this).EditorVisible;
     }
 
-    bool IGenComponent.IsRequired(object model)
+    bool IGenControl.IsRequired(object model)
     {
-         return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
+         return ((IGenControl)this).RequiredIf?.Invoke(model) ?? ((IGenControl)this).Required;
     }
 
    

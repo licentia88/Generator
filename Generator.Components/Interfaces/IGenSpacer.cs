@@ -1,3 +1,3 @@
 ﻿namespace Generator.Components.Interfaces;
 
-public interface IGenSpacer : IGenComponent { }
+public interface IGenSpacer : IGenControl { }

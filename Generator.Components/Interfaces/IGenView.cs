@@ -16,11 +16,11 @@ public interface INonGenView: IPageBase
 
     public List<(Type type, IGenComponent component)> Components { get; set; }
 
-    public List<IGenComponent> SearchFieldComponents { get; set; }
+    public List<IGenControl> SearchFieldComponents { get; set; }
 
-    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
+    public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenControl;
 
-    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenComponent;
+    public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenControl;
 
     bool IsTopLevel { get; set; }
 

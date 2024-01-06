@@ -33,7 +33,7 @@
     
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.10.0" />
+    <PackageReference Include="MudBlazor" Version="6.12.0" />
     <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
@@ -62,7 +62,6 @@
   <ItemGroup>
     <Folder Include="Args\" />
     <Folder Include="Enums\" />
-    <Folder Include="Components\" />
     <Folder Include="Helpers\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Extensions\" />
@@ -77,7 +76,6 @@
     <Compile Remove="Renderers\ModelRenderer.cs" />
     <Compile Remove="Renderers\IRendererBase.cs" />
     <Compile Remove="Renderers\RendererBase.cs" />
-    <Compile Remove="Components\GenButton.cs" />
     <Compile Remove="Components\GridSpacer.cs" />
     <Compile Remove="Components\GenColumnBase.cs" />
     <Compile Remove="Components\GenGridColumn.cs" />

@@ -14,7 +14,7 @@ namespace Generator.Components.Components;
 
 public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 {
-    [CascadingParameter(Name = nameof(IGenComponent.Parent))]
+    [CascadingParameter(Name = nameof(IGenControl.Parent))]
     IPageBase IGenComponent.Parent { get; set; }
 
     [Parameter, EditorRequired]
@@ -33,9 +33,9 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     [EditorRequired]
     public string BindingField { get; set; }
 
-    Type IGenComponent.DataType { get; set; } = typeof(object);
+    Type IGenControl.DataType { get; set; } = typeof(object);
 
-    object IGenComponent.GetDefaultValue => ((IGenComponent)this).DataType.GetDefaultValue();
+    object IGenControl.GetDefaultValue => ((IGenControl)this).DataType.GetDefaultValue();
 
     [Parameter]
     [Range(1, 12, ErrorMessage = "Column width must be between 1 and 12")]
@@ -84,8 +84,8 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     [Parameter]
     public Func<ComponentArgs<T>, bool> Where { get; set; }
 
-    [CascadingParameter(Name = nameof(IGenComponent.IsSearchField))]
-    bool IGenComponent.IsSearchField { get; set; }
+    [CascadingParameter(Name = nameof(IGenControl.IsSearchField))]
+    bool IGenControl.IsSearchField { get; set; }
 
     [Parameter]
     public Func<object, bool> EditorVisibleIf { get; set; }
@@ -192,14 +192,14 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         {
             if (string.IsNullOrEmpty(value) )
             {
-                var dataToReturn = DataSource.Where(x => Where?.Invoke(new ComponentArgs<T>(Model,x, ((IGenComponent)this).IsSearchField)) ?? true).Take(MaxItems.Value).ToList();
+                var dataToReturn = DataSource.Where(x => Where?.Invoke(new ComponentArgs<T>(Model,x, ((IGenControl)this).IsSearchField)) ?? true).Take(MaxItems.Value).ToList();
                 Count = dataToReturn.Count;
                 return dataToReturn;
             }
 
 
             var filteredData = DataSource
-                               .Where(x => Where?.Invoke(new ComponentArgs<T>(Model, x, ((IGenComponent)this).IsSearchField)) ?? true)
+                               .Where(x => Where?.Invoke(new ComponentArgs<T>(Model, x, ((IGenControl)this).IsSearchField)) ?? true)
                                .Where(x => x.GetType().GetProperty(DisplayField).GetValue(x).ToString().StartsWith(value, StringComparison.InvariantCultureIgnoreCase))
                                .ToList();
 
@@ -218,16 +218,16 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
     protected void AddComponents()
     {
-        if (((IGenComponent)this).IsSearchField)
-            ((INonGenGrid)((IGenComponent)this).Parent)?.AddSearchFieldComponent(this);
+        if (((IGenControl)this).IsSearchField)
+            ((INonGenGrid)((IGenControl)this).Parent)?.AddSearchFieldComponent(this);
         else
-            ((IGenComponent)this).Parent?.AddChildComponent(this);
+            ((IGenControl)this).Parent?.AddChildComponent(this);
 
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (((IGenComponent)this).Parent is not null && Model is not null)
+        if (((IGenControl)this).Parent is not null && Model is not null)
             base.BuildRenderTree(builder);
 
         //if (Model is not null && Model.GetType().Name != "Object")
@@ -265,7 +265,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     {
         //if (value is null) return;
 
-        if (this is not IGenComponent comp) return;
+        if (this is not IGenControl comp) return;
 
         var loValue = value.GetPropertyValue(ValueField);
 
@@ -304,7 +304,7 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     protected override async Task SetValueAsync(T value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(new ComponentArgs<T>(Model, value, ((IGenComponent)this).IsSearchField));
+        await OnValueChanged.InvokeAsync(new ComponentArgs<T>(Model, value, ((IGenControl)this).IsSearchField));
         Validate();
     }
    
@@ -369,10 +369,10 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
         //    Model = model;
 
-        if (!((IGenComponent)this).IsSearchField)
+        if (!((IGenControl)this).IsSearchField)
             Model = model;
 
-        if (((IGenComponent)this).IsSearchField && Model is null)
+        if (((IGenControl)this).IsSearchField && Model is null)
         {
             Model = model;
         }
@@ -426,9 +426,9 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
     };
 
 
-    void IGenComponent.ValidateObject()
+    void IGenControl.ValidateObject()
     {
-        if (((IGenComponent)this).Parent is INonGenGrid grid)
+        if (((IGenControl)this).Parent is INonGenGrid grid)
             grid.ValidateField(BindingField);
 
         //((IGenComponent)this).Parent.ValidateField(BindingField);
@@ -436,29 +436,29 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
     public object GetValue()
     {
-        if (((IGenComponent)this).IsSearchField)
-            return ((IGenComponent)this).GetSearchValue();
+        if (((IGenControl)this).IsSearchField)
+            return ((IGenControl)this).GetSearchValue();
         else
             return this.GetFieldValue(nameof(_value));
     }
 
 
 
-    void IGenComponent.SetSearchValue(object value)
+    void IGenControl.SetSearchValue(object value)
     {
         Model.CastTo<Dictionary<string, object>>()[BindingField] = value.GetPropertyValue(BindingField);
-        ((IGenComponent)this).Parent.StateHasChanged();
+        ((IGenControl)this).Parent.StateHasChanged();
     }
 
-    object IGenComponent.GetSearchValue()
+    object IGenControl.GetSearchValue()
     {
         return Model.GetPropertyValue(BindingField);
         
     }
 
-    void IGenComponent.SetEmpty()
+    void IGenControl.SetEmpty()
     {
-        var defaultValue = ((IGenComponent)this).DataType.GetDefaultValue();
+        var defaultValue = ((IGenControl)this).DataType.GetDefaultValue();
 
         Model?.SetPropertyValue(BindingField, defaultValue);
 
@@ -534,10 +534,10 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
     public new bool Validate()
     {
-        if (((IGenComponent)this).IsSearchField)
-            return ((INonGenGrid)((IGenComponent)this).Parent).ValidateSearchField(BindingField);
+        if (((IGenControl)this).IsSearchField)
+            return ((INonGenGrid)((IGenControl)this).Parent).ValidateSearchField(BindingField);
 
-        if (((IGenComponent)this).Parent is INonGenGrid grid)
+        if (((IGenControl)this).Parent is INonGenGrid grid)
             return grid.ValidateField(BindingField);
 
         return true;
@@ -546,19 +546,19 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
     bool IGenComponent.IsEditorVisible(object model)
     {
-        return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
+        return ((IGenControl)this).EditorVisibleIf?.Invoke(model) ?? ((IGenControl)this).EditorVisible;
     }
 
-    bool IGenComponent.IsRequired(object model)
+    bool IGenControl.IsRequired(object model)
     {
-        return ((IGenComponent)this).RequiredIf?.Invoke(model) ?? ((IGenComponent)this).Required;
+        return ((IGenControl)this).RequiredIf?.Invoke(model) ?? ((IGenControl)this).Required;
     }
 
-    void IGenComponent.ValidateField()
+    void IGenControl.ValidateField()
     {
         if (Model is null) return;
 
-        if (((IGenComponent)this).IsEditorVisible(Model))
+        if (((IGenControl)this).IsEditorVisible(Model))
         {
             var loValue = Model.GetPropertyValue(BindingField);
 

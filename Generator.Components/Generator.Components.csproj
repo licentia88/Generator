@@ -11,7 +11,7 @@
      <!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
      <EnableDefaultContentItems>true</EnableDefaultContentItems>
      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-     <Version>1.4.3</Version>
+     <Version>1.4.5</Version>
      <Authors>ASIM GUNDUZ</Authors>
     <Company>ASIM GUNDUZ</Company>
     <Description>MudBlazor Grid Component</Description>
@@ -20,7 +20,7 @@
     <RepositoryUrl>https://github.com/licentia88/Generator.Components</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>Blazor MudBlazor GenComponents</PackageTags>
-    <ReleaseVersion>1.3.2</ReleaseVersion>
+    <ReleaseVersion>1.4.5</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>
 

@@ -3,9 +3,9 @@
 
 @if (Model is null) {return;}
 
-<MudFileUpload T="IBrowserFile" FilesChanged="FilesChanged">
+<MudFileUpload  T="IBrowserFile" FilesChanged="FilesChanged">
     <ButtonTemplate>
-        <MudButton
+        <MudButton FullWidth="true"
                    HtmlTag="label"
                    Variant="this.Variant"
                    Color="this.Color"

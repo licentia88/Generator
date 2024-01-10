@@ -739,6 +739,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     void IPageBase.AddChildComponent(IGenComponent childComponent)
     {
+        if (((INonGenGrid)this).IsRendered) return;
         //if (childComponent is not GenSpacer && string.IsNullOrEmpty(childComponent.BindingField)) return;
 
         var componentType = childComponent.GetType();
@@ -750,6 +751,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     void INonGenGrid.AddSearchFieldComponent(IGenControl component)
     {
+        if (((INonGenGrid)this).IsRendered) return;
         //if (component is not GenSpacer && string.IsNullOrEmpty(component.BindingField)) return;
 
         if (SearchFieldComponents.Any(x => x.BindingField == component.BindingField )) return;

@@ -50,7 +50,7 @@ public partial class GenFileUpload : MudFileUpload<IBrowserFile>, IGenFileUpload
     [CascadingParameter(Name = nameof(IGenComponent.Parent))]
     public IPageBase Parent { get; set; }
 
-    [Parameter, EditorRequired]
+    [Parameter]
     public string BindingField { get; set; }
     [Parameter] public int Order { get; set; }
     [Parameter] public bool EditorEnabled { get; set; } = true;

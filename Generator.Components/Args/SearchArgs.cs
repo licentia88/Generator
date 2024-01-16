@@ -111,7 +111,7 @@ namespace Generator.Components.Args;
 
 public class GenArgs<TModel> : EventArgs  
 {
-    public TModel Model { get; set; }
+    public TModel CurrentValue { get; set; }
 
     public TModel OldModel { get; set; }
 
@@ -120,14 +120,14 @@ public class GenArgs<TModel> : EventArgs
 
     public GenArgs(TModel model, TModel oldModel)
     {
-        Model = model;
+        CurrentValue = model;
 
         OldModel = oldModel;
     }
 
     public GenArgs(TModel model,TModel oldModel, int index) 
     {
-        Model = model;
+        CurrentValue = model;
 
         OldModel = oldModel;
 

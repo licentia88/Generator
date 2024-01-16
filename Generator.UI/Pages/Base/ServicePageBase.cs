@@ -49,13 +49,13 @@ where TService : IGenericService<TService, TModel>
     {
         await ExecuteAsync(async () =>
         {
-            var result = await Service.Create(args.Model);
+            var result = await Service.Create(args.CurrentValue);
 
-            var primaryKey = args.Model.GetPrimaryKey();
+            var primaryKey = args.CurrentValue.GetPrimaryKey();
 
-            args.Model.SetPropertyValue(primaryKey, result.GetPropertyValue(primaryKey));
+            args.CurrentValue.SetPropertyValue(primaryKey, result.GetPropertyValue(primaryKey));
 
-            args.Model = result;
+            args.CurrentValue = result;
 
             DataSource.Add(result);
 
@@ -79,7 +79,7 @@ where TService : IGenericService<TService, TModel>
     {
         await ExecuteAsync(async () =>
         {
-            var result = await Service.Update(args.Model);
+            var result = await Service.Update(args.CurrentValue);
 
             return result;
         });
@@ -103,9 +103,9 @@ where TService : IGenericService<TService, TModel>
         await ExecuteAsync(async () =>
         {
 
-            var result = await Service.Delete(args.Model);
+            var result = await Service.Delete(args.CurrentValue);
 
-            DataSource.Remove(args.Model);
+            DataSource.Remove(args.CurrentValue);
 
             return result;
         });
@@ -147,7 +147,7 @@ public abstract class ServicePageBase<TModel, TChild, TService> : ServicePageBas
 
         var fk = ModelExtensions.GetForeignKey<TModel, TChild>();
 
-        args.Model.SetPropertyValue(fk, ParentModel.GetPropertyValue(pk));
+        args.CurrentValue.SetPropertyValue(fk, ParentModel.GetPropertyValue(pk));
 
         return base.Create(args);
     }

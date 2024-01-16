@@ -143,11 +143,11 @@ public partial class Users
     {
      
         //throw new Exception();
-        var result = await UserService.Create(data.Model);
+        var result = await UserService.Create(data.CurrentValue);
  
         ////REQUIRED 
-        data.Model.U_ROWID = result.U_ROWID;
-        data.Model = result;
+        data.CurrentValue.U_ROWID = result.U_ROWID;
+        data.CurrentValue = result;
 
  
         DataSource.Add(result);
@@ -161,24 +161,24 @@ public partial class Users
 
     public async Task UpdateAsync(GenArgs<USER> data)
     {
-         var result = await UserService.Update(data.Model);
+         var result = await UserService.Update(data.CurrentValue);
 
-        var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.Model.U_ROWID);
+        var existing = DataSource.FirstOrDefault(x => x.U_ROWID == data.CurrentValue.U_ROWID);
 
 
-        DataSource.Replace(existing, data.Model);
+        DataSource.Replace(existing, data.CurrentValue);
     }
 
     public async Task DeleteAsync(GenArgs<USER> data)
     {
-        var result = await UserService.Delete(data.Model);
+        var result = await UserService.Delete(data.CurrentValue);
 
-        DataSource.Remove(data.Model);
+        DataSource.Remove(data.CurrentValue);
     }
 
     public  Task Cancel(GenArgs<USER> data)
     {
-         var index = DataSource.IndexOf(data.Model);
+         var index = DataSource.IndexOf(data.CurrentValue);
         DataSource[index] = data.OldModel;
         //DataSource[data.Index] = data.OldModel;
         return Task.CompletedTask;

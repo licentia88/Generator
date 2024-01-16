@@ -50,13 +50,13 @@ where THubReceiver: class, IMagicReceiver<TModel>
     {
         await ExecuteAsync(async () =>
         {
-            var result = await Service.CreateAsync(args.Model);
+            var result = await Service.CreateAsync(args.CurrentValue);
 
-            var primaryKey = args.Model.GetPrimaryKey();
+            var primaryKey = args.CurrentValue.GetPrimaryKey();
 
-            args.Model.SetPropertyValue(primaryKey, result.GetPropertyValue(primaryKey));
+            args.CurrentValue.SetPropertyValue(primaryKey, result.GetPropertyValue(primaryKey));
 
-            args.Model = result.Data;
+            args.CurrentValue = result.Data;
             
             return result;
         });
@@ -74,7 +74,7 @@ where THubReceiver: class, IMagicReceiver<TModel>
     {
         await ExecuteAsync(async () =>
         {
-            await Service.UpdateAsync(args.Model);
+            await Service.UpdateAsync(args.CurrentValue);
         });
     }
 
@@ -89,7 +89,7 @@ where THubReceiver: class, IMagicReceiver<TModel>
 
         await ExecuteAsync(async () =>
         {
-            await Service.DeleteAsync(args.Model);
+            await Service.DeleteAsync(args.CurrentValue);
         });
 
     }

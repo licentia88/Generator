@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel : new() 
+public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TModel : new()
 {
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
@@ -119,7 +119,6 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
     {
         if (!Validate()) return;
 
- 
         if (IsIndividual)
         {
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
@@ -132,7 +131,10 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
 
         //Parent Save
         if (GenGrid.Parent?.ViewState == ViewState.Create)
+        {
+            GenGrid.Parent.CurrentGenPage.Validate();
             await GenGrid.Parent.CurrentGenPage.OnCommitAndWait();
+        }
 
         if (((INonGenView)this).IsTopLevel || GenGrid.Parent.CurrentGenPage.IsValid)
         {
@@ -215,7 +217,7 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
         {
             Close(true);
             //MudDialog.Close();
-            
+
             //Cancel eventini tetikler
             GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
         }
@@ -250,5 +252,10 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
     public void AddChildComponent(IGenComponent component)
     {
         //throw new NotImplementedException();
+    }
+
+    object INonGenPage.GetSelectedItem()
+    {
+        return SelectedItem;
     }
 }

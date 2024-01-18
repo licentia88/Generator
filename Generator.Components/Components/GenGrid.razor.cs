@@ -11,6 +11,7 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Vml.Office;
 
 namespace Generator.Components.Components;
 
@@ -487,8 +488,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
                 (this as INonGenGrid).ForceRenderAll();
 
-                this.OriginalTable.UpdateSelection();
-                this.OriginalTable.Context.TableStateHasChanged();
+                OriginalTable.UpdateSelection();
+                OriginalTable.Context.TableStateHasChanged();
                 SetEditingItem(SelectedItem);
                 //Components.Clear();
 
@@ -498,33 +499,41 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
                 return;
             }
 
-            var args = new GenArgs<TModel>();
+            var args = new GenArgs<TModel>
+            {
+                OldValue = ((IGenView<TModel>)this).OriginalEditItem,
+                CurrentValue = model,
+                Index = index,
+                Parent = ((INonGenGrid)this).Parent?.CurrentGenPage?.GetSelectedItem()
 
-            args.OldValue = model;
-            args.CurrentValue = ((IGenView<TModel>)this).OriginalEditItem;
-            args.Index = index;
+            };
+
+
 
             switch (ViewState)
             {
                 case ViewState.Create when Create.HasDelegate:
 
-
                     if (EditMode == EditMode.Inline)
                         DataSource.Remove(SelectedItem);
 
+                   
                     await Create.InvokeAsync(args);
 
-                    //if (EditMode == EditMode.Inline)
-                    //    DataSource.Remove(SelectedItem);
-
+ 
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
+
+                   
                     await Update.InvokeAsync(args);
-                    RefreshButtonState(true, args.CurrentValue);
+                    //RefreshButtonState(true, args.CurrentValue);
                     break;
 
                 case ViewState.Delete when Delete.HasDelegate:
+
+                    args.OldValue = ((IGenView<TModel>)this).OriginalEditItem;
+                    args.CurrentValue = ((IGenView<TModel>)this).OriginalEditItem;
                     await Delete.InvokeAsync(args);
                     break;
 

@@ -11,6 +11,8 @@ public class GenArgs<TModel> : EventArgs //  where TModel:class
 
     public int Index { get; set; }
 
+    public object Parent { get; set; }
+
     public GenArgs()
     {
 

@@ -18,6 +18,8 @@ public interface INonGenPage: INonGenView
 
     bool IsValid { get; set; }
 
+    internal object GetSelectedItem();
+
     void Close();
 
     public bool Validate();

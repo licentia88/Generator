@@ -220,12 +220,9 @@ public partial class GenPage<TModel>: IGenPage<TModel>,IDisposable where TModel 
             GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
         }
 
-
         (GenGrid as INonGenGrid).ForceRenderAll();
 
-        //SelectedItem = default;
-        //GenGrid.SelectedItem = default;
-        //Components.ForEach(x => x.Model = null);
+      
 
         RefreshParentGrid.InvokeAsync();
 

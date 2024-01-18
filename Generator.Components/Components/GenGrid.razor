@@ -350,6 +350,7 @@
 
                         @{
 
+                        //TODO bu necindir bul
                             if (EditMode != EditMode.Inline)
                             {
                                 var currentRow = OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem));
@@ -359,7 +360,7 @@
                                     editingRow?.Context.Table.SetEditingItem(null);
 
 
-                                    editingRow.SetFieldValue("hasBeenCanceled", false);
+                                    editingRow.SetFieldValue("hasBeenCanceled", true);
                                     editingRow.SetFieldValue("hasBeenCommitted", false);
                                     editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
                                 }
@@ -461,7 +462,7 @@
                                                            Size="@Size.Small"
                                                            Icon="@Icons.Material.Outlined.Edit"
                                                            Class="pa-0"
-                                                           OnClick="()=>OnEditContextButtonClick(button)"
+                                                           OnClick="()=> OnEditContextButtonClick(button)"
                                                            Disabled="button.ButtonDisabled||Disabled" />
                                         }
 
@@ -482,13 +483,6 @@
                                 </div>
 
                             }
-
-
-                            //if (EditMode == EditMode.Inline && ViewState == ViewState.Create && model.Equals(SelectedItem))
-                            //{
-
-                            //    button.ButtonDisabled = false;
-                            //}
                         }
 
                     </EditButtonContent>

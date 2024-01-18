@@ -102,6 +102,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         };
     }
 
+ 
     public ViewState ViewState { get; set; } = ViewState.None;
 
     internal MudIconButton EditButtonRef { get; set; }
@@ -240,6 +241,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     {
         EditTrigger = TableEditTrigger.EditButton;
     }
+ 
 
     protected override void OnInitialized()
     {
@@ -384,7 +386,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     //*****BURASI edit button rowclick de tetiklenmez, kurguyu ona gore kur*****
     public async Task OnEditContextButtonClick(EditButtonContext button)
     {
-        //Should be at top
+        ////Should be at top
         if (ViewState == ViewState.None)
             ViewState = ViewState.Update;
 
@@ -496,6 +498,12 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
                 return;
             }
 
+            var args = new GenArgs<TModel>();
+
+            args.OldValue = model;
+            args.CurrentValue = ((IGenView<TModel>)this).OriginalEditItem;
+            args.Index = index;
+
             switch (ViewState)
             {
                 case ViewState.Create when Create.HasDelegate:
@@ -504,7 +512,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
                     if (EditMode == EditMode.Inline)
                         DataSource.Remove(SelectedItem);
 
-                    await Create.InvokeAsync(new GenArgs<TModel>(model,((IGenView<TModel>)this).OriginalEditItem, index));
+                    await Create.InvokeAsync(args);
 
                     //if (EditMode == EditMode.Inline)
                     //    DataSource.Remove(SelectedItem);
@@ -512,15 +520,16 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
-                    await Update.InvokeAsync(new GenArgs<TModel>(model, ((IGenView<TModel>)this).OriginalEditItem, index));
+                    await Update.InvokeAsync(args);
+                    RefreshButtonState(true, args.CurrentValue);
                     break;
 
                 case ViewState.Delete when Delete.HasDelegate:
-                    await Delete.InvokeAsync(new GenArgs<TModel>(model, ((IGenView<TModel>)this).OriginalEditItem, index));
+                    await Delete.InvokeAsync(args);
                     break;
 
                 case ViewState.None when Cancel.HasDelegate:
-                    await Cancel.InvokeAsync(new GenArgs<TModel>(model, ((IGenView<TModel>)this).OriginalEditItem, index));
+                    await Cancel.InvokeAsync(args);
                     break;
 
                 default:
@@ -603,7 +612,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
     }
 
-    private async Task OnCancelClick(TModel element)
+    public async Task OnCancelClick(TModel element)
     {
         if (ViewState == ViewState.None) return;
 
@@ -614,6 +623,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         {
             DataSource.Remove(element);
         }
+
         else
         {
             DataSource.Replace(index, ((IGenView<TModel>)this).OriginalEditItem);
@@ -641,7 +651,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         //itemToRemove = SelectedItem;
 
-        Components.Clear();
+        //Components.Clear();
         //components clear veya reset validation
         //eger reset validation sikinti cikarirsa clear components yap
  
@@ -1019,13 +1029,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     internal MudTr GetCurrentRow(TModel model)
     {
         return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(model??SelectedItem)).Value;
-
-      
     }
 
+    //internal MudTr GetCurrentRow(int index)
+    //{
+    //    return OriginalTable?.Context?.Rows.
+    //}
     internal MudTr GetCurrentRow()
     {
         return GetCurrentRow(default);
+        //Console.WriteLine(SelectedItem);
+        //return GetCurrentRow(OriginalTable.SelectedItem);
         //return OriginalTable?.Context?.Rows?.FirstOrDefault(x => x.Key.Equals(SelectedItem)).Value;
 
         //try
@@ -1054,9 +1068,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         RefreshButtonState(true);
     }
 
-    private void RefreshButtonState(bool changeState)
+
+    private void RefreshButtonState(bool changeState, TModel currentModel)
     {
-        var row = GetCurrentRow();
+        var row = GetCurrentRow(currentModel);
 
         if (row is not null)
         {
@@ -1065,7 +1080,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
             if (!hasBeenCanceled && !hasBeenCommitted)
             {
-                OriginalTable.Context?.Table.SetEditingItem(null);
+                OriginalTable.Context?.Table.SetEditingItem(currentModel);
                 //StateHasChanged();
                 //Context.Table.RowEditCancel?.Invoke(Item);
             }
@@ -1083,6 +1098,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         if (changeState)
             StateHasChanged();
+    }
+    private void RefreshButtonState(bool changeState)
+    {
+        RefreshButtonState(changeState, default);
     }
 
     private void RollBack()

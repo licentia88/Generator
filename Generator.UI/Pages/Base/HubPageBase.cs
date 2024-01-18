@@ -96,7 +96,7 @@ where THubReceiver: class, IMagicReceiver<TModel>
 
     protected virtual void Cancel(GenArgs<TModel> args)
     {
-        DataSource[args.Index] = args.OldModel;
+        DataSource[args.Index] = args.OldValue;
     }
 
     protected virtual Task Load(IGenView<TModel> View)

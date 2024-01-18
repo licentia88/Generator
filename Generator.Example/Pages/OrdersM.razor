@@ -10,7 +10,7 @@
          Class="m-2"
          Load="OnLoad"
          IsIndividual="true"
-         Cancel="x=>  DataSource[x.Index] = x.OldModel"
+         Cancel="x=>  DataSource[x.Index] = x.OldValue"
          Create="@( async x=> await CreateAsync(x))"
          Update="@( async x=> await UpdateAsync(x))"
          Delete="@( async x=> await DeleteAsync(x))">

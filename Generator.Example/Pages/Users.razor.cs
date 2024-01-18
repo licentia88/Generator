@@ -179,7 +179,7 @@ public partial class Users
     public  Task Cancel(GenArgs<USER> data)
     {
          var index = DataSource.IndexOf(data.CurrentValue);
-        DataSource[index] = data.OldModel;
+        DataSource[index] = data.OldValue;
         //DataSource[data.Index] = data.OldModel;
         return Task.CompletedTask;
     }

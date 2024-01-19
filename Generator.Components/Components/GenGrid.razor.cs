@@ -11,7 +11,7 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Vml.Office;
+using System.Linq;
 
 namespace Generator.Components.Components;
 
@@ -448,11 +448,14 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         //Parent Save
         if (Parent?.ViewState == ViewState.Create)
         {
+            Parent.ValidateModel();
+
             await Parent.OnCommitAndWait();
         }
 
         if (((INonGenView)this).IsTopLevel)
         {
+           
             await ((IGenView<TModel>)this).OnCommit(SelectedItem, ViewState.None);
         }
 
@@ -517,10 +520,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
                     if (EditMode == EditMode.Inline)
                         DataSource.Remove(SelectedItem);
 
-                   
+               
                     await Create.InvokeAsync(args);
-
- 
+  
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
@@ -660,10 +662,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         //itemToRemove = SelectedItem;
 
-        //Components.Clear();
+        Components.Clear();
         //components clear veya reset validation
         //eger reset validation sikinti cikarirsa clear components yap
- 
+
+        //var controls = Components.Where(x => x.component is IGenControl).Select(x => (IGenControl)x.component).ToList();
+
+        //((INonGenGrid)this).ResetValidations(controls);
 
 
         SelectedItem = default;
@@ -672,12 +677,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         RefreshButtonState(true);
 
+        //StateHasChanged();
     }
 
     void INonGenGrid.ForceRenderAll()
     {
         ((INonGenGrid)this).IsFirstRender = true;
-        //((INonGenGrid)this).IsRendered = false;
+        ((INonGenGrid)this).IsRendered = false;
         //Components.Clear();
     }
 
@@ -849,9 +855,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
      
         if (!isValid)
             ((INonGenGrid)this).ForceRenderOnce = true;
-        
+
+
+        IsValid = isValid;
         //StateHasChanged();
-        return isValid;
+        return IsValid;
     }
 
     //public bool ValidateRequiredRules(IGenComponent component)

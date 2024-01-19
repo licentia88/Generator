@@ -138,6 +138,7 @@
                 EditTrigger = TableEditTrigger.EditButton;
             }
 
+            
             if (DataSource is not null)
             {
                 if (OriginalTable is not null && OriginalTable.GroupFooterTemplate is null)
@@ -193,45 +194,45 @@
 
                     <HeaderContent>
                         @{
-                            if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
-                            {
+                    if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
+                    {
                                 <MudTh>
 
                                 </MudTh>
                             }
 
-                            Func<IGenControl, bool> predicate;
+                    Func<IGenControl, bool> predicate;
 
-                            if (ViewState != ViewState.None && EditMode == EditMode.Inline)
-                            {   //edit create vs
+                    if (ViewState != ViewState.None && EditMode == EditMode.Inline)
+                    {   //edit create vs
 
-                                if (SelectedItem is null)
-                                {
-                                    predicate = x => x.EditorVisible && x is not GenSpacer;
+                        if (SelectedItem is null)
+                        {
+                            predicate = x => x.EditorVisible && x is not GenSpacer;
 
-                                }
-                                else
-                                {
-                                    predicate = x => x.EditorVisible && x is not GenSpacer && x.IsEditorVisible(SelectedItem);
+                        }
+                        else
+                        {
+                            predicate = x => x.EditorVisible && x is not GenSpacer && x.IsEditorVisible(SelectedItem);
 
-                                }
+                        }
 
-                            }
-                            else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
+                    }
+                    else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
+                    {
+                        predicate = x => x.GridVisible && x is not GenSpacer;
+                    }
+                    else
+                    {
+                        predicate = x => x is not GenSpacer;
+                    }
+
+                    foreach (var item in GetComponentsOf<IGenControl>().Where(predicate).OrderBy(x => x.Order))
+                    {
+                        if (ViewState == ViewState.None)
+                        {
+                            if (!item.GridVisible)
                             {
-                                predicate = x => x.GridVisible && x is not GenSpacer;
-                            }
-                            else
-                            {
-                                predicate = x => x is not GenSpacer;
-                            }
-
-                            foreach (var item in GetComponentsOf<IGenControl>().Where(predicate).OrderBy(x => x.Order))
-                            {
-                                if (ViewState == ViewState.None)
-                                {
-                                    if (!item.GridVisible)
-                                    {
                                         @*<MudTh>
 
                             </MudTh>*@

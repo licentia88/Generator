@@ -11,7 +11,6 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Linq;
 
 namespace Generator.Components.Components;
 
@@ -581,7 +580,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
             if(ViewState == ViewState.Update)
             {
-              await  OnCancelClick(SelectedItem);
+              await OnCancelClick(SelectedItem);
             }
 
             GridIsBusy = false;
@@ -646,8 +645,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         foreach (var item in Components)
         {
-            if(item.component is not IGenControl cntrl) return;
-            ((INonGenGrid)this).ResetValidation(cntrl);
+            if (item.component is IGenControl cntrl)
+                ((INonGenGrid)this).ResetValidation(cntrl);
         }
       
         //RefreshButtonState sonunda statehaschanged var
@@ -662,7 +661,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         //itemToRemove = SelectedItem;
 
-        Components.Clear();
+        //Components.Clear();
         //components clear veya reset validation
         //eger reset validation sikinti cikarirsa clear components yap
 
@@ -677,13 +676,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         RefreshButtonState(true);
 
-        //StateHasChanged();
+        StateHasChanged();
     }
 
     void INonGenGrid.ForceRenderAll()
     {
         ((INonGenGrid)this).IsFirstRender = true;
-        ((INonGenGrid)this).IsRendered = false;
+        //((INonGenGrid)this).IsRendered = false;
+
+         
+       
+        //GenColumns.Invoke(this.BuildRenderTree);
         //Components.Clear();
     }
 

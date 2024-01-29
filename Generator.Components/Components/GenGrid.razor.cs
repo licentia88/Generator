@@ -247,8 +247,21 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     {
         base.OnInitialized();
 
+     
+
         if (Parent is not null && Parent.DetailClicked)
             Parent.StateHasChanged();
+
+
+        if (MultiSelection)
+        {
+            SelectedItemsChanged = EventCallback.Factory.Create<HashSet<TModel>>(this, x =>
+            {
+                //SelectedItems = x;
+                //Console.WriteLine();
+            });
+        }
+
 
     }
     //protected override async Task OnInitializedAsync()

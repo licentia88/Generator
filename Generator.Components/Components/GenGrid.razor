@@ -178,9 +178,9 @@
                           FixedHeader="FixedHeader"
                           FixedFooter="FixedFooter"
                           Height="@(FixedHeader || FixedFooter ?$"{_height}{_measurement}":Height)"
-                          @bind-SelectedItem="SelectedItem"
-                          @bind-SelectedItems="@SelectedItems"
-                         
+                          @bind-SelectedItem="@SelectedItem"
+                          SelectedItems="@SelectedItems"
+                          SelectedItemsChanged="SelectedItemsChanged"
                           Filter="ViewState==ViewState.Create?null:Filter"
                           Virtualize="Virtualize"
                           RowEditPreview="async x => await MyRowEditPreview(x)"

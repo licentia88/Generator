@@ -33,14 +33,15 @@ public static class RenderExtensions
 
             i++;
         }
-            
+
+      
         foreach (var additional in AdditionalParams)
         {
             builder.AddAttribute(i, additional.Key, additional.Value);
             i++;
         }
 
-       
+ 
         builder.CloseComponent();
 
     }

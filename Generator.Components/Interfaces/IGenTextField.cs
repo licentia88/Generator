@@ -1,4 +1,6 @@
-﻿namespace Generator.Components.Interfaces;
+﻿using Generator.Components.Components;
+
+namespace Generator.Components.Interfaces;
 
 public interface IGenTextField : IGenControl
 {
@@ -7,5 +9,7 @@ public interface IGenTextField : IGenControl
     public int MinLength { get; set; }
 
     public object InitialValue { get; set; }
+
+ 
 
 }

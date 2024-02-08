@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.ExtendedProperties;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -37,8 +38,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     [Parameter]
     public int Order { get; set; }
 
-    [Parameter]
-    public bool EditorEnabled { get; set; } = true;
+    //[Parameter]
+    //public bool EditorEnabled { get; set; } = true;
 
     [Parameter]
     public bool EditorVisible { get; set; } = true;
@@ -69,10 +70,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     public Func<object,bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
 
-   
-
+ 
     Type IGenControl.DataType { get; set; }
 
     object IGenControl.GetDefaultValue => ((IGenControl)this).DataType.GetDefaultValue();
@@ -83,12 +83,14 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
    
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        
         if (((IGenControl)this).Parent is not null && Model is not null)
         {
             base.BuildRenderTree(builder);
         }
 
-        AddComponents();
+         AddComponents();
+
     }
 
     protected override void OnInitialized()
@@ -146,8 +148,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
     };
 
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public new string Text => Model.GetPropertyValue(BindingField)?.ToString();
+    //[EditorBrowsable(EditorBrowsableState.Never)]
+    //public new string Text => Model.GetPropertyValue(BindingField)?.ToString();
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -169,7 +171,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
             Value = value;
             _value = value;
-
+            base.Text = value.ToString();
             //comp.Parent?.StateHasChanged();
             //comp.Parent?.CurrentGenPage?.StateHasChanged();
         }
@@ -218,7 +220,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     }
 
-
+    public new string Text => Model.GetPropertyValue(BindingField)?.ToString()??base.Text;
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
@@ -241,14 +243,22 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Clearable = true;
         }
 
-        var loValue = Model.GetPropertyValue(BindingField);
+        //var loValue = Model.GetPropertyValue(BindingField);
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle
         //additionalParams.Add((nameof(Value), loValue ??Value));
-        additionalParams.Add((nameof(Value),Text));
+
+
+        //additionalParams.Add((nameof(Value), Text));
+        additionalParams.Add((nameof(Value), Text));
+
+      
+
+        //builder.AddElementReferenceCapture(1, (value) => { Reference = (GenTextField)value; });
+
         //additionalParams.Add((nameof(Text), Value));
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled) ));
+        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled) ));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
@@ -267,6 +277,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         {
             data = dt.ToString(Format);
         }
+
+        if(InputType == InputType.Password)
+            data = new string('x', data.ToString().Length);
 
         RenderExtensions.RenderGrid(builder, data);
     };

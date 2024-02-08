@@ -45,7 +45,7 @@ public class GenButton:MudButton,IGenComponent
     public Func<object, bool> EditorVisibleIf { get; set; }
     
     [Parameter]
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
     
     [CascadingParameter(Name = nameof(IGenComponent.Parent))]
     public IPageBase Parent { get; set; }
@@ -53,7 +53,6 @@ public class GenButton:MudButton,IGenComponent
     [Parameter,EditorBrowsable(EditorBrowsableState.Never)]
     public string BindingField { get; set; }
     [Parameter] public int Order { get; set; }
-    [Parameter] public bool EditorEnabled { get; set; } = true;
     [Parameter]public bool EditorVisible { get; set; } = true;
     [Parameter,EditorBrowsable(EditorBrowsableState.Never)]
     public bool GridVisible { get; set; } = false;

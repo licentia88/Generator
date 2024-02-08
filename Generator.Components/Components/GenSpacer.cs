@@ -23,8 +23,8 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public int Order { get; set; }
 
-    [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
-    public bool EditorEnabled { get; set; } = true;
+    //[Parameter, EditorBrowsable(EditorBrowsableState.Never)]
+    //public bool EditorEnabled { get; set; } = true;
 
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public bool EditorVisible { get; set; } = true;
@@ -86,7 +86,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     bool IGenControl.IsSearchField { get; set; }
 
     public Func<object, bool> EditorVisibleIf { get; set; }
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
     public Func<object, bool> RequiredIf { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)

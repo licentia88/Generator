@@ -11,7 +11,7 @@ namespace Generator.Components.Components;
 public partial class GenFileUpload : MudFileUpload<IBrowserFile>, IGenFileUpload
 {
     //private MudFileUpload<IBrowserFile> MudFileUpload { get; set; }
-
+    
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -67,10 +67,10 @@ public partial class GenFileUpload : MudFileUpload<IBrowserFile>, IGenFileUpload
 
             builder.AddAttribute(2, "ButtonTemplate", (RenderFragment<FileUploadButtonTemplateContext<IBrowserFile>>)((context) => (__builder2) => {
                 __builder2.OpenComponent<MudButton>(3);
-                __builder2.AddAttribute(4, "FullWidth", (object)(RuntimeHelpers.TypeCheck<Boolean>(true)));
+                __builder2.AddAttribute(4, "FullWidth", (object)(RuntimeHelpers.TypeCheck(true)));
                 __builder2.AddAttribute(5, "HtmlTag", (object)("label"));
-                __builder2.AddAttribute(6, "Variant", (object)(RuntimeHelpers.TypeCheck<Variant>(this.Variant)));
-                __builder2.AddAttribute(7, "Color", (object)(RuntimeHelpers.TypeCheck<Color>(this.Color)));
+                __builder2.AddAttribute(6, "Variant", RuntimeHelpers.TypeCheck(this.Variant));
+                __builder2.AddAttribute(7, "Color", RuntimeHelpers.TypeCheck(this.Color));
                 __builder2.AddAttribute(8, "for", (object)(context.Id));
                 __builder2.AddAttribute(9, "ChildContent", (RenderFragment)((__builder3) =>
                 {
@@ -132,7 +132,7 @@ public partial class GenFileUpload : MudFileUpload<IBrowserFile>, IGenFileUpload
     public Func<object, bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
 
     [CascadingParameter(Name = nameof(IGenComponent.Parent))]
     public IPageBase Parent { get; set; }
@@ -140,7 +140,7 @@ public partial class GenFileUpload : MudFileUpload<IBrowserFile>, IGenFileUpload
     [Parameter]
     public string BindingField { get; set; }
     [Parameter] public int Order { get; set; }
-    [Parameter] public bool EditorEnabled { get; set; } = true;
+    //[Parameter] public bool EditorEnabled { get; set; } = true;
     [Parameter] public bool EditorVisible { get; set; } = true;
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public bool GridVisible { get; set; } = false;
@@ -165,8 +165,8 @@ public partial class GenFileUpload : MudFileUpload<IBrowserFile>, IGenFileUpload
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public bool FullWidth { get; set; }
 
-    [Parameter,EditorRequired]
-    public Color Color { get; set; }
+    [Parameter]
+    public Color Color { get; set; } = Color.Inherit;
 
     [Parameter]
     public Variant Variant { get; set; }

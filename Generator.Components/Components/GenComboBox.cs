@@ -42,8 +42,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     [Parameter]
     public int Order { get; set; }
 
-    [Parameter]
-    public bool EditorEnabled { get; set; } = true;
+    //[Parameter]
+    //public bool EditorEnabled { get; set; } = true;
 
     [Parameter]
     public bool EditorVisible { get; set; } = true;
@@ -86,7 +86,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     public Func<object, bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
 
     //[Parameter]
     //public Func<(object Model, object Value), bool> Where { get; set; }
@@ -275,7 +275,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         additionalParams.Add((nameof(Value), loValue??Value));
 
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
+        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 

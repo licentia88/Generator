@@ -4,7 +4,7 @@ public interface IGenComponent:IGenCompRenderer
 {
     public Func<object,bool> EditorVisibleIf { get;set;}
 
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
     
     public IPageBase Parent { get; set; }
 
@@ -12,7 +12,7 @@ public interface IGenComponent:IGenCompRenderer
     
     public int Order { get; set; }
 
-    public bool EditorEnabled { get; set; } 
+    //public bool EditorEnabled { get; set; } 
 
     public bool EditorVisible { get; set; } 
 

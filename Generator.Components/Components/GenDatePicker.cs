@@ -36,8 +36,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [Parameter]
     public int Order { get; set; }
 
-    [Parameter]
-    public bool EditorEnabled { get; set; } = true;
+    //[Parameter]
+    //public bool EditorEnabled { get; set; } = true;
 
     [Parameter]
     public bool EditorVisible { get; set; } = true;
@@ -74,7 +74,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     public Func<object, bool> EditorVisibleIf { get; set; }
 
     [Parameter]
-    public Func<object, bool> EditorEnabledIf { get; set; }
+    public Func<object, bool> DisabledIf { get; set; }
 
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
@@ -256,7 +256,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         //additionalParams.Add((nameof(Date), valDate));
 
-        additionalParams.Add((nameof(Disabled), !(EditorEnabledIf?.Invoke(Model) ?? EditorEnabled)));
+        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 

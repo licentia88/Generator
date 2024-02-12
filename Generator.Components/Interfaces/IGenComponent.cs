@@ -8,7 +8,7 @@ public interface IGenComponent:IGenCompRenderer
     
     public IPageBase Parent { get; set; }
 
-    public string BindingField { get; set; }
+    string BindingField { get; set; }
     
     public int Order { get; set; }
 
@@ -32,7 +32,7 @@ public interface IGenComponent:IGenCompRenderer
 
     public object Model { get; set; }
 
-    public string Label { get; set; }
+    string Label { get; set; }
  
     bool IsEditorVisible(object Model);
 

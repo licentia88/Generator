@@ -36,18 +36,18 @@ public static class ComponentExtensions
     public static void Disable(this IGenControl component)
     {
         component.SetEmpty();
-        component.EditorEnabled = false;
+        //component.EditorEnabled = false;
 
     }
 
     public static void Enable(this IGenControl component)
     {
-        component.EditorEnabled = true;
+        //component.EditorEnabled = true;
     }
 
     public static void EnabledIf(this IGenControl component, Func<bool> predicate)
     {
-        component.EditorEnabled = predicate();
+        //component.EditorEnabled = predicate();
     }
 
 }

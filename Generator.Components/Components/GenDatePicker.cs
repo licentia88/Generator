@@ -313,9 +313,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     void IGenControl.SetEmpty()
     {
+        if (Model is null) return;
+
         var defaultValue = ((IGenControl)this).DataType.GetDefaultValue().CastTo<DateTime?>();
 
-        Model?.SetPropertyValue(BindingField, defaultValue);
+        Model.SetPropertyValue(BindingField, defaultValue);
 
         _value = defaultValue;
     }

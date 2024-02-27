@@ -286,8 +286,10 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
     void IGenControl.SetEmpty()
     {
+        if (Model is null) return;
+
         var defaultValue = ((IGenControl)this).DataType.GetDefaultValue().CastTo<bool>();
-        Model?.SetPropertyValue(BindingField, defaultValue);
+        Model.SetPropertyValue(BindingField, defaultValue);
         _value = defaultValue;
         Checked = defaultValue;
     }

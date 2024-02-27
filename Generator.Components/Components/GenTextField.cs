@@ -279,7 +279,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
 
         if(InputType == InputType.Password)
-            data = new string('x', data.ToString().Length);
+            data = new string((char)0x25CF, data.ToString().Length);
 
         RenderExtensions.RenderGrid(builder, data);
     };
@@ -313,9 +313,11 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     void IGenControl.SetEmpty()
     {
+        if (Model is null) return;
+
         var defaultValue = ((IGenControl)this).DataType.GetDefaultValue();
 
-        Model?.SetPropertyValue(BindingField, defaultValue);
+        Model.SetPropertyValue(BindingField, defaultValue);
         Value = null;
         _value = null;
     }

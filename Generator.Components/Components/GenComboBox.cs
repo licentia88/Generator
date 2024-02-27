@@ -326,9 +326,11 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     void IGenControl.SetEmpty()
     {
+        if (Model is null) return;
+
         var defaultValue = ((IGenControl)this).DataType.GetDefaultValue();
 
-        Model?.SetPropertyValue(BindingField, defaultValue);
+        Model.SetPropertyValue(BindingField, defaultValue);
 
         //Value = null;
 

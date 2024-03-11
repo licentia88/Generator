@@ -241,7 +241,8 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
         if (((IGenControl)this).IsSearchField)
             return ((IGenControl)this).GetSearchValue();
         else
-            return this.GetFieldValue(nameof(_value));
+            return Model.GetFieldValue(BindingField);
+
     }
 
     void IGenControl.SetSearchValue(object Value)

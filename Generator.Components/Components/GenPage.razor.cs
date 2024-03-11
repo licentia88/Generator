@@ -159,7 +159,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, ViewState.Update);
         }
 
-        StateHasChanged();
+        //StateHasChanged();
     }
 
     private void CloseIfAllowed()
@@ -258,4 +258,6 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
     {
         return SelectedItem;
     }
+
+     
 }

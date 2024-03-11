@@ -205,8 +205,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         // if (!ValueChanged.HasDelegate)
         ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
-        if (!OnClearButtonClick.HasDelegate)
-            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClickedAsync);
+        //if (!OnClearButtonClick.HasDelegate)
+        //    OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClickedAsync);
 
 
         //OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>
@@ -275,7 +275,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         additionalParams.Add((nameof(Value), loValue??Value));
 
-        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
+        additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
@@ -308,7 +308,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (((IGenControl)this).IsSearchField)
             return ((IGenControl)this).GetSearchValue();
         else
-            return this.GetFieldValue(nameof(_value));
+            return Model.GetFieldValue(BindingField);
     }
 
 
@@ -339,9 +339,10 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
     public new async Task Clear()
     {
+        ((IGenControl)this).SetEmpty();
+
         await base.Clear();
 
-        ((IGenControl)this).SetEmpty();
     }
 
     public new bool Validate()

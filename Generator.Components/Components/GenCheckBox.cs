@@ -238,7 +238,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         if (((IGenControl)this).IsSearchField)
             return ((IGenControl)this).GetSearchValue();
         else
-            return this.GetFieldValue(nameof(_value));
+            return Model.GetFieldValue(BindingField);
+
     }
 
     void IGenControl.SetValue(object value)

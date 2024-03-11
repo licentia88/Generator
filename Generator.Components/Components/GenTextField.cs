@@ -83,7 +83,6 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
    
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        
         if (((IGenControl)this).Parent is not null && Model is not null)
         {
             base.BuildRenderTree(builder);
@@ -243,7 +242,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Clearable = true;
         }
 
-        //var loValue = Model.GetPropertyValue(BindingField);
+        var loValue = Model.GetPropertyValue(BindingField);
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle
@@ -251,14 +250,14 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
 
         //additionalParams.Add((nameof(Value), Text));
-        additionalParams.Add((nameof(Value), Text));
+        additionalParams.Add((nameof(Value), loValue));
 
-      
+
 
         //builder.AddElementReferenceCapture(1, (value) => { Reference = (GenTextField)value; });
 
         //additionalParams.Add((nameof(Text), Value));
-        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled) ));
+        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
@@ -297,7 +296,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         if (((IGenControl)this).IsSearchField)
             return ((IGenControl)this).GetSearchValue();
         else
-            return this.GetFieldValue(nameof(_value));
+            return Model.GetFieldValue(BindingField);
     }
 
     void IGenControl.SetSearchValue(object value)

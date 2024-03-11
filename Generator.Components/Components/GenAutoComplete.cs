@@ -439,7 +439,8 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
         if (((IGenControl)this).IsSearchField)
             return ((IGenControl)this).GetSearchValue();
         else
-            return this.GetFieldValue(nameof(_value));
+            return Model.GetFieldValue(BindingField);
+
     }
 
 

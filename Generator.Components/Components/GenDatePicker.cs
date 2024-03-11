@@ -256,7 +256,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         //additionalParams.Add((nameof(Date), valDate));
 
-        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
+        additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
@@ -291,7 +291,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         if (((IGenControl)this).IsSearchField)
             return ((IGenControl)this).GetSearchValue();
         else
-            return this.GetFieldValue(nameof(_value));
+            return Model.GetFieldValue(BindingField);
     }
 
     void IGenControl.SetSearchValue(object Value)

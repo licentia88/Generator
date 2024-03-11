@@ -40,8 +40,9 @@
                                 @{
                                     var components = Components.Select(x => x.component);
 
+                                    IGenComponent[] componentDetails = components as IGenComponent[] ?? components.ToArray();
 
-                                    foreach (var componentDetail in components)
+                                    foreach (var componentDetail in componentDetails)
                                     {
 
                                         //(componentDetail as IGenControl)?.ValidateField();
@@ -61,9 +62,12 @@
                                                 }
                                                 else
                                                 {
-                                                    if (componentDetail is IGenControl cntrl && cntrl.ClearIfNotVisible)
+                                                    if (componentDetail is IGenControl cntrl && components.Where(x=> x.BindingField == componentDetail.BindingField).All(x => !x.IsEditorVisible(SelectedItem)))
+                                                    {
                                                         cntrl.SetEmpty();
-                                                   
+                                                    }
+
+
                                                 }
 
                                             }

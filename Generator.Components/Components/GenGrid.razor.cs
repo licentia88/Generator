@@ -748,14 +748,14 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
    
     public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
-        var item = SearchFieldComponents.FirstOrDefault(x => x.BindingField is not null && x.BindingField.Equals(bindingField));
+        var item = SearchFieldComponents.FirstOrDefault(x => x.BindingField is not null && x is TComponent && x.BindingField.Equals(bindingField));
 
         return item is null ? default : item.CastTo<TComponent>();
     }
 
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
-        var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component.BindingField.Equals(bindingField));
+        var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component is TComponent && x.component.BindingField.Equals(bindingField));
 
         return item.component is null ? default : item.component.CastTo<TComponent>();
     }

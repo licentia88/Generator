@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Enums;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 //using Generator.Shared.Extensions;
@@ -129,10 +130,9 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-        if (InitialValue is not null && Date is null)
-        {
+        if (InitialValue is not null && ((INonGenGrid)((IGenControl)this).Parent).ViewState != ViewState.Update)
             await SetDateAsync(InitialValue, true);
-        }
+        
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)

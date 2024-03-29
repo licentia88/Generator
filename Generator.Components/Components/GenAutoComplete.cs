@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Enums;
 
 namespace Generator.Components.Components;
 
@@ -126,8 +127,9 @@ public class GenAutoComplete<T> : MudAutocomplete<T>, IGenAutoComplete<T>
 
         //if (InitialValue is not null)
         //    SetValue(InitialValue);
-
-        await SetInitialValue();
+        if (InitialValue is not null && ((INonGenGrid)((IGenControl)this).Parent).ViewState != ViewState.Update)
+            await SetInitialValue();
+       
     }
 
     private async Task SetInitialValue()

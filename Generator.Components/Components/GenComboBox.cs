@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Enums;
 
 namespace Generator.Components.Components;
 
@@ -107,7 +108,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-        if (InitialValue is not null && Value is null)
+        if (InitialValue is not null && ((INonGenGrid)((IGenControl)this).Parent).ViewState != ViewState.Update)
             SetValue(InitialValue);
     }
  
@@ -194,6 +195,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
 
         Validate();
     }
+   
 
     [Parameter]
     public EventCallback<ComponentArgs<object>> OnValueChanged { get; set; }
@@ -205,8 +207,9 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         // if (!ValueChanged.HasDelegate)
         ValueChanged = EventCallback.Factory.Create<object>(this, SetValue);
 
-        //if (!OnClearButtonClick.HasDelegate)
-        //    OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClickedAsync);
+
+        if (!OnClearButtonClick.HasDelegate && ((IGenControl)this).IsSearchField)
+            OnClearButtonClick = EventCallback.Factory.Create<MouseEventArgs>(this, OnClearClickedAsync);
 
 
         //OnBlur = EventCallback.Factory.Create<FocusEventArgs>(this, () =>

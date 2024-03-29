@@ -1,7 +1,6 @@
 using Generator.Components.Enums;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
-//using Generator.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -48,7 +47,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
     [Parameter]
     public Dictionary<string, object> Parameters { get; set; } = new();
 
-    [CascadingParameter(Name =nameof(Parameters))]
+    [CascadingParameter(Name = nameof(Parameters))]
     private Dictionary<string, object> _Parameters { get => Parameters; set => Parameters = value; }
 
     internal EventCallback RefreshParentGrid { get; set; }
@@ -79,7 +78,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
         RefreshParentGrid = EventCallback.Factory.Create(this, GenGrid.RefreshButtonState);
 
         await base.OnInitializedAsync();
-          
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -87,7 +86,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
         GetSubmitTextFromViewState();
 
         await base.OnAfterRenderAsync(firstRender);
-    }       
+    }
 
     public bool Validate()
     {
@@ -103,7 +102,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
         Validate();
     }
 
-        
+
     async Task INonGenView.OnCommit()
     {
         ((INonGenView)this).IsTopLevel = true;
@@ -132,13 +131,15 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
         //Parent Save
         if (GenGrid.Parent?.ViewState == ViewState.Create)
         {
-            GenGrid.Parent.CurrentGenPage.Validate();
+            var result = GenGrid.Parent.CurrentGenPage.Validate();
+            if (!result) return;
+
             await GenGrid.Parent.CurrentGenPage.OnCommitAndWait();
         }
 
         if (((INonGenView)this).IsTopLevel || GenGrid.Parent.CurrentGenPage.IsValid)
         {
-           
+
             //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
 
@@ -170,7 +171,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
         MudDialog.Close();
     }
 
-    void  INonGenPage.Close()
+    void INonGenPage.Close()
     {
         Close(false);
         CloseIfAllowed();
@@ -202,15 +203,15 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
         base.StateHasChanged();
     }
 
-       
+
 
     public TComponent GetComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
-        var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component.BindingField.Equals(bindingField));
+        var item = Components.FirstOrDefault(x => x.component.BindingField is not null && x.component is TComponent && x.component.BindingField.Equals(bindingField));
 
         return item.component is null ? default : item.component.CastTo<TComponent>();
     }
- 
+
     public void Dispose()
     {
         if (ViewState != ViewState.None)
@@ -224,7 +225,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
 
         (GenGrid as INonGenGrid).ForceRenderAll();
 
-      
+
 
         RefreshParentGrid.InvokeAsync();
 
@@ -232,7 +233,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
 
         MudDialog.Dispose();
 
-           
+
     }
 
     public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenControl
@@ -258,6 +259,4 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
     {
         return SelectedItem;
     }
-
-     
 }

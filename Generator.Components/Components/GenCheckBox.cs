@@ -3,6 +3,7 @@ using MudBlazor;
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
 using System.ComponentModel;
+using Generator.Components.Enums;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
 
@@ -117,7 +118,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-        if (InitialValue is not null && !Checked)
+        if (InitialValue is not null && ((INonGenGrid)((IGenControl)this).Parent).ViewState != ViewState.Update)
             SetValue(InitialValue.Value);
     }
     protected override Task OnInitializedAsync()

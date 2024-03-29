@@ -18,7 +18,7 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
     public object Model { get; set; }
 
 
-    [Parameter]
+    // [Parameter,edi]
     public DateRange InitialValue { get; set; }
 
     [Parameter]

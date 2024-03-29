@@ -9,6 +9,7 @@ using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using Generator.Components.Enums;
 
 namespace Generator.Components.Components;
 
@@ -117,7 +118,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         if (Model is null || Model.GetType().Name == "Object") return;
 
-         if (InitialValue is not null && Value is null)
+        if (InitialValue is not null && ((INonGenGrid)((IGenControl)this).Parent).ViewState != ViewState.Update)
             SetValue(InitialValue);
     }
    
@@ -158,26 +159,26 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public void SetValue(object value)
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        // ReSharper disable once HeuristicUnreachableCode
-        if (this is not IGenControl comp) return;
+        //// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        //// ReSharper disable once HeuristicUnreachableCode
+        //if (this is not IGenControl comp) return;
 
-        if (comp.IsSearchField)
-            comp.SetSearchValue(value);
-        else
-        {
-            Model?.SetPropertyValue(BindingField, value);
+        //if (comp.IsSearchField)
+        //    comp.SetSearchValue(value);
+        //else
+        //{
+        //    Model?.SetPropertyValue(BindingField, value);
 
-            Value = value;
-            _value = value;
-            base.Text = value.ToString();
-            //comp.Parent?.StateHasChanged();
-            //comp.Parent?.CurrentGenPage?.StateHasChanged();
-        }
+        //    Value = value;
+        //    _value = value;
+        //    base.Text = value.ToString();
+        //    //comp.Parent?.StateHasChanged();
+        //    //comp.Parent?.CurrentGenPage?.StateHasChanged();
+        //}
 
-        comp.Parent.StateHasChanged();
-        if (comp.Parent is INonGenGrid grid)
-            grid.CurrentGenPage?.StateHasChanged();
+        //comp.Parent.StateHasChanged();
+        //if (comp.Parent is INonGenGrid grid)
+        //    grid.CurrentGenPage?.StateHasChanged();
     }
 
 
@@ -201,7 +202,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     {
         await base.SetValueAsync(value, updateText, force);
         await OnValueChanged.InvokeAsync((Model, value));
-        Validate();
+        //Validate();
     }
 
     private void SetCallBackEvents()

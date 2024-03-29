@@ -8,10 +8,10 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-     <!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
+     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
      <EnableDefaultContentItems>true</EnableDefaultContentItems>
      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-     <Version>1.6.1</Version>
+     <Version>1.6.3</Version>
      <Authors>ASIM GUNDUZ</Authors>
     <Company>ASIM GUNDUZ</Company>
     <Description>MudBlazor Grid Component</Description>
@@ -36,7 +36,7 @@
     -->
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.14.0" />
+    <PackageReference Include="MudBlazor" Version="6.19.1" />
     <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />

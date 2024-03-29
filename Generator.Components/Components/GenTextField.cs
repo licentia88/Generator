@@ -159,26 +159,26 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     public void SetValue(object value)
     {
-        //// ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        //// ReSharper disable once HeuristicUnreachableCode
-        //if (this is not IGenControl comp) return;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once HeuristicUnreachableCode
+        if (this is not IGenControl comp) return;
 
-        //if (comp.IsSearchField)
-        //    comp.SetSearchValue(value);
-        //else
-        //{
-        //    Model?.SetPropertyValue(BindingField, value);
+        if (comp.IsSearchField)
+            comp.SetSearchValue(value);
+        else
+        {
+            Model?.SetPropertyValue(BindingField, value);
 
-        //    Value = value;
-        //    _value = value;
-        //    base.Text = value.ToString();
-        //    //comp.Parent?.StateHasChanged();
-        //    //comp.Parent?.CurrentGenPage?.StateHasChanged();
-        //}
+            Value = value;
+            _value = value;
+            base.Text = value.ToString();
+            //comp.Parent?.StateHasChanged();
+            //comp.Parent?.CurrentGenPage?.StateHasChanged();
+        }
 
-        //comp.Parent.StateHasChanged();
-        //if (comp.Parent is INonGenGrid grid)
-        //    grid.CurrentGenPage?.StateHasChanged();
+        comp.Parent.StateHasChanged();
+        if (comp.Parent is INonGenGrid grid)
+            grid.CurrentGenPage?.StateHasChanged();
     }
 
 

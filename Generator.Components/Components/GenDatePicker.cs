@@ -122,7 +122,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     {
         await base.OnInitializedAsync();
 
-        Date = (DateTime?)Model?.GetPropertyValue(BindingField);
+        if (Model is not null)
+            Date = (DateTime?)Model?.GetPropertyValue(BindingField);
 
         AddComponents();
 
@@ -137,6 +138,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+
         if (((IGenControl)this).Parent is not null && Model is not null)
             base.BuildRenderTree(builder);
 

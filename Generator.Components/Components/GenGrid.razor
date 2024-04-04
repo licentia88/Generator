@@ -138,7 +138,7 @@
                 EditTrigger = TableEditTrigger.EditButton;
             }
 
-            
+
             if (DataSource is not null)
             {
                 if (OriginalTable is not null && OriginalTable.GroupFooterTemplate is null)
@@ -195,48 +195,48 @@
 
                     <HeaderContent>
                         @{
-                    if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
-                    {
+                            if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)
+                            {
                                 <MudTh>
 
                                 </MudTh>
                             }
 
-                    Func<IGenControl, bool> predicate;
+                            Func<IGenControl, bool> predicate;
 
-                    if (ViewState != ViewState.None && EditMode == EditMode.Inline)
-                    {   //edit create vs
+                            if (ViewState != ViewState.None && EditMode == EditMode.Inline)
+                            {   //edit create vs
 
-                        if (SelectedItem is null)
-                        {
-                            predicate = x => x.EditorVisible && x is not GenSpacer;
+                                if (SelectedItem is null)
+                                {
+                                    predicate = x => x.EditorVisible && x is not GenSpacer;
 
-                        }
-                        else
-                        {
-                            predicate = x => x.EditorVisible && x is not GenSpacer && x.IsEditorVisible(SelectedItem);
+                                }
+                                else
+                                {
+                                    predicate = x => x.EditorVisible && x is not GenSpacer && x.IsEditorVisible(SelectedItem);
 
-                        }
+                                }
 
-                    }
-                    else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
-                    {
-                        predicate = x => x.GridVisible && x is not GenSpacer;
-                    }
-                    else
-                    {
-                        predicate = x => x is not GenSpacer;
-                    }
-
-                    foreach (var item in GetComponentsOf<IGenControl>().Where(predicate).OrderBy(x => x.Order))
-                    {
-                        if (ViewState == ViewState.None)
-                        {
-                            if (!item.GridVisible)
+                            }
+                            else if (ViewState != ViewState.None && EditMode != EditMode.Inline)
                             {
+                                predicate = x => x.GridVisible && x is not GenSpacer;
+                            }
+                            else
+                            {
+                                predicate = x => x is not GenSpacer;
+                            }
+
+                            foreach (var item in GetComponentsOf<IGenControl>().Where(predicate).OrderBy(x => x.Order))
+                            {
+                                if (ViewState == ViewState.None)
+                                {
+                                    if (!item.GridVisible)
+                                    {
                                         @*<MudTh>
 
-                            </MudTh>*@
+                                            </MudTh>*@
                                         continue;
                                     }
                                 }
@@ -346,13 +346,13 @@
                     </RowTemplate>
 
 
-                  
+
 
                     <RowEditingTemplate Context="_context">
 
                         @{
 
-                        //TODO bu necindir bul
+                            //TODO bu necindir bul
                             if (EditMode != EditMode.Inline)
                             {
                                 var currentRow = OriginalTable.Context.Rows.FirstOrDefault(x => x.Key.Equals(SelectedItem));
@@ -383,15 +383,18 @@
                             //        component.SetEmpty();
                             //    }
                             //}
-                            var components = Components.Select(x => x.component).Where(x => x is not GenSpacer).OrderBy(x => x.Order);
+                            var components = Components.Select(x => x.component).Where(x => x is not GenSpacer && x.EditorVisible).OrderBy(x => x.Order);
 
                             foreach (var component in components)
                             {
                                 if (EditMode != EditMode.Inline || !ShouldShowDialog || ((INonGenGrid)this).DetailClicked)
                                 {
-                                    <MudTd Style="width: auto !important">
-                                        @component.RenderAsGridComponent(_context)
-                                    </MudTd>
+                                    if (component.GridVisible)
+                                    {
+                                        <MudTd Style="width: auto !important">
+                                            @component.RenderAsGridComponent(_context)
+                                        </MudTd>
+                                    }
                                 }
                                 else
                                 {
@@ -405,9 +408,10 @@
                                     {
                                         if (component is IGenControl cntrl)
                                         {
-                                            cntrl.SetEmpty();
+                                            if (cntrl.ClearIfNotVisible)
+                                                cntrl.SetEmpty();
                                         }
-                                       
+
 
                                     }
 
@@ -492,7 +496,7 @@
 
                 </MudTable>
 
-             
+
                 ((INonGenGrid)this).IsRendered = true;
 
             }

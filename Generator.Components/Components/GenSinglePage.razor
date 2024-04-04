@@ -39,12 +39,12 @@
         }
 
     }
-    <EditForm EditContext="@editContext"  OnValidSubmit="OnCommit" OnInvalidSubmit="InvalidSubmit">
+    <EditForm EditContext="@editContext" OnValidSubmit="OnCommit" OnInvalidSubmit="InvalidSubmit">
         <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="Close" DisableSidePadding="true">
             <DialogContent>
 
                 <DataAnnotationsValidator />
-                @*<ValidationSummary />*@
+                @*@<ValidationSummary />@*@
 
                 <MudContainer Class="m-0" Style="max-height: 75vh;overflow-y: scroll;max-width:100vw!important">
 
@@ -53,9 +53,12 @@
                         @{
                             var components = Components.Select(x => x.component);
 
+                            IGenComponent[] componentDetails = components as IGenComponent[] ?? components.ToArray();
 
-                            foreach (var componentDetail in components)
+                            foreach (var componentDetail in componentDetails)
                             {
+
+                                //(componentDetail as IGenControl)?.ValidateField();
 
                                 <MudItem Class="mt-4"
                                          xs="componentDetail.xs"
@@ -68,12 +71,15 @@
 
                                         if (componentDetail.IsEditorVisible(Model))
                                         {
-                                            @componentDetail.RenderAsComponent(Model);
+                                            @componentDetail.RenderAsComponent(Model)
+                                            ;
                                         }
                                         else
                                         {
-                                            if(componentDetail is IGenControl cntrl && cntrl.ClearIfNotVisible)
+                                            if (componentDetail is IGenControl cntrl && components.Where(x => x.BindingField == componentDetail.BindingField).All(x => !x.IsEditorVisible(Model)))
+                                            {
                                                 cntrl.SetEmpty();
+                                            }
                                         }
 
                                     }
@@ -96,7 +102,3 @@
     </EditForm>
 
 </CascadingValue>
-
-
-
-

@@ -137,13 +137,15 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
             await GenGrid.Parent.CurrentGenPage.OnCommitAndWait();
         }
 
-        if (((INonGenView)this).IsTopLevel || GenGrid.Parent.CurrentGenPage.IsValid)
+
+
+        if (((INonGenView)this).IsTopLevel || (GenGrid.Parent is not null && GenGrid.Parent.CurrentGenPage.IsValid))
         {
 
             //GenGrid.OriginalTable.RowEditCommit.Invoke(SelectedItem);
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, viewState);
 
-            if (!GenGrid.IsValid) return;
+            //if (!GenGrid.IsValid) return;
 
             ViewState = ViewState.None;
 
@@ -153,14 +155,23 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
 
     async Task INonGenView.OnCommitAndWait()
     {
+
         if (((INonGenPage)this).IsValid)
         {
+            if (GenGrid.Parent?.ViewState == ViewState.Create)
+            {
+                var result = GenGrid.Parent.CurrentGenPage.Validate();
+                if (!result) return;
+
+                await GenGrid.Parent.CurrentGenPage.OnCommitAndWait();
+            }
+
             ViewState = ViewState.Update;
 
             await ((IGenGrid<TModel>)GenGrid).OnCommit(SelectedItem, ViewState.Update);
         }
 
-        //StateHasChanged();
+        StateHasChanged();
     }
 
     private void CloseIfAllowed()

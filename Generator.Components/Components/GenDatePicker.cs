@@ -180,8 +180,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         {
             if (((IGenControl)this).IsSearchField)
                 ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
-
-            if (((IGenControl)this).Parent is INonGenGrid grid)
+            
+            else if (((IGenControl)this).Parent is INonGenGrid grid)
                 grid.ValidateField(BindingField);
          
         }

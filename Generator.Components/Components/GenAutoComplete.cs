@@ -577,8 +577,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
     {
         if (((IGenControl)this).IsSearchField)
             return ((INonGenGrid)((IGenControl)this).Parent).ValidateSearchField(BindingField);
-
-        if (((IGenControl)this).Parent is INonGenGrid grid)
+        else if (((IGenControl)this).Parent is INonGenGrid grid)
             return grid.ValidateField(BindingField);
 
         return true;

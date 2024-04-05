@@ -353,7 +353,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         if (((IGenControl)this).IsSearchField)
             return ((INonGenGrid)((IGenControl)this).Parent).ValidateSearchField(BindingField);
 
-        if(((IGenControl)this).Parent is INonGenGrid grid)
+        else if(((IGenControl)this).Parent is INonGenGrid grid)
             return grid.ValidateField(BindingField);
 
         return true;

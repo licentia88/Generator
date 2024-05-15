@@ -157,7 +157,7 @@
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
                           LoadingProgressColor="@LoadingProgressColor"
-                          Items="DataSource"
+                          Items="DataSource.Where(Where)"
                           CancelEditIcon="@CancelEditIcon"
                           CancelEditTooltip="@CancelEditTooltip"
                           CommitEditIcon="@CommitEditIcon"

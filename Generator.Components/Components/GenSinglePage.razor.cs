@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Generator.Components.Components;
 
-public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TModel:class
+public partial class GenSinglePage<TModel> : ComponentBase, ISinglePage<TModel> where TModel : class, new()
 {
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
@@ -23,6 +23,10 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
     [Parameter]
     public ViewState ViewState { get; set; }
 
+    [Parameter, AllowNull]
+    public RenderFragment<TModel> GenDetailGrid { get; set; }
+
+   
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
 
@@ -61,7 +65,22 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
     [Parameter]
     public string UpdateText { get; set; } = "Update";
 
-    private string SubmitText => ViewState == ViewState.Create ? CreateText : UpdateText;
+    private string SubmitText => ((ISinglePage<TModel>)this).ViewState == ViewState.Create ? CreateText : UpdateText;
+
+  
+
+    [Parameter]
+    public GenGrid<TModel> GenGrid { get; set; }
+
+    [Parameter]
+    public Dictionary<string, object> Parameters { get; set; } = new();
+
+    [CascadingParameter(Name = nameof(Parameters))]
+
+    private Dictionary<string, object> _Parameters { get => Parameters; set => Parameters = value; }
+
+    bool IPageBase.IsValid { get; set; }
+
 
     void IPageBase.AddChildComponent(IGenComponent component)
     {
@@ -80,7 +99,7 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
     }
 
 
-    async Task OnCommit()
+    async Task OnCommit(bool shouldClose = false)
     {
         if (ViewState == ViewState.Create && Create.HasDelegate)
             await Create.InvokeAsync(new GenArgs<TModel>(Model, null));
@@ -88,14 +107,39 @@ public partial class GenSinglePage<TModel>:ComponentBase, ISinglePage where TMod
         if (ViewState == ViewState.Update && Update.HasDelegate)
             await Update.InvokeAsync(new GenArgs<TModel>(Model, OriginalModel));
 
-        Close();
+        if (shouldClose)
+           this.Close();
     }
 
-    public void Close() => MudDialog.Close();
+    void Close()
+    {
+        ((IPageBase)this).Close();
+    }
+    void IPageBase.Close() => MudDialog.Close();
 
-    public new void StateHasChanged()
+    void IPageBase.StateHasChanged()
     {
         base.StateHasChanged();
+    }
+
+    bool IPageBase.Validate()
+    {
+        ((IPageBase)this).IsValid = GenGrid.Validate();
+        GenGrid.IsValid = ((IPageBase)this).IsValid;
+        StateHasChanged();
+
+        return ((IPageBase)this).IsValid;
+    }
+
+    async Task IPageBase.OnCommitAndWait()
+    {
+        if (((IPageBase)this).IsValid)
+            await OnCommit();
+    }
+
+    object IPageBase.GetSelectedItem()
+    {
+        return Model;
     }
 }
 

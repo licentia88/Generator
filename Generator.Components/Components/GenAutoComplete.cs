@@ -367,8 +367,10 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         return base.OnBlurredAsync(obj);
     }
 
+ 
+    public bool IsExecuting { get; set; }
 
-    public virtual RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => async builder =>
+    public virtual RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) =>   async builder =>
     {
         //if (Model?.GetType().Name == "Object" || !((IGenComponent)this).IsSearchField)
         //    Model = model;
@@ -411,33 +413,41 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         var currentModelValue = Model.GetPropertyValue(BindingField)?.ToString();
 
 
-        if(OperatingSystem.IsWindows())
+        if (DataSource is not null)
         {
-            if (DataSource is not null)
-            {
-                var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
-                additionalParams.Add((nameof(Value), loValue ?? Value));
+            var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
+            additionalParams.Add((nameof(Value), loValue ?? Value));
 
-            }
-            else if (ServiceMethod is not null && !string.IsNullOrEmpty(currentModelValue))
-            {
-
-                var serviceResult = ServiceMethod.Invoke(currentModelValue);
-
-                try
-                {
-                    DataSource = serviceResult.Result;
-
-                    var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
-                    additionalParams.Add((nameof(Value), loValue ?? Value));
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }
         }
-         
+        
+
+        //if(OperatingSystem.IsWindows())
+        //{
+        //    if (DataSource is not null)
+        //    {
+        //        var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
+        //        additionalParams.Add((nameof(Value), loValue ?? Value));
+
+        //    }
+        //    else if (ServiceMethod is not null && !string.IsNullOrEmpty(currentModelValue))
+        //    {
+
+        //        var serviceResult = await ServiceMethod(currentModelValue);
+
+        //        try
+        //        {
+        //            DataSource = serviceResult;
+
+        //            var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
+        //            additionalParams.Add((nameof(Value), loValue ?? Value));
+        //        }
+        //        catch (Exception ex)
+        //        {
+
+        //        }
+        //    }
+        //}
+
 
 
 

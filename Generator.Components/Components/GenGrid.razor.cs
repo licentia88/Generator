@@ -14,7 +14,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel : new()
+public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable where TModel : new()
 {
     private int index;
 
@@ -76,7 +76,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         }
     }
 
-    INonGenPage INonGenGrid.CurrentGenPage { get; set; }
+    IPageBase INonGenGrid.CurrentGenPage { get; set; }
 
     public DialogResult DialogResult { get; set; }
 
@@ -102,7 +102,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         };
     }
 
- 
+    //[CascadingParameter(Name =(nameof(ViewState)))]
     public ViewState ViewState { get; set; } = ViewState.None;
 
     internal MudIconButton EditButtonRef { get; set; }
@@ -438,14 +438,16 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
         ViewState = ViewState.Update;
 
-        await ShowDialogAsync<GenPage<TModel>>();
+        var dialogReference = await ShowDialogAsync<GenPage<TModel>>();
+
+        await dialogReference.Result;
 
     }
 
    
     private async Task Commit()
     {
-        IsValid =  ValidateModel();
+        IsValid = Validate();
 
         if (!IsValid)
         {
@@ -460,7 +462,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
         //Parent Save
         if (Parent?.ViewState == ViewState.Create)
         {
-            Parent.ValidateModel();
+            Parent.Validate();
 
             await Parent.OnCommitAndWait();
         }
@@ -497,7 +499,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
             if (!IsValid)
             {
                 if (((INonGenGrid)this).CurrentGenPage is not null)
-                    ((INonGenGrid)this).CurrentGenPage.IsValid = false;
+                    (((INonGenGrid)this).Parent?.CurrentGenPage).IsValid = false;
 
                 EditButtonActionList.Clear();
 
@@ -518,8 +520,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
             {
                 OldValue = ((IGenView<TModel>)this).OriginalEditItem,
                 CurrentValue = model,
-                Index = index,
-                Parent = ((INonGenGrid)this).Parent?.CurrentGenPage?.GetSelectedItem()
+                 Index = index,
+                Parent = (((INonGenGrid)this).Parent?.CurrentGenPage)?.GetSelectedItem()
 
             };
 
@@ -559,6 +561,13 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
                     throw new ArgumentOutOfRangeException();
             }
 
+
+            if(((INonGenGrid)this).CurrentGenPage is not null && ((INonGenGrid)this).CurrentGenPage is IGenView<TModel> page)
+            {
+                page.SelectedItem = args.CurrentValue;
+                SelectedItem = args.CurrentValue;
+            }
+
             ((INonGenGrid)this). SearchDisabled = false;
 
             ((INonGenGrid)this).NewDisabled = false;
@@ -588,7 +597,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
             if(((INonGenGrid)this).CurrentGenPage is not null)
             {
                 ((INonGenGrid)this).CurrentGenPage.ViewState = ViewState;
-                ((INonGenGrid)this).CurrentGenPage.Close();
+                ((INonGenGrid)this).CurrentGenPage.Close(); 
             }
 
             if(ViewState == ViewState.Update)
@@ -620,7 +629,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
      }
 
 
-    async Task INonGenView.OnCommitAndWait()
+    async Task IPageBase.OnCommitAndWait()
     {
         await ((IGenGrid<TModel>)this).OnCommit(SelectedItem, ViewState.Update);
 
@@ -865,7 +874,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
     }
 
 
-    public bool ValidateModel()
+    public bool Validate()
     {
         var isValid = GenValidator.ValidateDataSource(SelectedItem, Components.Where(x=> x.component is IGenControl).Select(x=>   x.component as IGenControl));
      
@@ -1012,7 +1021,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
 
       
 
-        await ShowDialogAsync<GenPage<TModel>>();
+        var dialogReference =   await ShowDialogAsync<GenPage<TModel>>();
+
+        await dialogReference.Result;
+
 
     }
     
@@ -1249,4 +1261,19 @@ public partial class GenGrid<TModel> : MudTable<TModel>,IDisposable where TModel
             DataSource.RemoveAt(0);
         }
     }
+
+    public object GetSelectedItem()
+    {
+        return SelectedItem;
+    }
+
+    void IPageBase.Close()
+    {
+        ((IGenGrid<TModel>)this).CurrentGenPage.Close();
+    }
+
+    //public bool Validate()
+    //{
+    //    throw new NotImplementedException();
+    //}
 }

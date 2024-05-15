@@ -219,7 +219,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         else
         {
             // if (!DateChanged.HasDelegate)
-                DateChanged = EventCallback.Factory.Create<DateTime?>(this,  x =>  SetValue(x));
+            DateChanged = EventCallback.Factory.Create<DateTime?>(this, SetValue);
 
         }
     }

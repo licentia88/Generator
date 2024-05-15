@@ -1,7 +1,7 @@
-﻿@typeparam TModel  where TModel : class
+﻿@typeparam TModel  where TModel : class ,new()
 
 @inherits ComponentBase
-@implements ISinglePage
+@implements ISinglePage<TModel>
 
 
 
@@ -39,58 +39,93 @@
         }
 
     }
-    <EditForm EditContext="@editContext" OnValidSubmit="OnCommit" OnInvalidSubmit="InvalidSubmit">
+    <EditForm EditContext="@editContext" OnValidSubmit="async () => await OnCommit(true)" OnInvalidSubmit="InvalidSubmit">
         <MudDialog DefaultFocus="DefaultFocus.Element" OnBackdropClick="Close" DisableSidePadding="true">
             <DialogContent>
 
                 <DataAnnotationsValidator />
                 @*@<ValidationSummary />@*@
 
-                <MudContainer Class="m-0" Style="max-height: 75vh;overflow-y: scroll;max-width:100vw!important">
+            <MudContainer Class="m-0" Style="max-height: 75vh;overflow-y: scroll;max-width:100vw!important">
 
-                    <MudGrid Justify="Justify.FlexStart" Spacing="0">
+                <MudGrid Justify="Justify.FlexStart" Spacing="0">
 
-                        @{
-                            var components = Components.Select(x => x.component);
+                    @{
+                        var components = Components.Select(x => x.component);
 
-                            IGenComponent[] componentDetails = components as IGenComponent[] ?? components.ToArray();
+                        IGenComponent[] componentDetails = components as IGenComponent[] ?? components.ToArray();
 
-                            foreach (var componentDetail in componentDetails)
-                            {
+                        foreach (var componentDetail in componentDetails)
+                        {
 
-                                //(componentDetail as IGenControl)?.ValidateField();
+                            //(componentDetail as IGenControl)?.ValidateField();
 
-                                <MudItem Class="mt-4"
-                                         xs="componentDetail.xs"
-                                         sm="componentDetail.sm"
-                                         md="componentDetail.md"
-                                         lg="componentDetail.lg"
-                                         xl="componentDetail.xl"
-                                         xxl="componentDetail.xxl">
-                                    @{
+                            <MudItem Class="mt-4"
+                                     xs="componentDetail.xs"
+                                     sm="componentDetail.sm"
+                                     md="componentDetail.md"
+                                     lg="componentDetail.lg"
+                                     xl="componentDetail.xl"
+                                     xxl="componentDetail.xxl">
+                                @{
 
-                                        if (componentDetail.IsEditorVisible(Model))
-                                        {
-                                            @componentDetail.RenderAsComponent(Model)
-                                            ;
-                                        }
-                                        else
-                                        {
-                                            if (componentDetail is IGenControl cntrl && components.Where(x => x.BindingField == componentDetail.BindingField).All(x => !x.IsEditorVisible(Model)))
-                                            {
-                                                cntrl.SetEmpty();
-                                            }
-                                        }
+                                    if (componentDetail.IsEditorVisible(Model))
+                                    {
+                                        @componentDetail.RenderAsComponent(Model)
 
                                     }
-                                </MudItem>
-                            }
+                                    else
+                                    {
+                                        if (componentDetail is IGenControl cntrl && components.Where(x => x.BindingField == componentDetail.BindingField).All(x => !x.IsEditorVisible(Model)))
+                                        {
+                                            cntrl.SetEmpty();
+                                        }
+                                    }
 
+                                }
+                            </MudItem>
                         }
-                    </MudGrid>
+
+                    }
+                </MudGrid>
+
+                @{
+                    if (GenDetailGrid is not null)
+                    {
+                        INonGenGrid gridParam = new GenGrid<TModel>()
+                        {
+                            ViewState = this.ViewState,
+                            GenValidator = new Validators.GenValidator<TModel>()
+                        };
+
+                        gridParam.CurrentGenPage = this;
 
 
-                </MudContainer>
+                        (this).GenGrid = gridParam as GenGrid<TModel>;
+
+                        GenGrid.SelectedItem = this.Model;
+                        GenGrid.Components = this.Components;
+                        GenGrid.Parent = gridParam;
+
+                        @*<div style=" overflow-y: scroll!important; ">*@
+                        @*<div style="overflow-x:hidden; overflow-y:hidden;">*@
+                        <CascadingValue Value="Parameters" Name="@(nameof(Parameters))">
+                            <CascadingValue Value="Model" Name="@(nameof(GenGrid.SelectedItems))">
+                                <CascadingValue Value="@(ViewState)" Name="@(nameof(GenGrid.ViewState))">
+                                    <CascadingValue Value="@gridParam" Name="@(nameof(GenGrid.Parent))">
+                                        @GenDetailGrid(Model)
+                                    </CascadingValue>
+                                </CascadingValue>
+                            </CascadingValue>
+                        </CascadingValue>
+
+                        @*</div>*@
+                        @*</div>*@
+
+                    }
+                }
+
+            </MudContainer>
             </DialogContent>
             <DialogActions>
                 <MudButton OnClick="Close">@CancelText</MudButton>

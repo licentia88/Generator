@@ -1,5 +1,4 @@
-﻿using Generator.Components.Components;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
 namespace Generator.Components.Interfaces;
@@ -8,7 +7,7 @@ public interface INonGenGrid:INonGenView
 {
     IDialogService DialogService { get; set; }
 
-    INonGenPage CurrentGenPage { get; set; }
+    IPageBase CurrentGenPage { get; set; }
 
     bool IsFirstRender { get; set; }
 
@@ -58,14 +57,14 @@ public interface INonGenGrid:INonGenView
 
     public RenderFragment<object> GenSideButtons { get; set; }
 
-    public bool IsValid { get; set; }
+    //public bool IsValid { get; set; }
 
 
     public string SearchPlaceHolderText { get; set; }
 
     bool ForceRenderOnce { get; set; }
 
-    public bool ValidateModel();
+    //public bool ValidateModel();
 
     public bool ValidateField(string propertyName);
 

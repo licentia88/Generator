@@ -44,9 +44,6 @@
 
                                     foreach (var componentDetail in componentDetails)
                                     {
-
-                                        //(componentDetail as IGenControl)?.ValidateField();
-
                                         <MudItem Class="mt-4"
                                                  xs="componentDetail.xs"
                                                  sm="componentDetail.sm"
@@ -66,8 +63,6 @@
                                                     {
                                                         cntrl.SetEmpty();
                                                     }
-
-
                                                 }
 
                                             }
@@ -76,10 +71,7 @@
 
                                 }
                             </MudGrid>
-                            @*<div style="overflow-x:hidden; ">
-
-                            </div>*@
-
+                  
 
                             if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
                             {

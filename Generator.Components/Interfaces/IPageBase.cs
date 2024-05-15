@@ -1,4 +1,6 @@
-﻿namespace Generator.Components.Interfaces;
+﻿using Generator.Components.Enums;
+
+namespace Generator.Components.Interfaces;
 
 public interface IPageBase
 {
@@ -6,4 +8,15 @@ public interface IPageBase
 
     void StateHasChanged();
 
+    public bool Validate();
+
+    bool IsValid { get; set; }
+
+    Task OnCommitAndWait();
+
+    public ViewState ViewState { get; set; }
+
+    public object GetSelectedItem();
+
+    public void Close();
 }

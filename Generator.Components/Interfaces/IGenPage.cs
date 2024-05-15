@@ -15,13 +15,5 @@ public interface INonGenPage: INonGenView
     public MudDialogInstance MudDialog { get; set; }
 
     public bool EnableModelValidation { get; set; }
-
-    bool IsValid { get; set; }
-
-    internal object GetSelectedItem();
-
-    void Close();
-
-    public bool Validate();
-
+ 
  }

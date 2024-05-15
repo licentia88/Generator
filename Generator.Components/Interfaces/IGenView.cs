@@ -10,7 +10,7 @@ public interface INonGenView: IPageBase
 
     public string Title { get; set; }
 
-    public ViewState ViewState { get; set; }
+    //public ViewState ViewState { get; set; }
 
     public EditMode EditMode { get; set; }
 
@@ -27,7 +27,7 @@ public interface INonGenView: IPageBase
 
     Task OnCommit();
 
-    Task OnCommitAndWait();
+   
 
     public bool HasErrors();
 

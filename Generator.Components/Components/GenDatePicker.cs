@@ -80,7 +80,6 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     [Parameter]
     public Func<object, bool> RequiredIf { get; set; }
 
-
     public new DateTime? Date
     {
         get
@@ -92,6 +91,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             SetDateAsync(value, updateValue: true).AndForget();
         }
     }
+
+ 
     protected new  async Task SetDateAsync(DateTime? date, bool updateValue)
     {
         if (!(_value != date))
@@ -133,7 +134,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
         if (InitialValue is not null && ((INonGenGrid)((IGenControl)this).Parent).ViewState != ViewState.Update)
             await SetDateAsync(InitialValue, true);
-        
+
+
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)

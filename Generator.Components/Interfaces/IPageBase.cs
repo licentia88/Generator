@@ -1,4 +1,5 @@
 ﻿using Generator.Components.Enums;
+using MudBlazor;
 
 namespace Generator.Components.Interfaces;
 
@@ -11,6 +12,10 @@ public interface IPageBase
     public bool Validate();
 
     bool IsValid { get; set; }
+
+    Color TemplateColor { get; set; }
+
+    public bool GridIsBusy { get; set; }
 
     Task OnCommitAndWait();
 

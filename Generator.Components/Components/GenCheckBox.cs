@@ -199,15 +199,17 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
         SetCallBackEvents();
 
-          var val = (Model.GetPropertyValue(BindingField)) ?? false;
+        var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
-          var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-        
-          additionalParams.Add((nameof(Checked), val));
+        var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
-          additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
+        additionalParams.Add((nameof(Checked), val));
 
-          additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
+        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
+
+        additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
+
+        additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
 
         if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;

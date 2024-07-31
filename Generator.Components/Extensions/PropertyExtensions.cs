@@ -13,7 +13,7 @@ internal static class PropertyExtensions
         {
             if (obj is null) return default;
 
-            if ((obj is ExpandoObject || obj is Dictionary<string, object>))
+            if (obj is ExpandoObject || obj is Dictionary<string, object>)
                 return ((IDictionary<string, object>)obj)[propertyName] ?? null;
 
             return obj.GetType()

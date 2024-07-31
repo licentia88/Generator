@@ -15,13 +15,20 @@
         border-bottom-left-radius: var(--mud-default-borderradius);
         border-bottom-right-radius: var(--mud-default-borderradius);
     }
+
     .mud-dialog .mud-dialog-content.mud-dialog-no-side-padding {
-         padding: 0; 
+        padding: 0;
     }
 </style>
 
 @{
     if (SelectedItem is null) return;
+
+    if (GridIsBusy)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+
+    }
 
     <CascadingValue Value="GenGrid" Name="@(nameof(GenGrid.Parent))">
         <EditForm Model="@SelectedItem" OnValidSubmit="((INonGenPage)this).OnCommit" OnInvalidSubmit="OnInvalidSubmit">
@@ -29,7 +36,7 @@
                 <DialogContent>
 
                     <DataAnnotationsValidator />
-                    
+                    <ValidationSummary />
 
                     <MudContainer Class="m-0" Style="max-height: 75vh;overflow-y: scroll;max-width:100vw!important">
                         @*<MudContainer Class="m-0 p-2" Style="overflow-y: scroll">*@
@@ -59,7 +66,7 @@
                                                 }
                                                 else
                                                 {
-                                                    if (componentDetail is IGenControl cntrl && components.Where(x=> x.BindingField == componentDetail.BindingField).All(x => !x.IsEditorVisible(SelectedItem)))
+                                                    if (componentDetail is IGenControl cntrl && components.Where(x => x.BindingField == componentDetail.BindingField).All(x => !x.IsEditorVisible(SelectedItem)))
                                                     {
                                                         cntrl.SetEmpty();
                                                     }
@@ -71,7 +78,7 @@
 
                                 }
                             </MudGrid>
-                  
+
 
                             if (GenGrid.EditMode == EditMode.SmartForm && GenGrid.GenDetailGrid is not null)
                             {

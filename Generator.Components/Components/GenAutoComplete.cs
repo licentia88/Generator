@@ -455,7 +455,13 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
+        if (ProgressIndicatorColor is not Color.Default)
+            additionalParams.Add((nameof(ProgressIndicatorColor), ProgressIndicatorColor));
+        else
+            additionalParams.Add((nameof(ProgressIndicatorColor), ((IGenControl)this).Parent.TemplateColor));
+
         additionalParams.Add(innerFragment);
+        additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
 
         //SelectValueOnTab = true;
         //Clearable = true;

@@ -81,6 +81,10 @@ public partial class GenSinglePage<TModel> : ComponentBase, ISinglePage<TModel> 
 
     bool IPageBase.IsValid { get; set; }
 
+    public bool GridIsBusy { get; set; }
+
+    [Parameter]
+    public Color TemplateColor { get; set; }
 
     void IPageBase.AddChildComponent(IGenComponent component)
     {
@@ -101,12 +105,15 @@ public partial class GenSinglePage<TModel> : ComponentBase, ISinglePage<TModel> 
 
     async Task OnCommit(bool shouldClose = false)
     {
+        GridIsBusy = true;
         if (ViewState == ViewState.Create && Create.HasDelegate)
             await Create.InvokeAsync(new GenArgs<TModel>(Model, null));
 
         if (ViewState == ViewState.Update && Update.HasDelegate)
             await Update.InvokeAsync(new GenArgs<TModel>(Model, OriginalModel));
 
+
+        GridIsBusy = false;
         if (shouldClose)
            this.Close();
     }

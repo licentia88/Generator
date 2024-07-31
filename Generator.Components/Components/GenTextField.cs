@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using Generator.Components.Extensions;
+﻿using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -252,7 +250,6 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         //additionalParams.Add((nameof(Value), Text));
         additionalParams.Add((nameof(Value), loValue));
-
 
 
         //builder.AddElementReferenceCapture(1, (value) => { Reference = (GenTextField)value; });

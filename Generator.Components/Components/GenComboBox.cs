@@ -265,7 +265,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
                 treeBuilder.OpenComponent(i++, typeof(MudSelectItem<object>));
 
                 treeBuilder.AddAttribute(i++, nameof(Value), data);
-
+                
                 treeBuilder.CloseComponent();
             }
 
@@ -281,6 +281,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
+        
+        //additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
 
         additionalParams.Add(innerFragment);
 

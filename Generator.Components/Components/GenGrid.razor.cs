@@ -11,6 +11,7 @@ using Mapster;
 using Generator.Components.Args;
 using Generator.Components.Helpers;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Color = MudBlazor.Color;
 
 namespace Generator.Components.Components;
 
@@ -84,7 +85,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
     internal List<Action> EditButtonActionList { get; set; } = new();
 
-    public bool GridIsBusy = false;
+    public bool GridIsBusy { get; set; } = false;
+
+    [Parameter]
+    public Color TemplateColor { get; set; } = Color.Primary;
 
     [Parameter]
     public Func<TModel, bool> Where { get; set; } = x => 1 == 1;
@@ -492,6 +496,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
         {
             GridIsBusy = true;
 
+            if (((INonGenGrid)this).CurrentGenPage is not null)
+                ((INonGenGrid)this).CurrentGenPage.GridIsBusy = true;
 
             if (OnBeforeSubmit.HasDelegate)
                await OnBeforeSubmit.InvokeAsync(model);
@@ -511,7 +517,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
                 //Components.Clear();
 
                 GridIsBusy = false;
-
+                if (((INonGenGrid)this).CurrentGenPage is not null)
+                    ((INonGenGrid)this).CurrentGenPage.GridIsBusy = false;
                 //StateHasChanged();
                 return;
             }
@@ -606,6 +613,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
             }
 
             GridIsBusy = false;
+
+            if (((INonGenGrid)this).CurrentGenPage is not null)
+                ((INonGenGrid)this).CurrentGenPage.GridIsBusy = false;
         }
 
  
@@ -623,6 +633,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
         //Components.Clear();
 
         GridIsBusy = false;
+        if (((INonGenGrid)this).CurrentGenPage is not null)
+            (((INonGenGrid)this)?.CurrentGenPage).GridIsBusy = false;
 
         StateHasChanged();
 
@@ -726,6 +738,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
             (nameof(GenPage<TModel>.IsIndividual), IsIndividual),
             (nameof(GenPage<TModel>.Parameters), Parameters),
             (nameof(GenPage<TModel>.Title), Title),
+            (nameof(GenPage<TModel>.TemplateColor), TemplateColor),
             (nameof(GenPage<TModel>.ViewState), ViewState),
             (nameof(GenPage<TModel>.GenGrid), this)
         };

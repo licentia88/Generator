@@ -60,6 +60,11 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
 
     public bool ShouldShowDialog { get; set; } = true;
 
+    public bool GridIsBusy { get; set; }
+
+    [Parameter]
+    public Color TemplateColor { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         ((INonGenGrid)GenGrid).CurrentGenPage = this;

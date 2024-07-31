@@ -211,6 +211,8 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
+        additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
+
         if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;
 

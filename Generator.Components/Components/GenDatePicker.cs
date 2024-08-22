@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Args;
 using Generator.Components.Enums;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
@@ -88,7 +89,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         }
         set
         {
-            SetDateAsync(value, updateValue: true).AndForget();
+            SetDateAsync(value, updateValue: true).CatchAndLog();
         }
     }
 
@@ -115,7 +116,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         await BeginValidateAsync();
         FieldChanged(_value);
 
-         await OnDateChanged.InvokeAsync((Model, date));
+         await OnDateChanged.InvokeAsync(new ValueChangedArgs<DateTime?>(Model,Date,date,((IGenControl)this).IsSearchField));
 
     }
 
@@ -165,7 +166,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             //await SetTextAsync(base.Converter.Set(date), true);
 
         }
-        await OnDateChanged.InvokeAsync((Model, date));
+        await OnDateChanged.InvokeAsync(new ValueChangedArgs<DateTime?>(Model,Date,date,((IGenControl)this).IsSearchField));
+
 
         comp.Parent.StateHasChanged();
         if (comp.Parent is INonGenGrid grid)
@@ -175,22 +177,19 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     }
 
 
-
-    protected override void OnClosed()
+    protected override Task OnClosedAsync()
     {
-        if (!Error)
-        {
-            if (((IGenControl)this).IsSearchField)
-                ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
+        if (Error) return base.OnClosedAsync();
+        if (((IGenControl)this).IsSearchField)
+            ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
             
-            else if (((IGenControl)this).Parent is INonGenGrid grid)
-                grid.ValidateField(BindingField);
-         
-        }
-            
-
-        base.OnClosed();
+        else if (((IGenControl)this).Parent is INonGenGrid grid)
+            grid.ValidateField(BindingField);
+        return base.OnClosedAsync();
     }
+    
+
+   
 
     private void AddComponents()
     {
@@ -204,7 +203,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     
     [Parameter]
-    public EventCallback<(object Model, DateTime? Value)> OnDateChanged { get; set; }
+    public EventCallback<ValueChangedArgs<DateTime?>> OnDateChanged { get; set; }
 
  
     
@@ -317,6 +316,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         SetValue((DateTime?)value);
     }
 
+    public Task ClearAsync()
+    {
+        ClearAsync(true);
+        return Task.CompletedTask;
+    }
+
     void IGenControl.SetEmpty()
     {
         if (Model is null) return;
@@ -328,13 +333,11 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         _value = defaultValue;
     }
 
-    public Task Clear()
-    {
-        base.Clear();
 
+    public override Task ClearAsync(bool close = true)
+    {
         ((IGenControl)this).SetEmpty();
-        
-        return Task.CompletedTask;
+        return base.ClearAsync(close);
     }
 
     public new bool Validate()

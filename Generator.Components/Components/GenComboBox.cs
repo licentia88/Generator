@@ -141,7 +141,8 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         {
             SetValue(null);
 
-            await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, default, ((IGenControl)this).IsSearchField));
+            var args = new ValueChangedArgs<object>(Model, default, null, ((IGenControl)this).IsSearchField);
+            await OnValueChanged.InvokeAsync(args);
 
             Validate();
             return;
@@ -191,14 +192,15 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
         if (value is null) return;
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value, ((IGenControl)this).IsSearchField));
+        var args = new ValueChangedArgs<object>(Model, Value, value, ((IGenControl)this).IsSearchField);
+        await OnValueChanged.InvokeAsync(args);
 
         Validate();
     }
    
 
     [Parameter]
-    public EventCallback<ComponentArgs<object>> OnValueChanged { get; set; }
+    public EventCallback<ValueChangedArgs<object>> OnValueChanged { get; set; }
 
     private void SetCallBackEvents()
     {
@@ -342,7 +344,7 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
         //_value = Model;
     }
 
-    public new async Task Clear()
+    public new async Task ClearAsync()
     {
         ((IGenControl)this).SetEmpty();
 

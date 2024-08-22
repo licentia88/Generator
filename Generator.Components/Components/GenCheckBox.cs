@@ -3,6 +3,7 @@ using MudBlazor;
 using System.ComponentModel.DataAnnotations;
 using Generator.Components.Interfaces;
 using System.ComponentModel;
+using Generator.Components.Args;
 using Generator.Components.Enums;
 using Microsoft.AspNetCore.Components.Rendering;
 using Generator.Components.Extensions;
@@ -161,17 +162,17 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     protected new async Task SetCheckedAsync(bool value)
     {
         await base.SetCheckedAsync(value);
-        await OnCheckedChanged.InvokeAsync((Model,value));
+        var args = new ValueChangedArgs<bool>(Model, Value, value, ((IGenControl)this).IsSearchField);
+        await OnCheckedChanged.InvokeAsync(args);
     }
     
     [Parameter]
-    public EventCallback<(object Model,bool Value)> OnCheckedChanged{ get; set; }
+    public EventCallback<ValueChangedArgs<bool>> OnCheckedChanged{ get; set; }
 
     private void SetCallBackEvents()
     {
         // if (!CheckedChanged.HasDelegate)
-            CheckedChanged = EventCallback.Factory.Create<bool>(this, x => { SetValue(x); Validate(); });
-
+            ValueChanged = EventCallback.Factory.Create<bool>(this, x => { SetValue(x); Validate(); });
     }
     
     
@@ -202,8 +203,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-
-        additionalParams.Add((nameof(Checked), val));
+        additionalParams.Add((nameof(Value), val));
 
         additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
 
@@ -263,7 +263,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         {
             Model?.SetPropertyValue(BindingField, value);
             
-            Checked = value;
+            Value = value;
 
             _value = value;
 
@@ -295,11 +295,11 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         var defaultValue = ((IGenControl)this).DataType.GetDefaultValue().CastTo<bool>();
         Model.SetPropertyValue(BindingField, defaultValue);
         _value = defaultValue;
-        Checked = defaultValue;
+        Value = defaultValue;
     }
 
 
-    public Task Clear()
+    public Task ClearAsync()
     {
         ((IGenControl)this).SetEmpty();
         return Task.CompletedTask;

@@ -30,36 +30,36 @@ public class ComponentArgs<TModel> : EventArgs
 
   
 
-    public T GetValueAs<T>(string bindingField)
-    {
-        object value;
-
-        //if (IsSearchField)
-        //    value = DictionaryModel[bindingField];
-        //else
-        value = Model.GetPropertyValue(bindingField);
-
-        if (value is null) return default;
-
-        if (typeof(T).GetInterfaces().Contains(typeof(IConvertible)))
-        {
-            try
-            {
-                return (T)Convert.ChangeType(value, typeof(T));
-            }
-            catch (InvalidCastException)
-            {
-                // Handle conversion failure here
-                return default;
-            }
-        }
-        else
-        {
-            // Handle types that don't support conversion from string
-            // You can throw an exception or provide a default behavior here
-            return default;
-        }
-    }
+    // public T GetValueAs<T>(string bindingField)
+    // {
+    //     object value;
+    //
+    //     //if (IsSearchField)
+    //     //    value = DictionaryModel[bindingField];
+    //     //else
+    //     value = Model.GetPropertyValue(bindingField);
+    //
+    //     if (value is null) return default;
+    //
+    //     if (typeof(T).GetInterfaces().Contains(typeof(IConvertible)))
+    //     {
+    //         try
+    //         {
+    //             return (T)Convert.ChangeType(value, typeof(T));
+    //         }
+    //         catch (InvalidCastException)
+    //         {
+    //             // Handle conversion failure here
+    //             return default;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // Handle types that don't support conversion from string
+    //         // You can throw an exception or provide a default behavior here
+    //         return default;
+    //     }
+    // }
 
      
 }

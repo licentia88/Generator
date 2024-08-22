@@ -155,14 +155,14 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
 
 
 
-    /// <summary>
-    /// Toggle the menu (if not disabled or not readonly, and is opened).
-    /// </summary>
-    public new async Task ToggleMenu()
-    {
-
-        await base.ToggleMenu();
-    }
+    // /// <summary>
+    // /// Toggle the menu (if not disabled or not readonly, and is opened).
+    // /// </summary>
+    // public new async Task ToggleMenu()
+    // {
+    //
+    //     await base.ToggleMenu();
+    // }
 
     protected int? Count = null;
 
@@ -181,9 +181,9 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         await SetValueAsync(Value, updateText: true, force: true);
         //return base.ForceUpdate();
     }
-    private async Task<IEnumerable<object>> FindMethod(string value)
+    
+    private async Task<IEnumerable<object>> FindMethod(string value, CancellationToken arg2)
     {
-
         if (!string.IsNullOrEmpty(value) && value == Text)
         {
             //Count = null;
@@ -306,13 +306,16 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync(new ComponentArgs<object>(Model, value, ((IGenControl)this).IsSearchField));
+        
+        var args = new ValueChangedArgs<object>(Model, Value, value, ((IGenControl)this).IsSearchField);
+
+        await OnValueChanged.InvokeAsync(args);
         Validate();
     }
 
 
     [Parameter]
-    public EventCallback<ComponentArgs<object>> OnValueChanged { get; set; }
+    public EventCallback<ValueChangedArgs<object>> OnValueChanged { get; set; }
 
 
 
@@ -361,6 +364,8 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         //});
 
     }
+
+   
 
     protected override Task OnBlurredAsync(FocusEventArgs obj)
     {
@@ -563,7 +568,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         }
     }
 
-    public new async Task Clear()
+    public new async Task ClearAsync()
     {
         await OnClearButtonClick.InvokeAsync();
         //await base.Clear();

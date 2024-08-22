@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Args;
 using Generator.Components.Extensions;
 
 namespace Generator.Components.Components;
@@ -81,13 +82,13 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
 
 
     [Parameter]
-    public EventCallback<(object Model, TimeSpan? Value)> OnTimeChanged { get; set; }
+    public EventCallback<ValueChangedArgs<TimeSpan?>> OnTimeChanged { get; set; }
 
 
     protected new async Task SetTimeAsync(TimeSpan? time, bool updateValue)
     {
          await base.SetTimeAsync(time, updateValue);
-        await OnTimeChanged.InvokeAsync((Model, time));
+        await OnTimeChanged.InvokeAsync(new ValueChangedArgs<TimeSpan?>(Model,Time,time,((IGenControl)this).IsSearchField));
     }
 
  
@@ -134,7 +135,7 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
             //await SetTextAsync(base.Converter.Set(date), true);
 
         }
-        await OnTimeChanged.InvokeAsync((Model, date));
+        await OnTimeChanged.InvokeAsync(new ValueChangedArgs<TimeSpan?>(Model,Time,date,((IGenControl)this).IsSearchField));
 
         comp.Parent.StateHasChanged();
         if (comp.Parent is INonGenGrid grid)
@@ -144,22 +145,18 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
     }
 
 
-
-    protected override void OnClosed()
+    protected override Task OnClosedAsync()
     {
-        if (!Error)
-        {
-            if (((IGenControl)this).IsSearchField)
-                ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
+        if (Error) return base.OnClosedAsync();
+        if (((IGenControl)this).IsSearchField)
+            ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
 
-            else if (((IGenControl)this).Parent is INonGenGrid grid)
-                grid.ValidateField(BindingField);
-
-        }
-
-
-        base.OnClosed();
+        else if (((IGenControl)this).Parent is INonGenGrid grid)
+            grid.ValidateField(BindingField);
+        return base.OnClosedAsync();
     }
+
+    
 
     private void AddComponents()
     {
@@ -295,12 +292,9 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
         _value = defaultValue;
     }
 
-    public Task Clear()
+    public Task ClearAsync()
     {
-        base.Clear();
-
-        ((IGenControl)this).SetEmpty();
-
+        ClearAsync(true);
         return Task.CompletedTask;
     }
 

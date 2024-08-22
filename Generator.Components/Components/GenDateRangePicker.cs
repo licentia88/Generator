@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Generator.Components.Args;
 using Generator.Components.Extensions;
 using Generator.Components.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -84,7 +85,7 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
     protected new async Task SetDateRangeAsync(DateRange dateRange, bool updateValue)
     {
         await base.SetDateRangeAsync(dateRange, updateValue);
-        await OnDateRangeChanged.InvokeAsync((Model, dateRange));
+        await OnDateRangeChanged.InvokeAsync(new ValueChangedArgs<DateRange>(Model,DateRange,dateRange,((IGenControl)this).IsSearchField));
     }
 
     protected override async Task OnInitializedAsync()
@@ -133,22 +134,18 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
     }
 
 
-
-    protected override void OnClosed()
+    protected override Task OnClosedAsync()
     {
-        if (!Error)
-        {
-            if (((IGenControl)this).IsSearchField)
-                ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
+        if (Error) return base.OnClosedAsync();
+        if (((IGenControl)this).IsSearchField)
+            ((INonGenGrid)((IGenControl)this).Parent)?.ValidateSearchField(BindingField);
 
-            if (((IGenControl)this).Parent is INonGenGrid grid)
-                grid.ValidateField(BindingField);
-
-        }
-
-
-        base.OnClosed();
+        if (((IGenControl)this).Parent is INonGenGrid grid)
+            grid.ValidateField(BindingField);
+        return base.OnClosedAsync();
     }
+
+    
 
     private void AddComponents()
     {
@@ -159,7 +156,7 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
 
     [Parameter]
-    public EventCallback<(object Model, DateRange Value)> OnDateRangeChanged { get; set; }
+    public EventCallback<ValueChangedArgs<DateRange>> OnDateRangeChanged { get; set; }
 
 
 
@@ -272,12 +269,9 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
         _value = null;
     }
 
-    public Task Clear()
+    public Task ClearAsync()
     {
-        base.Clear();
-
-        ((IGenControl)this).SetEmpty();
-
+        ClearAsync(true);
         return Task.CompletedTask;
     }
 

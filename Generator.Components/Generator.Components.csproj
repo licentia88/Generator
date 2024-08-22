@@ -36,7 +36,7 @@
     -->
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.20.0" />
+    <PackageReference Include="MudBlazor" Version="7.6.0" />
     <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
@@ -63,7 +63,6 @@
     <None Remove="AnalyzerReleases.Unshipped.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Args\" />
     <Folder Include="Enums\" />
     <Folder Include="Helpers\" />
     <Folder Include="Interfaces\" />
@@ -85,17 +84,6 @@
  
   </ItemGroup>
 
-  
-  <ItemGroup>
-    <Content Include=".DS_Store">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-        <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
- 
-  
-   
    
   
   <ItemGroup>

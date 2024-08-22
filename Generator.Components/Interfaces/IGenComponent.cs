@@ -71,7 +71,7 @@ public interface IGenControl : IGenComponent
 
     public void SetValue(object value);
 
-    public Task Clear();
+    public Task ClearAsync();
 
     public bool Validate();
 

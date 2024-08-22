@@ -17,7 +17,7 @@ namespace Generator.Components.Components;
 
 public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable where TModel : new()
 {
-    private int index;
+    private int _index;
 
     [Inject]
     public GenValidator<TModel> GenValidator { get; set; }
@@ -47,7 +47,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
     public bool CloseOnEscapeKey { get; set; } = true;
 
     [Parameter]
-    public bool DisableBackdropClick { get; set; } = true;
+    public bool BackdropClick { get; set; }
 
     [Parameter]
     public bool EnableSorting { get; set; }
@@ -101,7 +101,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
             FullWidth = true,
             CloseButton = CloseButton,
             CloseOnEscapeKey = CloseOnEscapeKey,
-            DisableBackdropClick = DisableBackdropClick,
+            BackdropClick = BackdropClick,
             Position = DialogPosition.Center
         };
     }
@@ -356,7 +356,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
             if (editingItem is null)
                 StateHasChanged();
 
-            editingRow.IsEditing = true;
+
+            editingRow?.Context.Editable(true); 
+            // editingRow.Context.Table.SetEditingItem(editingItem);
+            // editingRow.IsEditing = true;
 
             ((INonGenGrid)this).ForceRenderOnce = false;
             //}
@@ -369,37 +372,38 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
         //return Task.CompletedTask;
     }
 
-    private void InvokeEditActions(MudTr editingRow)
-    {
-        if (EditButtonActionList.Any())
-        {
-            // ReSharper disable once PossibleNullReferenceException
-            var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
-
-            if (firstItem is null) return;
-
-
-            firstItem.Invoke();
-        }
-        else
-        {
-            if (Disabled)
-            {
-
-                editingRow.Context.Table.RowEditCancel.Invoke(null);
-                StateHasChanged();
-                ((INonGenGrid)this).ForceRenderOnce = false;
-            }
-            else
-            {
-                //editingRow.Context.Table.OnPreviewEditClick.InvokeAsync(SelectedItem);
-
-                editingRow.OnRowClicked(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
-                CancelDisabled = true;
-            }
-
-        }
-    }
+    // private void InvokeEditActions(MudTr editingRow)
+    // {
+    //     if (EditButtonActionList.Any())
+    //     {
+    //         // ReSharper disable once PossibleNullReferenceException
+    //         var firstItem = EditButtonActionList.FirstOrDefault(x => (x.Target?.CastTo<MudTr>()).Item.CastTo<TModel>().Equals(SelectedItem));
+    //
+    //         if (firstItem is null) return;
+    //
+    //
+    //         firstItem.Invoke();
+    //     }
+    //     else
+    //     {
+    //         if (Disabled)
+    //         {
+    //
+    //             editingRow.Context.Table.RowEditCancel.Invoke(null);
+    //             StateHasChanged();
+    //             ((INonGenGrid)this).ForceRenderOnce = false;
+    //         }
+    //         else
+    //         {
+    //             //editingRow.Context.Table.OnPreviewEditClick.InvokeAsync(SelectedItem);
+    //
+    //            
+    //             editingRow.OnRowClickedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+    //             CancelDisabled = true;
+    //         }
+    //
+    //     }
+    // }
     //*****BURASI edit button rowclick de tetiklenmez, kurguyu ona gore kur*****
     public async Task OnEditContextButtonClick(EditButtonContext button)
     {
@@ -527,7 +531,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
             {
                 OldValue = ((IGenView<TModel>)this).OriginalEditItem,
                 CurrentValue = model,
-                 Index = index,
+                 Index = _index,
                 Parent = (((INonGenGrid)this).Parent?.CurrentGenPage)?.GetSelectedItem()
 
             };
@@ -670,7 +674,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
         else
         {
-            DataSource.Replace(index, ((IGenView<TModel>)this).OriginalEditItem);
+            DataSource.Replace(_index, ((IGenView<TModel>)this).OriginalEditItem);
             //if (Cancel.HasDelegate)
             //    await Cancel.InvokeAsync(new GenArgs<TModel>(element, ((IGenView<TModel>)this).OriginalEditItem, index));
         }
@@ -1133,10 +1137,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
         if (row is not null)
         {
-            var hasBeenCanceled = row.GetFieldValue("hasBeenCanceled").CastTo<bool>();
-            var hasBeenCommitted = row.GetFieldValue("hasBeenCommitted").CastTo<bool>();
+            
+            var _hasBeenCanceled = row.GetFieldValue("_hasBeenCanceled").CastTo<bool>();
+            var _hasBeenCommitted = row.GetFieldValue("_hasBeenCommitted").CastTo<bool>();
 
-            if (!hasBeenCanceled && !hasBeenCommitted)
+            if (!_hasBeenCanceled && !_hasBeenCommitted)
             {
                 OriginalTable.Context?.Table.SetEditingItem(currentModel);
                 //StateHasChanged();
@@ -1144,9 +1149,9 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
             }
 
 
-            row.SetFieldValue("hasBeenCanceled", true);
-            row.SetFieldValue("hasBeenCommitted", true);
-            row.SetFieldValue("hasBeenClickedFirstTime", false);
+            row.SetFieldValue("_hasBeenCanceled", true);
+            row.SetFieldValue("_hasBeenCommitted", true);
+            row.SetFieldValue("_hasBeenClickedFirstTime", false);
         }
 
         ((INonGenGrid)this).SearchDisabled = false;
@@ -1209,7 +1214,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
         ((IGenView<TModel>)this).OriginalEditItem = element.DeepClone();
 
-        index = DataSource.IndexOf(element);
+        _index = DataSource.IndexOf(element);
     }
 
     private bool _ShouldRender = true;

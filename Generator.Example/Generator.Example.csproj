@@ -75,9 +75,6 @@
     <ProjectReference Include="..\Generator.Examples.Shared\Generator.Examples.Shared.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\Generator.Client\Generator.Client.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
     <ProjectReference Include="..\Generator.Shared\Generator.Shared.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>

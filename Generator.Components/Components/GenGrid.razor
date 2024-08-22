@@ -151,8 +151,11 @@
                 if (OriginalTable is not null && OriginalTable.ColGroup is null)
                     OriginalTable.ColGroup = ColGroup;
 
-                var _height = Height ?? "50";
-                var _measurement = Height is null ? "vh" : "px";
+                //var _height = Height ?? "50";
+                //var _measurement = Height is null ? "vh" : "px";
+                //Height = "@(FixedHeader || FixedFooter ?$"{ _height}
+                //{ _measurement}
+                //":Height)"
                 <MudTable T="TModel"
                           @ref="OriginalTable"
                           Loading="@(GridIsBusy)"
@@ -177,7 +180,7 @@
                           Elevation="0"
                           FixedHeader="FixedHeader"
                           FixedFooter="FixedFooter"
-                          Height="@(FixedHeader || FixedFooter ?$"{_height}{_measurement}":Height)"
+                          Height="@Height"
                           @bind-SelectedItem="@SelectedItem"
                           SelectedItems="@SelectedItems"
                           SelectedItemsChanged="SelectedItemsChanged"
@@ -362,9 +365,9 @@
                                     editingRow?.Context.Table.SetEditingItem(null);
 
 
-                                    editingRow.SetFieldValue("hasBeenCanceled", true);
-                                    editingRow.SetFieldValue("hasBeenCommitted", false);
-                                    editingRow.SetFieldValue("hasBeenClickedFirstTime", false);
+                                    editingRow.SetFieldValue("_hasBeenCanceled", true);
+                                    editingRow.SetFieldValue("_hasBeenCommitted", false);
+                                    editingRow.SetFieldValue("_hasBeenClickedFirstTime", false);
                                 }
                             }
                             if (((INonGenGrid)this).HasDetail && EditMode != EditMode.SmartForm)

@@ -174,7 +174,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         return default;
     }
 
-    public Task Clear()
+    public Task ClearAsync()
     {
         throw new NotImplementedException();
     }

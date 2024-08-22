@@ -7,6 +7,7 @@ using MudBlazor;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using Generator.Components.Args;
 using Generator.Components.Enums;
 
 namespace Generator.Components.Components;
@@ -175,6 +176,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
 
         comp.Parent.StateHasChanged();
+
         if (comp.Parent is INonGenGrid grid)
             grid.CurrentGenPage?.StateHasChanged();
     }
@@ -194,12 +196,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     }
 
     [Parameter]
-    public EventCallback<(object Model, object Value)> OnValueChanged { get; set; }
+    public EventCallback<ValueChangedArgs<object>> OnValueChanged { get; set; }
 
     protected override async Task SetValueAsync(object value, bool updateText = true, bool force = false)
     {
         await base.SetValueAsync(value, updateText, force);
-        await OnValueChanged.InvokeAsync((Model, value));
+        await OnValueChanged.InvokeAsync(new ValueChangedArgs<object>(Model,Value,value,((IGenControl)this).IsSearchField));
         //Validate();
     }
 
@@ -218,7 +220,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     }
 
-    public new string Text => Model.GetPropertyValue(BindingField)?.ToString()??base.Text;
+    //public new string Text => Model.GetPropertyValue(BindingField)?.ToString()??base.Text;
 
     public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false, params (string Key, object Value)[] valuePairs) => builder =>
     {
@@ -250,12 +252,27 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         //additionalParams.Add((nameof(Value), Text));
         additionalParams.Add((nameof(Value), loValue));
+        additionalParams.Add((nameof(_value), loValue));
+        additionalParams.Add((nameof(Text), loValue));
+       
+        //if (BindingField.Equals("U_PHONE_NUMBER"))
+        //{
 
+        //    var dat = Model.GetPropertyValue("U_PHONE_NUMBER");
+        //    Console.WriteLine("*****");
+        //    Console.WriteLine(dat.ToString());
+        //    Console.WriteLine(Text);
+        //    Console.WriteLine(Value);
+        //    Console.WriteLine(_value);
+        //    Console.WriteLine(base.Text);
+        //    Console.WriteLine(base.Value);
+        //    Console.WriteLine(base._value);
 
+        //}
         //builder.AddElementReferenceCapture(1, (value) => { Reference = (GenTextField)value; });
 
         //additionalParams.Add((nameof(Text), Value));
-        additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
+        additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
@@ -321,7 +338,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
     
 
-    public new async Task Clear()
+    public new async Task ClearAsync()
     {
         await base.Clear();
 

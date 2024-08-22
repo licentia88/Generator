@@ -44,7 +44,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
 
     protected TContext Db;
 
-    private readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
+    // private readonly IDictionary<string, Func<SqlQueryFactory>> ConnectionFactory;
 
     /// <summary>
     /// Gets or sets the instance of FastJwtTokenService.
@@ -57,7 +57,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
     /// </summary>
     /// <param name="connectionName">The name of the connection.</param>
     /// <returns>An instance of SqlQueryFactory.</returns>
-    protected SqlQueryFactory GetDatabase(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
+    // protected  GetDatabase(string connectionName) => ConnectionFactory[connectionName]?.Invoke();
 
     public MagicBase(IServiceProvider provider)
     {
@@ -66,7 +66,7 @@ public class MagicBase<TService, TModel, TContext> : ServiceBase<TService>, IGen
 
         Db = provider.GetService<TContext>();
         FastJwtTokenService = provider.GetService<FastJwtTokenService>();
-        ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
+        // ConnectionFactory = provider.GetService<IDictionary<string, Func<SqlQueryFactory>>>();
     }
 
     /// <summary>

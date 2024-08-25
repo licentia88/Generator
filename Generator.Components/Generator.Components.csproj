@@ -5,13 +5,21 @@
     </PropertyGroup>
 
   <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
+  <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
      <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
      <EnableDefaultContentItems>true</EnableDefaultContentItems>
      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-     <Version>1.7.0</Version>
+     <Version>1.7.1</Version>
      <Authors>ASIM GUNDUZ</Authors>
     <Company>ASIM GUNDUZ</Company>
     <Description>MudBlazor Grid Component</Description>
@@ -20,6 +28,7 @@
     <RepositoryUrl>https://github.com/licentia88/Generator.Components</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>Blazor MudBlazor GenComponents</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <ReleaseVersion>1.4.5</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
   </PropertyGroup>

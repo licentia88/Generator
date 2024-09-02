@@ -19,7 +19,7 @@
      <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
      <EnableDefaultContentItems>true</EnableDefaultContentItems>
      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-     <Version>1.7.1</Version>
+     <Version>1.7.2</Version>
      <Authors>ASIM GUNDUZ</Authors>
     <Company>ASIM GUNDUZ</Company>
     <Description>MudBlazor Grid Component</Description>
@@ -45,7 +45,7 @@
     -->
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="7.6.0" />
+    <PackageReference Include="MudBlazor" Version="7.7.0" />
     <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />

@@ -243,7 +243,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Clearable = true;
         }
 
-        var loValue = Model.GetPropertyValue(BindingField);
+        var loValue = Model.GetPropertyValue(BindingField).ToString();
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle

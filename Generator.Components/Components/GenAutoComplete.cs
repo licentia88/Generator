@@ -388,11 +388,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
             Model = model;
         }
 
-        //if (Model.GetType().Name == "Object")
-        //    return;
-
-
-
+      
         SetCallBackEvents();
 
         ShowProgressIndicator = true;
@@ -409,10 +405,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
             treeBuilder.CloseComponent();
         }));
 
-
-
-
-
+ 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         var currentModelValue = Model.GetPropertyValue(BindingField)?.ToString();
@@ -425,45 +418,14 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
 
         }
         
-
-        //if(OperatingSystem.IsWindows())
-        //{
-        //    if (DataSource is not null)
-        //    {
-        //        var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
-        //        additionalParams.Add((nameof(Value), loValue ?? Value));
-
-        //    }
-        //    else if (ServiceMethod is not null && !string.IsNullOrEmpty(currentModelValue))
-        //    {
-
-        //        var serviceResult = await ServiceMethod(currentModelValue);
-
-        //        try
-        //        {
-        //            DataSource = serviceResult;
-
-        //            var loValue = DataSource.FirstOrDefault(x => x.GetPropertyValue(ValueField)?.ToString() == currentModelValue);
-        //            additionalParams.Add((nameof(Value), loValue ?? Value));
-        //        }
-        //        catch (Exception ex)
-        //        {
-
-        //        }
-        //    }
-        //}
-
-
-
-
+ 
         additionalParams.Add((nameof(Disabled), (DisabledIf?.Invoke(Model) ?? Disabled)));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
-        if (ProgressIndicatorColor is not Color.Default)
-            additionalParams.Add((nameof(ProgressIndicatorColor), ProgressIndicatorColor));
-        else
-            additionalParams.Add((nameof(ProgressIndicatorColor), ((IGenControl)this).Parent.TemplateColor));
+        additionalParams.Add(ProgressIndicatorColor is not Color.Default
+            ? (nameof(ProgressIndicatorColor), ProgressIndicatorColor)
+            : (nameof(ProgressIndicatorColor), ((IGenControl)this).Parent.TemplateColor));
 
         additionalParams.Add(innerFragment);
         additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));

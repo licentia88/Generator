@@ -216,7 +216,7 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
             Clearable = true;
         }
 
-        var valDate = (TimeSpan?)Model?.GetPropertyValue(BindingField);
+        // var valDate = (TimeSpan?)Model?.GetPropertyValue(BindingField);
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 

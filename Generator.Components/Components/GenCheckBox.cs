@@ -200,7 +200,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
         SetCallBackEvents();
 
-        var val = (Model.GetPropertyValue(BindingField)) ?? false;
+        var val =GetValue() ?? false;
+        // var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
         additionalParams.Add((nameof(Value), val));

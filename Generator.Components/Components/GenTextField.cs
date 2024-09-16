@@ -243,7 +243,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Clearable = true;
         }
 
-        var loValue = Model.GetPropertyValue(BindingField).ToString();
+        var loValue = GetValue()?.ToString();
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle
@@ -252,26 +252,14 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         //additionalParams.Add((nameof(Value), Text));
         additionalParams.Add((nameof(Value), loValue));
+        
         additionalParams.Add((nameof(_value), loValue));
-        additionalParams.Add((nameof(Text), loValue));
-       
-        //if (BindingField.Equals("U_PHONE_NUMBER"))
-        //{
 
-        //    var dat = Model.GetPropertyValue("U_PHONE_NUMBER");
-        //    Console.WriteLine("*****");
-        //    Console.WriteLine(dat.ToString());
-        //    Console.WriteLine(Text);
-        //    Console.WriteLine(Value);
-        //    Console.WriteLine(_value);
-        //    Console.WriteLine(base.Text);
-        //    Console.WriteLine(base.Value);
-        //    Console.WriteLine(base._value);
-
-        //}
-        //builder.AddElementReferenceCapture(1, (value) => { Reference = (GenTextField)value; });
-
-        //additionalParams.Add((nameof(Text), Value));
+        if (loValue != null)
+        {
+            additionalParams.Add((nameof(Text), loValue));
+        }
+      
         additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));

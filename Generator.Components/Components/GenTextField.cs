@@ -243,7 +243,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             Clearable = true;
         }
 
-        var loValue = GetValue()?.ToString();
+        var loValue = ((IGenControl)this).GetValue().ToString();
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle
@@ -294,13 +294,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
-    public object GetValue()
-    {
-        if (((IGenControl)this).IsSearchField)
-            return ((IGenControl)this).GetSearchValue();
-        else
-            return Model.GetFieldValue(BindingField);
-    }
+    // public object GetValue()
+    // {
+    //     var result = ((IGenControl)this).IsSearchField ? ((IGenControl)this).GetSearchValue() : Model.GetPropertyValue(BindingField);
+    //     
+    //     return result;
+    // }
 
     void IGenControl.SetSearchValue(object value)
     {
@@ -308,7 +307,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         ((IGenControl)this).Parent?.StateHasChanged();
     }
 
-    object IGenControl.GetSearchValue()
+    object IGenControl.GetValue()
     {
         return Model.GetPropertyValue(BindingField);
     }

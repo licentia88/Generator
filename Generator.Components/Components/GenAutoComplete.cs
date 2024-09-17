@@ -457,14 +457,14 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
-    public object GetValue()
-    {
-        if (((IGenControl)this).IsSearchField)
-            return ((IGenControl)this).GetSearchValue();
-        else
-            return Model.GetFieldValue(BindingField);
-
-    }
+    // public object GetValue()
+    // {
+    //     if (((IGenControl)this).IsSearchField)
+    //         return ((IGenControl)this).GetSearchValue();
+    //     else
+    //         return Model.GetFieldValue(BindingField);
+    //
+    // }
 
 
 
@@ -474,7 +474,7 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         ((IGenControl)this).Parent.StateHasChanged();
     }
 
-    object IGenControl.GetSearchValue()
+    object IGenControl.GetValue()
     {
         return Model.GetPropertyValue(BindingField);
 

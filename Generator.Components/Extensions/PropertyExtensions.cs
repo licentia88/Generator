@@ -74,7 +74,7 @@ internal static class PropertyExtensions
 
             return obj.GetType()
                 .GetField(propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                .GetValue(obj) ?? null;
+                ?.GetValue(obj) ?? null;
         }
         catch (Exception ex)
         {

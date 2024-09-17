@@ -24,7 +24,7 @@ public class SearchArgs:EventArgs
 
     public KeyValuePair<string, object>[] WhereStatements =>
                                      Components.Where(x => x.BindingField is not null && x is not GenSpacer)
-                                     .Select(component => new KeyValuePair<string, object>(component.BindingField, component.GetSearchValue())).ToArray();
+                                     .Select(component => new KeyValuePair<string, object>(component.BindingField, component.GetValue())).ToArray();
 
 
 
@@ -35,7 +35,7 @@ public class SearchArgs:EventArgs
     {
         var component = GetComponent(bindingField);
 
-        var value = component.GetSearchValue();
+        var value = component.GetValue();
 
         if (value is null) return default;
 

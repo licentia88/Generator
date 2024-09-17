@@ -53,7 +53,7 @@ public interface IGenControl : IGenComponent
 
     void SetSearchValue(object Value);
 
-    object GetSearchValue();
+    object GetValue();
 
     void ValidateObject();
  
@@ -67,7 +67,7 @@ public interface IGenControl : IGenComponent
  
     void SetEmpty();
 
-    public object GetValue();
+    // public object GetValue();
 
     public void SetValue(object value);
 

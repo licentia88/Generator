@@ -291,13 +291,13 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
-    public object GetValue()
-    {
-        if (((IGenControl)this).IsSearchField)
-            return ((IGenControl)this).GetSearchValue();
-        else
-            return Model.GetFieldValue(BindingField);
-    }
+    // public object GetValue()
+    // {
+    //     if (((IGenControl)this).IsSearchField)
+    //         return ((IGenControl)this).GetSearchValue();
+    //     else
+    //         return Model.GetFieldValue(BindingField);
+    // }
 
     void IGenControl.SetSearchValue(object Value)
     {
@@ -306,7 +306,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
 
     }
 
-    object IGenControl.GetSearchValue()
+    object IGenControl.GetValue()
     {
         return Model.GetPropertyValue(BindingField);
     }

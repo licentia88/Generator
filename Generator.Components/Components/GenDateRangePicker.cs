@@ -235,14 +235,14 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
         //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
-    public object GetValue()
-    {
-        if (((IGenControl)this).IsSearchField)
-            return ((IGenControl)this).GetSearchValue();
-        else
-            return Model.GetFieldValue(BindingField);
-
-    }
+    // public object GetValue()
+    // {
+    //     if (((IGenControl)this).IsSearchField)
+    //         return ((IGenControl)this).GetSearchValue();
+    //     else
+    //         return Model.GetFieldValue(BindingField);
+    //
+    // }
 
     void IGenControl.SetSearchValue(object Value)
     {
@@ -251,7 +251,7 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
     }
 
-    object IGenControl.GetSearchValue()
+    object IGenControl.GetValue()
     {
         return Model.GetPropertyValue(BindingField);
     }

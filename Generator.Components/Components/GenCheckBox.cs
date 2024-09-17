@@ -200,7 +200,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
 
         SetCallBackEvents();
 
-        var val =GetValue() ?? false;
+        var val = ((IGenControl)this).GetValue() ?? false;
         // var val = (Model.GetPropertyValue(BindingField)) ?? false;
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
@@ -237,14 +237,14 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         //((IGenComponent)this).Parent.ValidateField(BindingField);
     }
 
-    public object GetValue()
-    {
-        if (((IGenControl)this).IsSearchField)
-            return ((IGenControl)this).GetSearchValue();
-        else
-            return Model.GetFieldValue(BindingField);
-
-    }
+    // public object GetValue()
+    // {
+    //     if (((IGenControl)this).IsSearchField)
+    //         return ((IGenControl)this).GetSearchValue();
+    //     else
+    //         return Model.GetFieldValue(BindingField);
+    //
+    // }
 
     void IGenControl.SetValue(object value)
     {
@@ -275,7 +275,7 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
             grid.CurrentGenPage?.StateHasChanged();
     }
 
-    object IGenControl.GetSearchValue()
+    object IGenControl.GetValue()
     {
         if (!TriState)
             return Model.GetPropertyValue(BindingField) ?? false;

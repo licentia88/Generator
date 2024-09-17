@@ -154,7 +154,7 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
         throw new NotImplementedException();
     }
 
-    object IGenControl.GetSearchValue()
+    object IGenControl.GetValue()
     {
         throw new NotImplementedException();
     }

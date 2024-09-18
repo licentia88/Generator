@@ -156,6 +156,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     public async  void SetValue(DateTime? date)
     {
         
+        // ReSharper disable once HeuristicUnreachableCode
         if (this is not IGenControl comp) return;
 
         if (comp.IsSearchField)

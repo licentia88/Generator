@@ -168,9 +168,9 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         {
             Model?.SetPropertyValue(BindingField, value);
 
-            Value = value;
-            _value = value;
-            base.Text = value.ToString();
+            // Value = value;
+            // _value = value;
+            // base.Text = value.ToString();
             //comp.Parent?.StateHasChanged();
             //comp.Parent?.CurrentGenPage?.StateHasChanged();
         }
@@ -249,7 +249,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         //Bunu neden koyduk? simdilik acik kalsin, gozlemle
         //additionalParams.Add((nameof(Value), loValue ??Value));
 
-
+        Console.WriteLine(loValue);
         //additionalParams.Add((nameof(Value), Text));
         additionalParams.Add((nameof(Value), loValue));
         

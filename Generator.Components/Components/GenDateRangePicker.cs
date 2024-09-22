@@ -200,6 +200,8 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
+        additionalParams.Add((nameof(Label), Label is null or "" ? " " : Label));
+
         //additionalParams.Add((nameof(_value), valDate));
 
         //additionalParams.Add((nameof(Date), valDate));

@@ -35,10 +35,13 @@ public interface IGenGrid<TModel> : INonGenGrid, IGenView<TModel> where TModel:n
     public EventCallback<TModel> OnAfterCancel { get; set; }
 
     //public EventCallback<IGenGrid<TModel>> OnBeforeShowDialog { get; set; }
-
     public EventCallback Close { get; set; }
 
     public EventCallback<SearchArgs> Search { get; set; }
 
+    public void DisableRender();
+
+    public void EnableRender();
+    
     Task OnDetailClicked(TModel context);
 }

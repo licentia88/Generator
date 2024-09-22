@@ -264,6 +264,8 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
+        additionalParams.Add((nameof(Label), Label is null or "" ? " " : Label));
+
         //TODO burada render yapmadan value yu kontrol et
         if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;

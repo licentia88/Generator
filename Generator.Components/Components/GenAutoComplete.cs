@@ -408,6 +408,8 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
  
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
+        additionalParams.Add((nameof(Label), Label is null or "" ? " " : Label));
+
         var currentModelValue = Model.GetPropertyValue(BindingField)?.ToString();
 
 

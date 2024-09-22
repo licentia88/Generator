@@ -836,6 +836,17 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
         _selectedDetailObject = ((INonGenGrid)this).DetailClicked ? context : default;
     }
 
+    public void DisableRender()
+    {
+        _ShouldRender = false;
+    }
+
+    public void EnableRender()
+    {
+        _ShouldRender = true;
+        throw new NotImplementedException();
+    }
+
     async Task IGenGrid<TModel>.OnDetailClicked(TModel context)
     {
         ((INonGenGrid)this).DetailClicked = !((INonGenGrid)this).DetailClicked;
@@ -1221,10 +1232,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
     protected override bool ShouldRender()
     {
-        if (_ShouldRender)
-            return base.ShouldRender();
-
-        return _ShouldRender;
+        return _ShouldRender ? base.ShouldRender() : _ShouldRender;
     }
 
     internal Task InvokeLoad()

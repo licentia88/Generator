@@ -230,6 +230,8 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
 
         additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
 
+        additionalParams.Add((nameof(Label), Label is null or "" ? " " : Label));
+
         if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;
 

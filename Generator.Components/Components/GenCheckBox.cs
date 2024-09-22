@@ -22,11 +22,6 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
     [Parameter, EditorBrowsable(EditorBrowsableState.Never)]
     public object Model { get; set; }
 
-    public bool IsEditorVisible(object Model)
-    {
-        throw new NotImplementedException();
-    }
-
 
     [Parameter]
     public bool? InitialValue { get; set; }
@@ -211,6 +206,8 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
         additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
+
+        additionalParams.Add((nameof(Label), Label is null or "" ? " " : Label));
 
         if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;

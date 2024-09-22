@@ -100,7 +100,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         {
             return;
         }
-        base.Touched = true;
+        Touched = true;
         if (date.HasValue && base.IsDateDisabledFunc(date.Value.Date))
         {
             await SetTextAsync(null, callback: false);
@@ -265,6 +265,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));
 
         additionalParams.Add((nameof(Color), ((IGenControl)this).Parent.TemplateColor));
+
+        additionalParams.Add((nameof(Label), Label is null or "" ? " " : Label));
 
         if (!Required && (!RequiredIf?.Invoke(Model) ?? false))
             Error = false;

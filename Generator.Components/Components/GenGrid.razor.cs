@@ -844,7 +844,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
     public void EnableRender()
     {
         _ShouldRender = true;
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
     }
 
     async Task IGenGrid<TModel>.OnDetailClicked(TModel context)
@@ -1280,13 +1280,19 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
         //base.StateHasChanged();
     }
 
-    public void Dispose()
+
+    protected override void Dispose(bool disposing)
     {
-        if (EditMode == EditMode.Inline && (ViewState == ViewState.Create || ViewState == ViewState.Update))
-        {
-            DataSource.RemoveAt(0);
-        }
+        base.Dispose(disposing);
     }
+
+    // public void Dispose()
+    // {
+    //     if (EditMode == EditMode.Inline && (ViewState == ViewState.Create || ViewState == ViewState.Update))
+    //     {
+    //         DataSource.RemoveAt(0);
+    //     }
+    // }
 
     public object GetSelectedItem()
     {

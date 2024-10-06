@@ -205,7 +205,7 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
         //additionalParams.Add((nameof(_value), valDate));
 
         //additionalParams.Add((nameof(Date), valDate));
-
+        additionalParams.Add(("tabindex", -1));
         additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));

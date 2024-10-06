@@ -220,6 +220,7 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
 
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
+        additionalParams.Add(("tabindex", -1));
         //additionalParams.Add((nameof(_value), valDate?? _value));
 
         //additionalParams.Add((nameof(Date), valDate));

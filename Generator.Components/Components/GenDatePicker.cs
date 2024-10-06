@@ -252,10 +252,12 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             Clearable = true;
         }
 
-        var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
-
+        // var valDate = (DateTime?)Model?.GetPropertyValue(BindingField);
+        // Set a tabindex attribute dynamically
+        // builder.AddAttribute(1, "tabindex", -1);
+       
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
-
+        additionalParams.Add(("tabindex", -1));
         //additionalParams.Add((nameof(_value), valDate?? _value));
 
         //additionalParams.Add((nameof(Date), valDate));

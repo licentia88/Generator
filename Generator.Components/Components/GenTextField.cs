@@ -88,7 +88,7 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
             base.BuildRenderTree(builder);
         }
 
-         AddComponents();
+        AddComponents();
 
     }
 
@@ -258,11 +258,12 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         
         additionalParams.Add((nameof(_value), loValue));
 
-        if (loValue != null)
-        {
-            additionalParams.Add((nameof(Text), loValue));
-        }
-      
+        // if (loValue != null)
+        // {
+        //     additionalParams.Add((nameof(Text), loValue));
+        // }
+        additionalParams.Add((nameof(Text), loValue));
+        
         additionalParams.Add((nameof(Disabled), DisabledIf?.Invoke(Model) ?? Disabled));
 
         additionalParams.Add((nameof(Required), RequiredIf?.Invoke(Model) ?? Required));

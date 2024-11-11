@@ -162,23 +162,26 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         // ReSharper disable once HeuristicUnreachableCode
         if (this is not IGenControl comp) return;
 
+        if (value is string str && string.IsNullOrEmpty(str))
+        {
+            value = null;
+        }
+
         if (comp.IsSearchField)
+        {
             comp.SetSearchValue(value);
+        }
         else
         {
             Model?.SetPropertyValue(BindingField, value);
-
-            // Value = value;
-            // _value = value;
-            // base.Text = value.ToString();
-            //comp.Parent?.StateHasChanged();
-            //comp.Parent?.CurrentGenPage?.StateHasChanged();
         }
 
         comp.Parent.StateHasChanged();
 
         if (comp.Parent is INonGenGrid grid)
+        {
             grid.CurrentGenPage?.StateHasChanged();
+        }
     }
 
 

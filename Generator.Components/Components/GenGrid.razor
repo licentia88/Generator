@@ -102,35 +102,33 @@
                                 </MudItem>
 
                                 <MudItem>
-                                    <MudItem>
+                                    @* <MudItem> *@
                                         @{
                                             if (!string.IsNullOrEmpty(ExcelFile))
                                             {
                                                 <MudFab EndIcon="@Icons.Custom.FileFormats.FileExcel"
                                                         Color="Color.Success"
                                                         Size="Size.Small"
-                                                        DisableElevation="true"
                                                         Label="@ExcelButtonText"
                                                         @onclick="@(async _=> await GenExcel.Create(this,ExcelFile))" />
                                             }
                                         }
-                                    </MudItem>
+                                    @* </MudItem> *@
                                 </MudItem>
                                 if (Search.HasDelegate)
                                 {
                                     <MudItem Class="mr-7">
-                                        <MudGrid Justify="Justify.FlexEnd">
-                                            <MudItem>
+                                        @* <MudGrid Justify="Justify.FlexEnd"> *@
+                                            @* <MudItem> *@
                                                 <MudFab EndIcon="@Icons.Material.Filled.Search"
                                                         Color="Color.Info"
                                                         Size="Size.Small"
                                                         Label="@SearchText"
-                                                        DisableElevation="true"
                                                         @onclick="OnSearchClicked" Disabled=" ((INonGenGrid)this). SearchDisabled" />
                                             </MudItem>
 
-                                        </MudGrid>
-                                    </MudItem>
+                                        // </MudGrid>
+                                    // </MudItem>
                                 }
                             }
                         </MudGrid>

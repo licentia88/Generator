@@ -651,7 +651,10 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
         ((INonGenGrid)this).CurrentGenPage.ViewState = ViewState.Update;
 
-        await InvokeAsync(() => ((INonGenGrid)this).CurrentGenPage?.StateHasChanged());
+        // 13.11.2024 Inline iken commit yapildiginda parent page de commit yapilirken sayfa refresh olmamasi icin
+        //sayfa refresh olunca racing conditiondan oturu sayfa refreshlenir ve data sonra kaydedilir bu yuzden ekranda gozukmez.
+        
+        // await InvokeAsync(() => ((INonGenGrid)this).CurrentGenPage?.StateHasChanged());
         //((INonGenGrid)this).CurrentGenPage?.StateHasChanged();
 
         OnBackUp(SelectedItem);

@@ -13,7 +13,7 @@ using Generator.Components.Enums;
 namespace Generator.Components.Components;
 
 
-public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
+public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComplete<object>
 {
     [CascadingParameter(Name = nameof(IGenControl.Parent))]
     IPageBase IGenComponent.Parent { get; set; }
@@ -598,4 +598,42 @@ public class GenAutoComplete : MudAutocomplete<object>, IGenAutoComplete<object>
         }
 
     }
+
+  
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // Dispose managed resources
+            // _stringConverter = null;
+            // _dateConverter = null;
+            Model = null;
+            InitialValue = null;
+            // ((IGenComponent)this).Parent = null;
+            // BindingField = null;
+            EditorVisibleIf = null;
+            DisabledIf = null;
+            RequiredIf = null;
+            OnValueChanged = default;
+            ValueChanged = default;
+            TextChanged = default;
+            OnClearButtonClick = default;
+            OnAdornmentClick = default;
+            OnBlur = default;
+            OnKeyUp = default;
+            OnKeyDown = default;
+            OnInternalInputChanged = default;
+            OnlyValidateIfDirty = default;
+            OnInternalInputChanged = default; 
+            ServiceMethod = null;
+            Where = null;
+            CurrentData = null;
+            // ValueField = null;
+            // DisplayField = null;
+        }
+
+        base.Dispose(disposing);
+    }
+
 }

@@ -11,7 +11,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<GenDatePicker>
+public class GenDatePicker : MudDatePicker, IGenDatePicker, IAsyncDisposable, IComponentMethods<GenDatePicker>
 {
     [CascadingParameter(Name = nameof(IGenComponent.Parent))]
     IPageBase IGenComponent.Parent { get; set; }
@@ -48,7 +48,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     public bool GridVisible { get; set; } = true;
 
     [Parameter]
-    public bool ClearIfNotVisible { get; set; } = false;
+    public bool ClearIfNotVisible { get; set; }
 
     [Parameter]
     public int xs { get; set; } = 12;
@@ -101,7 +101,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
             return;
         }
         Touched = true;
-        if (date.HasValue && base.IsDateDisabledFunc(date.Value.Date))
+        if (date.HasValue && IsDateDisabledFunc(date.Value.Date))
         {
             await SetTextAsync(null, callback: false);
             return;
@@ -109,8 +109,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         _value = date;
         if (updateValue)
         {
-            base.Converter.GetError = false;
-            await SetTextAsync(base.Converter.Set(_value), callback: false);
+            Converter.GetError = false;
+            await SetTextAsync(Converter.Set(_value), callback: false);
         }
         await DateChanged.InvokeAsync(_value);
         await BeginValidateAsync();
@@ -119,7 +119,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
          await OnDateChanged.InvokeAsync(new ValueChangedArgs<DateTime?>(Model,Date,date,((IGenControl)this).IsSearchField));
 
     }
-
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -151,7 +151,7 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         AddComponents();
     }
 
-    public DateTime? _originalDate;
+    public DateTime? OriginalDate;
 
     public async  void SetValue(DateTime? date)
     {
@@ -304,9 +304,9 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
     //         return Model.GetFieldValue(BindingField);
     // }
 
-    void IGenControl.SetSearchValue(object Value)
+    void IGenControl.SetSearchValue(object value)
     {
-        Model.CastTo<Dictionary<string, object>>()[BindingField] = Value;
+        Model.CastTo<Dictionary<string, object>>()[BindingField] = value;
         ((IGenControl)this).Parent.StateHasChanged();
 
     }
@@ -344,6 +344,8 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
         ((IGenControl)this).SetEmpty();
         return base.ClearAsync(close);
     }
+    
+    
 
     public new bool Validate()
     {
@@ -383,5 +385,45 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IComponentMethods<Ge
                 Error = loValue is null || loValue.ToString() == string.Empty;
             }
         }
+    }
+
+    private void ReleaseUnmanagedResources()
+    {
+        // TODO release unmanaged resources here
+    }
+
+     
+    public async ValueTask DisposeAsync()
+    {
+        // Dispose of any resources here
+        await Task.CompletedTask;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // Dispose managed resources
+            Model = null;
+            // ((IGenComponent)this).Parent = null;
+            InitialValue = null;
+            // BindingField = null;
+            EditorVisibleIf = null;
+            DisabledIf = null;
+            RequiredIf = null;
+            OnDateChanged = default;
+            OnClick=default;
+            DateChanged=default;
+            OnDateChanged = default;
+            
+        }
+
+        base.Dispose(disposing);
+    }
+
+   
+    ~GenDatePicker()
+    {
+        Dispose(false);
     }
 }

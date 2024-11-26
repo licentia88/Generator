@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public class GenButton:MudButton,IGenComponent
+public class GenButton:MudButton,IGenComponent,IDisposable
 {
     protected override void OnInitialized()
     {
@@ -73,5 +73,21 @@ public class GenButton:MudButton,IGenComponent
     {
         return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
 
+    }
+
+    private void ReleaseUnmanagedResources()
+    {
+        // TODO release unmanaged resources here
+    }
+
+    public void Dispose()
+    {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~GenButton()
+    {
+        ReleaseUnmanagedResources();
     }
 }

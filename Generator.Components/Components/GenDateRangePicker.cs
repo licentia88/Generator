@@ -10,7 +10,7 @@ using MudBlazor;
 namespace Generator.Components.Components;
 
  
-public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComponentMethods<GenDatePicker>
+public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IDisposable, IComponentMethods<GenDatePicker>
 {
     [CascadingParameter(Name = nameof(IGenControl.Parent))]
     IPageBase IGenComponent.Parent { get; set; }
@@ -315,6 +315,27 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IComp
                 Error = loValue is null || loValue.ToString() == string.Empty;
             }
         }
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // Dispose managed resources
+            Model = null;
+            // ((IGenComponent)this).Parent = null;
+            InitialValue = null;
+            // BindingField = null;
+            EditorVisibleIf = null;
+            DisabledIf = null;
+            RequiredIf = null;
+            OnClick=default;
+            OnDateRangeChanged=default;
+            TextChanged = default;
+            PickerMonthChanged = default;
+        }
+
+        base.Dispose(disposing);
     }
 }
 

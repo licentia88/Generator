@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public class GenImage : MudImage, IGenComponent
+public class GenImage : MudImage, IGenComponent,IDisposable
 {
 
     protected override void OnInitialized()
@@ -71,5 +71,26 @@ public class GenImage : MudImage, IGenComponent
     {
         return ((IGenComponent)this).EditorVisibleIf?.Invoke(model) ?? ((IGenComponent)this).EditorVisible;
 
+    }
+    
+
+    private void ReleaseUnmanagedResources()
+    {
+        // TODO release unmanaged resources here
+        
+        Model = null;
+        EditorVisibleIf = null;
+        DisabledIf = null;
+    }
+
+    public void Dispose()
+    {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~GenImage()
+    {
+        ReleaseUnmanagedResources();
     }
 }

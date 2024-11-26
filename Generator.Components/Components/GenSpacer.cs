@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Generator.Components.Components;
 
-public partial class GenSpacer : ComponentBase, IGenSpacer
+public partial class GenSpacer : ComponentBase, IGenSpacer, IDisposable
 {
     public GenSpacer()
     {
@@ -192,5 +192,23 @@ public partial class GenSpacer : ComponentBase, IGenSpacer
     void IGenControl.ValidateField()
     {
          
+    }
+
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
+        // Dispose managed resources
+          
+        Model = null;
+        // ((IGenComponent)this).Parent = null;
+        // BindingField = null;
+        EditorVisibleIf = null;
+        DisabledIf = null;
+        RequiredIf = null;
+
+        Reference = null;
+        ValueChangedAction = null;
+        
     }
 }

@@ -10,7 +10,7 @@ using Generator.Components.Extensions;
 
 namespace Generator.Components.Components;
 
-public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<GenCheckBox>
+public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox,IDisposable, IComponentMethods<GenCheckBox>
 {
     #region CascadingParameters
 
@@ -341,6 +341,26 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox, IComponentMethods<Ge
                 Error = loValue is null || loValue.ToString() == string.Empty;
             }
         }
+    }
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // Dispose managed resources
+
+            Model = null;
+            InitialValue = null;
+            // ((IGenComponent)this).Parent = null;
+            // BindingField = null;
+            EditorVisibleIf = null;
+            DisabledIf = null;
+            RequiredIf = null;
+            OnCheckedChanged = default;
+            ValueChanged = default;
+            ValueChanged = default;
+        }
+
+        base.Dispose(disposing);
     }
 }
 

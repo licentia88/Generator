@@ -10,7 +10,7 @@ using Generator.Components.Extensions;
 
 namespace Generator.Components.Components;
 
-public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<GenTimePicker>
+public class GenTimePicker : MudTimePicker, IGenTimePicker,IDisposable, IComponentMethods<GenTimePicker>
 {
     [CascadingParameter(Name = nameof(IGenComponent.Parent))]
     IPageBase IGenComponent.Parent { get; set; }
@@ -339,5 +339,26 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker, IComponentMethods<Ge
                 Error = loValue is null || loValue.ToString() == string.Empty;
             }
         }
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // Dispose managed resources
+            Model = null;
+            // ((IGenComponent)this).Parent = null;
+            InitialValue = null;
+            // BindingField = null;
+            EditorVisibleIf = null;
+            DisabledIf = null;
+            RequiredIf = null;
+            OnClick=default;
+            OnTimeChanged=default;
+            TextChanged = default;
+            TimeChanged = default;
+        }
+
+        base.Dispose(disposing);
     }
 }

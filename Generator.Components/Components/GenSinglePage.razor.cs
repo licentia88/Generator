@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Generator.Components.Components;
 
-public partial class GenSinglePage<TModel> : ComponentBase, ISinglePage<TModel> where TModel : class, new()
+public partial class GenSinglePage<TModel> : ComponentBase,IDisposable, ISinglePage<TModel> where TModel : class, new()
 {
     [Parameter, AllowNull]
     public RenderFragment GenColumns { get; set; }
@@ -147,6 +147,37 @@ public partial class GenSinglePage<TModel> : ComponentBase, ISinglePage<TModel> 
     object IPageBase.GetSelectedItem()
     {
         return Model;
+    }
+    
+    private void ReleaseUnmanagedResources()
+    {
+        // TODO release unmanaged resources here
+        if (ViewState != ViewState.None)
+        {
+            Close();
+        }
+        
+        (GenGrid as INonGenGrid).ForceRenderAll();
+ 
+        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component as IGenControl));
+
+        OriginalModel = default;
+        MudDialog.Dispose();
+
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+        if (!disposing) return;
+        // MudDialog?.Dispose();
+        // GenGrid?.Dispose();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
 

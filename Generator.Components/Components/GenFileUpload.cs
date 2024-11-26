@@ -245,4 +245,16 @@ public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
 
     }
  
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Model = null;
+            InitialValue = null;
+            EditorVisibleIf = null;
+            DisabledIf = null;
+        }
+
+        base.Dispose(disposing);
+    }
 }

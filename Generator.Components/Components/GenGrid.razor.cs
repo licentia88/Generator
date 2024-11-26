@@ -63,19 +63,19 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
 
     public bool IsValid { get; set; }
 
-    
 
-    internal MudTable<TModel> OriginalTable
-    {
-        get => _OriginalTable;
-
-        set {
-            _OriginalTable = value;
-
-            //Burada render de stabil kalmasini istedigin parametreleri set et
-            OriginalTable.RowsPerPage = RowsPerPage;
-        }
-    }
+    public MudTable<TModel> OriginalTable { get; set; }
+    // internal MudTable<TModel> OriginalTable
+    // {
+    //     get => _OriginalTable;
+    //
+    //     set {
+    //         _OriginalTable = value;
+    //
+    //         //Burada render de stabil kalmasini istedigin parametreleri set et
+    //         // OriginalTable.RowsPerPage = RowsPerPage;
+    //     }
+    // }
 
     IPageBase INonGenGrid.CurrentGenPage { get; set; }
 
@@ -1284,10 +1284,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
     }
 
 
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-    }
+    
 
     // public void Dispose()
     // {
@@ -1307,6 +1304,63 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable 
         ((IGenGrid<TModel>)this).CurrentGenPage.Close();
     }
 
+   
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // Dispose managed resources
+            OriginalTable = null;
+           DataSource = null;
+            Search = default;
+            Create = default;
+            Delete = default;
+            Update = default;
+            Cancel = default;
+            Load = default;
+            OnBeforeSubmit = default;
+            OnAfterSubmit = default;
+            OnBeforeCancel = default;
+            OnAfterCancel = default;
+            Close = default;
+            GenColumns = null;
+            GenSearchFields = null;
+            GenHeaderButtons = null;
+            GenSideButtons = null;
+            GenDetailGrid = null;
+            Parent = null;
+            DialogParameters = null;
+            ViewState = ViewState.None;
+            SelectedItem = default;
+            _selectedDetailObject = default;
+            _searchString = string.Empty;
+            EditButtonActionList = null;
+          
+            EditButtonRef = null;
+            SelectedItemChanged= default;
+            SelectedItemsChanged = default;
+            RowsPerPageChanged = default;
+
+            foreach (var component in Components)
+            {
+                component.component.Parent = null;
+
+            }
+            
+            foreach (var component in SearchFieldComponents)
+            {
+                component.Parent = null;
+
+            }
+            
+            SearchFieldComponents.Clear();
+            Components.Clear();
+
+        }
+
+        base.Dispose(disposing);
+    }
     //public bool Validate()
     //{
     //    throw new NotImplementedException();

@@ -6,7 +6,7 @@ using MudBlazor;
 
 namespace Generator.Components.Components;
 
-public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TModel : new()
+public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposable where TModel : new()
 {
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; }
@@ -228,31 +228,7 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
 
         return item.component is null ? default : item.component.CastTo<TComponent>();
     }
-
-    public void Dispose()
-    {
-        if (ViewState != ViewState.None)
-        {
-            Close(true);
-            //MudDialog.Close();
-
-            //Cancel eventini tetikler
-            GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
-        }
-
-        (GenGrid as INonGenGrid).ForceRenderAll();
-
-        Parent?.CurrentGenPage.StateHasChanged();
-
-
-        RefreshParentGrid.InvokeAsync();
-
-        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component as IGenControl));
-
-        MudDialog.Dispose();
-
-
-    }
+    
 
     public TComponent GetSearchFieldComponent<TComponent>(string bindingField) where TComponent : IGenControl
     {
@@ -276,5 +252,73 @@ public partial class GenPage<TModel> : IGenPage<TModel>, IDisposable where TMode
     object IPageBase.GetSelectedItem()
     {
         return SelectedItem;
+    }
+    
+    // public void Dispose()
+    // {
+    //     if (ViewState != ViewState.None)
+    //     {
+    //         Close(true);
+    //         //MudDialog.Close();
+    //
+    //         //Cancel eventini tetikler
+    //         GenGrid.OriginalTable.RowEditCancel.Invoke(OriginalEditItem);
+    //     }
+    //
+    //     (GenGrid as INonGenGrid).ForceRenderAll();
+    //
+    //     Parent?.CurrentGenPage.StateHasChanged();
+    //
+    //
+    //     RefreshParentGrid.InvokeAsync();
+    //
+    //     ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component as IGenControl));
+    //
+    //     MudDialog.Dispose();
+    //
+    //
+    // }
+    // //
+ 
+
+    private void ReleaseUnmanagedResources()
+    {
+        // TODO release unmanaged resources here
+        if (ViewState != ViewState.None)
+        {
+            Close(true);
+        }
+        
+        (GenGrid as INonGenGrid).ForceRenderAll();
+    
+        Parent?.CurrentGenPage.StateHasChanged();
+    
+    
+        RefreshParentGrid.InvokeAsync();
+    
+        ((INonGenGrid)GenGrid).ResetValidations(Components.Select(x => x.component as IGenControl));
+
+        SelectedItem = default;
+        MudDialog.Dispose();
+
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+        if (!disposing) return;
+        // MudDialog?.Dispose();
+        // GenGrid?.Dispose();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~GenPage()
+    {
+        Dispose(false);
     }
 }

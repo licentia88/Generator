@@ -212,6 +212,10 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
         }
 
         var loValue = ((IGenControl)this).GetValue()?.ToString();
+        
+        // if(string.IsNullOrEmpty(loValue) && !string.IsNullOrEmpty(InitialValue?.ToString()))
+        //     loValue = InitialValue?.ToString();
+        
         var additionalParams = valuePairs.Select(x => (x.Key, x.Value)).ToList();
 
         additionalParams.Add((nameof(Value), loValue));
@@ -317,32 +321,34 @@ public class GenTextField : MudTextField<object>, IGenTextField, IComponentMetho
     
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
-        {
-            // Dispose managed resources
-            _stringConverter = null;
-            _dateConverter = null;
-            Model = null;
-            InitialValue = null;
-            // ((IGenComponent)this).Parent = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnValueChanged = default;
-            ValueChanged = default;
-            TextChanged = default;
-            OnClearButtonClick = default;
-            OnAdornmentClick = default;
-            OnBlur = default;
-            OnKeyUp = default;
-            OnKeyDown = default;
-            OnDebounceIntervalElapsed = default;
-            OnInternalInputChanged = default;
-            OnlyValidateIfDirty = default;
-            OnInternalInputChanged = default;
-        }
+        // if (disposing)
+        // {
+        //     // Dispose managed resources
+        //     _stringConverter = null;
+        //     _dateConverter = null;
+        //     Model = null;
+        //     // InitialValue = null;
+        //     // ((IGenComponent)this).Parent = null;
+        //     // BindingField = null;
+        //     // EditorVisible = false;
+        //     // EditorVisibleIf = null;
+        //     // DisabledIf = null;
+        //     // RequiredIf = null;
+        //     OnValueChanged = default;
+        //     ValueChanged = default;
+        //     TextChanged = default;
+        //     OnClearButtonClick = default;
+        //     OnAdornmentClick = default;
+        //     OnBlur = default;
+        //     OnKeyUp = default;
+        //     OnKeyDown = default;
+        //     OnDebounceIntervalElapsed = default;
+        //     OnInternalInputChanged = default;
+        //     OnlyValidateIfDirty = default;
+        //     OnInternalInputChanged = default;
+        // }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 } 

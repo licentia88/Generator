@@ -404,21 +404,22 @@ public class GenDatePicker : MudDatePicker, IGenDatePicker, IAsyncDisposable, IC
         if (disposing)
         {
             // Dispose managed resources
-            Model = null;
-            // ((IGenComponent)this).Parent = null;
-            InitialValue = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnDateChanged = default;
-            OnClick=default;
-            DateChanged=default;
-            OnDateChanged = default;
+            // Model = null;
+            // // ((IGenComponent)this).Parent = null;
+            // InitialValue = null;
+            // // BindingField = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
+            // RequiredIf = null;
+            // OnDateChanged = default;
+            // OnClick=default;
+            // DateChanged=default;
+            // OnDateChanged = default;
             
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 
    

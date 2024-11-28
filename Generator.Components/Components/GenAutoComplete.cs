@@ -605,35 +605,36 @@ public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComp
     {
         if (disposing)
         {
-            // Dispose managed resources
-            // _stringConverter = null;
-            // _dateConverter = null;
-            Model = null;
-            InitialValue = null;
-            // ((IGenComponent)this).Parent = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnValueChanged = default;
-            ValueChanged = default;
-            TextChanged = default;
-            OnClearButtonClick = default;
-            OnAdornmentClick = default;
-            OnBlur = default;
-            OnKeyUp = default;
-            OnKeyDown = default;
-            OnInternalInputChanged = default;
-            OnlyValidateIfDirty = default;
-            OnInternalInputChanged = default; 
-            ServiceMethod = null;
-            Where = null;
-            CurrentData = null;
+            // // Dispose managed resources
+            // // _stringConverter = null;
+            // // _dateConverter = null;
+            // Model = null;
+            // InitialValue = null;
+            // // ((IGenComponent)this).Parent = null;
+            // // BindingField = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
+            // RequiredIf = null;
+            // OnValueChanged = default;
+            // ValueChanged = default;
+            // TextChanged = default;
+            // OnClearButtonClick = default;
+            // OnAdornmentClick = default;
+            // OnBlur = default;
+            // OnKeyUp = default;
+            // OnKeyDown = default;
+            // OnInternalInputChanged = default;
+            // OnlyValidateIfDirty = default;
+            // OnInternalInputChanged = default; 
+            // ServiceMethod = null;
+            // Where = null;
+            // CurrentData = null;
             // ValueField = null;
             // DisplayField = null;
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 
 }

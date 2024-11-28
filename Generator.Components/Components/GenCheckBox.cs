@@ -346,21 +346,22 @@ public class GenCheckBox : MudCheckBox<bool>, IGenCheckBox,IDisposable, ICompone
     {
         if (disposing)
         {
-            // Dispose managed resources
-
-            Model = null;
-            InitialValue = null;
-            // ((IGenComponent)this).Parent = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnCheckedChanged = default;
-            ValueChanged = default;
-            ValueChanged = default;
+            // // Dispose managed resources
+            //
+            // Model = null;
+            // InitialValue = null;
+            // // ((IGenComponent)this).Parent = null;
+            // // BindingField = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
+            // RequiredIf = null;
+            // OnCheckedChanged = default;
+            // ValueChanged = default;
+            // ValueChanged = default;
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 }
 

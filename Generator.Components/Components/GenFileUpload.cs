@@ -249,12 +249,13 @@ public RenderFragment RenderAsComponent(object model, bool ignoreLabels = false,
     {
         if (disposing)
         {
-            Model = null;
-            InitialValue = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
+            // Model = null;
+            // InitialValue = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 }

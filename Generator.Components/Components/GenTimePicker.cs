@@ -345,20 +345,21 @@ public class GenTimePicker : MudTimePicker, IGenTimePicker,IDisposable, ICompone
     {
         if (disposing)
         {
-            // Dispose managed resources
-            Model = null;
-            // ((IGenComponent)this).Parent = null;
-            InitialValue = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnClick=default;
-            OnTimeChanged=default;
-            TextChanged = default;
-            TimeChanged = default;
+            // // Dispose managed resources
+            // Model = null;
+            // // ((IGenComponent)this).Parent = null;
+            // // InitialValue = null;
+            // // BindingField = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
+            // RequiredIf = null;
+            // OnClick=default;
+            // OnTimeChanged=default;
+            // TextChanged = default;
+            // TimeChanged = default;
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 }

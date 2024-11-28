@@ -397,31 +397,32 @@ public class GenComboBox : MudSelect<object>, IGenComboBox, IComponentMethods<Ge
     {
         if (disposing)
         {
-            // Model = null;
-            InitialValue = null;
-            // ((IGenComponent)this).Parent = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnValueChanged = default;
-            ValueChanged = default;
-            TextChanged = default;
-            OnClearButtonClick = default;
-            OnAdornmentClick = default;
-            OnBlur = default;
-            OnKeyUp = default;
-            OnKeyDown = default;
-            OnInternalInputChanged = default;
-            OnlyValidateIfDirty = default;
-            OnInternalInputChanged = default;
-            OnClose = default;
-            OnValueChanged = default;
-            OnlyValidateIfDirty = default;
-            Where = null;
+            // // Model = null;
+            // InitialValue = null;
+            // // ((IGenComponent)this).Parent = null;
+            // // BindingField = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
+            // RequiredIf = null;
+            // OnValueChanged = default;
+            // ValueChanged = default;
+            // TextChanged = default;
+            // OnClearButtonClick = default;
+            // OnAdornmentClick = default;
+            // OnBlur = default;
+            // OnKeyUp = default;
+            // OnKeyDown = default;
+            // OnInternalInputChanged = default;
+            // OnlyValidateIfDirty = default;
+            // OnInternalInputChanged = default;
+            // OnClose = default;
+            // OnValueChanged = default;
+            // OnlyValidateIfDirty = default;
+            // Where = null;
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 
 }

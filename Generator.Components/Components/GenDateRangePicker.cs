@@ -321,21 +321,22 @@ public class GenDateRangePicker : MudDateRangePicker, IGenDateRangePicker, IDisp
     {
         if (disposing)
         {
-            // Dispose managed resources
-            Model = null;
-            // ((IGenComponent)this).Parent = null;
-            InitialValue = null;
-            // BindingField = null;
-            EditorVisibleIf = null;
-            DisabledIf = null;
-            RequiredIf = null;
-            OnClick=default;
-            OnDateRangeChanged=default;
-            TextChanged = default;
-            PickerMonthChanged = default;
+            // // Dispose managed resources
+            // Model = null;
+            // // ((IGenComponent)this).Parent = null;
+            // InitialValue = null;
+            // // BindingField = null;
+            // EditorVisibleIf = null;
+            // DisabledIf = null;
+            // RequiredIf = null;
+            // OnClick=default;
+            // OnDateRangeChanged=default;
+            // TextChanged = default;
+            // PickerMonthChanged = default;
         }
 
         base.Dispose(disposing);
+        GC.SuppressFinalize(this);
     }
 }
 

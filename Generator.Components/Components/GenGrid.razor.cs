@@ -15,7 +15,7 @@ using Color = MudBlazor.Color;
 
 namespace Generator.Components.Components;
 
-public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable where TModel : new()
+public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable, INonGenGrid where TModel : new()
 {
     private int _index;
 

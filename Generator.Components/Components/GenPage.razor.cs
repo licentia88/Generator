@@ -291,7 +291,7 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
         
         (GenGrid as INonGenGrid).ForceRenderAll();
     
-        Parent?.CurrentGenPage.StateHasChanged();
+        Parent?.CurrentGenPage?.StateHasChanged();
     
     
         RefreshParentGrid.InvokeAsync();

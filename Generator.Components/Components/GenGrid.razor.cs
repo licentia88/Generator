@@ -553,6 +553,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
                 case ViewState.Update when Update.HasDelegate:
                     
                     _index = DataSource.IndexOf(args.CurrentValue);
+                    args.Index = _index;
                     
                     await Update.InvokeAsync(args);
                    

@@ -531,7 +531,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
             {
                 OldValue = ((IGenView<TModel>)this).OriginalEditItem,
                 CurrentValue = model,
-                 Index = _index,
+                Index = _index,
                 Parent = (((INonGenGrid)this).Parent?.CurrentGenPage)?.GetSelectedItem()
 
             };
@@ -551,9 +551,11 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
                     break;
 
                 case ViewState.Update when Update.HasDelegate:
-
-                   
+                    
+                    _index = DataSource.IndexOf(args.CurrentValue);
+                    
                     await Update.InvokeAsync(args);
+                   
                     //RefreshButtonState(true, args.CurrentValue);
                     break;
 

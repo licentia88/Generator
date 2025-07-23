@@ -270,12 +270,16 @@ public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComp
         if (this is not IGenControl comp) return;
 
         var loValue = value.GetPropertyValue(ValueField);
-
+        var loDisplayValue = value.GetPropertyValue(DisplayField);
         if (comp.IsSearchField)
         {
             //comp.SetSearchValue(value);
             Model?.SetPropertyValue(BindingField, loValue);
+            
+            SetTextAsync(loDisplayValue.ToString(), updateValue: false).GetAwaiter().GetResult();
             ((INonGenGrid)comp.Parent).ResetConditionalSearchFields();
+             
+
 
         }
         else

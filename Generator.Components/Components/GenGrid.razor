@@ -314,7 +314,7 @@
                                                Style="@($"width:100%!important;height:100%!important;border-radius:0px!important;padding:{padding}!important;")"
                                                Disabled="((INonGenGrid)this).ExpandDisabled"
                                                Icon="@expandIcon"
-                                               OnClick="async () => await ((IGenGrid<TModel>)this).OnDetailClicked(context)" />
+                                               OnClick=@(async () => await ((IGenGrid<TModel>)this).OnDetailClicked(context)) />
                             </MudTd>
 
                         }

@@ -196,7 +196,8 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
 
     public void Close(bool force)
     {
-        if (force) ((INonGenView)this).IsTopLevel = true;
+        if (force) 
+            ((INonGenView)this).IsTopLevel = true;
 
         CloseIfAllowed();
 
@@ -253,7 +254,8 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
     {
         return SelectedItem;
     }
-    
+
+   
     // public void Dispose()
     // {
     //     if (ViewState != ViewState.None)
@@ -287,6 +289,7 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
         if (ViewState != ViewState.None)
         {
             Close(true);
+            GenGrid.OriginalTable.RowEditCancel?.Invoke(OriginalEditItem);
         }
         
         (GenGrid as INonGenGrid).ForceRenderAll();

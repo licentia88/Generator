@@ -1160,7 +1160,7 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
 
             if (!_hasBeenCanceled && !_hasBeenCommitted)
             {
-                OriginalTable.Context?.Table.SetEditingItem(currentModel);
+                OriginalTable.Context.Table?.SetEditingItem(currentModel);
                 //StateHasChanged();
                 //Context.Table.RowEditCancel?.Invoke(Item);
             }
@@ -1169,6 +1169,8 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
             row.SetFieldValue("_hasBeenCanceled", true);
             row.SetFieldValue("_hasBeenCommitted", true);
             row.SetFieldValue("_hasBeenClickedFirstTime", false);
+            // OriginalTable.Context.Table?.SetEditingItem(currentModel);
+
         }
 
         ((INonGenGrid)this).SearchDisabled = false;

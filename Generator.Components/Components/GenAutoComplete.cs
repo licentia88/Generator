@@ -123,6 +123,7 @@ public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComp
 
         ErrorText = string.IsNullOrEmpty(ErrorText) ? "*" : ErrorText;
 
+        Clearable = true;
         //if (Model is null || Model.GetType().Name == "Object") return;
 
         //if (InitialValue is not null)
@@ -142,7 +143,7 @@ public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComp
 
             if (DataSource is null) return;
 
-            CurrentData = DataSource.FirstOrDefault(x => x.GetType().GetProperty(ValueField).GetValue(x).ToString() == currentPropertyValue.ToString());
+            CurrentData = DataSource.FirstOrDefault(x => x.GetType().GetProperty(ValueField)?.GetValue(x)?.ToString() == currentPropertyValue.ToString());
 
             var tosetValue = CurrentData.GetPropertyValue(DisplayField).ToString();
 
@@ -276,11 +277,8 @@ public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComp
             //comp.SetSearchValue(value);
             Model?.SetPropertyValue(BindingField, loValue);
             
-            SetTextAsync(loDisplayValue.ToString(), updateValue: false).GetAwaiter().GetResult();
+            SetTextAsync(loDisplayValue?.ToString()??string.Empty, updateValue: false).GetAwaiter().GetResult();
             ((INonGenGrid)comp.Parent).ResetConditionalSearchFields();
-             
-
-
         }
         else
         {
@@ -637,8 +635,8 @@ public class GenAutoComplete : MudAutocomplete<object>,IDisposable, IGenAutoComp
             // DisplayField = null;
         }
 
-        base.Dispose(disposing);
-        GC.SuppressFinalize(this);
+        // base.Dispose(disposing);
+        // GC.SuppressFinalize(this);
     }
 
 }

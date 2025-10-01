@@ -32,30 +32,27 @@ public class SearchArgs:EventArgs
 
  
 
+    // ReSharper disable once CognitiveComplexity
     public T GetComponentValueAs<T>(string bindingField)
     {
-        // yoksa default (nullable ise null)
         if (!WhereStatementDictionary.TryGetValue(bindingField, out var value) || value is null)
             return default!;
 
-        // zaten istenen tipteyse
         if (value is T t)
             return t;
 
-        // metne çevir
         var s = value.ToString();
         if (string.IsNullOrWhiteSpace(s))
             return default!;
 
         var targetType = typeof(T);
         var underlying = Nullable.GetUnderlyingType(targetType) ?? targetType;
-        var isNullable = underlying != targetType;
 
-        // desteklenen tipleri TryParse ile tek tek ele al
         object? parsed = null;
 
         if (underlying == typeof(string))
             parsed = s;
+
         else if (underlying == typeof(int)      && int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var i)) parsed = i;
         else if (underlying == typeof(long)     && long.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var l)) parsed = l;
         else if (underlying == typeof(short)    && short.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sh)) parsed = sh;
@@ -64,6 +61,14 @@ public class SearchArgs:EventArgs
         else if (underlying == typeof(double)   && double.TryParse(s, NumberStyles.Float  | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var d)) parsed = d;
         else if (underlying == typeof(float)    && float.TryParse(s,  NumberStyles.Float  | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var f)) parsed = f;
         else if (underlying == typeof(bool)     && bool.TryParse(s, out var b)) parsed = b;
+
+        // özel DateOnly / DateOnly? case
+        else if (underlying == typeof(DateOnly))
+        {
+            if (DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+                parsed = DateOnly.FromDateTime(dt);
+        }
+
         else if (underlying == typeof(DateTime) && DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt)) parsed = dt;
         else if (underlying == typeof(Guid)     && Guid.TryParse(s, out var g)) parsed = g;
         else if (underlying.IsEnum && Enum.TryParse(underlying, s, ignoreCase: true, out var e)) parsed = e;
@@ -71,9 +76,9 @@ public class SearchArgs:EventArgs
         if (parsed is null)
             return default!;
 
-        // boxing kuralı: underlying değerini T (veya Nullable<T>)’ye güvenle dök
         return (T)parsed;
     }
+
 }
 
 

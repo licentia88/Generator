@@ -24,4 +24,6 @@ public interface IPageBase
     public object GetSelectedItem();
 
     public void Close();
+    public void Close(bool force);
+
 }

@@ -1306,10 +1306,15 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
 
     void IPageBase.Close()
     {
-        ((IGenGrid<TModel>)this).CurrentGenPage.Close();
+        ((IGenGrid<TModel>)this).Close(true);
+        // ((IGenGrid<TModel>)this).CurrentGenPage.Close();
     }
 
-   
+    void IPageBase.Close(bool force)
+    {
+        ((IGenGrid<TModel>)this).CurrentGenPage.Close(true);
+    }
+
 
     protected override void Dispose(bool disposing)
     {

@@ -27,48 +27,18 @@ public class SearchArgs:EventArgs
                                      .Select(component => new KeyValuePair<string, object>(component.BindingField, component.GetValue())).ToArray();
 
 
+    private Dictionary<string, object> WhereStatementDictionary => WhereStatements.ToDictionary(kv => kv.Key, kv => kv.Value);
+    
+     
 
-    public IGenControl GetComponent(string BindingField) => Components.FirstOrDefault(x => x.BindingField == BindingField);
-
-
-    public T GetComponentValueAs<T>(string bindingField)
+    public T GetComponentValueAs<T>(string bindingField) where T :IParsable<T>
     {
-        var component = GetComponent(bindingField);
-
-        var value = component.GetValue();
-
-        if (value is null) return default;
-
-        T result;
-
-        // Check if T supports TryParse
-        var tryParseMethod = typeof(T).GetMethod("TryParse", new[] { typeof(string), typeof(T).MakeByRefType() });
-
-        if (tryParseMethod != null)
-        {
-            // Call TryParse using reflection
-            object[] parameters = { value, null };
-            var parseResult = (bool)tryParseMethod.Invoke(null, parameters);
-
-            if (parseResult)
-            {
-                result = (T)parameters[1];
-            }
-            else
-            {
-                return default;
-                // Handle parsing failure here
-                //throw new ArgumentException("Parsing failed");
-            }
-        }
-        else
-        {
-            return value.CastTo<T>();
-            // Handle types that don't support TryParse
-            //throw new NotSupportedException($"Type {typeof(T).Name} does not support TryParse.");
-        }
-
-        return result;
+        if (!WhereStatementDictionary.TryGetValue(bindingField, out object value)) 
+            return default;
+        
+        T.TryParse(value?.ToString(), null, out var val);
+        
+        return val;
     }
 
 }

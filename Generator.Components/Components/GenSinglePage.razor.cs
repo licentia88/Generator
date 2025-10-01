@@ -122,6 +122,12 @@ public partial class GenSinglePage<TModel> : ComponentBase,IDisposable, ISingleP
     {
         ((IPageBase)this).Close();
     }
+
+    public void Close(bool force)
+    {
+        Close();
+    }
+
     void IPageBase.Close() => MudDialog.Close();
 
     void IPageBase.StateHasChanged()

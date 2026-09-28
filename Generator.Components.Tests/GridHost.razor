@@ -1,0 +1,18 @@
+@* A SmartForm grid with one row, and the providers an app's layout renders for its dialogs. The grid comes first, so
+   removing this component disposes the grid before the page its dialog shows, the order a circuit's end uses. *@
+<GenGrid TModel="Row"
+         DataSource="Rows"
+         EditMode="EditMode.SmartForm"
+         Title="Rows"
+         Create="@((GenArgs<Row> _) => Task.CompletedTask)"
+         Update="@((GenArgs<Row> _) => Task.CompletedTask)">
+    <GenColumns>
+        <GenTextField BindingField="@nameof(Row.Name)" Label="Name" />
+    </GenColumns>
+</GenGrid>
+<MudPopoverProvider />
+<MudDialogProvider />
+
+@code {
+    private List<Row> Rows { get; } = new() { new Row { Id = 1, Name = "first" } };
+}

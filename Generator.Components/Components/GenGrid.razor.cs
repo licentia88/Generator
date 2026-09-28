@@ -1316,10 +1316,18 @@ public partial class GenGrid<TModel> : MudTable<TModel>, IPageBase, IDisposable,
     }
 
 
+    /// <summary>
+    /// True once the grid has been disposed. When a circuit ends, Blazor disposes the grid before the page its dialog
+    /// shows, so the page reads this to leave the grid alone.
+    /// </summary>
+    internal bool IsDisposed { get; private set; }
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
+            IsDisposed = true;
+
             // Dispose managed resources
             OriginalTable = null;
            DataSource = null;

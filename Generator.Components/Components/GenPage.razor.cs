@@ -283,9 +283,16 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
     // //
  
 
-    private void ReleaseUnmanagedResources()
+    /// <summary>
+    /// Cancels the edit the page still holds on its grid and closes its dialog. A grid that is already disposed has
+    /// nothing left to cancel, and its table is gone: Blazor disposes the grid first when the circuit ends, or when the
+    /// user navigates away with the dialog open (the new page renders, then the dialog provider closes the dialog).
+    /// </summary>
+    private void ReleaseGridState()
     {
-        // TODO release unmanaged resources here
+        if (GenGrid.IsDisposed)
+            return;
+
         if (ViewState != ViewState.None)
         {
             Close(true);
@@ -306,22 +313,17 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
 
     }
 
+    // The page holds no unmanaged resources, so it has no finalizer. Its cleanup works on the grid and the dialog, and an
+    // exception thrown on the GC's finalizer thread would end the whole process.
     protected virtual void Dispose(bool disposing)
     {
-        ReleaseUnmanagedResources();
         if (!disposing) return;
-        // MudDialog?.Dispose();
-        // GenGrid?.Dispose();
+        ReleaseGridState();
     }
 
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
-    }
-
-    ~GenPage()
-    {
-        Dispose(false);
     }
 }

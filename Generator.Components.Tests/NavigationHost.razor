@@ -1,0 +1,36 @@
+@* A grid that goes away when the location changes, as a Router's page does, and the dialog providers of an app's layout.
+   It subscribes before MudDialogProvider, as a Router does, so the grid is disposed before MudDialogProvider closes the
+   dialog on the same navigation. *@
+@implements IDisposable
+@inject NavigationManager Navigation
+@if (_gridShown)
+{
+    <GenGrid TModel="Row"
+             DataSource="Rows"
+             EditMode="EditMode.SmartForm"
+             Title="Rows"
+             Create="@((GenArgs<Row> _) => Task.CompletedTask)"
+             Update="@((GenArgs<Row> _) => Task.CompletedTask)">
+        <GenColumns>
+            <GenTextField BindingField="@nameof(Row.Name)" Label="Name" />
+        </GenColumns>
+    </GenGrid>
+}
+<MudPopoverProvider />
+<MudDialogProvider />
+
+@code {
+    private bool _gridShown = true;
+
+    private List<Row> Rows { get; } = new() { new Row { Id = 1, Name = "first" } };
+
+    protected override void OnInitialized() => Navigation.LocationChanged += HideGrid;
+
+    private void HideGrid(object sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        _gridShown = false;
+        StateHasChanged();
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= HideGrid;
+}

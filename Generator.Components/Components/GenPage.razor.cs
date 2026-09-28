@@ -284,12 +284,13 @@ public partial class GenPage<TModel> :ComponentBase, IGenPage<TModel>, IDisposab
  
 
     /// <summary>
-    /// Cancels the edit the page still holds on its grid and closes its dialog. A grid that is already disposed (the
-    /// circuit is ending, and Blazor disposed the grid first) has nothing left to cancel, and its table is gone.
+    /// Cancels the edit the page still holds on its grid and closes its dialog. A grid that is already disposed has
+    /// nothing left to cancel, and its table is gone: Blazor disposes the grid first when the circuit ends, or when the
+    /// user navigates away with the dialog open (the new page renders, then the dialog provider closes the dialog).
     /// </summary>
     private void ReleaseGridState()
     {
-        if (GenGrid is null || GenGrid.IsDisposed)
+        if (GenGrid.IsDisposed)
             return;
 
         if (ViewState != ViewState.None)

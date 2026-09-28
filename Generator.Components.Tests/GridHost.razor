@@ -1,5 +1,6 @@
 @* A SmartForm grid with one row, and the providers an app's layout renders for its dialogs. The grid comes first, so
-   removing this component disposes the grid before the page its dialog shows, the order a circuit's end uses. *@
+   removing this component disposes the grid before the page its dialog shows (render-tree order), as a circuit's end
+   can. *@
 <GenGrid TModel="Row"
          DataSource="Rows"
          EditMode="EditMode.SmartForm"
